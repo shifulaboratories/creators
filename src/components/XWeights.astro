@@ -1,0 +1,292 @@
+---
+/**
+ * X's published ranking weights, 2023 vs 2026, as diverging bars,
+ * plus a calculator showing why weights are not "counts".
+ * Sources:
+ *  2023: twitter/the-algorithm-ml, projects/home/recap/README.md (weights dated April 5, 2023)
+ *  2026: xai-org/x-algorithm, home-mixer/params/param.rs (checked Nov 26, 2026)
+ */
+const sets = {
+	'2026': [
+		['Share via copy link', 20],
+		['Reply', 5],
+		['Quote', 5],
+		['Share via DM', 5],
+		['Follow the author', 4],
+		['Share', 2.118],
+		['Repost', 1],
+		['Like', 0.708],
+		['Time spent after clicking in', 0.385],
+		['Click into the post', 0.274],
+		['Open a link', 0.2],
+		['Scroll past without stopping', -0.02],
+		['Block the author', -31.2],
+		['Not interested', -53.07],
+		['Mute the author', -58.8],
+		['Report', -234],
+	],
+	'2023': [
+		['Reply the author engages with', 75],
+		['Reply', 13.5],
+		['Profile click, then engage', 12],
+		['Open the conversation, then engage', 11],
+		['Open the conversation, stay 2+ min', 10],
+		['Retweet', 1],
+		['Like', 0.5],
+		['Watch half a video', 0.005],
+		['Negative feedback', -74],
+		['Report', -369],
+	],
+} as const;
+const fmt = (n: number) => (Math.abs(n) >= 10 ? String(n) : String(+n.toFixed(3)));
+// sqrt scale so a 0.7 like is still visible next to a 234 report
+const maxAbs = 369;
+const pct = (n: number) => (Math.sqrt(Math.abs(n)) / Math.sqrt(maxAbs)) * 100;
+---
+
+<div class="sc-widget xw" data-xw>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">From the code · Ranking weights</div>
+			<h4 class="sc-widget__title">What X’s ranker multiplies each predicted action by</h4>
+		</div>
+		<div class="sc-chip-row" role="group" aria-label="Year">
+			<button type="button" class="sc-chip" data-year="2026" aria-pressed="true">2026 code</button>
+			<button type="button" class="sc-chip" data-year="2023" aria-pressed="false">2023 code</button>
+		</div>
+	</div>
+
+	{
+		Object.entries(sets).map(([year, rows]) => (
+			<ul class="xw-bars" data-set={year} hidden={year !== '2026'}>
+				{rows.map(([label, w], i) => (
+					<li class={w < 0 ? 'is-neg' : ''} style={`--w:${pct(w)};--i:${i}`}>
+						<span class="xw-label">{label}</span>
+						<span class="xw-track">
+							<span class="xw-fill" />
+						</span>
+						<span class="xw-val">{w > 0 ? '+' : ''}{fmt(w)}</span>
+					</li>
+				))}
+			</ul>
+		))
+	}
+	<p class="sc-widget__note">
+		Bars use a square-root scale so small weights stay visible. 2023 weights from <a href="https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md">the-algorithm-ml</a> (dated April 5, 2023). 2026 weights from <a href="https://github.com/xai-org/x-algorithm/blob/main/home-mixer/params/param.rs">x-algorithm’s param.rs</a>, which X says a script keeps in sync with production defaults. Weights with a value of zero are left out. X can change them at any time.
+	</p>
+</div>
+
+<div class="sc-widget xc" data-xc>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Weights are not counts</div>
+			<h4 class="sc-widget__title">Does one report really cancel hundreds of likes?</h4>
+		</div>
+		<span class="sc-tag is-code">X’s own explanation</span>
+	</div>
+	<p class="xc-lead">
+		The weights multiply the <em>chance</em> that this viewer takes an action, not how many times it happened. A report is rare, so its chance is tiny. X’s code says the baseline chance of a report is more than 1,000 times lower than a like. Move the sliders.
+	</p>
+	<div class="xc-grid">
+		<label>
+			<span class="xc-top"><span>Chance this viewer likes it</span><output data-o="like">10%</output></span>
+			<input class="sc-range" type="range" min="0" max="50" step="1" value="10" data-p="like" aria-label="Chance of a like, percent" />
+		</label>
+		<label>
+			<span class="xc-top"><span>Chance this viewer reports it</span><output data-o="report">0.01%</output></span>
+			<input class="sc-range" type="range" min="0" max="100" step="1" value="1" data-p="report" aria-label="Chance of a report, hundredths of a percent" />
+		</label>
+	</div>
+	<div class="xc-out">
+		<div class="xc-row"><span>Like: 0.708 × <b data-r="pl">0.10</b></span><span class="xc-track"><span class="xc-fill" data-f="like" /></span><b data-r="like">+0.071</b></div>
+		<div class="xc-row is-neg"><span>Report: −234 × <b data-r="pr">0.0001</b></span><span class="xc-track"><span class="xc-fill" data-f="report" /></span><b data-r="report">−0.023</b></div>
+	</div>
+	<p class="xc-verdict" data-verdict aria-live="polite"></p>
+	<p class="sc-widget__note">Uses the 2026 like and report weights. Probabilities are examples. Real ones are predicted per viewer, which is also why X says mass-reporting mainly affects what similar accounts see.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-xw]').forEach((root) => {
+		root.querySelectorAll<HTMLButtonElement>('[data-year]').forEach((b) =>
+			b.addEventListener('click', () => {
+				root.querySelectorAll<HTMLButtonElement>('[data-year]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				root.querySelectorAll<HTMLElement>('[data-set]').forEach((s) => (s.hidden = s.dataset.set !== b.dataset.year));
+			}),
+		);
+	});
+	document.querySelectorAll<HTMLElement>('[data-xc]').forEach((root) => {
+		const like = root.querySelector<HTMLInputElement>('[data-p="like"]')!;
+		const rep = root.querySelector<HTMLInputElement>('[data-p="report"]')!;
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const update = () => {
+			const pl = +like.value / 100;
+			const pr = +rep.value / 10000;
+			like.style.setProperty('--fill', (+like.value / +like.max) * 100 + '%');
+			rep.style.setProperty('--fill', (+rep.value / +rep.max) * 100 + '%');
+			$('[data-o="like"]').textContent = like.value + '%';
+			$('[data-o="report"]').textContent = (pr * 100).toFixed(2) + '%';
+			const cl = 0.708 * pl;
+			const cr = 234 * pr;
+			$('[data-r="pl"]').textContent = pl.toFixed(2);
+			$('[data-r="pr"]').textContent = pr.toFixed(4);
+			$('[data-r="like"]').textContent = '+' + cl.toFixed(3);
+			$('[data-r="report"]').textContent = '−' + cr.toFixed(3);
+			const m = Math.max(cl, cr, 0.001);
+			$('[data-f="like"]').style.width = (cl / m) * 100 + '%';
+			$('[data-f="report"]').style.width = (cr / m) * 100 + '%';
+			$('[data-verdict]').textContent =
+				cr > cl
+					? 'Here the report term outweighs the like term, because this viewer is unusually likely to report. That is the system working as intended: it predicts this person won’t want it.'
+					: `The like term is ${cr ? (cl / cr).toFixed(1) + '×' : 'far'} bigger. A huge weight on a rare action still adds up to a small number.`;
+		};
+		like.addEventListener('input', update);
+		rep.addEventListener('input', update);
+		update();
+	});
+</script>
+
+<style>
+	.xw-bars {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.4rem;
+	}
+	.xw-bars li {
+		margin: 0;
+		display: grid;
+		grid-template-columns: minmax(7rem, 13rem) 1fr 3.6rem;
+		align-items: center;
+		gap: 0.6rem;
+		font-size: 0.82rem;
+	}
+	.xw-label {
+		color: var(--sc-ivory);
+		line-height: 1.25;
+	}
+	.xw-track {
+		position: relative;
+		height: 10px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.05);
+		overflow: hidden;
+	}
+	.xw-fill {
+		position: absolute;
+		inset: 0 auto 0 0;
+		width: calc(var(--w) * 1%);
+		border-radius: 999px;
+		background: linear-gradient(90deg, color-mix(in srgb, var(--sc-jade) 50%, transparent), var(--sc-jade));
+		transform-origin: left;
+		animation: xw-grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		animation-delay: calc(var(--i) * 40ms);
+	}
+	.is-neg .xw-fill {
+		background: linear-gradient(90deg, color-mix(in srgb, var(--sc-ember) 50%, transparent), var(--sc-ember));
+	}
+	@keyframes xw-grow {
+		from {
+			transform: scaleX(0);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.xw-fill {
+			animation: none;
+		}
+	}
+	.xw-val {
+		font-family: var(--sc-font-mono);
+		font-size: 0.78rem;
+		text-align: right;
+		color: var(--sc-jade);
+	}
+	.is-neg .xw-val {
+		color: var(--sc-ember);
+	}
+	@media (max-width: 30rem) {
+		.xw-bars li {
+			grid-template-columns: 1fr 3.2rem;
+		}
+		.xw-track {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+	}
+	.xc-lead {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		line-height: 1.55;
+	}
+	.xc-grid {
+		display: grid;
+		gap: 0.8rem 1.5rem;
+	}
+	@media (min-width: 40rem) {
+		.xc-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.xc-grid label {
+		display: block;
+		margin: 0;
+	}
+	.xc-top {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.82rem;
+		color: var(--sc-ivory);
+	}
+	.xc-top output {
+		font-family: var(--sc-font-mono);
+		color: var(--accent);
+	}
+	.xc-out {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 1.1rem;
+	}
+	.xc-row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.3rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	@media (min-width: 40rem) {
+		.xc-row {
+			grid-template-columns: 14rem 1fr 4.5rem;
+			align-items: center;
+			gap: 0.75rem;
+		}
+	}
+	.xc-row > b {
+		color: var(--sc-jade);
+		text-align: right;
+	}
+	.xc-row.is-neg > b {
+		color: var(--sc-ember);
+	}
+	.xc-track {
+		height: 12px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.05);
+		overflow: hidden;
+	}
+	.xc-fill {
+		display: block;
+		height: 100%;
+		background: var(--sc-jade);
+		border-radius: 999px;
+		transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.is-neg .xc-fill {
+		background: var(--sc-ember);
+	}
+	.xc-verdict {
+		margin: 0.9rem 0 0;
+		font-size: 0.88rem;
+		color: var(--sc-ivory);
+	}
+</style>

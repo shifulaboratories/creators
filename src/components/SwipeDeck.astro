@@ -1,0 +1,256 @@
+---
+/**
+ * "The briefing": story-style swipeable cards, one sourced fact each.
+ * Phones: swipe or tap the edges. Desktop: arrows or trackpad. No library.
+ */
+interface Props {
+	title?: string;
+}
+const { title = 'The 60-second briefing' } = Astro.props;
+const cards = [
+	{ tint: 'youtube', kicker: 'YouTube', big: '2012', text: 'YouTube added watch time because clicks alone rewarded misleading videos.', src: 'YouTube', href: '/platforms/youtube/' },
+	{ tint: 'x', kicker: 'X · from the code', big: '7×', text: 'The chance of a reply is weighted about seven times the chance of a like. A copy-link share, about 28 times.', src: 'X source code, 2026', href: '/algorithms/x-open-source/' },
+	{ tint: 'tiktok', kicker: 'TikTok', big: '0', text: 'Follower count is not a direct factor in For You. Neither are your past hits. Every video gets its own shot.', src: 'TikTok, 2020', href: '/platforms/tiktok/' },
+	{ tint: 'instagram', kicker: 'Instagram', big: 'Reels', text: 'Reels and Explore are mostly accounts people don’t follow yet. That’s where new reach comes from.', src: 'Instagram, 2023', href: '/platforms/instagram/' },
+	{ tint: 'x', kicker: 'X · from the code', big: '48h', text: 'Posts older than 48 hours are filtered out of the For You feed before ranking even starts.', src: 'X source code, 2026', href: '/algorithms/x-open-source/' },
+	{ tint: 'instagram', kicker: 'Instagram', big: '✕', text: 'Another app’s watermark limits a Reel’s reach. Export the clean, original file.', src: 'Instagram, 2023', href: '/platforms/instagram/' },
+	{ tint: 'algorithms', kicker: 'Myth', big: '≠', text: '“One report cancels 468 likes” is wrong. Weights multiply predicted chances, not counts. X’s own code says so.', src: 'X source code, 2026', href: '/algorithms/myths/' },
+	{ tint: 'case-studies', kicker: 'MrBeast', big: '100', text: '“Make 100 videos and improve one thing each video.”', src: 'TechCrunch, VidCon 2022', href: '/case-studies/mrbeast/' },
+];
+---
+
+<section class="sd not-content" data-sd aria-roledescription="carousel" aria-label={title}>
+	<div class="sd-head">
+		<div>
+			<p class="sd-kicker">Swipe</p>
+			<h2 class="sd-title">{title}</h2>
+		</div>
+		<div class="sd-arrows">
+			<button type="button" data-dir="-1" aria-label="Previous card">‹</button>
+			<button type="button" data-dir="1" aria-label="Next card">›</button>
+		</div>
+	</div>
+	<div class="sd-progress" aria-hidden="true">
+		{cards.map(() => <span><i /></span>)}
+	</div>
+	<div class="sd-track" tabindex="0">
+		{
+			cards.map((c, i) => (
+				<a class="sd-card" href={c.href} data-section={c.tint} aria-roledescription="slide" aria-label={`${i + 1} of ${cards.length}`}>
+					<span class="sd-glow" aria-hidden="true" />
+					<span class="sd-ck">{c.kicker}</span>
+					<span class="sd-big">{c.big}</span>
+					<span class="sd-text">{c.text}</span>
+					<span class="sd-foot">
+						<span class="sd-src">{c.src}</span>
+						<span class="sd-go">Read →</span>
+					</span>
+				</a>
+			))
+		}
+	</div>
+</section>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-sd]').forEach((root) => {
+		const track = root.querySelector<HTMLElement>('.sd-track')!;
+		const cards = [...track.children] as HTMLElement[];
+		const bars = [...root.querySelectorAll<HTMLElement>('.sd-progress span')];
+		let current = 0;
+		const set = (i: number) => {
+			current = i;
+			bars.forEach((b, j) => b.classList.toggle('on', j === i));
+		};
+		const go = (i: number) => {
+			const n = Math.max(0, Math.min(cards.length - 1, i));
+			track.scrollTo({ left: cards[n].offsetLeft - track.offsetLeft - parseFloat(getComputedStyle(track).paddingLeft), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+		};
+		const io = new IntersectionObserver(
+			(es) => es.forEach((e) => e.isIntersecting && set(cards.indexOf(e.target as HTMLElement))),
+			{ root: track, threshold: 0.6 },
+		);
+		cards.forEach((c) => io.observe(c));
+		root.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach((b) => b.addEventListener('click', () => go(current + +b.dataset.dir!)));
+		track.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowRight') (e.preventDefault(), go(current + 1));
+			if (e.key === 'ArrowLeft') (e.preventDefault(), go(current - 1));
+		});
+		set(0);
+	});
+</script>
+
+<style>
+	.sd {
+		margin-block: 1.5rem 2.5rem;
+	}
+	.sd-head {
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.75rem;
+	}
+	.sd-kicker {
+		margin: 0;
+		font-family: var(--sc-font-mono);
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--sc-ion);
+	}
+	.sd-title {
+		margin: 0.2rem 0 0;
+		font-size: clamp(1.3rem, 4vw, 1.75rem);
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+		border: 0;
+		padding: 0;
+	}
+	.sd-arrows {
+		display: none;
+		gap: 0.4rem;
+	}
+	@media (hover: hover) {
+		.sd-arrows {
+			display: flex;
+		}
+	}
+	.sd-arrows button {
+		width: 2.4rem;
+		height: 2.4rem;
+		border-radius: 50%;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-ivory);
+		font-size: 1.3rem;
+		line-height: 1;
+		cursor: pointer;
+		transition:
+			border-color 0.2s,
+			background 0.2s;
+	}
+	.sd-arrows button:hover {
+		border-color: var(--sc-line-bright);
+		background: rgb(255 255 255 / 0.07);
+	}
+	.sd-progress {
+		display: flex;
+		gap: 4px;
+		margin-bottom: 0.75rem;
+	}
+	.sd-progress span {
+		flex: 1;
+		height: 3px;
+		border-radius: 3px;
+		background: rgb(255 255 255 / 0.12);
+		overflow: hidden;
+	}
+	.sd-progress i {
+		display: block;
+		height: 100%;
+		width: 0;
+		background: var(--sc-ivory);
+		transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.sd-progress span.on i {
+		width: 100%;
+	}
+	.sd-track {
+		display: flex;
+		gap: 0.75rem;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		padding-bottom: 0.25rem;
+		outline: none;
+	}
+	.sd-track::-webkit-scrollbar {
+		display: none;
+	}
+	.sd-track:focus-visible {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 4px;
+		border-radius: 20px;
+	}
+	.sd-card {
+		position: relative;
+		flex: 0 0 min(80%, 19rem);
+		scroll-snap-align: start;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		min-height: 22rem;
+		padding: 1.25rem 1.2rem 1.1rem;
+		border-radius: 22px;
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+		background: #0c0c0c;
+		color: var(--sc-ivory);
+		text-decoration: none;
+		overflow: hidden;
+		isolation: isolate;
+		-webkit-tap-highlight-color: transparent;
+		transition:
+			transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+			border-color 0.25s;
+	}
+	.sd-card:hover {
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+	}
+	.sd-card:active {
+		transform: scale(0.98);
+	}
+	.sd-glow {
+		position: absolute;
+		inset: -40% -40% auto auto;
+		width: 120%;
+		aspect-ratio: 1;
+		z-index: -1;
+		background: radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent), transparent 62%);
+		opacity: 0.9;
+	}
+	.sd-ck {
+		font-family: var(--sc-font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.sd-big {
+		margin-top: auto;
+		font-size: clamp(3.5rem, 16vw, 4.5rem);
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: -0.05em;
+		background: linear-gradient(180deg, var(--sc-ivory), color-mix(in srgb, var(--accent) 70%, var(--sc-ivory)));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.sd-text {
+		font-size: 1.02rem;
+		line-height: 1.45;
+		color: var(--sc-ivory);
+	}
+	.sd-foot {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-top: 0.7rem;
+		border-top: 1px solid var(--sc-line);
+		font-family: var(--sc-font-mono);
+		font-size: 0.68rem;
+	}
+	.sd-src {
+		color: var(--sc-silver);
+	}
+	.sd-go {
+		color: var(--accent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sd-progress i,
+		.sd-card {
+			transition: none;
+		}
+	}
+</style>

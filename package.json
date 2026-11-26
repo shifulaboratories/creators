@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "astro build && wrangler deploy",
+    "cf-preview": "astro build && wrangler dev"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.43.1",
@@ -16,5 +18,8 @@
     "@fontsource-variable/geist-mono": "^5.3.0",
     "astro": "^7.4.13",
     "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
   }
 }

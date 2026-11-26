@@ -1,0 +1,7 @@
+name: X's recommendation algorithm, explained by its engineers
+url: https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm
+kind: official
+tint: x
+coverLabel: X, officially
+why: How the For You feed finds about 1,500 candidates, ranks them by predicted engagement and filters the mix.
+free: true

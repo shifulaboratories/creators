@@ -1,0 +1,7 @@
+name: twitter/the-algorithm
+url: https://github.com/twitter/the-algorithm
+kind: code
+tint: x
+coverLabel: The algorithm
+why: The 2023 open-source release of the code behind the For You timeline. Rare chance to read a feed's ranking code yourself.
+free: true

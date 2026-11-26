@@ -1,0 +1,257 @@
+---
+/**
+ * Interactive: the five stages every big recommendation feed shares.
+ * Tap a stage to see what happens there, a real example, and what it means for a creator.
+ */
+const stages = [
+	{
+		key: 'retrieve',
+		n: '01',
+		name: 'Find candidates',
+		size: 100,
+		count: 'A huge pool → a few thousand',
+		what: 'Fast, cheap models pull a shortlist from everything that could be shown: posts from accounts you follow, plus posts from accounts you don’t that look like things you engage with.',
+		example: 'X, 2023: about 1,500 candidates per request, roughly half from accounts the viewer follows. X’s 2026 code pulls from Thunder (followed accounts), Phoenix retrieval and SimClusters (everyone else).',
+		src: 'code',
+		you: 'You can’t be ranked if you’re never retrieved. Clear topics and a consistent audience make it easier for retrieval to match you with the right people.',
+	},
+	{
+		key: 'filter',
+		n: '02',
+		name: 'Filter',
+		size: 78,
+		count: 'Remove what can’t be shown',
+		what: 'Rules drop anything ineligible: already seen, blocked or muted, too old, spam, or against the platform’s recommendation rules.',
+		example: 'X’s 2026 code drops posts older than 48 hours from For You, plus posts from blocked or muted accounts and posts matching muted keywords. TikTok says videos under review and spam aren’t eligible.',
+		src: 'code',
+		you: 'Filters run before quality is judged. Breaking a rule or getting muted takes you out of the race entirely, however good the post.',
+	},
+	{
+		key: 'rank',
+		n: '03',
+		name: 'Rank',
+		size: 56,
+		count: 'Score every survivor',
+		what: 'A large model predicts how likely this viewer is to take each action on each post: click, watch, like, reply, share, or say “not interested.” Those predictions are combined into one score.',
+		example: 'X publishes the formula: score = Σ (weight × predicted probability). Replies, shares and follows carry far more weight than likes; “not interested,” mute, block and report carry negative weights.',
+		src: 'code',
+		you: 'The model predicts behavior per viewer. Make posts that cause the high-weight actions in the people you want to reach, not generic likes.',
+	},
+	{
+		key: 'mix',
+		n: '04',
+		name: 'Mix and balance',
+		size: 40,
+		count: 'Adjust for variety',
+		what: 'The top scores are reshuffled so the feed isn’t one creator or one topic on repeat, and new voices get a look.',
+		example: 'TikTok says it generally won’t show two videos in a row with the same sound or creator. X’s code discounts each extra post from the same author and lifts posts from authors with few impressions.',
+		src: 'platform',
+		you: 'Flooding the feed with near-identical posts competes with yourself. Variety across posts helps more of them get shown.',
+	},
+	{
+		key: 'learn',
+		n: '05',
+		name: 'Learn',
+		size: 28,
+		count: 'What you do trains the next feed',
+		what: 'Every action the viewer takes, or doesn’t take, becomes training data. The next request starts from a slightly different picture of them.',
+		example: 'YouTube surveys viewers and counts time on videos rated 4 or 5 stars as more valuable. X’s ranking model reads each viewer’s recent engagement history as its main input.',
+		src: 'platform',
+		you: 'There’s no fixed formula to hack. The system follows what audiences do, so serving the audience is the strategy.',
+	},
+];
+const srcLabel: Record<string, string> = { code: 'From the code', platform: 'From the platforms' };
+---
+
+<div class="sc-widget rp" data-rp>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · The pipeline</div>
+			<h4 class="sc-widget__title">Five stages between your upload and someone’s feed</h4>
+		</div>
+		<span class="sc-tag is-code">Sourced</span>
+	</div>
+
+	<div class="rp-funnel" role="tablist" aria-label="Pipeline stages">
+		{
+			stages.map((s, i) => (
+				<button type="button" role="tab" class="rp-stage" id={`rp-tab-${s.key}`} aria-controls={`rp-panel-${s.key}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} style={`--size:${s.size}`}>
+					<span class="rp-n">{s.n}</span>
+					<span class="rp-name">{s.name}</span>
+					<span class="rp-bar"><span /></span>
+				</button>
+			))
+		}
+	</div>
+
+	{
+		stages.map((s, i) => (
+			<div class="rp-panel" role="tabpanel" id={`rp-panel-${s.key}`} aria-labelledby={`rp-tab-${s.key}`} hidden={i !== 0}>
+				<p class="rp-count">{s.count}</p>
+				<p>{s.what}</p>
+				<div class="rp-cols">
+					<div class="rp-card">
+						<span class={`sc-tag is-${s.src}`}>{srcLabel[s.src]}</span>
+						<p>{s.example}</p>
+					</div>
+					<div class="rp-card is-you">
+						<span class="sc-tag is-practitioner">What it means for you</span>
+						<p>{s.you}</p>
+					</div>
+				</div>
+			</div>
+		))
+	}
+	<p class="sc-widget__note">Tap a stage, or use the arrow keys. Funnel widths are illustrative; the examples are sourced on this page.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-rp]').forEach((root) => {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const select = (t: HTMLButtonElement, focus = false) => {
+			tabs.forEach((x) => {
+				const on = x === t;
+				x.setAttribute('aria-selected', String(on));
+				x.tabIndex = on ? 0 : -1;
+				const panel = root.querySelector<HTMLElement>('#' + x.getAttribute('aria-controls'));
+				if (panel) panel.hidden = !on;
+			});
+			if (focus) t.focus();
+		};
+		tabs.forEach((t, i) => {
+			t.addEventListener('click', () => select(t));
+			t.addEventListener('keydown', (e) => {
+				const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+				if (!d) return;
+				e.preventDefault();
+				select(tabs[(i + d + tabs.length) % tabs.length], true);
+			});
+		});
+	});
+</script>
+
+<style>
+	.rp-funnel {
+		display: grid;
+		gap: 0.35rem;
+		margin-bottom: 1.1rem;
+	}
+	.rp-stage {
+		appearance: none;
+		font: inherit;
+		display: grid;
+		grid-template-columns: 2rem 8.5rem 1fr;
+		align-items: center;
+		gap: 0.6rem;
+		width: 100%;
+		padding: 0.55rem 0.7rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 10px;
+		background: transparent;
+		color: var(--sc-silver);
+		cursor: pointer;
+		text-align: left;
+		transition:
+			border-color 0.2s,
+			background 0.2s,
+			color 0.2s;
+	}
+	.rp-stage:hover {
+		color: var(--sc-ivory);
+		border-color: var(--sc-line-strong);
+	}
+	.rp-stage[aria-selected='true'] {
+		color: var(--sc-ivory);
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+		background: color-mix(in srgb, var(--accent) 9%, transparent);
+	}
+	.rp-stage:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.rp-n {
+		font-family: var(--sc-font-mono);
+		font-size: 0.72rem;
+		color: var(--accent);
+	}
+	.rp-name {
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+	.rp-bar {
+		display: flex;
+		justify-content: center;
+		height: 10px;
+	}
+	.rp-bar span {
+		display: block;
+		height: 100%;
+		width: calc(var(--size) * 1%);
+		border-radius: 999px;
+		background: linear-gradient(90deg, transparent, var(--accent), transparent);
+		opacity: 0.35;
+		transition: opacity 0.3s;
+		background-size: 200% 100%;
+	}
+	.rp-stage[aria-selected='true'] .rp-bar span {
+		opacity: 1;
+		animation: rp-flow 2.4s linear infinite;
+	}
+	@keyframes rp-flow {
+		from {
+			background-position: 100% 0;
+		}
+		to {
+			background-position: -100% 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rp-stage[aria-selected='true'] .rp-bar span {
+			animation: none;
+		}
+	}
+	.rp-panel {
+		animation: rp-in 0.35s ease both;
+	}
+	@keyframes rp-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+	}
+	.rp-panel p {
+		margin: 0 0 0.75rem;
+		font-size: 0.92rem;
+		line-height: 1.55;
+	}
+	.rp-count {
+		font-family: var(--sc-font-mono);
+		font-size: 0.75rem !important;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.rp-cols {
+		display: grid;
+		gap: 0.6rem;
+	}
+	@media (min-width: 45rem) {
+		.rp-cols {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.rp-card {
+		margin: 0 !important;
+		padding: 0.8rem 0.9rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.02);
+	}
+	.rp-card p {
+		margin: 0.5rem 0 0 !important;
+		font-size: 0.86rem !important;
+	}
+	.rp-card.is-you {
+		border-color: color-mix(in srgb, var(--sc-champagne) 30%, transparent);
+	}
+</style>

@@ -3,6 +3,7 @@
  * reads as designed chapters, not a wiki.
  */
 @import './sections.css';
+@import './widgets.css';
 
 :root:has(.guide-head[data-section='grow']) { --accent: var(--sc-grow); }
 :root:has(.guide-head[data-section='earn']) { --accent: var(--sc-earn); }
@@ -64,3 +65,7 @@
 		transform: translateY(8px);
 	}
 }
+:root:has(.guide-head[data-section='algorithms']) { --accent: var(--sc-algorithms); }
+:root:has(.guide-head[data-section='case-studies']) { --accent: var(--sc-case-studies); }
+:root:has(.guide-head[data-section='platforms']) { --accent: var(--sc-platforms); }
+:root:has(.guide-head[data-section='goldmines']) { --accent: var(--sc-goldmines); }

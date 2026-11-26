@@ -1,0 +1,173 @@
+---
+/**
+ * Generated cover art for a guide or resource. Pure SVG, no image files:
+ * a pattern picked from the title, tinted with the section color.
+ */
+interface Props {
+	title: string;
+	section: string;
+	label?: string; // big word on the cover, e.g. "YouTube"
+	kicker?: string; // small mono line, e.g. "Platform guide"
+	pattern?: 'orbit' | 'bars' | 'wave' | 'grid' | 'rays';
+}
+const { title, section, label, kicker } = Astro.props;
+
+let h = 0;
+for (const c of title) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+const patterns = ['orbit', 'bars', 'wave', 'grid', 'rays'] as const;
+const pattern = Astro.props.pattern ?? patterns[h % patterns.length];
+const uid = `cv${h.toString(36)}`;
+const seed = (n: number) => ((h >> n) & 0xff) / 255;
+---
+
+<div class="cover" data-section={section} aria-hidden="true">
+	<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice">
+		<defs>
+			<radialGradient id={`${uid}-glow`} cx={`${20 + seed(3) * 60}%`} cy="0%" r="90%">
+				<stop offset="0" stop-color="var(--accent)" stop-opacity="0.38" />
+				<stop offset="1" stop-color="var(--accent)" stop-opacity="0" />
+			</radialGradient>
+			<linearGradient id={`${uid}-fade`} x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0" stop-color="var(--accent)" stop-opacity="0.7" />
+				<stop offset="1" stop-color="var(--accent)" stop-opacity="0.05" />
+			</linearGradient>
+		</defs>
+		<rect width="320" height="180" fill="#0a0a0a" />
+		<rect width="320" height="180" fill={`url(#${uid}-glow)`} />
+
+		{pattern === 'orbit' && (
+			<g fill="none" stroke="var(--accent)">
+				{[30, 52, 74, 96, 118].map((r, i) => (
+					<circle cx={230 + seed(5) * 40} cy={120} r={r} stroke-opacity={0.5 - i * 0.08} />
+				))}
+				<circle class="spin" cx={230 + seed(5) * 40} cy={120} r="74" stroke-dasharray="4 10" stroke-opacity="0.8" />
+				<circle cx={230 + seed(5) * 40 + 52} cy={120} r="4" fill="var(--accent)" />
+			</g>
+		)}
+		{pattern === 'bars' && (
+			<g>
+				{[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+					const bh = 24 + ((i * 17 + seed(i) * 60) % 70) + i * 9;
+					return <rect class="bar" x={150 + i * 20} y={170 - bh} width="12" height={bh} rx="3" fill={`url(#${uid}-fade)`} style={`--i:${i}`} />;
+				})}
+			</g>
+		)}
+		{pattern === 'wave' && (
+			<g fill="none" stroke="var(--accent)" stroke-width="1.5">
+				{[0, 1, 2, 3].map((i) => (
+					<path
+						class="wave"
+						d={`M0 ${110 + i * 14} C 80 ${70 + i * 14 + seed(i) * 30}, 160 ${150 + i * 10}, 320 ${90 + i * 16}`}
+						stroke-opacity={0.75 - i * 0.15}
+					/>
+				))}
+			</g>
+		)}
+		{pattern === 'grid' && (
+			<g stroke="var(--accent)" stroke-opacity="0.35">
+				{[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+					<line x1={160} y1={70} x2={-80 + i * 60} y2={180} />
+				))}
+				{[96, 118, 146, 180].map((y) => (
+					<line x1="0" y1={y} x2="320" y2={y} />
+				))}
+				<circle cx="160" cy="70" r="5" fill="var(--accent)" stroke="none" class="pulse" />
+			</g>
+		)}
+		{pattern === 'rays' && (
+			<g stroke="var(--accent)">
+				{Array.from({ length: 18 }, (_, i) => {
+					const a = (Math.PI * (i + 0.5)) / 18;
+					return <line x1={260} y1={190} x2={260 - Math.cos(a) * 220} y2={190 - Math.sin(a) * 220} stroke-opacity={0.1 + (i % 3) * 0.12} />;
+				})}
+			</g>
+		)}
+
+		<rect x="0.5" y="0.5" width="319" height="179" rx="0" fill="none" stroke="rgb(255 255 255 / 0.06)" />
+	</svg>
+	<div class="cover-text">
+		{kicker && <span class="kicker">{kicker}</span>}
+		{label && <span class="label">{label}</span>}
+	</div>
+</div>
+
+<style>
+	.cover {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		border-radius: var(--sc-radius-md, 14px);
+		background: #0a0a0a;
+		isolation: isolate;
+	}
+	.cover svg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+	.cover-text {
+		position: absolute;
+		inset: auto auto 0 0;
+		padding: 0.9rem 1rem;
+		display: grid;
+		gap: 0.2rem;
+	}
+	.kicker {
+		font-family: var(--sc-font-mono);
+		font-size: 0.62rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.label {
+		font-family: 'Syne Variable', 'Syne', var(--sc-font-sans);
+		font-weight: 700;
+		font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+		text-shadow: 0 2px 20px rgb(0 0 0 / 0.6);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.spin {
+			transform-box: fill-box;
+			transform-origin: center;
+			animation: cover-spin 24s linear infinite;
+		}
+		.bar {
+			transform-box: fill-box;
+			transform-origin: bottom;
+			animation: cover-rise 900ms var(--sc-ease-settle) both;
+			animation-delay: calc(var(--i) * 60ms);
+		}
+		.wave {
+			stroke-dasharray: 520;
+			animation: cover-draw 2.2s var(--sc-ease-settle) both;
+		}
+		.pulse {
+			animation: cover-pulse 2.4s ease-in-out infinite;
+		}
+	}
+	@keyframes cover-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@keyframes cover-rise {
+		from {
+			transform: scaleY(0);
+		}
+	}
+	@keyframes cover-draw {
+		from {
+			stroke-dashoffset: 520;
+		}
+	}
+	@keyframes cover-pulse {
+		50% {
+			opacity: 0.3;
+		}
+	}
+</style>
