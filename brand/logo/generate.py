@@ -8,7 +8,7 @@ OUT = sys.argv[1]; os.makedirs(OUT, exist_ok=True)
 FONT = os.environ.get('GEIST_TTF', 'Geist-Medium.ttf')  # from `npm pack geist`: dist/fonts/geist-sans/
 
 # ---------- mark geometry (64 x 64 grid) ----------
-S = 64; LOBES = 12; R = 28.8; AMP = 1.8  # the rosette: 12 soft scallops (platform badges use 8)
+S = 64; LOBES = 12; R = 28.9; AMP = 1.6  # the rosette: 12 soft scallops (platform badges use 8)
 def plate(inset=0):
     """Scalloped verification seal centred on (32, 32), shrunk by `inset`."""
     pts=[]
@@ -17,35 +17,29 @@ def plate(inset=0):
         r=R-inset+AMP*math.cos(LOBES*t)
         pts.append((32+r*math.sin(t), 32-r*math.cos(t)))
     return 'M'+' L'.join(f'{x:.2f} {y:.2f}' for x,y in pts)+' Z'
-r2=math.sqrt(2); u=(1/r2,-1/r2); d=(1/r2,1/r2)
-def P(o,su,td): return (o[0]+su*u[0]+td*d[0], o[1]+su*u[1]+td*d[1])
-W=2.25; G=1.7; A=(0,0)  # long-stroke foot
-L_LONG=26; L_SHORT=11.5
-def poly(pts): return 'M'+' L'.join(f'{x:.2f} {y:.2f}' for x,y in pts)+' Z'
-long_=poly([P(A,0,-W),P(A,L_LONG,-W),P(A,L_LONG,W),P(A,0,W)])
-Dc=P(A,W,-W-G)       # short-stroke end centre
-short_=poly([(Dc[0]-W*u[0]-L_SHORT*d[0],Dc[1]-W*u[1]-L_SHORT*d[1]),
-             (Dc[0]+W*u[0]-L_SHORT*d[0],Dc[1]+W*u[1]-L_SHORT*d[1]),
-             (Dc[0]+W*u[0],Dc[1]+W*u[1]),(Dc[0]-W*u[0],Dc[1]-W*u[1])])
-import re as _re
-_raw=long_+' '+short_
-_nums=[float(v) for v in _re.findall(r'-?\d+\.\d+',_raw)]
-_xs=_nums[0::2]; _ys=_nums[1::2]
-_ox=32-(min(_xs)+max(_xs))/2; _oy=32.6-(min(_ys)+max(_ys))/2
-CHECK=_re.sub(r'(-?\d+\.\d+) (-?\d+\.\d+)', lambda m: f'{float(m.group(1))+_ox:.2f} {float(m.group(2))+_oy:.2f}', _raw)
+# The check: one continuous stroke with rounded ends and a rounded corner.
+CHECK_D = 'M20.4 32.9 L28.1 40.5 L43.8 24.8'
+CHECK_W = 5.4
+CHECK_LEN = 10.82 + 22.20
 
 DEFS='''<defs>
   <linearGradient id="sc-plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1c1c"/><stop offset=".55" stop-color="#0a0a0a"/><stop offset="1" stop-color="#000"/></linearGradient>
   <linearGradient id="sc-edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a9a98"/><stop offset=".35" stop-color="#3a3a39"/><stop offset=".7" stop-color="#1a1a1a"/><stop offset="1" stop-color="#5c5c5b"/></linearGradient>
-  <linearGradient id="sc-ti" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fafaf9"/><stop offset=".5" stop-color="#d4d4d2"/><stop offset="1" stop-color="#8e8e8c"/></linearGradient>
+  <linearGradient id="sc-ti" gradientUnits="userSpaceOnUse" x1="18" y1="22" x2="46" y2="42"><stop offset="0" stop-color="#fafaf9"/><stop offset=".5" stop-color="#d4d4d2"/><stop offset="1" stop-color="#8e8e8c"/></linearGradient>
 </defs>'''
+def check_stroke(paint):
+    return f'<path d="{CHECK_D}" fill="none" stroke="{paint}" stroke-width="{CHECK_W}" stroke-linecap="round" stroke-linejoin="round"/>'
+def knockout(fill, mid):
+    # one-colour seal with the check cut out (mask keeps the check transparent)
+    return (f'<mask id="{mid}" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/>'
+            f'{check_stroke("#000")}</mask><path d="{plate(0)}" fill="{fill}" mask="url(#{mid})"/>')
 def mark_group(variant):
-    if variant=='metal':   # primary: black plate, titanium edge, platinum split check
-        return f'<path d="{plate(0.75)}" fill="url(#sc-plate)" stroke="url(#sc-edge)" stroke-width="1.5" stroke-linejoin="round"/><path d="{plate(3.2)}" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width=".75" stroke-linejoin="round"/><path d="{CHECK}" fill="url(#sc-ti)"/>'
-    if variant=='black':   # flat black plate, check knocked out (for light backgrounds, print)
-        return f'<path fill-rule="evenodd" d="{plate(0)} {CHECK}" fill="#0a0a0a"/>'
-    if variant=='white':   # flat white plate, check knocked out (dark backgrounds, one colour)
-        return f'<path fill-rule="evenodd" d="{plate(0)} {CHECK}" fill="#f5f5f4"/>'
+    if variant=='metal':   # primary: black seal, titanium edge, platinum check
+        return f'<path d="{plate(0.75)}" fill="url(#sc-plate)" stroke="url(#sc-edge)" stroke-width="1.5" stroke-linejoin="round"/><path d="{plate(3.2)}" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width=".75" stroke-linejoin="round"/>' + check_stroke('url(#sc-ti)')
+    if variant=='black':
+        return knockout('#0a0a0a','sc-cut-k')
+    if variant=='white':
+        return knockout('#f5f5f4','sc-cut-w')
 def mark_svg(variant, size=None):
     defs = DEFS if variant=='metal' else ''
     return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Select Creators">{defs}{mark_group(variant)}</svg>\n'
