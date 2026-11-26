@@ -1,0 +1,9 @@
+# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
+name: Audacity
+url: https://www.audacityteam.org/
+slot: audio
+pricing:
+  free: true
+bestFor: Cleaning up voiceovers and podcast audio
+alternative: GarageBand (free on Mac)
+affiliate: false

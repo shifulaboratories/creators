@@ -1,0 +1,277 @@
+---
+import logo from '../assets/logo.svg?raw';
+import { SITE_NAME } from '../site.mjs';
+
+const { data } = Astro.locals.starlightRoute.entry;
+const { tagline, actions = [] } = data.hero || {};
+---
+
+<section class="sc-hero not-content">
+	<div class="copy">
+		<p class="eyebrow"><span class="dot"></span>Free and open source</p>
+		<h1 id="_top" data-page-title>
+			The creator economy,<br /><span class="metal">fully disclosed.</span>
+		</h1>
+		{tagline && <p class="tagline" set:html={tagline} />}
+		<div class="actions">
+			{
+				actions.map(({ link, text, variant }, i) => (
+					<a href={link} class:list={['btn', variant === 'minimal' || i > 0 ? 'ghost' : 'solid']}>
+						{text}
+						{i === 0 && <span aria-hidden="true">→</span>}
+					</a>
+				))
+			}
+		</div>
+	</div>
+
+	<div class="card-stage" aria-hidden="true">
+		<div class="black-card">
+			<div class="sheen"></div>
+			<div class="top">
+				<span class="mark" set:html={logo} />
+				<span class="wordmark">{SITE_NAME.toUpperCase()}</span>
+			</div>
+			<div class="emblem" set:html={logo} />
+			<div class="bottom">
+				<div>
+					<span class="label">Member since</span>
+					<span class="value">2026</span>
+				</div>
+				<div class="right">
+					<span class="label">Access</span>
+					<span class="value">Unlimited · Free</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const stage = document.querySelector<HTMLElement>('.card-stage');
+	const card = document.querySelector<HTMLElement>('.black-card');
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	if (stage && card && !reduce) {
+		stage.addEventListener('pointermove', (e) => {
+			const r = stage.getBoundingClientRect();
+			const x = (e.clientX - r.left) / r.width - 0.5;
+			const y = (e.clientY - r.top) / r.height - 0.5;
+			card.style.setProperty('--rx', `${(-y * 10).toFixed(2)}deg`);
+			card.style.setProperty('--ry', `${(x * 14).toFixed(2)}deg`);
+			card.style.setProperty('--mx', `${((x + 0.5) * 100).toFixed(1)}%`);
+		});
+		stage.addEventListener('pointerleave', () => {
+			card.style.setProperty('--rx', '0deg');
+			card.style.setProperty('--ry', '0deg');
+			card.style.setProperty('--mx', '30%');
+		});
+	}
+</script>
+
+<style>
+	.sc-hero {
+		display: grid;
+		grid-template-columns: 1.1fr 1fr;
+		gap: 3rem;
+		align-items: center;
+		padding-block: clamp(2.5rem, 8vw, 6rem) 3rem;
+	}
+	.eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--sl-font-mono);
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: var(--sl-color-gray-2);
+		border: 1px solid var(--sc-border);
+		background: rgb(255 255 255 / 0.03);
+		padding: 0.35rem 0.8rem;
+		border-radius: 999px;
+		margin: 0 0 1.5rem;
+	}
+	.dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: #d6d6d5;
+		box-shadow: 0 0 10px rgb(255 255 255 / 0.6);
+	}
+	h1#_top {
+		font-size: clamp(2.4rem, 5.5vw, 4.25rem);
+		line-height: 1.02;
+		letter-spacing: -0.045em;
+		font-weight: 600;
+		color: var(--sl-color-white);
+		margin: 0;
+		background: none;
+		-webkit-background-clip: initial;
+		background-clip: initial;
+	}
+	.metal {
+		background: var(--sc-metal);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.tagline {
+		margin: 1.5rem 0 0;
+		max-width: 34rem;
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: var(--sl-color-gray-2);
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 2rem;
+	}
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1.25rem;
+		border-radius: 999px;
+		font-weight: 500;
+		font-size: 0.95rem;
+		text-decoration: none;
+		transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
+	}
+	.btn.solid {
+		background: #f5f5f4;
+		color: #050505;
+		box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.15), 0 8px 30px -10px rgb(255 255 255 / 0.35);
+	}
+	.btn.solid:hover {
+		transform: translateY(-1px);
+		background: #ffffff;
+	}
+	.btn.ghost {
+		color: var(--sl-color-white);
+		border: 1px solid var(--sc-border-strong);
+		background: rgb(255 255 255 / 0.02);
+	}
+	.btn.ghost:hover {
+		border-color: rgb(255 255 255 / 0.35);
+	}
+
+	/* The black card. */
+	.card-stage {
+		perspective: 1200px;
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+	}
+	.black-card {
+		--rx: 0deg;
+		--ry: 0deg;
+		--mx: 30%;
+		position: relative;
+		width: min(100%, 440px);
+		aspect-ratio: 1.586;
+		border-radius: 22px;
+		padding: 1.5rem 1.6rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		overflow: hidden;
+		transform: rotateX(var(--rx)) rotateY(var(--ry));
+		transform-style: preserve-3d;
+		transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		background:
+			repeating-linear-gradient(90deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px),
+			linear-gradient(135deg, #2a2a2a 0%, #121212 38%, #070707 70%, #1c1c1c 100%);
+		border: 1px solid rgb(255 255 255 / 0.12);
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 0.12),
+			inset 0 -1px 0 rgb(0 0 0 / 0.8),
+			0 40px 80px -30px rgb(0 0 0 / 1),
+			0 0 0 1px rgb(0 0 0 / 0.6),
+			0 0 120px -40px rgb(255 255 255 / 0.12);
+	}
+	.sheen {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 20%,
+			rgb(255 255 255 / 0.08) calc(var(--mx) - 8%),
+			rgb(255 255 255 / 0.14) var(--mx),
+			rgb(255 255 255 / 0.05) calc(var(--mx) + 8%),
+			transparent 70%
+		);
+		pointer-events: none;
+		mix-blend-mode: screen;
+	}
+	.top {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+	}
+	.mark :global(svg) {
+		width: 30px;
+		height: 30px;
+		display: block;
+	}
+	.wordmark {
+		font-family: var(--sl-font-mono);
+		font-size: 0.8rem;
+		letter-spacing: 0.32em;
+		background: var(--sc-metal);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.emblem {
+		position: absolute;
+		right: -6%;
+		top: 50%;
+		width: 48%;
+		transform: translateY(-50%);
+		opacity: 0.22;
+		filter: grayscale(1) contrast(1.1);
+	}
+	.emblem :global(svg) {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+	.bottom {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		font-family: var(--sl-font-mono);
+	}
+	.bottom .right {
+		text-align: end;
+	}
+	.label {
+		display: block;
+		font-size: 0.6rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		color: #6f6f6e;
+	}
+	.value {
+		display: block;
+		margin-top: 0.2rem;
+		font-size: 0.85rem;
+		letter-spacing: 0.12em;
+		color: #cfcfce;
+	}
+
+	@media (max-width: 50rem) {
+		.sc-hero {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+		.card-stage {
+			order: -1;
+		}
+		.black-card {
+			width: min(100%, 360px);
+		}
+	}
+</style>

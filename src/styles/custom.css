@@ -1,0 +1,169 @@
+/*
+ * Select Creators theme: matte black, brushed metal, platinum type.
+ * The site is dark-only, so light-theme variables mirror the dark ones.
+ */
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+:root,
+:root[data-theme='light'] {
+	color-scheme: dark;
+	--sl-font: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+	--sl-font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+	--sl-color-white: #f5f5f4;
+	--sl-color-gray-1: #e4e4e3;
+	--sl-color-gray-2: #bdbdbc;
+	--sl-color-gray-3: #8a8a89;
+	--sl-color-gray-4: #4e4e4d;
+	--sl-color-gray-5: #262626;
+	--sl-color-gray-6: #121212;
+	--sl-color-gray-7: #0b0b0b;
+	--sl-color-black: #050505;
+
+	--sl-color-accent-low: #1a1a1a;
+	--sl-color-accent: #d6d6d5;
+	--sl-color-accent-high: #fafaf9;
+
+	--sl-color-text-accent: #f5f5f4;
+	--sl-color-bg-nav: rgb(5 5 5 / 0.72);
+	--sl-color-bg-sidebar: #050505;
+	--sl-color-hairline: rgb(255 255 255 / 0.07);
+	--sl-color-hairline-light: rgb(255 255 255 / 0.1);
+	--sl-color-hairline-shade: rgb(255 255 255 / 0.05);
+
+	--sc-metal: linear-gradient(180deg, #fafaf9 0%, #c9c9c8 45%, #8d8d8c 100%);
+	--sc-border: rgb(255 255 255 / 0.08);
+	--sc-border-strong: rgb(255 255 255 / 0.18);
+}
+
+body {
+	background:
+		radial-gradient(1200px 600px at 50% -10%, rgb(255 255 255 / 0.06), transparent 60%),
+		#050505;
+	font-feature-settings: 'ss01', 'cv11';
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Header: frosted black bar with a hairline. */
+header.header {
+	backdrop-filter: blur(14px) saturate(140%);
+	border-bottom: 1px solid var(--sc-border);
+}
+.site-title {
+	gap: 0.6rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--sl-color-white);
+}
+.site-title img {
+	height: 1.75rem;
+	width: auto;
+}
+
+/* Headings: tight, platinum. */
+.sl-markdown-content :is(h1, h2, h3),
+h1#_top {
+	letter-spacing: -0.025em;
+	font-weight: 600;
+}
+h1#_top {
+	background: var(--sc-metal);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+/* Links stay quiet until hovered. */
+.sl-markdown-content a:not(:where(.not-content *)) {
+	color: var(--sl-color-white);
+	text-decoration-color: rgb(255 255 255 / 0.3);
+	text-underline-offset: 0.2em;
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+	text-decoration-color: var(--sl-color-white);
+}
+
+/* Sidebar: mono section labels, subtle active pill. */
+.sidebar-content .group-label .large {
+	font-family: var(--sl-font-mono);
+	font-size: var(--sl-text-xs);
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--sl-color-gray-3);
+}
+.sidebar-content a[aria-current='page'] {
+	background: rgb(255 255 255 / 0.06);
+	color: var(--sl-color-white);
+	border: 1px solid var(--sc-border);
+	font-weight: 500;
+}
+
+/* Cards: matte panels with a hairline and a soft sheen on hover. */
+.card {
+	background: linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.01));
+	border: 1px solid var(--sc-border) !important;
+	border-radius: 1rem;
+	transition: border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+.card:hover {
+	border-color: var(--sc-border-strong) !important;
+	transform: translateY(-2px);
+	box-shadow: 0 0 0 1px rgb(255 255 255 / 0.04), 0 20px 40px -20px rgb(0 0 0 / 0.9),
+		inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+.card .icon {
+	background: rgb(255 255 255 / 0.04) !important;
+	border: 1px solid var(--sc-border) !important;
+	color: var(--sl-color-gray-1) !important;
+	border-radius: 0.6rem;
+}
+.card .title {
+	letter-spacing: -0.015em;
+}
+
+/* Asides: neutral glass instead of colored blocks. */
+.starlight-aside {
+	background: rgb(255 255 255 / 0.03);
+	border: 1px solid var(--sc-border);
+	border-inline-start: 2px solid var(--sl-color-gray-2);
+	border-radius: 0.75rem;
+}
+.starlight-aside--caution {
+	border-inline-start-color: #c9a25a;
+}
+.starlight-aside__title {
+	color: var(--sl-color-white);
+}
+
+/* Tables: hairlines, mono headers. */
+.sl-markdown-content table th {
+	font-family: var(--sl-font-mono);
+	font-size: var(--sl-text-xs);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--sl-color-gray-3);
+	border-bottom: 1px solid var(--sc-border);
+}
+.sl-markdown-content table td {
+	border-bottom: 1px solid var(--sc-border);
+}
+
+/* Inline disclosure label rendered next to every affiliate link. */
+.affiliate-label {
+	font-family: var(--sl-font-mono);
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--sl-color-gray-2);
+	border: 1px solid var(--sc-border-strong);
+	border-radius: 999px;
+	padding: 0.05rem 0.45rem;
+	margin-inline-start: 0.4rem;
+	white-space: nowrap;
+}
+
+::selection {
+	background: rgb(255 255 255 / 0.85);
+	color: #050505;
+}

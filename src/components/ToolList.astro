@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+	slot?: string;
+}
+const { slot } = Astro.props;
+const tools = (await getCollection('tools'))
+	.map((t) => t.data)
+	.filter((t) => !slot || t.slot === slot)
+	.sort((a, b) => a.name.localeCompare(b.name));
+
+function price(p: { free: boolean; fromUsdPerMonth?: number; oneTimeUsd?: number }) {
+	const parts: string[] = [];
+	if (p.free) parts.push(p.fromUsdPerMonth || p.oneTimeUsd ? 'Free tier' : 'Free');
+	if (p.fromUsdPerMonth) parts.push('from $' + p.fromUsdPerMonth + '/mo');
+	if (p.oneTimeUsd) parts.push('$' + p.oneTimeUsd + ' one-time');
+	return parts.join(', ');
+}
+---
+
+<table>
+	<thead>
+		<tr>
+			<th>Tool</th><th>Slot</th><th>Price</th><th>Best for</th><th>Alternative</th><th>Last verified</th>
+		</tr>
+	</thead>
+	<tbody>
+		{
+			tools.map((t) => (
+				<tr>
+					<td>
+						{t.affiliate ? (
+							<>
+								<a href={t.affiliateUrl} rel="sponsored noopener">{t.name}</a>
+								<span class="affiliate-label" title="We may earn a commission. See How we make money.">affiliate</span>
+							</>
+						) : (
+							<a href={t.url} rel="noopener">{t.name}</a>
+						)}
+					</td>
+					<td>{t.slot}</td>
+					<td>{price(t.pricing)}</td>
+					<td>{t.bestFor}</td>
+					<td>{t.alternative}</td>
+					<td>{t.lastVerified ? t.lastVerified.toISOString().slice(0, 10) : 'Not yet verified'}</td>
+				</tr>
+			))
+		}
+	</tbody>
+</table>

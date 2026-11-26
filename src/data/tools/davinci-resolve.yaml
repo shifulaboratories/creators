@@ -1,0 +1,9 @@
+# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
+name: DaVinci Resolve
+url: https://www.blackmagicdesign.com/products/davinciresolve
+slot: editing
+pricing:
+  free: true
+bestFor: Long-form and color-heavy editing on desktop
+alternative: Shotcut (free, open source)
+affiliate: false
