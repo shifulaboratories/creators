@@ -1,0 +1,180 @@
+---
+/**
+ * One platform's playbook for one situation: the first move, numbered step
+ * cards, a watch-out note and sources. Used by Playbook and ProtectTriage.
+ */
+import type { Playbook } from '../lib/protect-playbooks';
+interface Props {
+	pb: Playbook;
+	compact?: boolean;
+}
+const { pb, compact = false } = Astro.props;
+const isExternal = (h: string) => /^https?:/.test(h);
+---
+
+<div class:list={['pp', { 'is-compact': compact }]}>
+	<p class="pp-first"><span class="pp-sticker">Do this first</span><span>{pb.first}</span></p>
+	<ol class="pp-steps">
+		{
+			pb.steps.map((s) => (
+				<li class="pp-step">
+					<div class="pp-step__body">
+						<strong>{s.t}</strong>
+						<span>{s.d}</span>
+					</div>
+					{s.href && (
+						<a class="pp-cta" href={s.href} {...(isExternal(s.href) ? { rel: 'noopener', target: '_blank' } : {})}>
+							{s.cta ?? 'Open'}
+							<span aria-hidden="true">{isExternal(s.href) ? '↗' : '→'}</span>
+						</a>
+					)}
+				</li>
+			))
+		}
+	</ol>
+	{pb.watch && <p class="pp-watch"><span aria-hidden="true">⚠️</span> {pb.watch}</p>}
+	{
+		!compact && (
+			<details class="pp-src">
+				<summary>Sources ({pb.sources.length})</summary>
+				<ul>
+					{pb.sources.map((s) => (
+						<li>
+							<a href={s.href}>{s.label}</a>
+						</li>
+					))}
+				</ul>
+			</details>
+		)
+	}
+</div>
+
+<style>
+	.pp {
+		display: grid;
+		gap: 0.85rem;
+	}
+	.pp-first {
+		margin: 0;
+		display: grid;
+		gap: 0.45rem;
+		padding: 0.9rem 1rem;
+		border-radius: var(--sc-radius-md);
+		background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent 80%);
+		border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+		color: var(--sc-ivory);
+		font-weight: 600;
+		line-height: 1.45;
+	}
+	.pp-sticker {
+		justify-self: start;
+		font-size: 0.68rem;
+		font-weight: 700;
+		padding: 0.15rem 0.55rem;
+		border-radius: var(--sc-radius-pill);
+		background: var(--sc-lime);
+		color: var(--sc-obsidian);
+		transform: rotate(-2deg);
+	}
+	.pp-steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.55rem;
+		counter-reset: pp;
+	}
+	.pp-step {
+		counter-increment: pp;
+		position: relative;
+		display: grid;
+		gap: 0.6rem;
+		padding: 0.85rem 0.9rem 0.85rem 3.1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		margin: 0 !important;
+	}
+	.pp-step::before {
+		content: counter(pp);
+		position: absolute;
+		left: 0.8rem;
+		top: 0.8rem;
+		width: 1.7rem;
+		height: 1.7rem;
+		display: grid;
+		place-items: center;
+		clip-path: var(--sc-seal-clip);
+		background: var(--sc-graphite);
+		color: var(--sc-platinum);
+		font-size: 0.8rem;
+		font-weight: 700;
+	}
+	.pp-step:first-child::before {
+		background: var(--accent);
+		color: var(--sc-obsidian);
+	}
+	.pp-step__body {
+		display: grid;
+		gap: 0.2rem;
+	}
+	.pp-step strong {
+		color: var(--sc-ivory);
+		font-size: 0.98rem;
+	}
+	.pp-step span {
+		color: var(--sc-silver);
+		font-size: 0.9rem;
+		line-height: 1.5;
+	}
+	.pp-cta {
+		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		min-height: 2.25rem;
+		padding: 0.35rem 0.85rem;
+		border-radius: var(--sc-radius-pill);
+		border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+		color: var(--sc-ivory) !important;
+		text-decoration: none !important;
+		font-size: 0.82rem;
+		font-weight: 600;
+		transition: background var(--sc-dur-quick);
+	}
+	.pp-cta:hover {
+		background: color-mix(in srgb, var(--accent) 18%, transparent);
+	}
+	.pp-watch {
+		margin: 0;
+		padding: 0.75rem 0.9rem;
+		border-radius: var(--sc-radius-md);
+		background: rgb(208 112 95 / 0.1);
+		border: 1px solid rgb(208 112 95 / 0.3);
+		color: var(--sc-platinum);
+		font-size: 0.88rem;
+		line-height: 1.5;
+	}
+	.pp-src summary {
+		cursor: pointer;
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+	}
+	.pp-src ul {
+		margin: 0.5rem 0 0;
+		padding-left: 1.1rem;
+		font-size: 0.8rem;
+	}
+	.pp-src a {
+		color: var(--sc-silver);
+	}
+	.is-compact .pp-step {
+		padding-block: 0.7rem;
+	}
+	@media (min-width: 48rem) {
+		.pp-step {
+			grid-template-columns: 1fr auto;
+			align-items: center;
+		}
+	}
+</style>

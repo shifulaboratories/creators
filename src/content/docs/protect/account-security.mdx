@@ -1,0 +1,59 @@
+---
+title: "The 15-minute lockdown"
+description: "Passkeys, two-factor that phishing can't beat, SIM-swap protection and team access without sharing passwords. A checklist you can tick off."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: Lockdown
+sidebar:
+  order: 6
+---
+
+import SecurityChecklist from '../../../components/SecurityChecklist.astro';
+
+**The short version:** protect your email first, put a passkey or authenticator app on every account, lock your phone number with your carrier, and give your team roles instead of your password. That stops the attacks on the [scams page](/protect/scams/) before they start.
+
+<figure class="sc-figure">
+<ul class="sc-bars">
+<li class="sc-bar is-rose"><div class="sc-bar__head">Text-message codes<b>Can be phished or SIM-swapped</b></div><div class="sc-bar__track"><div class="sc-bar__fill" style="--v:35;--i:0"></div></div></li>
+<li class="sc-bar is-champagne"><div class="sc-bar__head">Authenticator app<b>Beats SIM swaps; can still be phished</b></div><div class="sc-bar__track"><div class="sc-bar__fill" style="--v:65;--i:1"></div></div></li>
+<li class="sc-bar is-jade"><div class="sc-bar__head">Passkey or security key<b>Won't work on a fake site</b></div><div class="sc-bar__track"><div class="sc-bar__fill" style="--v:100;--i:2"></div></div></li>
+</ul>
+<figcaption>An illustrative ranking, not a measured score. Meta, for example, calls passkeys "effective against phishing" because they won't sign in to a lookalike site.</figcaption>
+</figure>
+
+<SecurityChecklist />
+
+## Why the email comes first
+
+Every platform's "forgot password" goes to your email. Whoever controls the inbox can keep taking your accounts back, even after you recover them. So the email gets the strongest lock, and ideally isn't the address you put in your bio for brand deals. <span class="sc-tag is-practitioner">Creator-tested</span>
+
+## Passkeys in plain English
+
+A passkey replaces your password with your phone's or laptop's own unlock (face, fingerprint or PIN). It's tied to the real website, so a fake login page can't use it. That's exactly the trick most creator phishing relies on.
+
+- **Google (YouTube):** YouTube's own security guide recommends 2-Step Verification with a passkey.
+- **TikTok:** supports passkeys on Android 9 and newer with a screen lock, and iOS 16 and newer with iCloud Keychain.
+- **Meta:** passkeys on Facebook since June 2025 and Messenger since September 2025, set up in Accounts Center.
+- **X:** use an authenticator app or security key. Text codes are for paid subscribers only.
+
+## SIM swaps
+
+A SIM swap is when someone talks your carrier into moving your number to their SIM card. Every text code then goes to them. In late 2023 the FCC adopted rules requiring US carriers to verify customers before moving a number to a new SIM or carrier, and to alert customers when that's requested. Your part: ask your carrier for a port-out PIN or number lock, and don't rely on text codes. <span class="sc-tag is-code">The law</span>
+
+## Giving your team access
+
+Sharing one password with an editor, manager or agency means you can't tell who did what, and you can't remove one person without locking out everyone.
+
+- **YouTube** has proper roles: Owner, Manager, Editor, Editor (Limited), Subtitle Editor, Viewer and Viewer (Limited). Invite people in Studio under Settings → Permissions. Invites expire after 30 days. <span class="sc-tag is-platform">From the platform</span>
+- **Instagram** professional accounts can be managed through Meta's business tools, which give people task access without your login.
+- **Everywhere else:** if you must share a login, share it through a password manager's shared vault, keep the 2FA on your device, and change the password when someone leaves.
+
+## Sources
+
+- YouTube Help, [Secure your YouTube channel](https://support.google.com/youtube/answer/9701986) and [Channel permissions](https://support.google.com/youtube/answer/9481328).
+- TikTok Support, [Log in with a passkey](https://support.tiktok.com/en/log-in-troubleshoot/log-in/log-in-with-a-passkey).
+- Meta Newsroom, [Introducing passkeys on Facebook for an easier sign-in](https://about.fb.com/news/2025/06/introducing-passkeys-facebook-easier-sign-in/), June 18, 2025 (updated Sept 23, 2025).
+- X (Twitter) blog, [An update on two-factor authentication using SMS](https://blog.twitter.com/en_us/topics/product/2023/an-update-on-two-factor-authentication-using-sms-on-twitter), Feb 2023.
+- FCC, [Protecting consumers from SIM swap and port-out fraud](https://www.fcc.gov/node/262577); BleepingComputer, [FCC adopts new rules to protect consumers from SIM swapping attacks](https://www.bleepingcomputer.com/news/security/fcc-adopts-new-rules-to-protect-consumers-from-sim-swapping-attacks/), Nov 18, 2023.
