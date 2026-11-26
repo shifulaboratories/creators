@@ -1,7 +1,7 @@
 ---
 /**
- * Newsletter signup card. Provider settings live in NEWSLETTER (src/site.mjs);
- * the form posts straight to the provider, so there is no backend and no script.
+ * Newsletter signup card. Settings live in NEWSLETTER (src/site.mjs). The form
+ * posts straight to our Listmonk server (double opt-in), so no script ships here.
  */
 import { NEWSLETTER } from '../site.mjs';
 interface Props {
@@ -12,7 +12,7 @@ const {
 	heading = NEWSLETTER.name,
 	blurb = 'One email a week: what changed on each platform, what it means for your reach and your rates, with a source for every claim. Free, no hype.',
 } = Astro.props;
-const live = Boolean(NEWSLETTER.action);
+const live = Boolean(NEWSLETTER.action && NEWSLETTER.listUuid);
 ---
 
 <section class="nl not-content" aria-labelledby="nl-h">
@@ -22,9 +22,12 @@ const live = Boolean(NEWSLETTER.action);
 	<p class="nl-blurb">{blurb}</p>
 	{
 		live ? (
-			<form class="nl-form" action={NEWSLETTER.action} method={NEWSLETTER.method} target="_blank">
+			<form class="nl-form" action={NEWSLETTER.action} method="post">
 				<label class="sr-only" for="nl-email">Email</label>
-				<input id="nl-email" type="email" name={NEWSLETTER.emailField} required autocomplete="email" placeholder="you@email.com" />
+				<input id="nl-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com" />
+				<input type="hidden" name="l" value={NEWSLETTER.listUuid} />
+				{/* Listmonk's honeypot: bots fill it, people never see it. */}
+				<input class="sr-only" type="text" name="nonce" tabindex="-1" autocomplete="off" aria-hidden="true" />
 				<button type="submit">Subscribe</button>
 			</form>
 		) : (

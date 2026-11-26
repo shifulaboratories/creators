@@ -5,14 +5,13 @@ export const SITE_DESCRIPTION =
 	'The free, open-source handbook for the creator economy, written by people who do the work.';
 export const REPO_URL = 'https://github.com/shifulaboratories/creators';
 
-// Newsletter signup (src/components/NewsletterSignup.astro). Until `action` is set,
+// Newsletter signup (src/components/NewsletterSignup.astro), self-hosted on Listmonk
+// sending through Amazon SES. Setup: docs/newsletter.md. Until `action` is set,
 // the signup shows a "launching soon" card that points to Instagram.
-// Kit:     action 'https://app.kit.com/forms/<FORM_ID>/subscriptions', emailField 'email_address', method 'post'
-// beehiiv: action 'https://<publication>.beehiiv.com/subscribe', emailField 'email', method 'get'
 export const NEWSLETTER = {
 	name: 'The Select Weekly',
-	provider: '',
+	// Listmonk's public form endpoint, e.g. 'https://news.creators.select/subscription/form'
 	action: '',
-	emailField: 'email',
-	method: 'post',
+	// UUID of the public "The Select Weekly" list in Listmonk (Lists > list > UUID).
+	listUuid: '',
 };
