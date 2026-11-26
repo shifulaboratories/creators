@@ -1,0 +1,102 @@
+---
+title: "How creators get taxed"
+description: "Self-employment tax, income tax, 1099s, payment apps and gifted products, explained with a worked example. US rules for 2026."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: Taxes
+sidebar:
+  order: 1
+---
+
+import TaxSources from '../../../components/basics/TaxSources.astro';
+
+**The short version:** in the US, creator income is business income. You pay two federal taxes on your profit: **income tax**, like everyone, and **self-employment tax**, which covers your Social Security and Medicare because no employer is paying half. Most states add their own income tax. Nothing is taken out of a brand payment or a platform payout, so you're the one who has to put it aside.
+
+:::caution[Not tax advice]
+General US federal rules for tax year 2026, checked November 26, 2026. Talk to a CPA or enrolled agent about your own return.
+:::
+
+## Where a payment goes
+
+<figure class="sc-figure">
+<div class="sc-flow">
+<div class="sc-flow__node is-cyan">Money in<small>Brands, platforms, fans</small></div>
+<div class="sc-flow__link"></div>
+<div class="sc-flow__node is-amethyst">Minus expenses<small>Editor, gear, software</small></div>
+<div class="sc-flow__link"></div>
+<div class="sc-flow__node is-champagne">= Profit<small>What you're taxed on</small></div>
+<div class="sc-flow__link"></div>
+<div class="sc-flow__node is-rose">Taxes<small>Self-employment, income, state</small></div>
+<div class="sc-flow__link"></div>
+<div class="sc-flow__node is-jade">Yours<small>Pay yourself from here</small></div>
+</div>
+<figcaption>You're taxed on profit, not on everything that comes in <span class="sc-tag is-platform">IRS</span></figcaption>
+</figure>
+
+## The two federal taxes
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-rose"><h4>Self-employment tax</h4><ul><li><strong>15.3%</strong>: 12.4% Social Security plus 2.9% Medicare</li><li>Charged on 92.35% of your net profit, which mirrors the employer half a job would pay</li><li>Social Security part stops at <strong>$184,500</strong> of combined wages and self-employment earnings in 2026</li><li>An extra 0.9% Medicare kicks in above $200,000 (single) or $250,000 (married filing jointly)</li><li>Owed once your net self-employment earnings hit <strong>$400</strong></li></ul></div>
+<div class="sc-compare__side is-champagne"><h4>Income tax</h4><ul><li>Same brackets as a paycheck: 10% up to 37%</li><li>You subtract half of your self-employment tax first</li><li>Then the standard deduction: <strong>$16,100</strong> single, <strong>$32,200</strong> married filing jointly in 2026</li><li>Only the dollars inside each bracket pay that bracket's rate</li><li>Many creators also get a 20% deduction on qualified business income, which is now permanent law</li></ul></div>
+</div>
+<figcaption>IRS self-employment tax page; Schedule SE (2026); Rev. Proc. 2025-32; IRS fact sheet FS-2026-07</figcaption>
+</figure>
+
+## A worked example
+
+Say you're single, creating full-time, and after expenses you made **$60,000** profit in 2026. No other job.
+
+<figure class="sc-figure">
+<ul class="sc-bars">
+<li class="sc-bar is-rose" style="--v:14.1;--i:0"><div class="sc-bar__head">Self-employment tax<b>$8,478</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-champagne" style="--v:7.5;--i:1"><div class="sc-bar__head">Federal income tax<b>$4,511</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-jade" style="--v:78.4;--i:2"><div class="sc-bar__head">Left before state tax<b>$47,011</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+</ul>
+<figcaption>$60,000 × 92.35% = $55,410 × 15.3% = $8,478. Taxable income: $60,000 − $4,239 (half of SE tax) − $16,100 = $39,661, taxed at 10% then 12%. Before the QBI deduction, which would lower it. <span class="sc-tag is-illustrative">Example</span></figcaption>
+</figure>
+
+Notice that self-employment tax is the bigger bill here. That surprises most people the first year, and it's the tax an [S corp election](/money/llc-vs-s-corp/) can shrink once profit is high enough.
+
+## 1099s: the forms, not the rule
+
+Brands and platforms send you tax forms that report what they paid you. They're useful for checking your records, but **you owe tax on all of your income whether or not a form shows up.** The IRS says this in so many words.
+
+| Form | Who sends it | When, for 2026 payments |
+| --- | --- | --- |
+| **1099-NEC** | A brand or agency that paid you for work | If they paid you $2,000 or more in the year (up from $600). The threshold rises with inflation from 2027 |
+| **1099-K** | Payment apps and marketplaces (PayPal, Venmo for business, Stripe and similar) | Over $20,000 **and** over 200 payments in the year. Some states set a lower bar, and an app may send one anyway |
+| **1099-MISC** | Some platforms, for royalties, prizes or other payments | Thresholds depend on the kind of payment |
+| **W-9** | You send this one | Brands ask for it before they pay you. It gives them your name and taxpayer ID |
+
+<span class="sc-tag is-platform">IRS</span> Thresholds from IRS Publication 1099 (2026) and the IRS Form 1099-K FAQs.
+
+## Gifted products and PR packages
+
+If a brand sends you something **in exchange for a post**, that's payment in kind. The IRS treats it like bartering: "You must include in gross income in the year of receipt the fair market value of goods or services received from bartering." <span class="sc-tag is-platform">IRS</span>
+
+- **Deal for content** (product for a post, a trip for coverage): count the product's fair market value as income.
+- **Truly unsolicited, no strings**: this is less settled, and tax pros disagree on how to treat it. Keep a list of what arrived, what it's worth and whether anything was expected. Ask your CPA how they want to handle it. <span class="sc-tag is-practitioner">Practitioner view</span>
+- Sending it back or giving it away the same week, with no post, makes for a much cleaner story.
+
+## State and local tax
+
+Most states tax your profit too, at their own rates, and a few cities do as well. Some states have no income tax at all. Rules change, so check your state revenue department's site rather than a list online. If you move mid-year, you may file in two states.
+
+## Got a day job too?
+
+Your creator profit stacks on top of your salary, so it gets taxed at your **top** bracket, not from the bottom. Two easy ways to cover it:
+
+- Make quarterly payments for the creator side (see [Set aside and pay quarterly](/money/set-aside/)).
+- Or ask your job to withhold more by filing a new Form W-4, so the extra tax comes out of each paycheck.
+
+## What to ask a tax pro
+
+- "Am I eligible for the qualified business income deduction, and what does it do to my set-aside?"
+- "How should I treat gifted products and trips?"
+- "Do I need to file in more than one state?"
+- "At what profit would an S corp start to make sense for me?"
+
+<TaxSources ids={['se', 'schse', 'ssa', 'rp2532', 'gig', 'p1099', 'k1099', 'barter']} />

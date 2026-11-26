@@ -1,0 +1,70 @@
+---
+/** Numbered source list for Money basics pages. Pass ids from src/lib/tax-data.ts. */
+import { sources, CHECKED } from '../../lib/tax-data';
+interface Props {
+	ids: string[];
+}
+const { ids } = Astro.props;
+const list = ids.map((id) => sources[id]).filter(Boolean);
+---
+
+<section class="ts not-content" aria-label="Sources">
+	<h2 class="ts-title">Sources</h2>
+	<p class="ts-checked">Every link opened and checked {CHECKED}.</p>
+	<ol>
+		{
+			list.map((s) => (
+				<li>
+					<a href={s.url} rel="noopener">
+						{s.name}
+					</a>
+					<span class="ts-meta">
+						{s.publisher} · {s.date}
+					</span>
+				</li>
+			))
+		}
+	</ol>
+</section>
+
+<style>
+	.ts {
+		margin-top: 2.5rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.ts-title {
+		font-family: var(--sc-font-display);
+		font-size: 1.05rem;
+		margin: 0 0 0.25rem;
+		color: var(--sc-ivory);
+	}
+	.ts-checked {
+		margin: 0 0 0.75rem;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+	.ts ol {
+		margin: 0;
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.6rem;
+	}
+	.ts li {
+		font-size: 0.85rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+	}
+	.ts li::marker {
+		color: var(--sc-steel);
+	}
+	.ts a {
+		color: var(--sc-platinum);
+		text-decoration-color: var(--sc-line-strong);
+	}
+	.ts-meta {
+		display: block;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+</style>

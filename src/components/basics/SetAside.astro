@@ -1,0 +1,296 @@
+---
+/** Tax set-aside estimator: how much of every payment to move to a tax account. Math in src/lib/tax-data.ts. */
+import { CHECKED, TAX_YEAR } from '../../lib/tax-data';
+---
+
+<div class="sc-widget sa not-content" data-section="money" data-sa>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Tax set-aside</div>
+			<h4 class="sc-widget__title">How much of every payment to put away</h4>
+		</div>
+	</div>
+
+	<div class="sc-chip-row sa-status" role="radiogroup" aria-label="Filing status">
+		<button type="button" class="sc-chip" role="radio" aria-checked="true" data-status="single">Single</button>
+		<button type="button" class="sc-chip" role="radio" aria-checked="false" data-status="mfj">Married, filing jointly</button>
+		<button type="button" class="sc-chip" role="radio" aria-checked="false" data-status="hoh">Head of household</button>
+	</div>
+
+	<div class="sa-inputs">
+		<label>
+			<span>Creator profit this year <b data-out="profit"></b></span>
+			<input class="sc-range" type="range" min="0" max="1000" value="520" data-in="profit" aria-label="Creator profit this year, after expenses" />
+			<small>What’s left after business expenses</small>
+		</label>
+		<label>
+			<span>Day-job pay (W-2) <b data-out="wages"></b></span>
+			<input class="sc-range" type="range" min="0" max="300000" step="5000" value="0" data-in="wages" aria-label="Pay from a regular job" />
+			<small>We assume your job already withholds its own tax</small>
+		</label>
+		<label>
+			<span>Your state’s income tax rate <b data-out="state"></b></span>
+			<input class="sc-range" type="range" min="0" max="13.3" step="0.1" value="5" data-in="state" aria-label="State income tax rate in percent" />
+			<small>Look up your state’s rate. Some states (Texas, Florida…) have none</small>
+		</label>
+	</div>
+
+	<div class="sa-result" aria-live="polite">
+		<div class="sa-big">
+			<span class="sa-big__label">Put aside</span>
+			<span class="sa-big__value" data-out="rate"></span>
+			<span class="sa-big__label">of every payment</span>
+		</div>
+		<div class="sa-bar" role="img" data-bar>
+			<span class="is-fed" data-seg="income"></span><span class="is-se" data-seg="se"></span><span class="is-state" data-seg="state"></span><span class="is-keep" data-seg="keep"></span>
+		</div>
+		<ul class="sa-legend">
+			<li class="is-fed"><i></i>Federal income tax <b data-out="income"></b></li>
+			<li class="is-se"><i></i>Self-employment tax <b data-out="se"></b></li>
+			<li class="is-state"><i></i>State (estimate) <b data-out="statetax"></b></li>
+			<li class="is-keep"><i></i>Yours to keep <b data-out="keep"></b></li>
+		</ul>
+		<div class="sa-quarter">
+			<div><span>Each quarterly payment</span><b data-out="quarter"></b></div>
+			<div><span>Federal share of that</span><b data-out="quarterFed"></b></div>
+		</div>
+		<button type="button" class="sa-copy" data-copy>Copy my plan</button>
+	</div>
+
+	<p class="sc-widget__note">
+		Estimate for tax year {TAX_YEAR} using IRS brackets, the standard deduction and self-employment tax, checked {CHECKED}. It skips the 20% qualified business income deduction and any credits, so it leans high on purpose: it’s better to have money left over in April than to come up short. State tax is a flat rate you choose. Not tax advice.
+	</p>
+</div>
+
+<script>
+	import { setAside, fmtUsd, type Status } from '../../lib/tax-data';
+	// Slider position → dollars, finer at the low end where most creators are: $0 to $1M.
+	const toProfit = (x: number) => (x <= 0 ? 0 : Math.round(Math.pow(10, 3 + (x / 1000) * 3) / 500) * 500);
+	document.querySelectorAll<HTMLElement>('[data-sa]').forEach((root) => {
+		const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const out = (k: string, v: string) => ($(`[data-out="${k}"]`).textContent = v);
+		const profitIn = $<HTMLInputElement>('[data-in="profit"]');
+		const wagesIn = $<HTMLInputElement>('[data-in="wages"]');
+		const stateIn = $<HTMLInputElement>('[data-in="state"]');
+		let status: Status = 'single';
+		let plan = '';
+		const fill = (el: HTMLInputElement) => el.style.setProperty('--fill', ((+el.value - +el.min) / (+el.max - +el.min)) * 100 + '%');
+		const render = () => {
+			const profit = toProfit(+profitIn.value);
+			const wages = +wagesIn.value;
+			const rate = +stateIn.value / 100;
+			[profitIn, wagesIn, stateIn].forEach(fill);
+			out('profit', fmtUsd(profit));
+			out('wages', fmtUsd(wages));
+			out('state', (+stateIn.value).toFixed(1) + '%');
+			const r = setAside(profit, wages, status, rate);
+			const keep = Math.max(0, profit - r.total);
+			const pct = Math.ceil(r.rate * 100);
+			out('rate', profit > 0 ? pct + '%' : '0%');
+			out('income', fmtUsd(r.income));
+			out('se', fmtUsd(r.se));
+			out('statetax', fmtUsd(r.state));
+			out('keep', fmtUsd(keep));
+			out('quarter', fmtUsd(r.total / 4));
+			out('quarterFed', fmtUsd((r.income + r.se) / 4));
+			const base = Math.max(profit, 1);
+			const segs: Record<string, number> = { income: r.income, se: r.se, state: r.state, keep };
+			for (const k in segs) $(`[data-seg="${k}"]`).style.flexGrow = String(segs[k] / base);
+			$('[data-bar]').setAttribute('aria-label', `Of ${fmtUsd(profit)}: federal income tax ${fmtUsd(r.income)}, self-employment tax ${fmtUsd(r.se)}, state ${fmtUsd(r.state)}, yours ${fmtUsd(keep)}`);
+			plan = [
+				`My ${new Date().getFullYear()} tax set-aside plan (estimate from creators.select, not tax advice)`,
+				`Expected creator profit: ${fmtUsd(profit)}${wages ? ` (plus ${fmtUsd(wages)} day-job pay)` : ''}`,
+				`Put aside ${pct}% of every payment`,
+				`Federal income tax ~${fmtUsd(r.income)} · Self-employment tax ~${fmtUsd(r.se)} · State ~${fmtUsd(r.state)}`,
+				`Quarterly payment ~${fmtUsd(r.total / 4)} (federal ~${fmtUsd((r.income + r.se) / 4)})`,
+			].join('\n');
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-status]').forEach((b) =>
+			b.addEventListener('click', () => {
+				status = b.dataset.status as Status;
+				root.querySelectorAll('[data-status]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+				root.querySelectorAll('[data-status]').forEach((x) => x.classList.toggle('is-on', x === b));
+				render();
+			}),
+		);
+		$('[data-status="single"]').classList.add('is-on');
+		const copy = $<HTMLButtonElement>('[data-copy]');
+		copy.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(plan);
+				copy.textContent = 'Copied';
+			} catch {
+				copy.textContent = 'Copy failed';
+			}
+			setTimeout(() => (copy.textContent = 'Copy my plan'), 1600);
+		});
+		[profitIn, wagesIn, stateIn].forEach((el) => el.addEventListener('input', render));
+		render();
+	});
+</script>
+
+<style>
+	.sa-status {
+		margin-bottom: 1rem;
+	}
+	:global(.sa .sc-chip.is-on) {
+		color: #0a0a0a;
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+	.sa-inputs {
+		display: grid;
+		gap: 0.9rem;
+		margin-bottom: 1.25rem;
+	}
+	@media (min-width: 48rem) {
+		.sa-inputs {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.25rem;
+		}
+	}
+	.sa-inputs label {
+		display: grid;
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+	}
+	.sa-inputs span {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+	.sa-inputs b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.sa-inputs small {
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.sa-result {
+		display: grid;
+		gap: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.sa-big {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem 0.6rem;
+	}
+	.sa-big__value {
+		font: 700 clamp(2.6rem, 12vw, 4rem) / 1 var(--sc-font-display);
+		letter-spacing: -0.03em;
+		color: var(--accent);
+		font-variant-numeric: tabular-nums;
+	}
+	.sa-big__label {
+		font-size: 0.95rem;
+		color: var(--sc-silver);
+	}
+	.sa-bar {
+		display: flex;
+		height: 18px;
+		border-radius: 999px;
+		overflow: hidden;
+		background: rgb(255 255 255 / 0.05);
+		gap: 2px;
+	}
+	.sa-bar span {
+		flex: 0 0 0;
+		flex-basis: 0;
+		min-width: 0;
+		transition: flex-grow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.is-fed {
+		--c: var(--sc-champagne);
+	}
+	.is-se {
+		--c: var(--sc-rose);
+	}
+	.is-state {
+		--c: var(--sc-amethyst);
+	}
+	.is-keep {
+		--c: var(--sc-jade);
+	}
+	.sa-bar span {
+		background: var(--c);
+	}
+	.sa-bar .is-keep {
+		background: color-mix(in srgb, var(--sc-jade) 35%, transparent);
+	}
+	.sa-legend {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem 1rem;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.sa-legend li {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 0.4rem;
+		align-items: center;
+	}
+	.sa-legend i {
+		width: 10px;
+		height: 10px;
+		border-radius: 3px;
+		background: var(--c);
+		grid-row: span 2;
+		align-self: start;
+		margin-top: 0.3rem;
+	}
+	.sa-legend b {
+		grid-column: 2;
+		color: var(--sc-ivory);
+		font-size: 0.95rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.sa-quarter {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+	}
+	.sa-quarter div {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.75rem 0.9rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 12px;
+		background: var(--sc-fill-subtle);
+	}
+	.sa-quarter span {
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.sa-quarter b {
+		font: 600 1.25rem / 1.1 var(--sc-font-display);
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.sa-copy {
+		justify-self: start;
+		font: 600 0.85rem / 1 var(--sc-font-sans);
+		padding: 0.65rem 1rem;
+		border-radius: 999px;
+		border: 1px solid var(--accent);
+		background: transparent;
+		color: var(--sc-ivory);
+		cursor: pointer;
+		min-height: 44px;
+	}
+	.sa-copy:hover {
+		background: color-mix(in srgb, var(--accent) 15%, transparent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sa-bar span {
+			transition: none;
+		}
+	}
+</style>
