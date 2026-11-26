@@ -3,6 +3,9 @@ import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 import '../styles/tokens.css';
 import '../styles/sections.css';
+import '../styles/widgets.css';
+import SwipeDeck from '../components/SwipeDeck.astro';
+import TabBar from '../components/TabBar.astro';
 import mark from '../assets/logo.svg?raw';
 import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from '../site.mjs';
@@ -151,6 +154,12 @@ const journey = [
 				</div>
 			</section>
 
+			<!-- BRIEFING -->
+			<section class="block briefing reveal">
+				<SwipeDeck title="Know more than the gurus in 60 seconds" />
+				<p class="trust-link"><a href="/algorithms/">How algorithms really work →</a></p>
+			</section>
+
 			<!-- BENTO -->
 			<section class="block">
 				<div class="block-head reveal">
@@ -159,7 +168,7 @@ const journey = [
 					<p class="sub">Each section is a set of visual guides, tools and checklists, kept current through public edits.</p>
 				</div>
 
-				<div class="bento">
+				<div class="bento sc-rail" data-rail>
 					{sections.map((s, i) => (
 						<a class={`tile reveal ${s.size}`} href={s.href} data-section={s.id} style={`--d: ${i * 60}ms`}>
 							<div class="viz" aria-hidden="true">
@@ -325,8 +334,10 @@ const journey = [
 			</nav>
 			<p>Educational information, not legal or financial advice.</p>
 		</footer>
+		<TabBar variant="landing" />
 
 		<script>
+			import "../scripts/rail";
 			const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 			const els = document.querySelectorAll('.reveal');
 			if (reduce || !('IntersectionObserver' in window)) {

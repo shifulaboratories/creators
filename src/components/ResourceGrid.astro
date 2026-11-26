@@ -21,7 +21,7 @@ const resources = (await getCollection('resources'))
 	.sort((a, b) => Number(b.featured) - Number(a.featured) || a.name.localeCompare(b.name));
 ---
 
-<div class="res-grid not-content">
+<div class="res-grid sc-rail not-content" data-rail>
 	{
 		resources.map((r) => (
 			<a
@@ -129,3 +129,7 @@ const resources = (await getCollection('resources'))
 		color: var(--accent);
 	}
 </style>
+
+<script>
+	import '../scripts/rail';
+</script>

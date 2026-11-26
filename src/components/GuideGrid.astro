@@ -19,7 +19,7 @@ const coverMeta = (e: (typeof entries)[number]) => {
 const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft', published: 'Reviewed' };
 ---
 
-<div class="guide-grid not-content">
+<div class="guide-grid sc-rail not-content" data-rail>
 	{
 		entries.map((e) => {
 			const m = coverMeta(e);
@@ -106,3 +106,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 		border-color: color-mix(in srgb, var(--sc-jade) 45%, transparent);
 	}
 </style>
+
+<script>
+	import '../scripts/rail';
+</script>

@@ -19,7 +19,7 @@ const tierText = { insider: 'Platform insider', practitioner: 'Practitioner' };
 const date = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<div class="vg not-content">
+<div class="vg sc-rail not-content" data-rail>
 	{
 		videos.map((v) => (
 			<article class="vc" data-tier={v.tier}>
@@ -47,6 +47,7 @@ const date = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 
 </div>
 
 <script>
+	import '../scripts/rail';
 	document.querySelectorAll<HTMLButtonElement>('.vc-frame[data-yt]').forEach((b) =>
 		b.addEventListener(
 			'click',
