@@ -10,6 +10,7 @@ export default defineConfig({
 	redirects: {
 		'/grow/algorithms': '/algorithms/how-recommenders-work/',
 		'/grow/case-studies': '/case-studies/',
+		'/grow/strategy': '/grow/niche/',
 	},
 	integrations: [
 		starlight({

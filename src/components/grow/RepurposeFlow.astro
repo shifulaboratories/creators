@@ -1,0 +1,75 @@
+---
+/** One idea fanning out to five places, each with what to change and what gets you down-ranked. */
+import './grow.css';
+import { repurpose } from '../../lib/grow-data';
+---
+
+<section class="sc-widget rp not-content" data-gr-rail aria-label="One idea, five places">
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Swipe · One idea, five places</div>
+			<h4 class="sc-widget__title">Remake it for each feed, don’t just re-upload</h4>
+		</div>
+		<div class="gr-arrows">
+			<button type="button" data-dir="-1" aria-label="Previous platform">‹</button>
+			<button type="button" data-dir="1" aria-label="Next platform">›</button>
+		</div>
+	</div>
+
+	<div class="rp-source" aria-hidden="true">
+		<span class="rp-node">💡 One idea</span>
+		<span class="rp-arrow"></span>
+		<span class="rp-node is-master">🎬 The master: your full video or post, raw files kept</span>
+		<span class="rp-fan">
+			{repurpose.map((r) => <i class={`gr-tint-${r.tint}`} />)}
+		</span>
+	</div>
+
+	<div class="gr-rail" tabindex="0">
+		{
+			repurpose.map((r) => (
+				<article class={`rp-card gr-tint-${r.tint}`}>
+					<span class="gr-pill">{r.name}</span>
+					<span class="rp-shape">{r.shape}</span>
+					<ul>{r.change.map((c) => <li>{c}</li>)}</ul>
+					<p class="rp-avoid"><b>Watch out:</b> {r.avoid}</p>
+					<a class="gr-src" href={r.href}>{r.src}</a>
+				</article>
+			))
+		}
+	</div>
+	<div class="gr-dots" aria-hidden="true">{repurpose.map(() => <span />)}</div>
+</section>
+
+<script>
+	import { initRails } from '../../scripts/gr-rail';
+	initRails();
+</script>
+
+<style>
+	.rp-source { display: grid; justify-items: center; gap: 0.35rem; margin: 0.25rem 0 1rem; }
+	.rp-node {
+		padding: 0.5rem 0.9rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; text-align: center;
+		border: 1px solid var(--sc-line-strong); background: rgb(255 255 255 / 0.04); color: var(--sc-ivory);
+	}
+	.rp-node.is-master { border-color: color-mix(in srgb, var(--accent) 50%, transparent); box-shadow: 0 0 24px -8px var(--accent); }
+	.rp-arrow { width: 2px; height: 18px; background: linear-gradient(var(--sc-line-strong), var(--accent)); }
+	.rp-fan { display: flex; gap: 10px; margin-top: 0.4rem; }
+	.rp-fan i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 12px var(--c); animation: rp-pulse 2.4s ease-in-out infinite; }
+	.rp-fan i:nth-child(2) { animation-delay: 0.2s; }
+	.rp-fan i:nth-child(3) { animation-delay: 0.4s; }
+	.rp-fan i:nth-child(4) { animation-delay: 0.6s; }
+	.rp-fan i:nth-child(5) { animation-delay: 0.8s; }
+	@keyframes rp-pulse { 0%, 100% { opacity: 0.45; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.1); } }
+	@media (prefers-reduced-motion: reduce) { .rp-fan i { animation: none; opacity: 1; } }
+	.rp-card {
+		display: flex; flex-direction: column; gap: 0.6rem; padding: 1.1rem; border-radius: 20px; min-height: 17rem;
+		border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+		background: radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--c) 16%, transparent), transparent 60%), #0c0c0c;
+	}
+	.rp-card .gr-pill { align-self: flex-start; }
+	.rp-shape { font-family: var(--sc-font-display); font-weight: 700; font-size: 1.1rem; color: var(--sc-ivory); }
+	.rp-card ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.3rem; color: var(--sc-platinum); font-size: 0.88rem; line-height: 1.45; }
+	.rp-avoid { margin: auto 0 0; font-size: 0.82rem; line-height: 1.45; color: var(--sc-silver); }
+	.rp-avoid b { color: var(--sc-ember); }
+</style>

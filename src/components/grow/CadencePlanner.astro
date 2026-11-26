@@ -1,0 +1,105 @@
+---
+/**
+ * Cadence planner: hours you can give each week divided by hours per piece.
+ * The output is a pace you can keep, compared with what Buffer's data shows.
+ */
+import './grow.css';
+import { cadenceFormats } from '../../lib/grow-data';
+---
+
+<div class="sc-widget cp not-content" data-cp>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Cadence planner</div>
+			<h4 class="sc-widget__title">How often can you actually post?</h4>
+		</div>
+	</div>
+
+	<label class="cp-field">
+		<span class="cp-top"><span>Hours you can give it each week</span><output data-out="hours">8</output></span>
+		<input class="sc-range" type="range" min="1" max="40" step="1" value="8" data-in="hours" aria-label="Hours per week" />
+	</label>
+
+	<p class="cp-label">Your main format</p>
+	<div class="sc-chip-row" role="group" aria-label="Main format">
+		{cadenceFormats.map((f, i) => <button type="button" class="sc-chip" data-fmt={f.key} data-h={f.hours} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>)}
+	</div>
+
+	<label class="cp-field">
+		<span class="cp-top"><span>Hours per piece, start to finish</span><output data-out="per">2</output></span>
+		<input class="sc-range" type="range" min="0.5" max="30" step="0.5" value="2" data-in="per" aria-label="Hours per piece" />
+		<span class="cp-hint">Our starting guess. Time your next few honestly: idea, shoot, edit, captions, replies.</span>
+	</label>
+
+	<label class="cp-switch">
+		<input type="checkbox" data-in="cut" />
+		<span>Also cut each piece for one more platform (adds about 30 min each)</span>
+	</label>
+
+	<div class="cp-out" aria-live="polite">
+		<div class="cp-big"><span data-out="posts">4</span><small>posts a week you can keep</small></div>
+		<div class="cp-week" aria-hidden="true" data-week></div>
+		<p class="cp-msg" data-out="msg"></p>
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-cp]').forEach((root) => {
+		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const hours = $<HTMLInputElement>('[data-in="hours"]');
+		const per = $<HTMLInputElement>('[data-in="per"]');
+		const cut = $<HTMLInputElement>('[data-in="cut"]');
+		const week = $('[data-week]');
+		const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+		let fmt = 'short';
+		const render = () => {
+			const h = +hours.value;
+			const p = +per.value + (cut.checked ? 0.5 : 0);
+			const raw = h / p;
+			// leave 20% slack for life, replies and bad weeks
+			const posts = Math.max(0, Math.floor((raw * 0.8) * 2) / 2);
+			$('[data-out="hours"]').textContent = String(h);
+			$('[data-out="per"]').textContent = String(+per.value);
+			const n = posts >= 1 ? Math.floor(posts) : posts;
+			$('[data-out="posts"]').textContent = posts < 1 ? (posts === 0.5 ? '1 every 2 weeks' : 'Under 1') : String(n);
+			const slots = Math.min(7, Math.round(posts));
+			const pick = [[], [2], [1, 4], [0, 2, 4], [0, 2, 4, 6], [0, 1, 3, 4, 6], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5, 6]][slots] ?? [];
+			week.innerHTML = days.map((d, i) => `<span class="${pick.includes(i) ? 'on' : ''}">${d}</span>`).join('');
+			let msg = '';
+			if (fmt === 'long') msg = posts >= 1 ? 'For long videos, one great upload a week or less is normal. YouTube itself asks only that your schedule be “sustainable over the long term.”' : 'That’s fine for long video. Pick a rhythm you can promise viewers, like every other Sunday, and batch-film.';
+			else if (posts < 1) msg = 'Too thin to build a habit with this format. Try a lighter format, or batch a month of posts in one weekend.';
+			else if (posts < 3) msg = 'A steady 1–2 a week is a real start. Buffer found weeks posted matters most: engagement per post kept rising up to about 21 straight weeks.';
+			else if (posts <= 5) msg = 'Sweet spot. In Buffer’s Instagram data, 3–5 posts a week got about 12% more reach per post than 1–2.';
+			else msg = 'That’s a lot. More posts raise your odds of a breakout, but Buffer’s TikTok data shows typical views per post stay about flat. Only keep this pace if quality holds.';
+			$('[data-out="msg"]').textContent = msg;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-fmt]').forEach((b) =>
+			b.addEventListener('click', () => {
+				fmt = b.dataset.fmt!;
+				root.querySelectorAll('[data-fmt]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				per.value = b.dataset.h!;
+				render();
+			}),
+		);
+		[hours, per, cut].forEach((i) => i.addEventListener('input', render));
+		render();
+	});
+</script>
+
+<style>
+	.cp-field { display: grid; gap: 0.4rem; margin: 0.6rem 0 1rem; }
+	.cp-top { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; color: var(--sc-platinum); }
+	.cp-top output { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+	.cp-hint { font-size: 0.75rem; color: var(--sc-steel); }
+	.cp-label { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--sc-platinum); }
+	.cp-switch { display: flex; gap: 0.6rem; align-items: center; font-size: 0.85rem; color: var(--sc-silver); margin-bottom: 1rem; }
+	.cp-switch input { width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }
+	.cp-out { display: grid; gap: 0.8rem; padding: 1.1rem; border-radius: 20px; background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%), #0b0b0b; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+	.cp-big { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+	.cp-big span { font-family: var(--sc-font-display); font-weight: 800; font-size: clamp(2.2rem, 9vw, 3rem); line-height: 1; letter-spacing: -0.04em; color: var(--accent); }
+	.cp-big small { color: var(--sc-silver); font-size: 0.9rem; }
+	.cp-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+	.cp-week :global(span) { display: grid; place-items: center; aspect-ratio: 1; max-height: 2.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: var(--sc-slate); border: 1px solid var(--sc-line); }
+	.cp-week :global(span.on) { color: #0a0a0a; background: var(--accent); border-color: var(--accent); }
+	.cp-msg { margin: 0; color: var(--sc-platinum); font-size: 0.9rem; line-height: 1.5; }
+</style>

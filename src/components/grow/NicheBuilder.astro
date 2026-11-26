@@ -1,0 +1,128 @@
+---
+/** Niche builder: who + what + how you're different, then six honest checks. */
+import './grow.css';
+import { nicheParts, nicheChecks } from '../../lib/grow-data';
+const rows = [
+	{ key: 'who', label: 'Who it’s for', items: nicheParts.who },
+	{ key: 'what', label: 'What you make', items: nicheParts.what },
+	{ key: 'how', label: 'Your angle', items: nicheParts.how },
+] as const;
+---
+
+<div class="sc-widget nb not-content" data-nb>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Niche builder</div>
+			<h4 class="sc-widget__title">Write your niche in one sentence</h4>
+		</div>
+		<button type="button" class="gr-btn" data-shuffle>🎲 Shuffle</button>
+	</div>
+
+	<p class="nb-sentence" aria-live="polite">
+		<span data-out="what" class="gr-tint-rose">{nicheParts.what[0]}</span>
+		<span class="nb-join">for</span>
+		<span data-out="who" class="gr-tint-cyan">{nicheParts.who[0]}</span><span class="nb-join is-comma">,</span>
+		<span data-out="how" class="gr-tint-champagne">{nicheParts.how[0]}</span>
+	</p>
+
+	{
+		rows.map((r) => (
+			<div class="nb-row">
+				<p class="nb-label">{r.label}</p>
+				<div class="nb-chips" role="group" aria-label={r.label}>
+					{r.items.map((it, i) => <button type="button" class="sc-chip" data-row={r.key} aria-pressed={i === 0 ? 'true' : 'false'}>{it}</button>)}
+				</div>
+			</div>
+		))
+	}
+	<p class="sc-widget__note">These are examples to spark yours. The best niches are usually a mix nobody else has: your job, your life stage, your taste.</p>
+
+	<div class="nb-checks">
+		<p class="nb-label">Now be honest. Tap every one that’s a yes.</p>
+		<ul>
+			{
+				nicheChecks.map((c) => (
+					<li>
+						<button type="button" class="nb-check" aria-pressed="false" data-check>
+							<span class="nb-box" aria-hidden="true" />
+							<span>
+								<span class="nb-q">{c.q}</span>
+								<span class="nb-why">{c.why}</span>
+							</span>
+						</button>
+					</li>
+				))
+			}
+		</ul>
+		<p class="nb-verdict" aria-live="polite" data-verdict>Tap the checks to see where your niche stands.</p>
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-nb]').forEach((root) => {
+		const pick = (b: HTMLButtonElement) => {
+			const row = b.dataset.row!;
+			root.querySelectorAll(`[data-row="${row}"]`).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+			root.querySelector(`[data-out="${row}"]`)!.textContent = b.textContent;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-row]').forEach((b) => b.addEventListener('click', () => pick(b)));
+		root.querySelector('[data-shuffle]')!.addEventListener('click', () => {
+			['who', 'what', 'how'].forEach((row) => {
+				const opts = [...root.querySelectorAll<HTMLButtonElement>(`[data-row="${row}"]`)];
+				pick(opts[Math.floor(Math.random() * opts.length)]);
+			});
+		});
+		const checks = [...root.querySelectorAll<HTMLButtonElement>('[data-check]')];
+		const verdict = root.querySelector<HTMLElement>('[data-verdict]')!;
+		const msgs = [
+			'Start with the person, not the topic. Who do you understand better than most?',
+			'Early days. Keep the topic, but sharpen who it’s for and what you add.',
+			'Early days. Keep the topic, but sharpen who it’s for and what you add.',
+			'Promising. Fix the “no” answers before you commit a year to it.',
+			'Promising. Fix the “no” answers before you commit a year to it.',
+			'Strong. Pick a series format and start your first 30 posts.',
+			'All six. Stop planning and post. You’ll learn more from 10 posts than 10 more weeks of thinking.',
+		];
+		checks.forEach((c) =>
+			c.addEventListener('click', () => {
+				c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+				const n = checks.filter((x) => x.getAttribute('aria-pressed') === 'true').length;
+				verdict.innerHTML = `<b>${n} of 6.</b> ${msgs[n]}`;
+			}),
+		);
+	});
+</script>
+
+<style>
+	.nb-sentence {
+		margin: 0.25rem 0 1.1rem; font-family: var(--sc-font-display); font-weight: 700;
+		font-size: clamp(1.3rem, 5vw, 1.8rem); line-height: 1.25; letter-spacing: -0.03em; color: var(--sc-ivory);
+	}
+	.nb-sentence [data-out] { color: var(--c); }
+	.nb-sentence::first-letter { text-transform: uppercase; }
+	.nb-join { color: var(--sc-steel); margin: 0 0.2em; }
+	.nb-join.is-comma { margin: 0 0.2em 0 0; }
+	.nb-row { margin-bottom: 0.8rem; }
+	.nb-label { margin: 0 0 0.4rem; font-size: 0.8rem; font-weight: 700; color: var(--sc-silver); }
+	.nb-chips { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; margin-inline: -1rem; padding-inline: 1rem; }
+	.nb-chips::-webkit-scrollbar { display: none; }
+	.nb-chips .sc-chip { white-space: nowrap; font-size: 0.8rem; padding: 0.45rem 0.8rem; }
+	@media (min-width: 40rem) { .nb-chips { flex-wrap: wrap; margin: 0; padding: 0; } }
+	.nb-checks { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--sc-line); }
+	.nb-checks ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+	.nb-check {
+		appearance: none; font: inherit; text-align: left; color: inherit; cursor: pointer; width: 100%;
+		display: grid; grid-template-columns: auto 1fr; gap: 0.7rem; align-items: start;
+		padding: 0.75rem 0.85rem; border-radius: 14px; border: 1px solid var(--sc-line); background: rgb(255 255 255 / 0.02);
+		transition: border-color 0.2s, background 0.2s;
+	}
+	.nb-check[aria-pressed='true'] { border-color: color-mix(in srgb, var(--accent) 50%, transparent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+	.nb-check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+	.nb-box { width: 1.2rem; height: 1.2rem; margin-top: 0.1rem; border-radius: 6px; border: 1.5px solid var(--sc-line-bright); display: grid; place-items: center; }
+	.nb-check[aria-pressed='true'] .nb-box { background: var(--accent); border-color: var(--accent); }
+	.nb-check[aria-pressed='true'] .nb-box::after { content: '✓'; color: #0a0a0a; font-size: 0.8rem; font-weight: 800; }
+	.nb-q { display: block; color: var(--sc-ivory); font-weight: 600; font-size: 0.92rem; }
+	.nb-why { display: block; color: var(--sc-silver); font-size: 0.82rem; line-height: 1.45; margin-top: 0.15rem; }
+	.nb-verdict { margin: 0.9rem 0 0; color: var(--sc-platinum); font-size: 0.95rem; }
+	.nb-verdict :global(b) { color: var(--accent); }
+</style>
