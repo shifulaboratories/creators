@@ -6,13 +6,13 @@ Working name: **Select Creators** · domain **creators.select** · Instagram **@
 
 ## The mark: the Select Seal
 
-A verification badge, the way social platforms mark a verified account: a scalloped rosette seal with a check inside. Ours is matte black with a titanium edge and a platinum check, so it reads as "verified" instantly but belongs to us.
+A verification badge, the way social platforms mark a verified account: a scalloped rosette seal with a check inside. Ours is matte black with a titanium edge and a smooth platinum check, so it reads as "verified" instantly but belongs to us.
 
 What makes it ours and not a copy of any platform's badge:
 
 - **Twelve soft scallops.** Instagram, Meta and X badges use eight broad lobes in brand blue. Twelve finer scallops read as a minted seal or a coin edge.
 - **Black and metal, never blue.** The seal is obsidian with a brushed edge; the check is platinum.
-- **The split check.** The short stroke stops just short of the long one, leaving a hairline gap. That gap is the signature: a machined part, not a drawn tick. Never close it.
+- **A smooth check.** One continuous stroke with rounded ends and a rounded corner, in brushed platinum.
 - **Grid**: 64 × 64. Geometry lives in [`logo/generate.py`](logo/generate.py); edit it there and regenerate, never redraw by hand.
 
 ### Files
@@ -34,7 +34,7 @@ What makes it ours and not a copy of any platform's badge:
 
 - **Clear space**: the height of the check's short stroke (about 1/4 of the mark) on every side.
 - **Minimum size**: mark 16px; horizontal lockup 120px wide; wordmark alone 96px wide.
-- **Never**: color the seal blue (that's the platforms' badge), recolor the check, add a glow or drop shadow, put it on a busy photo, change the number of scallops, or close the gap in the check.
+- **Never**: color the seal blue (that's the platforms' badge), recolor the check, add a glow or drop shadow, put it on a busy photo, change the number of scallops, or make the check sharp-cornered.
 - On light backgrounds use `mark-black`. Don't put the metal version on white; its edge disappears.
 
 ## Wordmark
@@ -106,7 +106,7 @@ Things should feel alive and expensive: light that moves, metal that catches it,
 | `.sc-grain` | Film grain over the page so black never looks flat. Put it on `body`. |
 | `.sc-float`, `.sc-orbit`, `.sc-pulse` | Ambient loops for the hero mark and status dots. |
 
-`logo/mark-animated.svg` is the mark's intro: the seal turns into place, its edge rotates slowly, the check draws short stroke then long, and a sheen crosses the seal every few seconds. Use it in the hero and loading states, never in the header.
+`logo/mark-animated.svg` is the mark's intro: the seal turns into place, its edge rotates slowly, the check draws itself in one stroke, and a sheen crosses the seal every few seconds. Use it in the hero and loading states, never in the header.
 
 ## Diagrams and infographics
 
