@@ -1,3 +1,5 @@
+@import './motion.css';
+@import './diagrams.css';
 /*
  * Select Creators design tokens.
  * Source of truth: brand/tokens.json. Guidelines: brand/README.md.
@@ -35,6 +37,23 @@
 	--sc-sage: #8fb59a; /* success, verified facts */
 	--sc-ember: #d0705f; /* danger, scams, warnings */
 	--sc-mist: #9fb3c8; /* info, links to sources */
+
+	/* Accent: jewel tones that glow on black. Color is for meaning and data, never for chrome. */
+	--sc-ion: #8b9cff; /* primary accent: links on hover, focus, the active step, chart series 1 */
+	--sc-jade: #4fd1a5; /* growth, money in, series 2 */
+	--sc-champagne: #e0b56a; /* premium, sponsored, series 3 (brighter sibling of brass) */
+	--sc-rose: #f08aa8; /* audience, people, series 4 */
+	--sc-cyan: #5cc8e6; /* platforms, reach, series 5 */
+	--sc-amethyst: #b18cf5; /* deals, contracts, series 6 */
+	--sc-aurora: linear-gradient(110deg, #8b9cff 0%, #b18cf5 45%, #f08aa8 100%); /* one highlight per screen */
+	--sc-ion-glow: 0 0 0 1px rgb(139 156 255 / 0.35), 0 0 32px -6px rgb(139 156 255 / 0.55);
+	/* Tints for fills behind diagrams: 12% of each accent on obsidian. */
+	--sc-ion-tint: rgb(139 156 255 / 0.12);
+	--sc-jade-tint: rgb(79 209 165 / 0.12);
+	--sc-champagne-tint: rgb(224 181 106 / 0.12);
+	--sc-rose-tint: rgb(240 138 168 / 0.12);
+	--sc-cyan-tint: rgb(92 200 230 / 0.12);
+	--sc-amethyst-tint: rgb(177 140 245 / 0.12);
 
 	/* ---------- Type ---------- */
 	--sc-font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
@@ -77,7 +96,7 @@
 	--sc-radius-sm: 10px; /* inputs, icon tiles */
 	--sc-radius-md: 14px; /* asides, small panels */
 	--sc-radius-lg: 20px; /* cards */
-	--sc-radius-card: 22px; /* the member card (ISO ID-1 ratio 1.586) */
+	--sc-radius-card: 22px; /* large feature panels and hero visuals */
 	--sc-radius-pill: 999px; /* buttons, chips */
 	/* The plate: the mark's chamfered octagon, reusable as a clip-path for avatars and tiles. */
 	--sc-plate-clip: polygon(19.5% 0, 80.5% 0, 100% 19.5%, 100% 80.5%, 80.5% 100%, 19.5% 100%, 0 80.5%, 0 19.5%);

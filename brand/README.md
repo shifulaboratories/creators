@@ -1,6 +1,6 @@
 # Select Creators brand system
 
-The feeling: a matte black metal card in a quiet room. Expensive by restraint, not by decoration. Everything is black, warm grey and brushed metal; color appears only when it carries meaning.
+The feeling: exclusive, premium, tech-forward. A private members' club that happens to be open to everyone. Black, warm grey and brushed metal set the stage; jewel-toned light and motion make it alive. It should feel cool to look at, never like reading a wiki, and it should teach visually: diagrams and infographics before paragraphs.
 
 Working name: **Select Creators** · domain **creators.select** · Instagram **@selectcreators**.
 
@@ -8,7 +8,7 @@ Working name: **Select Creators** · domain **creators.select** · Instagram **@
 
 A matte black plate with chamfered corners carrying a platinum check. The check is split: the short stroke stops just short of the long one, leaving a hairline gap. That gap is the signature. It reads as "verified", but as an engraved, machined part, not a platform badge.
 
-- **Plate**: a square with 19.5% chamfered corners, softened with small radii. Faceted like a cut metal plate or a card chip. Deliberately not a circle, not a scalloped rosette and not a star, so it never reads as Instagram's, X's or Meta's verified badge.
+- **Plate**: a square with 19.5% chamfered corners, softened with small radii. Faceted like a cut metal plate or a gem. Deliberately not a circle, not a scalloped rosette and not a star, so it never reads as Instagram's, X's or Meta's verified badge.
 - **Check**: two straight strokes at 45°, flat cut ends, no rounded caps.
 - **Grid**: 64 × 64. Geometry lives in [`logo/generate.py`](logo/generate.py); edit it there and regenerate, never by hand.
 
@@ -16,6 +16,7 @@ A matte black plate with chamfered corners carrying a platinum check. The check 
 
 | File | Use |
 | --- | --- |
+| `logo/mark-animated.svg` | The mark's animated intro, for heroes and loading states. |
 | `logo/mark.svg` | Primary. Metal plate, titanium edge, platinum check. Dark backgrounds, favicon, avatars. |
 | `logo/mark-black.svg` | One color, check knocked out. Light backgrounds, print, embossing, stamps. |
 | `logo/mark-white.svg` | One color reversed. Dark backgrounds where gradients can't render (email, video overlays). |
@@ -35,7 +36,7 @@ A matte black plate with chamfered corners carrying a platinum check. The check 
 
 ## Wordmark
 
-`SELECT CREATORS` in Geist Medium, all caps, tracked +0.22em, converted to outlines. Caps and wide tracking echo embossed card lettering. In live UI (the site header), set it as real text with `--sc-tracking-wordmark` so it stays accessible and crisp.
+`SELECT CREATORS` in Geist Medium, all caps, tracked +0.22em, converted to outlines. Caps and wide tracking read as engraved, quiet luxury. In live UI (the site header), set it as real text with `--sc-tracking-wordmark` so it stays accessible and crisp.
 
 ## Color
 
@@ -54,9 +55,22 @@ Black is never pure blue-black. The scale is warm-neutral so it feels like anodi
 | `--sc-platinum` | `#e4e4e3` | Body text |
 | `--sc-ivory` | `#f5f5f4` | Headings, primary button |
 
-**Metal** (`--sc-titanium`, `--sc-plate`, `--sc-card-metal`) is for type highlights, the mark and the member card only. Never a large background.
+**Metal** (`--sc-titanium`, `--sc-plate`, `--sc-card-metal`) is for type highlights and the mark only. Never a large background.
 
-**Signal colors** are muted and mean one thing each: `--sc-brass #c9a25a` disclosures and affiliate labels, `--sc-sage #8fb59a` success and verified facts, `--sc-ember #d0705f` danger and scams, `--sc-mist #9fb3c8` info and sources. No brand accent color exists on purpose; the brand color is black.
+**Accent palette (jewel tones).** Color brings the brand to life, but it's light, not paint: accents glow on black, appear in data, highlights and motion, and never fill chrome like headers or buttons.
+
+| Token | Hex | Meaning and chart order |
+| --- | --- | --- |
+| `--sc-ion` | `#8b9cff` | Primary accent: focus, active step, series 1 |
+| `--sc-jade` | `#4fd1a5` | Growth, money in, series 2 |
+| `--sc-champagne` | `#e0b56a` | Premium, sponsored, series 3 |
+| `--sc-rose` | `#f08aa8` | Audience, people, series 4 |
+| `--sc-cyan` | `#5cc8e6` | Platforms, reach, series 5 |
+| `--sc-amethyst` | `#b18cf5` | Deals, contracts, series 6 |
+
+Each has a 12% `-tint` for fills. `--sc-aurora` (ion to amethyst to rose) is the one gradient highlight, used at most once per screen, for example on two words of a headline.
+
+**Signal colors** are muted and mean one thing each: `--sc-brass #c9a25a` disclosures and affiliate labels, `--sc-sage #8fb59a` success and verified facts, `--sc-ember #d0705f` danger and scams, `--sc-mist #9fb3c8` info and sources. The brand color is still black: accents are there to explain and to delight, not to decorate.
 
 Hairlines are white at low alpha: `--sc-line` (8%), `--sc-line-strong` (18%), `--sc-line-bright` (35%).
 
@@ -69,19 +83,55 @@ Hairlines are white at low alpha: `--sc-line` (8%), `--sc-line-strong` (18%), `-
 ## Space, radii, elevation
 
 - 4px base: `--sc-space-1` (4px) through `--sc-space-10` (128px). Be generous; empty black space is the luxury.
-- Radii: 6 tags · 10 inputs · 14 asides · 20 cards · 22 member card · pill for buttons and chips. `--sc-plate-clip` reuses the mark's chamfer as a clip-path for avatars and feature tiles.
-- Elevation is light, not shadow: a 1px hairline, a faint inset top highlight, and a deep soft drop only on lift (`--sc-shadow-lift`, `--sc-shadow-card`).
+- Radii: 6 tags · 10 inputs · 14 asides · 20 cards · pill for buttons and chips. `--sc-plate-clip` reuses the mark's chamfer as a clip-path for avatars and feature tiles.
+- Elevation is light, not shadow: a 1px hairline, a faint inset top highlight, and a deep soft drop only on lift (`--sc-shadow-lift`).
 
 ## Motion
 
-One curve, `--sc-ease-settle` (fast out, long quiet landing). Durations: 120ms hover, 200ms lifts, 360ms panels and tilt, 700ms reveals and sheen sweeps. Things glide and settle; nothing bounces. All durations drop to 0 under `prefers-reduced-motion`.
+Things should feel alive and expensive: light that moves, metal that catches it, content that settles in. One curve, `--sc-ease-settle` (fast out, long quiet landing). Durations: 120ms hover, 200ms lifts, 360ms panels, 700ms reveals. Nothing bounces, and everything stops under `prefers-reduced-motion`.
+
+`src/styles/motion.css` provides the primitives, all CSS, no library:
+
+| Class | What it does |
+| --- | --- |
+| `.sc-reveal` (with `style="--i: n"`) | Fades up from a soft blur, staggered 90ms per index. Headlines, cards, sections. |
+| `.sc-shimmer` | A highlight that sweeps across titanium type every 6s. |
+| `.sc-spotlight` | Soft light that follows the pointer; set `--mx`/`--my` from a pointermove handler. |
+| `.sc-grid` | A drifting hairline grid that fades at the edges. Put it inside a positioned hero. |
+| `.sc-aurora` | Slow, blurred platinum and champagne light behind a hero. |
+| `.sc-beam` | A point of light that runs around a card border on hover (`.is-live` keeps it on). |
+| `.sc-grain` | Film grain over the page so black never looks flat. Put it on `body`. |
+| `.sc-float`, `.sc-orbit`, `.sc-pulse` | Ambient loops for the hero mark and status dots. |
+
+`logo/mark-animated.svg` is the mark's intro: the plate settles in, the check draws short stroke then long, and a sheen crosses the plate every few seconds. Use it in the hero and loading states, never in the header.
+
+## Diagrams and infographics
+
+People learn by looking, so every guide should lead with a visual. `src/styles/diagrams.css` has pure-CSS components (no chart library, so pages stay fast), written mobile-first: each one is designed at 360px and widens at 48rem. Color any of them with `.is-ion`, `.is-jade`, `.is-champagne`, `.is-rose`, `.is-cyan` or `.is-amethyst`. A working example of every component is in [`examples/diagrams.html`](examples/diagrams.html).
+
+| Component | Use it for |
+| --- | --- |
+| `.sc-figure` + `figcaption` | The frame every diagram sits in. The caption names the source. |
+| `.sc-stats` / `.sc-stat` | Two to four big numbers. Two columns on phones. |
+| `.sc-steps` | A process (pitch, negotiate, invoice). Vertical on phones, horizontal on desktop. Mark the current one `.is-active`. |
+| `.sc-bars` / `.sc-bar` (`--v` 0–100) | Comparing amounts: income mix, rates by platform. Labels sit above bars so they never squeeze. Bars grow in on load. |
+| `.sc-donut` (`--v`) | One share of a whole. |
+| `.sc-compare` | Two options side by side: manager vs agent, flat fee vs rev share. Stacks on phones. |
+| `.sc-flow` | Who pays whom: nodes joined by a marching dashed line. Vertical on phones. |
+| `.sc-legend` | Chart keys with plate-shaped swatches. |
+
+Rules: one idea per figure, label values directly instead of making people read a legend, every number has a source in the caption, and use accents in chart order (ion, jade, champagne, rose, cyan, amethyst) so colors mean the same thing across the site.
+
+## Performance
+
+Mobile-first and fast is part of the brand. No chart, animation or icon libraries; everything here is CSS and inline SVG. Fonts are two variable files (Geist, Geist Mono). Animations use only `transform`, `opacity` and background position so they stay on the GPU. Logos are SVG under 10 KB.
 
 ## Components
 
 - **Buttons**: pill. Primary is ivory on black with a soft white glow; secondary is a hairline ghost.
-- **Cards**: near-black gradient panel, hairline border, lift 2px on hover with a brighter border.
+- **Cards**: near-black gradient panel, hairline border, lift 2px on hover with a brighter border and a `.sc-beam` of light around the edge.
 - **Eyebrow chip**: mono caps in a pill, with a small sage status dot.
-- **Member card**: the homepage hero. ISO card ratio 1.586, brushed-metal stripes, a sheen that follows the pointer. Use it for membership, newsletter and agency moments, never as decoration elsewhere.
+- **Plate**: the mark's chamfer as a clip-path (`--sc-plate-clip`) for step numbers, legend swatches, avatars and feature tiles.
 - **Asides**: neutral glass, signal color only on the left rule.
 - **Affiliate label**: brass mono pill next to every affiliate link.
 

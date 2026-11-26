@@ -1,0 +1,174 @@
+/*
+ * Select Creators motion system.
+ * Ambient, slow and expensive-feeling: light that moves, metal that catches it, content that settles in.
+ * Every effect is off under prefers-reduced-motion (bottom of file).
+ */
+
+@property --sc-angle {
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: false;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes sc-rise {
+	from { opacity: 0; transform: translateY(14px); filter: blur(8px); }
+	to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes sc-shimmer {
+	from { background-position: 180% 0; }
+	to { background-position: -80% 0; }
+}
+@keyframes sc-spin {
+	to { --sc-angle: 360deg; }
+}
+@keyframes sc-drift {
+	from { background-position: 0 0; }
+	to { background-position: 48px 48px; }
+}
+@keyframes sc-orbit {
+	to { transform: rotate(360deg); }
+}
+@keyframes sc-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-10px); }
+}
+@keyframes sc-aurora {
+	0% { transform: translate(-10%, -6%) scale(1); }
+	50% { transform: translate(8%, 6%) scale(1.15); }
+	100% { transform: translate(-10%, -6%) scale(1); }
+}
+@keyframes sc-pulse {
+	0%, 100% { opacity: 0.55; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.25); }
+}
+
+/* ---------- Reveal: content settles in, staggered by --i ---------- */
+.sc-reveal {
+	animation: sc-rise var(--sc-dur-slow) var(--sc-ease-settle) both;
+	animation-delay: calc(var(--i, 0) * 90ms + 80ms);
+}
+
+/* ---------- Shimmer: a highlight that travels across titanium type ---------- */
+.sc-shimmer {
+	background: linear-gradient(
+			100deg,
+			#8d8d8c 0%,
+			#c9c9c8 30%,
+			#ffffff 45%,
+			#c9c9c8 60%,
+			#8d8d8c 100%
+		)
+		0 0 / 250% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: sc-shimmer 6s var(--sc-ease-linear) infinite;
+}
+
+/* ---------- Spotlight: soft light that follows the pointer (set --mx/--my from JS) ---------- */
+.sc-spotlight {
+	position: relative;
+	isolation: isolate;
+}
+.sc-spotlight::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: radial-gradient(
+		600px circle at var(--mx, 70%) var(--my, 30%),
+		rgb(255 255 255 / 0.07),
+		transparent 60%
+	);
+	transition: background var(--sc-dur-base) var(--sc-ease-settle);
+}
+
+/* ---------- Grid: a hairline grid that drifts and fades out at the edges ---------- */
+.sc-grid {
+	position: absolute;
+	inset: 0;
+	z-index: -2;
+	pointer-events: none;
+	background-image:
+		linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+		linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+	background-size: 48px 48px;
+	mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+	animation: sc-drift 12s linear infinite;
+}
+
+/* ---------- Aurora: slow graphite and platinum light behind the hero ---------- */
+.sc-aurora {
+	position: absolute;
+	inset: -20%;
+	z-index: -3;
+	pointer-events: none;
+	background:
+		radial-gradient(40% 35% at 30% 30%, rgb(255 255 255 / 0.07), transparent 70%),
+		radial-gradient(35% 30% at 70% 60%, rgb(201 162 90 / 0.05), transparent 70%);
+	filter: blur(40px);
+	animation: sc-aurora 18s ease-in-out infinite;
+}
+
+/* ---------- Beam: a point of light that runs around a card's border ---------- */
+.sc-beam {
+	position: relative;
+}
+.sc-beam::after {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: conic-gradient(
+		from var(--sc-angle),
+		transparent 0deg,
+		transparent 290deg,
+		rgb(255 255 255 / 0.7) 330deg,
+		transparent 360deg
+	);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity var(--sc-dur-quick) var(--sc-ease-settle);
+	animation: sc-spin 3.2s linear infinite;
+	pointer-events: none;
+}
+.sc-beam:hover::after,
+.sc-beam.is-live::after {
+	opacity: 1;
+}
+
+/* ---------- Grain: film grain so black never looks flat ---------- */
+.sc-grain::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	pointer-events: none;
+	opacity: 0.05;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Float, orbit, pulse: for the hero mark ---------- */
+.sc-float { animation: sc-float 7s ease-in-out infinite; }
+.sc-orbit { animation: sc-orbit 60s linear infinite; }
+.sc-orbit--reverse { animation-direction: reverse; animation-duration: 90s; }
+.sc-pulse { animation: sc-pulse 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+	.sc-reveal,
+	.sc-shimmer,
+	.sc-grid,
+	.sc-aurora,
+	.sc-beam::after,
+	.sc-float,
+	.sc-orbit,
+	.sc-pulse {
+		animation: none !important;
+	}
+	.sc-reveal { opacity: 1; transform: none; filter: none; }
+}
