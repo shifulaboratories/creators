@@ -20,8 +20,8 @@ export default defineConfig({
 				{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
 			],
 			components: {
-				Hero: './src/components/Hero.astro',
 				ThemeSelect: './src/components/ThemeSelect.astro',
+				PageTitle: './src/components/PageTitle.astro',
 			},
 			social: [
 				{ icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/selectcreators/' },
@@ -29,7 +29,7 @@ export default defineConfig({
 			],
 			editLink: { baseUrl: `${REPO_URL}/edit/main/` },
 			lastUpdated: true,
-			customCss: ['./src/styles/custom.css'],
+			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
 			sidebar: [
 				{ label: 'Start here', link: '/' },
 				section('Grow', 'grow'),

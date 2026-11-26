@@ -1,0 +1,66 @@
+/*
+ * Guide pages: each section tints the page with its accent so the handbook
+ * reads as designed chapters, not a wiki.
+ */
+@import './sections.css';
+
+:root:has(.guide-head[data-section='grow']) { --accent: var(--sc-grow); }
+:root:has(.guide-head[data-section='earn']) { --accent: var(--sc-earn); }
+:root:has(.guide-head[data-section='deals']) { --accent: var(--sc-deals); }
+:root:has(.guide-head[data-section='team']) { --accent: var(--sc-team); }
+:root:has(.guide-head[data-section='stack']) { --accent: var(--sc-stack); }
+:root:has(.guide-head[data-section='protect']) { --accent: var(--sc-protect); }
+:root:has(.guide-head[data-section='underground']) { --accent: var(--sc-underground); }
+:root:has(.guide-head[data-section='news']) { --accent: var(--sc-news); }
+
+/* A soft glow of the section color behind the page header. */
+.main-frame {
+	background:
+		radial-gradient(900px 420px at 30% -120px, color-mix(in srgb, var(--accent, #fff) 12%, transparent), transparent 70%),
+		transparent;
+}
+.content-panel:first-of-type {
+	border-bottom: 0;
+}
+
+/* Wider reading rhythm. */
+.sl-markdown-content {
+	font-size: 1.0625rem;
+	line-height: var(--sc-leading-body);
+}
+.sl-markdown-content h2 {
+	margin-top: 2.75rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--sc-line);
+	font-size: var(--sc-text-2xl);
+	letter-spacing: -0.03em;
+}
+.sl-markdown-content :is(ul, ol) > li::marker {
+	color: var(--accent, var(--sc-steel));
+}
+
+/* Active page in the sidebar picks up the section color. */
+.sidebar-content a[aria-current='page'] {
+	box-shadow: inset 2px 0 0 var(--accent, var(--sc-ivory));
+}
+
+/* Diagrams sit in a framed panel with the section glow. */
+.sl-markdown-content .sc-figure {
+	margin-block: 2rem;
+}
+
+/* Gentle entrance for each page's content. */
+@media (prefers-reduced-motion: no-preference) {
+	.sl-markdown-content > * {
+		animation: sc-doc-in 600ms var(--sc-ease-settle) both;
+	}
+	.sl-markdown-content > :nth-child(2) { animation-delay: 40ms; }
+	.sl-markdown-content > :nth-child(3) { animation-delay: 80ms; }
+	.sl-markdown-content > :nth-child(n + 4) { animation-delay: 120ms; }
+}
+@keyframes sc-doc-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
