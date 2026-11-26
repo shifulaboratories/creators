@@ -1,0 +1,23 @@
+/*
+ * Section accents. Each handbook section owns one hue from the brand's jewel
+ * palette (tokens.css), used for its diagrams, icons and glows; never as a large fill.
+ */
+:root {
+	--sc-grow: var(--sc-jade);
+	--sc-earn: var(--sc-champagne);
+	--sc-deals: var(--sc-amethyst);
+	--sc-team: var(--sc-ion);
+	--sc-stack: var(--sc-cyan);
+	--sc-protect: var(--sc-rose);
+	--sc-underground: var(--sc-ember);
+	--sc-news: var(--sc-silver);
+}
+
+[data-section='grow'] { --accent: var(--sc-grow); }
+[data-section='earn'] { --accent: var(--sc-earn); }
+[data-section='deals'] { --accent: var(--sc-deals); }
+[data-section='team'] { --accent: var(--sc-team); }
+[data-section='stack'] { --accent: var(--sc-stack); }
+[data-section='protect'] { --accent: var(--sc-protect); }
+[data-section='underground'] { --accent: var(--sc-underground); }
+[data-section='news'] { --accent: var(--sc-news); }
