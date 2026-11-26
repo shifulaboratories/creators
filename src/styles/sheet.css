@@ -1,0 +1,316 @@
+/*
+ * Bottom sheets (src/scripts/sheet.ts) and the guide's action buttons.
+ * Phones: the sheet slides up from the bottom and can be dragged down.
+ * Larger screens: a small centered panel.
+ */
+dialog.sc-sheet {
+	--drag: 0px;
+	position: fixed;
+	inset: auto 0 0 0;
+	width: 100%;
+	max-width: 100%;
+	max-height: min(85dvh, 40rem);
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	overscroll-behavior: contain;
+	border: 1px solid var(--sc-line-strong);
+	border-bottom: 0;
+	border-radius: 26px 26px 0 0;
+	background: var(--sc-onyx);
+	color: var(--sc-platinum);
+	box-shadow: 0 -24px 60px -20px rgb(0 0 0 / 0.8);
+	transform: translateY(var(--drag));
+}
+dialog.sc-sheet::backdrop {
+	background: rgb(8 7 10 / 0.6);
+}
+.sc-sheet__body {
+	padding: 0.5rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+}
+.sc-sheet__grab {
+	display: block;
+	width: 100%;
+	padding: 0.6rem 0 0.9rem;
+	border: 0;
+	background: none;
+	cursor: grab;
+}
+.sc-sheet__grab::before {
+	content: '';
+	display: block;
+	width: 38px;
+	height: 5px;
+	margin: 0 auto;
+	border-radius: 99px;
+	background: rgb(255 255 255 / 0.22);
+}
+.sc-sheet__title {
+	margin: 0;
+	font: 700 1.25rem / 1.2 var(--sc-font-display);
+	letter-spacing: -0.01em;
+	color: var(--sc-ivory);
+}
+.sc-sheet__sub {
+	margin: 0.3rem 0 1.1rem;
+	font-size: 0.85rem;
+	line-height: 1.45;
+	color: var(--sc-silver);
+}
+.sc-sheet__close {
+	position: absolute;
+	top: 0.85rem;
+	right: 0.85rem;
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border: 0;
+	border-radius: 50%;
+	background: rgb(255 255 255 / 0.07);
+	color: var(--sc-ivory);
+	font-size: 1.2rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	dialog.sc-sheet[open] {
+		animation: sc-sheet-in 360ms cubic-bezier(0.2, 0.9, 0.25, 1) backwards;
+	}
+	dialog.sc-sheet[open]::backdrop {
+		animation: sc-fade-in 300ms ease both;
+	}
+	dialog.sc-sheet.is-closing {
+		animation: sc-sheet-out 220ms cubic-bezier(0.4, 0, 1, 1) both;
+	}
+	dialog.sc-sheet.is-closing::backdrop {
+		animation: sc-fade-in 220ms ease reverse both;
+	}
+	dialog.sc-sheet:not(.is-dragging) {
+		transition: transform 260ms cubic-bezier(0.2, 0.9, 0.25, 1);
+	}
+}
+@keyframes sc-sheet-in {
+	from {
+		transform: translateY(100%);
+	}
+}
+@keyframes sc-sheet-out {
+	to {
+		transform: translateY(calc(100% + var(--drag)));
+	}
+}
+@keyframes sc-fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@media (min-width: 40rem) {
+	dialog.sc-sheet {
+		inset: 0;
+		width: min(26rem, calc(100% - 2rem));
+		margin: auto;
+		height: fit-content;
+		border-bottom: 1px solid var(--sc-line-strong);
+		border-radius: 24px;
+		box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8);
+	}
+	.sc-sheet__grab {
+		visibility: hidden;
+		padding-bottom: 0.4rem;
+	}
+	.sc-sheet__body {
+		padding-bottom: 1.25rem;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		dialog.sc-sheet[open] {
+			animation-name: sc-pop-in;
+			animation-duration: 240ms;
+		}
+		dialog.sc-sheet.is-closing {
+			animation-name: sc-pop-out;
+			animation-duration: 160ms;
+		}
+	}
+}
+@keyframes sc-pop-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(0.97);
+	}
+}
+@keyframes sc-pop-out {
+	to {
+		opacity: 0;
+		transform: translateY(8px) scale(0.98);
+	}
+}
+
+/* Big tappable rows inside a sheet. */
+.sc-sheet__list {
+	display: grid;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-sheet__row {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	width: 100%;
+	min-height: 3.5rem;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--sc-line);
+	border-radius: 16px;
+	background: rgb(255 255 255 / 0.03);
+	color: var(--sc-ivory);
+	font: 600 0.95rem / 1.25 var(--sc-font-sans);
+	text-align: start;
+	text-decoration: none;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		background 0.15s,
+		border-color 0.15s,
+		transform 0.12s;
+}
+.sc-sheet__row:hover {
+	border-color: var(--sc-line-strong);
+	background: rgb(255 255 255 / 0.06);
+}
+.sc-sheet__row:active {
+	transform: scale(0.98);
+}
+.sc-sheet__row small {
+	display: block;
+	margin-top: 0.1rem;
+	font-weight: 400;
+	font-size: 0.78rem;
+	color: var(--sc-silver);
+}
+.sc-sheet__row .arrow {
+	margin-inline-start: auto;
+	color: var(--sc-steel);
+}
+.sc-sheet__row[hidden] {
+	display: none;
+}
+.sc-sheet__icon {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 12px;
+	background: rgb(255 255 255 / 0.07);
+	color: var(--sc-ivory);
+}
+.sc-sheet__icon svg {
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.sc-sheet__icon.is-fill svg {
+	fill: currentColor;
+	stroke: none;
+}
+.sc-sheet__row.is-primary {
+	border-color: transparent;
+	background: var(--sc-aurora);
+	color: #120d12;
+}
+.sc-sheet__row.is-primary small {
+	color: rgb(18 13 18 / 0.7);
+}
+.sc-sheet__row.is-primary .sc-sheet__icon {
+	background: rgb(18 13 18 / 0.12);
+	color: #120d12;
+}
+
+/* App tiles: a row of round icons, like a phone's share sheet. */
+.sc-sheet__apps {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.5rem;
+	margin: 1rem 0 0;
+	padding: 0;
+	list-style: none;
+}
+.sc-sheet__app {
+	display: grid;
+	justify-items: center;
+	gap: 0.35rem;
+	padding: 0.25rem 0;
+	color: var(--sc-silver);
+	font-size: 0.72rem;
+	font-weight: 500;
+	text-decoration: none;
+	-webkit-tap-highlight-color: transparent;
+}
+.sc-sheet__app .sc-sheet__icon {
+	width: 3rem;
+	height: 3rem;
+	border-radius: 50%;
+	border: 1px solid var(--sc-line);
+	transition: transform 0.12s;
+}
+.sc-sheet__app:active .sc-sheet__icon {
+	transform: scale(0.92);
+}
+.sc-sheet__app:hover {
+	color: var(--sc-ivory);
+}
+
+/* The two buttons under a guide's title: Ask AI and Share. */
+.ga-btn {
+	display: inline-flex;
+	flex: 1 1 0;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	min-height: 2.75rem;
+	padding: 0.55rem 1.1rem;
+	border: 1px solid var(--sc-line-strong);
+	border-radius: 999px;
+	background: rgb(255 255 255 / 0.04);
+	color: var(--sc-ivory);
+	font: 600 0.9rem / 1 var(--sc-font-sans);
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		background 0.15s,
+		border-color 0.15s,
+		transform 0.12s;
+}
+.ga-btn:hover {
+	border-color: var(--accent, var(--sc-ion));
+	background: color-mix(in srgb, var(--accent, var(--sc-ion)) 12%, transparent);
+}
+.ga-btn:active {
+	transform: scale(0.96);
+}
+.ga-btn svg {
+	width: 17px;
+	height: 17px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.ga-btn svg.is-fill {
+	fill: var(--sc-ion);
+	stroke: none;
+}
+@media (min-width: 40rem) {
+	.ga-btn {
+		flex: 0 0 auto;
+	}
+}

@@ -1,7 +1,10 @@
 ---
-// Guide header: colored section kicker, title, lead, and trust chips.
+// Guide header: colored section kicker, title, lead, trust chips, one "Ask AI"
+// and one "Share" button (each opens a sheet), and the three-point short version.
 import AskAI from './AskAI.astro';
 import ShareBar from './ShareBar.astro';
+import Tldr from './Tldr.astro';
+import { tldrFor } from '../data/tldr';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
 const { entry } = Astro.locals.starlightRoute;
@@ -10,6 +13,7 @@ const data = entry.data as typeof entry.data & {
 	confidence?: string;
 	authors?: string[];
 	lastReviewed?: Date;
+	tldr?: string[];
 };
 const section = entry.id.split('/')[0];
 const labels: Record<string, string> = {
@@ -27,6 +31,7 @@ const labels: Record<string, string> = {
 	goldmines: 'Goldmines',
 	about: 'About',
 };
+const tldr = tldrFor(entry.id, data.tldr);
 const statusText: Record<string, string> = { outline: 'Coming soon', draft: 'In progress', published: 'Fact-checked' };
 const confidenceText: Record<string, string> = {
 	verified: 'Sourced',
@@ -45,12 +50,20 @@ const confidenceText: Record<string, string> = {
 		{data.authors && data.authors.length > 0 && <li class="chip">By {data.authors.join(', ')}</li>}
 		{section === 'underground' && <li class="chip ember">No affiliate links</li>}
 	</ul>}
-	{entry.id !== 'guides' && (
-		<div class="ask">
-			<AskAI mdPath={`/${entry.id}.md`} title={data.title} />
+	{entry.id !== '404' && (
+		<div class="actions">
+			{entry.id !== 'guides' && <AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />}
+			<ShareBar title={data.title} description={data.description} section={section} />
 		</div>
 	)}
-	{entry.id !== '404' && <ShareBar title={data.title} description={data.description} section={section} />}
+	{tldr.length > 0 && <Tldr points={tldr} />}
+	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 }}>
+		// Tint the whole page with the section color, without :root:has() (slow on long pages).
+		const r = document.documentElement;
+		r.dataset.section = section;
+		if (hasTldr) r.dataset.tldr = '';
+		else delete r.dataset.tldr;
+	</script>
 </header>
 
 <style>
@@ -116,11 +129,10 @@ const confidenceText: Record<string, string> = {
 		color: var(--sc-jade);
 		border-color: color-mix(in srgb, var(--sc-jade) 45%, transparent);
 	}
-	.ask {
+	.actions {
+		display: flex;
+		gap: 0.5rem;
 		margin-top: 1.1rem;
-	}
-	.ask :global(.ai) {
-		margin: 0;
 	}
 	.ember {
 		color: var(--sc-ember);

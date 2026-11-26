@@ -1,0 +1,293 @@
+---
+/**
+ * End of a guide: a big "Up next" card and a smaller way back, in the same
+ * order as the sidebar. On phones you can also swipe sideways anywhere in the
+ * guide: left for the next one, right for the previous one.
+ */
+import { getCollection } from 'astro:content';
+import { SECTION_LABELS } from '../lib/share';
+
+const { pagination } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+
+const docs = await getCollection('docs');
+const titles = new Map(docs.map((d) => [`/${d.id}/`.replace('//', '/'), d.data.title]));
+const describe = (link: typeof prev) => {
+	if (!link) return undefined;
+	const path = new URL(link.href, 'https://x.test').pathname;
+	const section = path.split('/')[1] || '';
+	return {
+		href: link.href,
+		title: titles.get(path) ?? link.label,
+		section,
+		kicker: SECTION_LABELS[section],
+	};
+};
+const p = describe(prev);
+const n = describe(next);
+---
+
+{
+	(p || n) && (
+		<nav class="pager print:hidden" aria-label="More guides" data-pager data-prev={p?.href} data-next={n?.href}>
+			{n && (
+				<a class="next" href={n.href} rel="next" data-section={n.section} data-astro-prefetch="viewport">
+					<span class="eyebrow">Up next{n.kicker && <> · {n.kicker}</>}</span>
+					<span class="title">{n.title}</span>
+					<span class="go" aria-hidden="true">
+						<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+					</span>
+				</a>
+			)}
+			{p && (
+				<a class="prev" href={p.href} rel="prev" data-astro-prefetch="viewport">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+					<span>
+						<span class="eyebrow">Back</span>
+						<span class="ptitle">{p.title}</span>
+					</span>
+				</a>
+			)}
+			<p class="hint" data-swipe-hint hidden>Tip: swipe sideways anywhere to flip between guides.</p>
+		</nav>
+	)
+}
+<div class="swipe-pill" data-swipe-pill aria-hidden="true"><span></span></div>
+
+<script>
+	// Sideways swipe to the next or previous guide (touch screens only).
+	const pager = document.querySelector<HTMLElement>('[data-pager]');
+	const pill = document.querySelector<HTMLElement>('[data-swipe-pill]');
+	const nextHref = pager?.dataset.next;
+	const prevHref = pager?.dataset.prev;
+	const touch = matchMedia('(pointer: coarse)').matches;
+
+	if (pager && pill && touch && (nextHref || prevHref)) {
+		pager.querySelector<HTMLElement>('[data-swipe-hint]')!.hidden = false;
+		const label = pill.querySelector('span')!;
+		const title = (rel: string) => pager.querySelector(`[rel="${rel}"] :is(.title, .ptitle)`)?.textContent ?? '';
+		const EDGE = 24; // leave the screen edges to the browser's own back/forward swipe
+		const GO = 90;
+		let x0 = 0;
+		let y0 = 0;
+		let t0 = 0;
+		let dx = 0;
+		let state: 'idle' | 'maybe' | 'swipe' | 'scroll' = 'idle';
+
+		// Anything that scrolls sideways or handles its own drags keeps the gesture.
+		const ownsGesture = (el: Element | null) => {
+			for (let n = el; n && n !== document.body; n = n.parentElement) {
+				if (n.matches('input, textarea, select, [contenteditable], dialog, [data-no-swipe], .tabbar, header, nav.sidebar')) return true;
+				if (n.scrollWidth > n.clientWidth + 2) {
+					const o = getComputedStyle(n).overflowX;
+					if (o === 'auto' || o === 'scroll') return true;
+				}
+			}
+			return false;
+		};
+
+		const reset = () => {
+			state = 'idle';
+			pill.classList.remove('on', 'ready', 'left', 'right');
+			pill.style.removeProperty('--dx');
+		};
+
+		addEventListener(
+			'touchstart',
+			(e) => {
+				if (e.touches.length !== 1 || document.querySelector('dialog[open]') || document.body.hasAttribute('data-mobile-menu-expanded')) return;
+				const t = e.touches[0];
+				if (t.clientX < EDGE || t.clientX > innerWidth - EDGE) return;
+				if (ownsGesture(e.target as Element)) return;
+				if (getSelection()?.toString()) return;
+				x0 = t.clientX;
+				y0 = t.clientY;
+				t0 = performance.now();
+				dx = 0;
+				state = 'maybe';
+			},
+			{ passive: true },
+		);
+		addEventListener(
+			'touchmove',
+			(e) => {
+				if (state === 'idle' || state === 'scroll') return;
+				const t = e.touches[0];
+				dx = t.clientX - x0;
+				const dy = t.clientY - y0;
+				if (state === 'maybe') {
+					if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) return void (state = 'scroll');
+					if (Math.abs(dx) < 14 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+					const href = dx < 0 ? nextHref : prevHref;
+					if (!href) return void (state = 'scroll');
+					state = 'swipe';
+					label.textContent = dx < 0 ? `Next: ${title('next')}` : `Back: ${title('prev')}`;
+					pill.classList.add('on', dx < 0 ? 'left' : 'right');
+				}
+				pill.style.setProperty('--dx', `${dx}px`);
+				pill.classList.toggle('ready', Math.abs(dx) > GO);
+			},
+			{ passive: true },
+		);
+		const end = () => {
+			if (state !== 'swipe') return reset();
+			const fast = Math.abs(dx) > 50 && Math.abs(dx) / (performance.now() - t0) > 0.6;
+			const href = dx < 0 ? nextHref : prevHref;
+			if (href && (Math.abs(dx) > GO || fast)) {
+				try {
+					sessionStorage.setItem('sc-nav', dx < 0 ? 'forward' : 'back');
+				} catch {}
+				pill.classList.add('ready');
+				location.href = href;
+				setTimeout(reset, 600);
+			} else reset();
+		};
+		addEventListener('touchend', end);
+		addEventListener('touchcancel', reset);
+		addEventListener('pageshow', reset);
+	}
+
+	// Tapping the cards counts as a direction too, for the page transition.
+	pager?.addEventListener('click', (e) => {
+		const a = (e.target as Element).closest('a[rel]');
+		if (!a) return;
+		try {
+			sessionStorage.setItem('sc-nav', a.getAttribute('rel') === 'next' ? 'forward' : 'back');
+		} catch {}
+	});
+</script>
+
+<style>
+	.pager {
+		display: grid;
+		gap: 0.6rem;
+		margin-top: 1rem;
+	}
+	a {
+		text-decoration: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.next {
+		position: relative;
+		display: grid;
+		gap: 0.35rem;
+		padding: 1.25rem 4.5rem 1.35rem 1.25rem;
+		border-radius: 24px;
+		border: 1px solid color-mix(in srgb, var(--accent, var(--sc-ion)) 40%, transparent);
+		background:
+			radial-gradient(120% 160% at 100% 100%, color-mix(in srgb, var(--accent, var(--sc-ion)) 22%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.03);
+		color: var(--sc-ivory);
+		transition:
+			transform 0.15s,
+			border-color 0.2s;
+	}
+	.next:hover {
+		border-color: var(--accent, var(--sc-ion));
+	}
+	.next:active,
+	.prev:active {
+		transform: scale(0.98);
+	}
+	.eyebrow {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--accent, var(--sc-ion));
+	}
+	.title {
+		font: 700 clamp(1.35rem, 5vw, 1.75rem) / 1.12 var(--sc-font-display);
+		letter-spacing: -0.02em;
+	}
+	.go {
+		position: absolute;
+		right: 1.1rem;
+		top: 50%;
+		translate: 0 -50%;
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border-radius: 50%;
+		background: var(--accent, var(--sc-ion));
+		color: #0b0b0b;
+	}
+	svg {
+		width: 20px;
+		height: 20px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		flex: none;
+	}
+	.prev {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.85rem 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		color: var(--sc-silver);
+		transition: transform 0.15s;
+	}
+	.prev .eyebrow {
+		display: block;
+		color: var(--sc-steel);
+	}
+	.ptitle {
+		color: var(--sc-platinum);
+		font-weight: 600;
+	}
+	.hint {
+		margin: 0.25rem 0 0;
+		text-align: center;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+
+	/* The pill that follows your thumb while you swipe. */
+	.swipe-pill {
+		--dx: 0px;
+		position: fixed;
+		z-index: 60;
+		top: 50%;
+		max-width: min(70vw, 18rem);
+		padding: 0.6rem 0.95rem;
+		border-radius: 999px;
+		background: rgb(20 18 22 / 0.94);
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		font-size: 0.82rem;
+		font-weight: 600;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.8);
+		opacity: 0;
+		pointer-events: none;
+		translate: 0 -50%;
+	}
+	.swipe-pill span {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.swipe-pill.left {
+		right: 0.75rem;
+		transform: translateX(calc(max(var(--dx) * 0.6, -60px) + 60px));
+	}
+	.swipe-pill.right {
+		left: 0.75rem;
+		transform: translateX(calc(min(var(--dx) * 0.6, 60px) - 60px));
+	}
+	.swipe-pill.on {
+		opacity: 0.75;
+	}
+	.swipe-pill.ready {
+		opacity: 1;
+		background: var(--sc-aurora);
+		color: #120d12;
+		border-color: transparent;
+	}
+</style>

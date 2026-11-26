@@ -21,6 +21,8 @@ const docs = defineCollection({
 			noAffiliates: z.boolean().default(false),
 			// Optional generated cover: big word and color key (see src/styles/sections.css).
 			cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
+			// "The short version": up to three points shown above the guide (or see src/data/tldr.ts).
+			tldr: z.array(z.string().max(160)).max(3).optional(),
 		}),
 	}),
 });
