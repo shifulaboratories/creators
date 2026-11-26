@@ -1,0 +1,298 @@
+---
+/** Searchable clause library: what each clause means, what's normal, the red flag, and wording to ask for instead. */
+import { clauses, cats, sources } from '../../lib/money-data';
+const riskText = { high: 'Big deal', medium: 'Worth a push', low: 'Usually fine' };
+---
+
+<div class="sc-widget cl not-content" data-section="deals" data-cl>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Clause library</div>
+			<h4 class="sc-widget__title">{clauses.length} clauses, decoded</h4>
+		</div>
+	</div>
+	<label class="cl-search">
+		<span class="sr-only">Search clauses</span>
+		<input type="search" placeholder="Search: perpetuity, whitelisting, Net 90…" data-q />
+	</label>
+	<div class="sc-chip-row cl-cats" role="group" aria-label="Filter by type">
+		<button type="button" class="sc-chip" data-cat="" aria-pressed="true">All</button>
+		{
+			Object.entries(cats).map(([k, v]) => (
+				<button type="button" class="sc-chip" data-cat={k} aria-pressed="false">
+					{v}
+				</button>
+			))
+		}
+	</div>
+
+	<div class="cl-list" data-list>
+		{
+			clauses.map((c) => (
+				<details class={`cl-card is-${c.risk}`} id={`clause-${c.key}`} data-cat-of={c.cat} data-text={`${c.name} ${c.plain} ${c.flag} ${c.bad} ${c.fix}`.toLowerCase()}>
+					<summary>
+						<span class="cl-name">{c.name}</span>
+						<span class="cl-risk">{riskText[c.risk]}</span>
+						<span class="cl-plain">{c.plain}</span>
+					</summary>
+					<div class="cl-body">
+						<div class="cl-cols">
+							<div class="cl-col is-ok">
+								<h6>Normal</h6>
+								<p>{c.normal}</p>
+							</div>
+							<div class="cl-col is-flag">
+								<h6>Red flag</h6>
+								<p>{c.flag}</p>
+							</div>
+						</div>
+						<div class="cl-words">
+							<h6>If you see wording like this</h6>
+							<blockquote class="cl-bad">{c.bad}</blockquote>
+							<h6>Ask for something like this</h6>
+							<blockquote class="cl-fix">{c.fix}</blockquote>
+							<button type="button" class="cl-copy" data-copy={c.fix}>
+								Copy the fix
+							</button>
+						</div>
+						<p class="cl-ask">
+							<b>Ask the brand:</b> “{c.ask}”
+						</p>
+						{c.srcs.length > 0 ? (
+							<p class="cl-src">
+								Based on:{' '}
+								{c.srcs.map((s, i) => (
+									<>
+										{i > 0 && ' · '}
+										<a href={sources[s].url} rel="noopener">
+											{sources[s].publisher}
+										</a>
+									</>
+								))}
+							</p>
+						) : (
+							<p class="cl-src">
+								<span class="sc-tag is-practitioner">Creator-tested</span> common practice, not from a single source.
+							</p>
+						)}
+					</div>
+				</details>
+			))
+		}
+	</div>
+	<p class="cl-empty" data-empty hidden>No clause matches that. Try “usage”, “payment” or “exclusive”.</p>
+	<p class="sc-widget__note">Educational information, not legal advice. Sample wording is a starting point for a conversation, not a drop-in clause. Laws differ by state and country.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-cl]').forEach((root) => {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const cards = [...root.querySelectorAll<HTMLDetailsElement>('.cl-card')];
+		let cat = '';
+		const apply = () => {
+			const term = q.value.trim().toLowerCase();
+			let shown = 0;
+			cards.forEach((c) => {
+				const ok = (!cat || c.dataset.catOf === cat) && (!term || c.dataset.text!.includes(term));
+				c.hidden = !ok;
+				if (ok) shown++;
+			});
+			root.querySelector<HTMLElement>('[data-empty]')!.hidden = shown > 0;
+		};
+		q.addEventListener('input', apply);
+		root.querySelector('.cl-cats')!.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cat]');
+			if (!b) return;
+			cat = b.dataset.cat!;
+			root.querySelectorAll<HTMLButtonElement>('[data-cat]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+			apply();
+		});
+		root.addEventListener('click', async (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+			if (!b) return;
+			try {
+				await navigator.clipboard.writeText(b.dataset.copy!);
+				b.textContent = 'Copied';
+			} catch {
+				b.textContent = 'Copy failed';
+			}
+			setTimeout(() => (b.textContent = 'Copy the fix'), 1600);
+		});
+		// open a clause linked by #clause-key
+		const open = () => {
+			const el = location.hash && root.querySelector<HTMLDetailsElement>(location.hash);
+			if (el) el.open = true;
+		};
+		window.addEventListener('hashchange', open);
+		open();
+	});
+</script>
+
+<style>
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+	.cl-search input {
+		width: 100%;
+		padding: 0.7rem 0.9rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-carbon);
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 0.92rem;
+	}
+	.cl-search input:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 1px;
+	}
+	.cl-cats {
+		margin: 0.75rem 0 1rem;
+	}
+	.cl-list {
+		display: grid;
+		gap: 0.55rem;
+	}
+	.cl-card {
+		--r: var(--sc-champagne);
+		border: 1px solid var(--sc-line);
+		border-radius: 14px;
+		background: rgb(255 255 255 / 0.02);
+		scroll-margin-top: 5rem;
+	}
+	.cl-card.is-high {
+		--r: var(--sc-rose);
+	}
+	.cl-card.is-low {
+		--r: var(--sc-jade);
+	}
+	.cl-card[open] {
+		border-color: color-mix(in srgb, var(--r) 45%, transparent);
+	}
+	.cl-card summary {
+		list-style: none;
+		cursor: pointer;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.2rem 0.75rem;
+		padding: 0.85rem 0.95rem;
+	}
+	.cl-card summary::-webkit-details-marker {
+		display: none;
+	}
+	.cl-name {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.cl-risk {
+		align-self: start;
+		font-size: 0.66rem;
+		font-weight: 600;
+		padding: 0.12rem 0.5rem;
+		border-radius: 999px;
+		color: #111;
+		background: var(--r);
+		white-space: nowrap;
+	}
+	.cl-plain {
+		grid-column: 1 / -1;
+		font-size: 0.83rem;
+		color: var(--sc-silver);
+		line-height: 1.45;
+	}
+	.cl-body {
+		padding: 0 0.95rem 1rem;
+		display: grid;
+		gap: 0.8rem;
+	}
+	.cl-cols {
+		display: grid;
+		gap: 0.5rem;
+	}
+	@media (min-width: 40rem) {
+		.cl-cols {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.cl-col {
+		padding: 0.7rem 0.8rem;
+		border-radius: 10px;
+		background: var(--t);
+	}
+	.cl-col.is-ok {
+		--c: var(--sc-jade);
+		--t: var(--sc-jade-tint);
+	}
+	.cl-col.is-flag {
+		--c: var(--sc-rose);
+		--t: var(--sc-rose-tint);
+	}
+	h6 {
+		margin: 0 0 0.25rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--c, var(--sc-steel));
+	}
+	.cl-col p {
+		margin: 0;
+		font-size: 0.84rem;
+		line-height: 1.5;
+		color: var(--sc-platinum);
+	}
+	.cl-words blockquote {
+		margin: 0 0 0.7rem;
+		padding: 0.6rem 0.75rem;
+		border-radius: 8px;
+		font-family: Georgia, 'Times New Roman', serif;
+		font-size: 0.86rem;
+		line-height: 1.5;
+	}
+	.cl-bad {
+		color: var(--sc-silver);
+		background: rgb(255 134 184 / 0.06);
+		text-decoration: line-through;
+		text-decoration-color: color-mix(in srgb, var(--sc-rose) 75%, transparent);
+	}
+	.cl-fix {
+		color: var(--sc-ivory);
+		background: rgb(95 227 176 / 0.08);
+		border-left: 2px solid var(--sc-jade);
+	}
+	.cl-copy {
+		appearance: none;
+		font: inherit;
+		font-size: 0.78rem;
+		font-weight: 600;
+		padding: 0.4rem 0.8rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-ivory);
+		cursor: pointer;
+	}
+	.cl-ask {
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--sc-platinum);
+	}
+	.cl-ask b {
+		color: var(--accent);
+	}
+	.cl-src {
+		margin: 0;
+		font-size: 0.74rem;
+		color: var(--sc-steel);
+	}
+	.cl-src a {
+		color: var(--sc-silver);
+	}
+	.cl-empty {
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+	}
+</style>

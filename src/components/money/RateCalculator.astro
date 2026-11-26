@@ -1,0 +1,467 @@
+---
+/**
+ * Rate check: pick a platform, format and follower count, see every published
+ * benchmark that covers you on one log scale, then add priced extras and copy a quote.
+ * Only uses figures in src/lib/money-data.ts (bands, marketAverage, addOns).
+ */
+import { bands, formats, marketAverage, addOns, sources } from '../../lib/money-data';
+const srcShort: Record<string, string> = { imh: 'Influencer Marketing Hub, 2026', later26: 'Later, 2026', later25: 'Later creator survey, 2025', collabstr: 'Collabstr, deals in 2025' };
+const payload = { bands, formats, marketAverage, addOns, srcShort, srcUrl: Object.fromEntries(Object.values(sources).map((s) => [s.id, s.url])) };
+---
+
+<div class="sc-widget rc not-content" data-section="earn" data-rc data-payload={JSON.stringify(payload)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Rate check</div>
+			<h4 class="sc-widget__title">What the published rate data says you can charge</h4>
+		</div>
+	</div>
+
+	<div class="rc-controls">
+		<div class="sc-chip-row" role="group" aria-label="Platform" data-group="platform">
+			<button type="button" class="sc-chip" data-v="instagram" aria-pressed="true">Instagram</button>
+			<button type="button" class="sc-chip" data-v="tiktok" aria-pressed="false">TikTok</button>
+			<button type="button" class="sc-chip" data-v="youtube" aria-pressed="false">YouTube</button>
+		</div>
+		<div class="sc-chip-row" role="group" aria-label="Format" data-group="format"></div>
+		<label class="rc-field">
+			<span>Followers <b data-out="followers">25K</b></span>
+			<input class="sc-range" type="range" min="0" max="1000" value="378" data-in="followers" aria-label="Followers" />
+			<span class="rc-ticks" aria-hidden="true"><i>1K</i><i>10K</i><i>100K</i><i>1M</i><i>5M</i></span>
+		</label>
+	</div>
+
+	<div class="rc-result" aria-live="polite">
+		<div class="rc-big">
+			<span class="rc-label">Middle of the published ranges</span>
+			<span class="rc-num" data-out="range">$500–$1,000</span>
+			<span class="rc-sub" data-out="sub"></span>
+		</div>
+	</div>
+
+	<div class="rc-chart" data-chart role="img" aria-label="Published rate ranges on a log scale"></div>
+	<div class="rc-axis" aria-hidden="true"><i>$10</i><i>$100</i><i>$1K</i><i>$10K</i><i>$100K</i></div>
+
+	<fieldset class="rc-adds">
+		<legend>What else is the brand asking for?</legend>
+		<div data-adds></div>
+	</fieldset>
+
+	<div class="rc-quote">
+		<div class="rc-total">
+			<span>Your quote range</span>
+			<b data-out="total">$500–$1,000</b>
+		</div>
+		<button type="button" class="rc-copy" data-copy>Copy as a quote</button>
+	</div>
+	<p class="sc-widget__note">
+		Every bar is a range a publisher printed, for the tier your follower count falls in. The headline is the median of their low ends to the median of their high ends. Sources don’t agree, so treat this as a starting point: a tight niche, strong engagement or a heavy brief all move it up. On TikTok, brands often price on your average views, not followers. Sources are listed at the bottom of this page.
+	</p>
+</div>
+
+<script>
+	type Band = { src: string; label: string; min: number; max: number | null; lo: number; hi: number | null };
+	type Add = { key: string; label: string; help: string; lo: number | null; hi: number | null; src: string };
+	type Payload = {
+		bands: Record<string, Record<string, Band[]>>;
+		formats: Record<string, { key: string; label: string }[]>;
+		marketAverage: Record<string, number>;
+		addOns: Add[];
+		srcShort: Record<string, string>;
+		srcUrl: Record<string, string>;
+	};
+	const money = (n: number) => '$' + (n >= 10000 ? Math.round(n / 100) * 100 : n >= 1000 ? Math.round(n / 50) * 50 : Math.round(n / 5) * 5).toLocaleString('en-US');
+	const short = (n: number) => (n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n));
+	const median = (xs: number[]) => {
+		const s = [...xs].sort((a, b) => a - b);
+		const m = s.length >> 1;
+		return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+	};
+	// log scale $10 … $100K → 0 … 100
+	const pos = (v: number) => Math.max(0, Math.min(100, ((Math.log10(v) - 1) / 4) * 100));
+	// slider 0…1000 → 1K…5M, log
+	const toFollowers = (x: number) => Math.round(Math.pow(10, 3 + (x / 1000) * Math.log10(5000)));
+
+	document.querySelectorAll<HTMLElement>('[data-rc]').forEach((root) => {
+		const P: Payload = JSON.parse(root.dataset.payload!);
+		const st = { platform: 'instagram', format: 'reel', followers: 25000, adds: new Set<string>(), excl: 0 };
+		const fmtRow = root.querySelector<HTMLElement>('[data-group="format"]')!;
+		const chart = root.querySelector<HTMLElement>('[data-chart]')!;
+		const out = (k: string) => root.querySelector<HTMLElement>(`[data-out="${k}"]`)!;
+		const slider = root.querySelector<HTMLInputElement>('[data-in="followers"]')!;
+
+		// add-ons
+		const addsBox = root.querySelector<HTMLElement>('[data-adds]')!;
+		addsBox.innerHTML = P.addOns
+			.map(
+				(a) => `<label class="rc-add">
+					<input type="checkbox" data-add="${a.key}">
+					<span class="rc-add__text"><b>${a.label}</b><small>${a.help}</small></span>
+					<span class="rc-add__val" data-addval="${a.key}">${a.lo === null ? '<input type="number" inputmode="numeric" min="0" step="50" placeholder="$ yours" data-excl aria-label="Your exclusivity fee in dollars">' : `+${a.lo * 100}–${a.hi! * 100}%`}</span>
+					${a.src ? `<a class="rc-add__src" href="${P.srcUrl[a.src]}" rel="noopener">${P.srcShort[a.src] ?? 'Source'}</a>` : '<span class="rc-add__src">No published number</span>'}
+				</label>`,
+			)
+			.join('');
+
+		const current = () => {
+			const list = P.bands[st.platform][st.format] ?? [];
+			return list.filter((b) => st.followers >= b.min && (b.max === null || st.followers < b.max));
+		};
+
+		let base: [number, number] = [0, 0];
+		let total: [number, number] = [0, 0];
+		const lines: string[] = [];
+
+		const render = () => {
+			// format chips
+			const fl = P.formats[st.platform];
+			if (!fl.some((f) => f.key === st.format)) st.format = fl[0].key;
+			fmtRow.innerHTML = fl.map((f) => `<button type="button" class="sc-chip" data-v="${f.key}" aria-pressed="${f.key === st.format}">${f.label}</button>`).join('');
+			fmtRow.hidden = fl.length < 2;
+			root.querySelectorAll<HTMLButtonElement>('[data-group="platform"] [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === st.platform)));
+			out('followers').textContent = short(st.followers);
+			slider.style.setProperty('--fill', (+slider.value / 10).toFixed(1) + '%');
+
+			const hits = current();
+			const avg = P.marketAverage[st.platform];
+			if (!hits.length) {
+				out('range').textContent = 'No published range';
+				out('sub').textContent = 'No source we trust prints a figure for this format at this size yet. Try another format.';
+				chart.innerHTML = '';
+				base = [0, 0];
+			} else {
+				const lo = median(hits.map((h) => h.lo));
+				const his = hits.map((h) => h.hi).filter((h): h is number => h !== null);
+				const hi = his.length ? Math.max(lo, median(his)) : lo;
+				base = [lo, hi];
+				out('range').textContent = his.length ? `${money(lo)}–${money(hi)}` : `${money(lo)}+`;
+				out('sub').textContent = `per ${fl.find((f) => f.key === st.format)!.label.toLowerCase()}, from ${hits.length} published range${hits.length > 1 ? 's' : ''}`;
+				chart.innerHTML =
+					hits
+						.map((h, i) => {
+							const a = pos(h.lo);
+							const b = h.hi === null ? 100 : pos(h.hi);
+							return `<div class="rc-row" style="--i:${i}">
+								<span class="rc-row__label"><a href="${P.srcUrl[h.src]}" rel="noopener">${P.srcShort[h.src]}</a> · ${h.label}</span>
+								<span class="rc-track"><span class="rc-band${h.hi === null ? ' is-open' : ''}" style="left:${a}%;width:${Math.max(1.5, b - a)}%"></span></span>
+								<span class="rc-row__val">${money(h.lo)}–${h.hi === null ? 'and up' : money(h.hi)}</span>
+							</div>`;
+						})
+						.join('') +
+					`<div class="rc-row is-avg">
+						<span class="rc-row__label"><a href="${P.srcUrl.collabstr}" rel="noopener">${P.srcShort.collabstr}</a> · average deal, all sizes</span>
+						<span class="rc-track"><span class="rc-dot" style="left:${pos(avg)}%"></span></span>
+						<span class="rc-row__val">${money(avg)}</span>
+					</div>`;
+			}
+
+			// add-ons
+			lines.length = 0;
+			total = [...base] as [number, number];
+			lines.push(`${fl.find((f) => f.key === st.format)!.label} on my ${st.platform === 'youtube' ? 'YouTube channel' : st.platform === 'tiktok' ? 'TikTok' : 'Instagram'}: ${money(base[0])}–${money(base[1])}`);
+			P.addOns.forEach((a) => {
+				const on = st.adds.has(a.key);
+				const val = root.querySelector<HTMLElement>(`[data-addval="${a.key}"]`)!;
+				if (a.lo === null) {
+					if (on && st.excl > 0) {
+						total[0] += st.excl;
+						total[1] += st.excl;
+						lines.push(`${a.label}: ${money(st.excl)}`);
+					} else if (on) lines.push(`${a.label}: quoted separately`);
+					return;
+				}
+				const add: [number, number] = [base[0] * a.lo, base[1] * a.hi!];
+				if (on) {
+					total[0] += add[0];
+					total[1] += add[1];
+					lines.push(`${a.label}: +${money(add[0])}–${money(add[1])}`);
+					val.textContent = `+${money(add[0])}–${money(add[1])}`;
+				} else val.textContent = `+${a.lo * 100}–${a.hi! * 100}%`;
+			});
+			out('total').textContent = base[0] ? `${money(total[0])}–${money(total[1])}` : '—';
+		};
+
+		root.querySelector('[data-group="platform"]')!.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-v]');
+			if (!b) return;
+			st.platform = b.dataset.v!;
+			render();
+		});
+		fmtRow.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-v]');
+			if (!b) return;
+			st.format = b.dataset.v!;
+			render();
+		});
+		slider.addEventListener('input', () => {
+			st.followers = toFollowers(+slider.value);
+			render();
+		});
+		addsBox.addEventListener('change', (e) => {
+			const t = e.target as HTMLInputElement;
+			if (t.dataset.add) t.checked ? st.adds.add(t.dataset.add) : st.adds.delete(t.dataset.add);
+			render();
+		});
+		addsBox.addEventListener('input', (e) => {
+			const t = e.target as HTMLInputElement;
+			if (t.hasAttribute('data-excl')) {
+				st.excl = Math.max(0, +t.value || 0);
+				const box = addsBox.querySelector<HTMLInputElement>('[data-add="excl"]')!;
+				if (st.excl > 0 && !box.checked) {
+					box.checked = true;
+					st.adds.add('excl');
+				}
+				render();
+			}
+		});
+		root.querySelector<HTMLButtonElement>('[data-copy]')!.addEventListener('click', async (e) => {
+			const btn = e.currentTarget as HTMLButtonElement;
+			const text = `Quote\n\n${lines.map((l) => '• ' + l).join('\n')}\n\nTotal: ${money(total[0])}–${money(total[1])}\nPayment: 50% on signature, balance Net 30 from posting.\nIncludes 2 rounds of revisions.`;
+			try {
+				await navigator.clipboard.writeText(text);
+				btn.textContent = 'Copied';
+			} catch {
+				btn.textContent = 'Copy failed';
+			}
+			setTimeout(() => (btn.textContent = 'Copy as a quote'), 1800);
+		});
+		render();
+	});
+</script>
+
+<style>
+	.rc-controls {
+		display: grid;
+		gap: 0.7rem;
+	}
+	.rc-field {
+		display: grid;
+		gap: 0.1rem;
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+		margin-top: 0.3rem;
+	}
+	.rc-field b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.rc-ticks,
+	.rc-axis {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.68rem;
+		color: var(--sc-steel);
+		font-style: normal;
+	}
+	.rc-ticks i,
+	.rc-axis i {
+		font-style: normal;
+	}
+	.rc-result {
+		margin: 1.1rem 0 0.9rem;
+		padding: 1rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+	}
+	.rc-big {
+		display: grid;
+		gap: 0.2rem;
+	}
+	.rc-label {
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	.rc-num {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: clamp(1.8rem, 8vw, 2.6rem);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.rc-sub {
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.rc-chart {
+		display: grid;
+		gap: 0.7rem;
+	}
+	:global(.rc-row) {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.25rem 0.75rem;
+		align-items: center;
+		animation: rc-in 0.35s ease both;
+		animation-delay: calc(var(--i, 0) * 50ms);
+	}
+	:global(.rc-row__label) {
+		font-size: 0.74rem;
+		color: var(--sc-silver);
+		min-width: 0;
+	}
+	:global(.rc-row__label a) {
+		color: var(--sc-platinum);
+		text-decoration-color: var(--sc-line-strong);
+	}
+	:global(.rc-row__val) {
+		font-size: 0.74rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+	:global(.rc-track) {
+		grid-column: 1 / -1;
+		position: relative;
+		height: 10px;
+		border-radius: 999px;
+		background: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.08) 0 1px, transparent 1px 25%), rgb(255 255 255 / 0.04);
+	}
+	:global(.rc-band) {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--sc-champagne), var(--sc-rose));
+		box-shadow: 0 0 14px -2px color-mix(in srgb, var(--sc-rose) 70%, transparent);
+	}
+	:global(.rc-band.is-open) {
+		background: linear-gradient(90deg, var(--sc-champagne), color-mix(in srgb, var(--sc-rose) 10%, transparent));
+	}
+	:global(.rc-dot) {
+		position: absolute;
+		top: 50%;
+		width: 12px;
+		height: 12px;
+		margin-left: -6px;
+		transform: translateY(-50%);
+		border-radius: 50%;
+		background: var(--sc-ivory);
+		box-shadow: 0 0 0 3px rgb(0 0 0 / 0.5);
+	}
+	:global(.rc-row.is-avg .rc-row__label) {
+		color: var(--sc-steel);
+	}
+	.rc-axis {
+		margin-top: 0.4rem;
+	}
+	@keyframes rc-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+	}
+	.rc-adds {
+		margin: 1.3rem 0 0;
+		padding: 0;
+		border: 0;
+	}
+	.rc-adds legend {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+		font-size: 0.95rem;
+		margin-bottom: 0.6rem;
+	}
+	.rc-adds [data-adds] {
+		display: grid;
+		gap: 0.5rem;
+	}
+	:global(.rc-add) {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 0.15rem 0.7rem;
+		align-items: center;
+		padding: 0.7rem 0.8rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.02);
+		cursor: pointer;
+		transition: border-color 0.2s, background 0.2s;
+	}
+	:global(.rc-add:has(input[type='checkbox']:checked)) {
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
+	}
+	:global(.rc-add input[type='checkbox']) {
+		width: 1.1rem;
+		height: 1.1rem;
+		accent-color: var(--accent);
+	}
+	:global(.rc-add__text) {
+		display: grid;
+		font-size: 0.85rem;
+		color: var(--sc-ivory);
+		min-width: 0;
+	}
+	:global(.rc-add__text small) {
+		color: var(--sc-silver);
+		font-size: 0.75rem;
+	}
+	:global(.rc-add__val) {
+		font-size: 0.8rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+	:global(.rc-add__val input) {
+		width: 6.5rem;
+		padding: 0.35rem 0.5rem;
+		border-radius: 8px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-carbon);
+		color: var(--sc-ivory);
+		font: inherit;
+	}
+	:global(.rc-add__src) {
+		grid-column: 2 / -1;
+		font-size: 0.68rem;
+		color: var(--sc-steel);
+	}
+	.rc-quote {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-top: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.rc-total {
+		display: grid;
+	}
+	.rc-total span {
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	.rc-total b {
+		font-family: var(--sc-font-display);
+		font-size: 1.5rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.rc-copy {
+		appearance: none;
+		font: inherit;
+		font-weight: 600;
+		font-size: 0.85rem;
+		padding: 0.65rem 1.1rem;
+		border-radius: 999px;
+		border: 0;
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+		cursor: pointer;
+	}
+	.rc-copy:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		:global(.rc-row) {
+			animation: none;
+		}
+	}
+</style>

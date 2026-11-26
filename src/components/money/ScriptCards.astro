@@ -1,0 +1,110 @@
+---
+/** Email scripts for the moments creators get stuck on, with a copy button. Swipe on phones. */
+import { scripts } from '../../lib/money-data';
+interface Props {
+	only?: string[];
+}
+const { only } = Astro.props;
+const list = only ? scripts.filter((s) => only.includes(s.key)) : scripts;
+---
+
+<div class="sk-wrap not-content" data-section="deals" data-sk>
+	<div class="sk sc-rail" data-rail>
+		{
+			list.map((s) => (
+				<article class="sk-card" id={`script-${s.key}`}>
+					<span class="sk-when">{s.when}</span>
+					<h5>{s.title}</h5>
+					<pre>{s.body}</pre>
+					<button type="button" class="sk-copy" data-copy={s.body}>
+						Copy script
+					</button>
+				</article>
+			))
+		}
+	</div>
+</div>
+
+<script>
+	import '../../scripts/rail';
+	document.querySelectorAll<HTMLElement>('[data-sk]').forEach((root) =>
+		root.addEventListener('click', async (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+			if (!b) return;
+			try {
+				await navigator.clipboard.writeText(b.dataset.copy!);
+				b.textContent = 'Copied';
+			} catch {
+				b.textContent = 'Copy failed';
+			}
+			setTimeout(() => (b.textContent = 'Copy script'), 1600);
+		}),
+	);
+</script>
+
+<style>
+	.sk-wrap {
+		margin-block: 1.25rem 2rem;
+	}
+	.sk {
+		display: grid;
+		gap: 0.75rem;
+	}
+	@media (min-width: 40rem) {
+		.sk {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.sk-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, transparent), rgb(255 255 255 / 0.015) 60%);
+	}
+	.sk-when {
+		align-self: flex-start;
+		font-size: 0.68rem;
+		font-weight: 600;
+		padding: 0.12rem 0.55rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--accent) 25%, transparent);
+		color: var(--sc-ivory);
+	}
+	.sk-card h5 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.05rem;
+		color: var(--sc-ivory);
+	}
+	.sk-card pre {
+		margin: 0;
+		flex: 1;
+		white-space: pre-wrap;
+		font-family: var(--sc-font-sans);
+		font-size: 0.82rem;
+		line-height: 1.55;
+		color: var(--sc-platinum);
+		background: rgb(0 0 0 / 0.25);
+		border: 1px solid var(--sc-line);
+		border-radius: 10px;
+		padding: 0.75rem;
+		max-height: 19rem;
+		overflow: auto;
+	}
+	.sk-copy {
+		align-self: flex-start;
+		appearance: none;
+		font: inherit;
+		font-size: 0.8rem;
+		font-weight: 600;
+		padding: 0.5rem 0.95rem;
+		border-radius: 999px;
+		border: 0;
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+		cursor: pointer;
+	}
+</style>
