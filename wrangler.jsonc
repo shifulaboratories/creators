@@ -9,5 +9,7 @@
 		"not_found_handling": "404-page",
 		"html_handling": "auto-trailing-slash"
 	},
+	// Attaches the domain on deploy (the zone is on this Cloudflare account).
+	"routes": [{ "pattern": "creators.select", "custom_domain": true }],
 	"observability": { "enabled": true }
 }
