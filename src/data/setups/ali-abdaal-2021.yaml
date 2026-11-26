@@ -4,6 +4,7 @@ site: https://aliabdaal.com/
 source: https://aliabdaal.com/my-gear/
 sourceTitle: "YouTube Studio Gear (2021) – $11k Setup"
 asOf: "2021"
+niche: education
 note: "His own page also lists his 2018 and 2019 setups, and he has a separate guide to gear by budget."
 gear:
   camera: [Sony A7SIII (main), Sony A7III (second camera)]
@@ -12,3 +13,4 @@ gear:
   lighting: [Aputure 120d Mk II, Aputure Light Dome II]
   editing: [Final Cut, PluralEyes]
   support: [Manfrotto Befree tripod, SmallHD Focus monitor]
+cost: "$11k"

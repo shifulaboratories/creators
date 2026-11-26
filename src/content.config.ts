@@ -120,6 +120,13 @@ const setups = defineCollection({
 		source: z.url(),
 		sourceTitle: z.string(),
 		asOf: z.string(),
+		// What they make, so readers can find someone like them.
+		niche: z.enum(['education', 'lifestyle', 'beauty', 'business', 'film', 'music', 'podcast', 'tech', 'gaming', 'short-form']),
+		// page: their own gear page. video: their own setup video (youtubeId required).
+		from: z.enum(['page', 'video']).default('page'),
+		youtubeId: z.string().regex(/^[A-Za-z0-9_-]{11}$/).optional(),
+		// A total only when the creator states one, in their words (e.g. "$5,963").
+		cost: z.string().optional(),
 		note: z.string().optional(),
 		gear: z.object({
 			camera: z.array(z.string()).default([]),
@@ -129,7 +136,7 @@ const setups = defineCollection({
 			editing: z.array(z.string()).default([]),
 			support: z.array(z.string()).default([]),
 		}),
-	}),
+	}).refine((s) => s.from !== 'video' || s.youtubeId, { message: 'from: video needs a youtubeId' }),
 });
 
 export const collections = { docs, tools, resources, videos, setups };
