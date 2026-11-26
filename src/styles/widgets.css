@@ -26,8 +26,7 @@
 .sc-widget__kicker {
 	font-family: var(--sc-font-mono);
 	font-size: var(--sc-text-2xs, 0.68rem);
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	letter-spacing: 0;
 	color: var(--accent);
 }
 .sc-widget__title {
@@ -35,6 +34,8 @@
 	font-size: 1.05rem;
 	color: var(--sc-ivory);
 	letter-spacing: -0.01em;
+	font-family: var(--sc-font-display);
+	font-weight: 700;
 }
 .sc-widget__note {
 	margin: 0.9rem 0 0;
@@ -83,8 +84,7 @@
 	display: inline-block;
 	font-family: var(--sc-font-mono);
 	font-size: 0.62rem;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
+	letter-spacing: 0;
 	padding: 0.05rem 0.45rem;
 	border-radius: 999px;
 	border: 1px solid currentColor;
@@ -207,4 +207,12 @@ input[type='range'].sc-range:focus-visible {
 		font-size: 1.02rem;
 		line-height: 1.7;
 	}
+}
+
+/* Display face for card and deck titles, so headings read editorial rather than UI. */
+.sd-title,
+.gg-card h3,
+.cs-head h3 {
+	font-family: var(--sc-font-display);
+	letter-spacing: -0.02em;
 }

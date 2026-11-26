@@ -7,7 +7,7 @@
  */
 :root {
 	/* ---------- Color: the Obsidian scale (warm-neutral, never blue-black) ---------- */
-	--sc-obsidian: #050505; /* canvas */
+	--sc-obsidian: #08070a; /* canvas */
 	--sc-onyx: #0b0b0b; /* raised surface */
 	--sc-carbon: #121212; /* panel */
 	--sc-graphite: #1c1c1c; /* hover panel, plate top */
@@ -39,25 +39,30 @@
 	--sc-mist: #9fb3c8; /* info, links to sources */
 
 	/* Accent: jewel tones that glow on black. Color is for meaning and data, never for chrome. */
-	--sc-ion: #8b9cff; /* primary accent: links on hover, focus, the active step, chart series 1 */
-	--sc-jade: #4fd1a5; /* growth, money in, series 2 */
-	--sc-champagne: #e0b56a; /* premium, sponsored, series 3 (brighter sibling of brass) */
-	--sc-rose: #f08aa8; /* audience, people, series 4 */
-	--sc-cyan: #5cc8e6; /* platforms, reach, series 5 */
-	--sc-amethyst: #b18cf5; /* deals, contracts, series 6 */
-	--sc-aurora: linear-gradient(110deg, #8b9cff 0%, #b18cf5 45%, #f08aa8 100%); /* one highlight per screen */
-	--sc-ion-glow: 0 0 0 1px rgb(139 156 255 / 0.35), 0 0 32px -6px rgb(139 156 255 / 0.55);
+	--sc-ion: #c3a6ff; /* primary accent: links on hover, focus, the active step, chart series 1 */
+	--sc-jade: #5fe3b0; /* growth, money in, series 2 */
+	--sc-champagne: #ffb47e; /* premium, sponsored, series 3 (brighter sibling of brass) */
+	--sc-rose: #ff86b8; /* audience, people, series 4 */
+	--sc-cyan: #7cc8ff; /* platforms, reach, series 5 */
+	--sc-amethyst: #a58bff; /* deals, contracts, series 6 */
+	--sc-aurora: linear-gradient(110deg, #ffb47e 0%, #ff86b8 45%, #c3a6ff 100%);
+	--sc-lime: #dcff6b; /* sticker highlight: one small thing per screen */ /* one highlight per screen */
+	--sc-ion-glow: 0 0 0 1px rgb(195 166 255 / 0.35), 0 0 32px -6px rgb(195 166 255 / 0.55);
 	/* Tints for fills behind diagrams: 12% of each accent on obsidian. */
-	--sc-ion-tint: rgb(139 156 255 / 0.12);
-	--sc-jade-tint: rgb(79 209 165 / 0.12);
-	--sc-champagne-tint: rgb(224 181 106 / 0.12);
-	--sc-rose-tint: rgb(240 138 168 / 0.12);
-	--sc-cyan-tint: rgb(92 200 230 / 0.12);
-	--sc-amethyst-tint: rgb(177 140 245 / 0.12);
+	--sc-ion-tint: rgb(195 166 255 / 0.12);
+	--sc-jade-tint: rgb(95 227 176 / 0.12);
+	--sc-champagne-tint: rgb(255 180 126 / 0.12);
+	--sc-rose-tint: rgb(255 134 184 / 0.12);
+	--sc-cyan-tint: rgb(124 200 255 / 0.12);
+	--sc-amethyst-tint: rgb(165 139 255 / 0.12);
 
 	/* ---------- Type ---------- */
 	--sc-font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
-	--sc-font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+	/* Labels used to be monospace caps, which read as engineer-coded. The "mono" token now
+	   points at the sans so every small label is friendly; real code uses --sc-font-code. */
+	--sc-font-mono: var(--sc-font-sans);
+	--sc-font-code: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+	--sc-font-display: 'Syne Variable', 'Syne', var(--sc-font-sans);
 
 	--sc-text-2xs: 0.65rem; /* 10.4px  mono labels on the card */
 	--sc-text-xs: 0.75rem; /* 12px    eyebrows, table heads */
@@ -72,7 +77,7 @@
 	--sc-tracking-display: -0.045em;
 	--sc-tracking-heading: -0.025em;
 	--sc-tracking-body: -0.005em;
-	--sc-tracking-caps: 0.14em; /* mono eyebrows and labels */
+	--sc-tracking-caps: 0; /* mono eyebrows and labels */
 	--sc-tracking-wordmark: 0.22em; /* SELECT CREATORS */
 
 	--sc-leading-tight: 1.02;
@@ -95,8 +100,8 @@
 	--sc-radius-xs: 6px; /* tags, kbd */
 	--sc-radius-sm: 10px; /* inputs, icon tiles */
 	--sc-radius-md: 14px; /* asides, small panels */
-	--sc-radius-lg: 20px; /* cards */
-	--sc-radius-card: 22px; /* large feature panels and hero visuals */
+	--sc-radius-lg: 24px; /* cards */
+	--sc-radius-card: 28px; /* large feature panels and hero visuals */
 	--sc-radius-pill: 999px; /* buttons, chips */
 	/* The seal: the mark's 12-scallop rosette as a clip-path, for step markers, swatches, avatars and tiles. */
 	--sc-seal-clip: polygon(50.0% 0.0%, 54.2% 1.7%, 57.9% 5.1%, 61.4% 7.4%, 65.6% 7.2%, 70.5% 6.0%, 75.0% 6.7%, 77.8% 10.2%, 79.3% 15.1%, 81.2% 18.8%, 84.9% 20.7%, 89.8% 22.2%, 93.3% 25.0%, 94.0% 29.5%, 92.8% 34.4%, 92.6% 38.6%, 94.9% 42.1%, 98.3% 45.8%, 100.0% 50.0%, 98.3% 54.2%, 94.9% 57.9%, 92.6% 61.4%, 92.8% 65.6%, 94.0% 70.5%, 93.3% 75.0%, 89.8% 77.8%, 84.9% 79.3%, 81.2% 81.2%, 79.3% 84.9%, 77.8% 89.8%, 75.0% 93.3%, 70.5% 94.0%, 65.6% 92.8%, 61.4% 92.6%, 57.9% 94.9%, 54.2% 98.3%, 50.0% 100.0%, 45.8% 98.3%, 42.1% 94.9%, 38.6% 92.6%, 34.4% 92.8%, 29.5% 94.0%, 25.0% 93.3%, 22.2% 89.8%, 20.7% 84.9%, 18.8% 81.2%, 15.1% 79.3%, 10.2% 77.8%, 6.7% 75.0%, 6.0% 70.5%, 7.2% 65.6%, 7.4% 61.4%, 5.1% 57.9%, 1.7% 54.2%, 0.0% 50.0%, 1.7% 45.8%, 5.1% 42.1%, 7.4% 38.6%, 7.2% 34.4%, 6.0% 29.5%, 6.7% 25.0%, 10.2% 22.2%, 15.1% 20.7%, 18.8% 18.8%, 20.7% 15.1%, 22.2% 10.2%, 25.0% 6.7%, 29.5% 6.0%, 34.4% 7.2%, 38.6% 7.4%, 42.1% 5.1%, 45.8% 1.7%);

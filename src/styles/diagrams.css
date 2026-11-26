@@ -22,8 +22,7 @@
 .sc-figure__caption {
 	margin-top: var(--sc-space-4);
 	font: 500 var(--sc-text-xs) / 1.4 var(--sc-font-mono);
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	letter-spacing: 0;
 	color: var(--sc-steel);
 }
 @media (min-width: 48rem) {
@@ -49,8 +48,7 @@
 }
 .sc-stat__label {
 	font: 500 var(--sc-text-xs) / 1.4 var(--sc-font-mono);
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
+	letter-spacing: 0;
 	color: var(--sc-steel);
 }
 .sc-stat__delta { font: 500 var(--sc-text-sm) / 1.4 var(--sc-font-mono); color: var(--sc-jade); }
@@ -180,8 +178,7 @@
 .sc-compare__side h4 {
 	margin: 0 0 var(--sc-space-3);
 	font: 500 var(--sc-text-xs) / 1.3 var(--sc-font-mono);
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
+	letter-spacing: 0;
 	color: var(--c);
 }
 .sc-compare__side ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--sc-space-2); }
@@ -212,7 +209,6 @@
 	color: var(--sc-ivory);
 	min-width: 0;
 }
-.sc-flow__node small { display: block; margin-top: 2px; font: 500 var(--sc-text-2xs) / 1.3 var(--sc-font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c); }
 .sc-flow__link {
 	width: 2px;
 	height: 28px;

@@ -1,11 +1,11 @@
 ---
-title: "How recommender systems work"
-description: "The five stages between your upload and someone's feed, and a simulator that shows how what a feed rewards changes what wins."
+title: "How the algorithm picks what people see"
+description: "What happens between hitting post and showing up in someone's feed, in five steps. Then play with a mini feed and see what wins when the rules change."
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
 cover:
-  label: Recommenders
+  label: How it picks
 sidebar:
   order: 1
 ---
@@ -29,13 +29,13 @@ The ranking step is a weighted sum. The weights are a choice the platform makes,
 
 Three things to notice:
 
-- **Clicks alone reward clickbait.** That's not a hypothetical. YouTube says it added watch time in 2012 because clicks alone rewarded misleading videos. <span class="sc-tag is-platform">Platform</span>
-- **Rewarding replies without a penalty rewards rage.** Every platform we cover subtracts negative signals like "not interested," mutes, blocks or reports. X's published weights for those are large and negative. <span class="sc-tag is-code">Code</span>
-- **Deep value and shareable content win under most settings.** When a feed measures whether people stayed and whether they passed it on, the posts that actually deliver tend to rise. <span class="sc-tag is-practitioner">Practitioner</span>
+- **Clicks alone reward clickbait.** That's not a hypothetical. YouTube says it added watch time in 2012 because clicks alone rewarded misleading videos. <span class="sc-tag is-platform">From the platform</span>
+- **Rewarding replies without a penalty rewards rage.** Every platform we cover subtracts negative signals like "not interested," mutes, blocks or reports. X's published weights for those are large and negative. <span class="sc-tag is-code">From the code</span>
+- **Deep value and shareable content win under most settings.** When a feed measures whether people stayed and whether they passed it on, the posts that actually deliver tend to rise. <span class="sc-tag is-practitioner">Creator-tested</span>
 
 ## It's personal, not global
 
-There is no single score for your post. The same post gets a different predicted probability for every viewer, because the model reads each viewer's own history. X's model takes the viewer's recent engagement history as its main input. YouTube says how much each signal counts depends on the viewer. <span class="sc-tag is-platform">Platform</span>
+There is no single score for your post. The same post gets a different predicted probability for every viewer, because the model reads each viewer's own history. X's model takes the viewer's recent engagement history as its main input. YouTube says how much each signal counts depends on the viewer. <span class="sc-tag is-platform">From the platform</span>
 
 That's why "post at 9 a.m." or "use exactly 5 hashtags" rarely survives contact with reality. The system is matching posts to people. The lever you control is making something a specific audience will act on.
 

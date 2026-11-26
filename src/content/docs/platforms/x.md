@@ -40,7 +40,7 @@ January 2026 update, as reported by TechCrunch:
 - **Write posts people reply to.** Replies are one of the named engagement types, and conversation keeps a post in circulation. *(From the platform, applied.)*
 - **Earn reach beyond your followers.** Roughly half of the 2023 feed came from accounts people didn't follow, so a strong post can travel. *(From the platform.)*
 - **Avoid what gets filtered.** Spam-like behavior and content people mute or block are removed before you're seen. *(From the platform.)*
-- **Treat specific weightings as temporary.** The 2026 system learns from behavior rather than fixed rules, so old "hacks" may not carry over. *(Practitioner view.)*
+- **Treat specific weightings as temporary.** The 2026 system learns from behavior rather than fixed rules, so old "hacks" may not carry over. *(Creator-tested.)*
 
 ## Go deeper
 

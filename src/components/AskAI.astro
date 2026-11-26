@@ -33,7 +33,7 @@ const targets = [
 	</span>
 	<div class="ai-btns">
 		{targets.map((t) => <a class="ai-btn" href={t.href} target="_blank" rel="noopener">{t.name} ↗</a>)}
-		{mdPath && <button type="button" class="ai-btn" data-copy={mdPath}>Copy as Markdown</button>}
+		{mdPath && <button type="button" class="ai-btn" data-copy={mdPath}>Copy for AI</button>}
 		{scope === 'site' && <a class="ai-btn" href="/llms-full.txt">llms-full.txt</a>}
 	</div>
 </div>
@@ -64,7 +64,7 @@ const targets = [
 		padding: 0.6rem 0.75rem;
 		border-radius: 14px;
 		border: 1px solid color-mix(in srgb, var(--sc-ion) 30%, transparent);
-		background: linear-gradient(90deg, rgb(139 156 255 / 0.08), rgb(177 140 245 / 0.04));
+		background: linear-gradient(90deg, rgb(195 166 255 / 0.08), rgb(255 134 184 / 0.04));
 	}
 	.ai-label {
 		display: inline-flex;
@@ -102,6 +102,6 @@ const targets = [
 	}
 	.ai-btn:hover {
 		border-color: var(--sc-ion);
-		background: rgb(139 156 255 / 0.1);
+		background: rgb(195 166 255 / 0.1);
 	}
 </style>

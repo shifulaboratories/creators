@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
 		const k = d.id.split('/')[0];
 		groups.set(k, [...(groups.get(k) ?? []), d]);
 	}
-	let out = `# ${SITE_NAME}\n\n> ${SITE_DESCRIPTION}\n\nFree, open-source creator economy handbook. Claims are sourced and tagged: Code (published source code), Platform (the platform's own explainers), Practitioner (named people on the record). Every page has a Markdown copy at the same path with .md. The whole library in one file: ${SITE}/llms-full.txt\n`;
+	let out = `# ${SITE_NAME}\n\n> ${SITE_DESCRIPTION}\n\nFree, open-source creator economy handbook. Claims are sourced and tagged: From the code (published source code), From the platform (the platform's own explainers), Creator-tested (named people on the record). Every page has a Markdown copy at the same path with .md. The whole library in one file: ${SITE}/llms-full.txt\n`;
 	for (const [k, list] of groups) {
 		out += `\n## ${k.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase())}\n\n`;
 		for (const d of list) out += `- [${d.data.title}](${SITE}/${d.id}.md): ${d.data.description ?? ''}\n`;

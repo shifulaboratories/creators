@@ -4,13 +4,14 @@
  */
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
+@import '@fontsource-variable/syne';
 @import './tokens.css';
 
 :root,
 :root[data-theme='light'] {
 	color-scheme: dark;
 	--sl-font: var(--sc-font-sans);
-	--sl-font-mono: var(--sc-font-mono);
+	--sl-font-mono: var(--sc-font-code);
 
 	--sl-color-white: var(--sc-ivory);
 	--sl-color-gray-1: var(--sc-platinum);
@@ -41,7 +42,8 @@
 
 body {
 	background:
-		radial-gradient(1200px 600px at 50% -10%, rgb(255 255 255 / 0.06), transparent 60%),
+		radial-gradient(900px 500px at 15% -10%, rgb(255 134 184 / 0.10), transparent 60%),
+		radial-gradient(900px 500px at 90% -5%, rgb(195 166 255 / 0.10), transparent 60%),
 		var(--sc-obsidian);
 	font-feature-settings: 'ss01', 'cv11';
 	-webkit-font-smoothing: antialiased;
@@ -57,7 +59,6 @@ header.header {
 	gap: 0.75rem;
 	font-size: var(--sc-text-sm);
 	font-weight: 500;
-	text-transform: uppercase;
 	letter-spacing: var(--sc-tracking-wordmark);
 	color: var(--sc-ivory);
 }
@@ -66,17 +67,12 @@ header.header {
 	width: auto;
 }
 
-/* Headings: tight, platinum. */
+/* Headings: Syne, the wordmark's face. Friendlier and more editorial than a UI sans. */
 .sl-markdown-content :is(h1, h2, h3),
 h1#_top {
-	letter-spacing: var(--sc-tracking-heading);
-	font-weight: 600;
-}
-h1#_top {
-	background: var(--sc-metal);
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+	font-family: var(--sc-font-display);
+	letter-spacing: -0.02em;
+	font-weight: 700;
 }
 
 /* Links stay quiet until hovered. */
@@ -93,8 +89,7 @@ h1#_top {
 .sidebar-content .group-label .large {
 	font-family: var(--sl-font-mono);
 	font-size: var(--sl-text-xs);
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
+	letter-spacing: 0;
 	color: var(--sl-color-gray-3);
 }
 .sidebar-content a[aria-current='page'] {
@@ -154,8 +149,7 @@ h1#_top {
 .sl-markdown-content table th {
 	font-family: var(--sl-font-mono);
 	font-size: var(--sl-text-xs);
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
+	letter-spacing: 0;
 	color: var(--sl-color-gray-3);
 	border-bottom: 1px solid var(--sc-border);
 }
@@ -167,8 +161,7 @@ h1#_top {
 .affiliate-label {
 	font-family: var(--sl-font-mono);
 	font-size: 0.65rem;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
+	letter-spacing: 0;
 	color: var(--sc-brass);
 	border: 1px solid rgb(201 162 90 / 0.4);
 	border-radius: var(--sc-radius-pill);
@@ -178,6 +171,6 @@ h1#_top {
 }
 
 ::selection {
-	background: rgb(255 255 255 / 0.85);
+	background: var(--sc-lime);
 	color: #050505;
 }

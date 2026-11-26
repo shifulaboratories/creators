@@ -37,8 +37,8 @@ From the platform:
 ## What to optimize for
 
 - **Completion.** Since finishing a longer video is a strong signal, cut anything that doesn't earn the next second. *(From the platform, applied.)*
-- **The first seconds.** Viewers decide fast in a swipe feed, so open on the payoff or the question. *(Practitioner view.)*
-- **Shares and comments over likes.** Make something people want to send to a friend or argue about. *(Practitioner view.)*
+- **The first seconds.** Viewers decide fast in a swipe feed, so open on the payoff or the question. *(Creator-tested.)*
+- **Shares and comments over likes.** Make something people want to send to a friend or argue about. *(Creator-tested.)*
 - **Describe the video clearly.** Captions, sounds and hashtags are how TikTok understands what it is. *(From the platform.)*
 - **Don't buy engagement.** Content that tries to artificially increase traffic is ineligible for For You, and buying fake engagement is also a legal risk in the US. See [Fake engagement](/underground/fake-engagement/).
 

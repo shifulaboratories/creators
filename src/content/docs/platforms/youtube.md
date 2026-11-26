@@ -46,7 +46,7 @@ From the platform:
 <li><strong>Hold attention</strong><span>Keep each section earning the next minute of watch time.</span></li>
 <li><strong>Leave them satisfied</strong><span>A video people are glad they watched is what the surveys measure.</span></li>
 </ol>
-<figcaption>Practitioner view, consistent with what YouTube says it measures</figcaption>
+<figcaption>Creator-tested, consistent with what YouTube says it measures</figcaption>
 </figure>
 
 - **Clicks without satisfaction backfire.** Since YouTube weighs watch time and surveys, a misleading thumbnail wins the click and loses the recommendation.

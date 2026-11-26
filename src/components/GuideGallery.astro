@@ -9,7 +9,7 @@ import { getCollection } from 'astro:content';
 import Cover from './Cover.astro';
 
 const labels: Record<string, string> = {
-	algorithms: 'How algorithms work',
+	algorithms: 'The algorithm',
 	platforms: 'Platforms',
 	'case-studies': 'Case studies',
 	goldmines: 'Goldmines',
@@ -285,7 +285,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 	}
 	.gg-search:focus-within {
 		border-color: var(--sc-ion);
-		box-shadow: 0 0 0 4px rgb(139 156 255 / 0.15);
+		box-shadow: 0 0 0 4px rgb(195 166 255 / 0.15);
 	}
 	.gg-search svg {
 		width: 18px;
@@ -473,8 +473,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 		color: var(--sc-silver);
 	}
 	.gg-st {
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		letter-spacing: 0;
 		padding: 0.05rem 0.45rem;
 		border-radius: 999px;
 		border: 1px solid var(--sc-line-strong);

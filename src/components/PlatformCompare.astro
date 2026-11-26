@@ -7,7 +7,7 @@
 
 
 import { rows, platforms } from '../lib/widget-data';
-const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitioner', none: 'Unknown' };
+const tagText = { code: 'From the code', platform: 'From the platform', practitioner: 'Creator-tested', none: 'Unknown' };
 ---
 
 <div class="sc-widget pc" data-pc data-platforms={JSON.stringify(platforms)}>
@@ -62,13 +62,13 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 		<div class="sc-widget__kicker">Moving a winner across</div>
 		<p data-port></p>
 	</div>
-	<p class="sc-widget__note">Each cell is tagged: <span class="sc-tag is-code">Code</span> published source code, <span class="sc-tag is-platform">Platform</span> the platform’s own explainer, <span class="sc-tag is-practitioner">Practitioner</span> our read, consistent with those sources. Sources are listed on each platform guide.</p>
+	<p class="sc-widget__note">Each cell is tagged: <span class="sc-tag is-code">From the code</span> published source code, <span class="sc-tag is-platform">From the platform</span> the platform’s own explainer, <span class="sc-tag is-practitioner">Creator-tested</span> our read, consistent with those sources. Sources are listed on each platform guide.</p>
 </div>
 
 <script>
 	type Cell = { t: string; s: string };
 	type P = { key: string; name: string; tint: string; href: string; rows: Record<string, Cell> };
-	const tagText: Record<string, string> = { code: 'Code', platform: 'Platform', practitioner: 'Practitioner', none: 'Unknown' };
+	const tagText: Record<string, string> = { code: 'From the code', platform: 'From the platform', practitioner: 'Creator-tested', none: 'Unknown' };
 	document.querySelectorAll<HTMLElement>('[data-pc]').forEach((root) => {
 		const platforms: P[] = JSON.parse(root.dataset.platforms!);
 		const pick = { a: platforms[0].key, b: platforms[1].key } as Record<string, string>;
@@ -124,8 +124,7 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 	.pc-side {
 		font-family: var(--sc-font-mono);
 		font-size: 0.68rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-silver);
 		width: 2.6rem;
 		align-self: center;
@@ -152,8 +151,7 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 		grid-column: 1 / -1;
 		font-family: var(--sc-font-mono);
 		font-size: 0.68rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-silver);
 	}
 	.pc-cell {

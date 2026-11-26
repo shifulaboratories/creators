@@ -15,7 +15,7 @@ const videos = (await getCollection('videos'))
 	.map((v) => v.data)
 	.filter((v) => (!tier || v.tier === tier) && (!topic || v.topics.includes(topic)) && (!ids || ids.includes(v.youtubeId)))
 	.sort((a, b) => +b.published - +a.published);
-const tierText = { insider: 'Platform insider', practitioner: 'Practitioner' };
+const tierText = { insider: 'Platform insider', practitioner: 'Creator' };
 const date = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
