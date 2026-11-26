@@ -8,22 +8,19 @@ OUT = sys.argv[1]; os.makedirs(OUT, exist_ok=True)
 FONT = os.environ.get('GEIST_TTF', 'Geist-Medium.ttf')  # from `npm pack geist`: dist/fonts/geist-sans/
 
 # ---------- mark geometry (64 x 64 grid) ----------
-S = 64; C = 12.5; R = 3.2  # chamfer, corner softening
+S = 64; LOBES = 12; R = 28.8; AMP = 1.8  # the rosette: 12 soft scallops (platform badges use 8)
 def plate(inset=0):
-    i=inset; c=C-inset*0.414; r=max(R-inset*0.4,0.8)
-    pts=[(c+i,i),(S-c-i,i),(S-i,c+i),(S-i,S-c-i),(S-c-i,S-i),(c+i,S-i),(i,S-c-i),(i,c+i)]
-    n=len(pts); out=[]
-    def toward(a,b,dist):
-        dx,dy=b[0]-a[0],b[1]-a[1]; l=math.hypot(dx,dy); return (a[0]+dx/l*dist,a[1]+dy/l*dist)
-    for k in range(n):
-        p0=pts[k-1]; p1=pts[k]; p2=pts[(k+1)%n]
-        a=toward(p1,p0,r); b=toward(p1,p2,r)
-        out.append(('L' if out else 'M')+f'{a[0]:.2f} {a[1]:.2f} Q{p1[0]:.2f} {p1[1]:.2f} {b[0]:.2f} {b[1]:.2f}')
-    return ' '.join(out)+' Z'
+    """Scalloped verification seal centred on (32, 32), shrunk by `inset`."""
+    pts=[]
+    for k in range(LOBES*24):
+        t=2*math.pi*k/(LOBES*24)
+        r=R-inset+AMP*math.cos(LOBES*t)
+        pts.append((32+r*math.sin(t), 32-r*math.cos(t)))
+    return 'M'+' L'.join(f'{x:.2f} {y:.2f}' for x,y in pts)+' Z'
 r2=math.sqrt(2); u=(1/r2,-1/r2); d=(1/r2,1/r2)
 def P(o,su,td): return (o[0]+su*u[0]+td*d[0], o[1]+su*u[1]+td*d[1])
-W=2.4; G=1.8; A=(0,0)  # long-stroke foot
-L_LONG=28.5; L_SHORT=12.5
+W=2.25; G=1.7; A=(0,0)  # long-stroke foot
+L_LONG=26; L_SHORT=11.5
 def poly(pts): return 'M'+' L'.join(f'{x:.2f} {y:.2f}' for x,y in pts)+' Z'
 long_=poly([P(A,0,-W),P(A,L_LONG,-W),P(A,L_LONG,W),P(A,0,W)])
 Dc=P(A,W,-W-G)       # short-stroke end centre

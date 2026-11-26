@@ -6,24 +6,27 @@ Working name: **Select Creators** · domain **creators.select** · Instagram **@
 
 ## The mark: the Select Seal
 
-A matte black plate with chamfered corners carrying a platinum check. The check is split: the short stroke stops just short of the long one, leaving a hairline gap. That gap is the signature. It reads as "verified", but as an engraved, machined part, not a platform badge.
+A verification badge, the way social platforms mark a verified account: a scalloped rosette seal with a check inside. Ours is matte black with a titanium edge and a platinum check, so it reads as "verified" instantly but belongs to us.
 
-- **Plate**: a square with 19.5% chamfered corners, softened with small radii. Faceted like a cut metal plate or a gem. Deliberately not a circle, not a scalloped rosette and not a star, so it never reads as Instagram's, X's or Meta's verified badge.
-- **Check**: two straight strokes at 45°, flat cut ends, no rounded caps.
-- **Grid**: 64 × 64. Geometry lives in [`logo/generate.py`](logo/generate.py); edit it there and regenerate, never by hand.
+What makes it ours and not a copy of any platform's badge:
+
+- **Twelve soft scallops.** Instagram, Meta and X badges use eight broad lobes in brand blue. Twelve finer scallops read as a minted seal or a coin edge.
+- **Black and metal, never blue.** The seal is obsidian with a brushed edge; the check is platinum.
+- **The split check.** The short stroke stops just short of the long one, leaving a hairline gap. That gap is the signature: a machined part, not a drawn tick. Never close it.
+- **Grid**: 64 × 64. Geometry lives in [`logo/generate.py`](logo/generate.py); edit it there and regenerate, never redraw by hand.
 
 ### Files
 
 | File | Use |
 | --- | --- |
 | `logo/mark-animated.svg` | The mark's animated intro, for heroes and loading states. |
-| `logo/mark.svg` | Primary. Metal plate, titanium edge, platinum check. Dark backgrounds, favicon, avatars. |
+| `logo/mark.svg` | Primary. Black seal, titanium edge, platinum check. Dark backgrounds, favicon, avatars. |
 | `logo/mark-black.svg` | One color, check knocked out. Light backgrounds, print, embossing, stamps. |
 | `logo/mark-white.svg` | One color reversed. Dark backgrounds where gradients can't render (email, video overlays). |
 | `logo/wordmark-light.svg` / `wordmark-dark.svg` | SELECT CREATORS alone, for dark / light backgrounds. |
 | `logo/lockup-horizontal-on-dark.svg` / `-on-light.svg` | Default lockup: headers, decks, OG images. |
 | `logo/lockup-stacked-on-dark.svg` / `-on-light.svg` | Square spaces: profile cards, merch, splash screens. |
-| `logo/png/icon-512.png` | App icon, social avatar (Instagram crops to a circle; the plate survives it). |
+| `logo/png/icon-512.png` | App icon, social avatar (Instagram crops to a circle; the seal survives it). |
 | `logo/png/apple-touch-icon-180.png` | iOS home screen (also at `public/apple-touch-icon.png`). |
 | `logo/png/og-1200x630.png` | Link previews (also at `public/og.png`). |
 
@@ -31,7 +34,7 @@ A matte black plate with chamfered corners carrying a platinum check. The check 
 
 - **Clear space**: the height of the check's short stroke (about 1/4 of the mark) on every side.
 - **Minimum size**: mark 16px; horizontal lockup 120px wide; wordmark alone 96px wide.
-- **Never**: recolor the check, add a glow or drop shadow to the mark, rotate it, put it on a busy photo without a black plate behind it, round the plate into a circle, or close the gap in the check.
+- **Never**: color the seal blue (that's the platforms' badge), recolor the check, add a glow or drop shadow, put it on a busy photo, change the number of scallops, or close the gap in the check.
 - On light backgrounds use `mark-black`. Don't put the metal version on white; its edge disappears.
 
 ## Wordmark
@@ -47,7 +50,7 @@ Black is never pure blue-black. The scale is warm-neutral so it feels like anodi
 | `--sc-obsidian` | `#050505` | Canvas |
 | `--sc-onyx` | `#0b0b0b` | Raised surface |
 | `--sc-carbon` | `#121212` | Panel |
-| `--sc-graphite` | `#1c1c1c` | Hover panel, plate top |
+| `--sc-graphite` | `#1c1c1c` | Hover panel, seal highlight |
 | `--sc-gunmetal` | `#262626` | Strong divider, inputs |
 | `--sc-slate` | `#4e4e4d` | Disabled, resting icons |
 | `--sc-steel` | `#8a8a89` | Labels, tertiary text |
@@ -83,7 +86,7 @@ Hairlines are white at low alpha: `--sc-line` (8%), `--sc-line-strong` (18%), `-
 ## Space, radii, elevation
 
 - 4px base: `--sc-space-1` (4px) through `--sc-space-10` (128px). Be generous; empty black space is the luxury.
-- Radii: 6 tags · 10 inputs · 14 asides · 20 cards · pill for buttons and chips. `--sc-plate-clip` reuses the mark's chamfer as a clip-path for avatars and feature tiles.
+- Radii: 6 tags · 10 inputs · 14 asides · 20 cards · pill for buttons and chips. `--sc-seal-clip` reuses the mark's rosette as a clip-path for avatars, step markers and tiles.
 - Elevation is light, not shadow: a 1px hairline, a faint inset top highlight, and a deep soft drop only on lift (`--sc-shadow-lift`).
 
 ## Motion
@@ -103,7 +106,7 @@ Things should feel alive and expensive: light that moves, metal that catches it,
 | `.sc-grain` | Film grain over the page so black never looks flat. Put it on `body`. |
 | `.sc-float`, `.sc-orbit`, `.sc-pulse` | Ambient loops for the hero mark and status dots. |
 
-`logo/mark-animated.svg` is the mark's intro: the plate settles in, the check draws short stroke then long, and a sheen crosses the plate every few seconds. Use it in the hero and loading states, never in the header.
+`logo/mark-animated.svg` is the mark's intro: the seal turns into place, its edge rotates slowly, the check draws short stroke then long, and a sheen crosses the seal every few seconds. Use it in the hero and loading states, never in the header.
 
 ## Diagrams and infographics
 
@@ -118,7 +121,7 @@ People learn by looking, so every guide should lead with a visual. `src/styles/d
 | `.sc-donut` (`--v`) | One share of a whole. |
 | `.sc-compare` | Two options side by side: manager vs agent, flat fee vs rev share. Stacks on phones. |
 | `.sc-flow` | Who pays whom: nodes joined by a marching dashed line. Vertical on phones. |
-| `.sc-legend` | Chart keys with plate-shaped swatches. |
+| `.sc-legend` | Chart keys with seal-shaped swatches. |
 
 Rules: one idea per figure, label values directly instead of making people read a legend, every number has a source in the caption, and use accents in chart order (ion, jade, champagne, rose, cyan, amethyst) so colors mean the same thing across the site.
 
@@ -131,7 +134,7 @@ Mobile-first and fast is part of the brand. No chart, animation or icon librarie
 - **Buttons**: pill. Primary is ivory on black with a soft white glow; secondary is a hairline ghost.
 - **Cards**: near-black gradient panel, hairline border, lift 2px on hover with a brighter border and a `.sc-beam` of light around the edge.
 - **Eyebrow chip**: mono caps in a pill, with a small sage status dot.
-- **Plate**: the mark's chamfer as a clip-path (`--sc-plate-clip`) for step numbers, legend swatches, avatars and feature tiles.
+- **Seal**: the mark's rosette as a clip-path (`--sc-seal-clip`) for step numbers, legend swatches, avatars and feature tiles.
 - **Asides**: neutral glass, signal color only on the left rule.
 - **Affiliate label**: brass mono pill next to every affiliate link.
 
