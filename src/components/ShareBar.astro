@@ -1,0 +1,295 @@
+---
+/**
+ * Share row for a guide: native share sheet (phones), copy link, the networks
+ * creators actually use, and a 1080x1920 Story card. Also turns on Story
+ * sharing for any stat on the page: <ShareStat>, a .sc-stat tile, or any
+ * element with data-story-value (see src/scripts/story.ts and CONTRIBUTING.md).
+ */
+import { SECTION_LABELS } from '../lib/share';
+interface Props {
+	title: string;
+	description?: string;
+	section?: string;
+}
+const { title, description, section } = Astro.props;
+const site = (Astro.site ?? new URL('https://creators.select')).origin;
+const url = new URL(Astro.url.pathname, site).href;
+const text = `${title}: free and sourced, on Select Creators`;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(text);
+const links = [
+	{ name: 'X', href: `https://x.com/intent/post?text=${t}&url=${u}` },
+	{ name: 'Threads', href: `https://www.threads.net/intent/post?text=${encodeURIComponent(`${text} ${url}`)}` },
+	{ name: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+	{ name: 'WhatsApp', href: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}` },
+];
+---
+
+<div
+	class="share not-content"
+	data-share
+	data-title={title}
+	data-text={text}
+	data-url={url}
+	data-description={description}
+	data-kicker={section ? SECTION_LABELS[section] : undefined}
+>
+	<button type="button" class="sh-btn sh-main" data-share-native>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>
+		Share
+	</button>
+	<button type="button" class="sh-btn" data-story-page>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3" /><path d="M10 6.5h4" /></svg>
+		Story card
+	</button>
+	<button type="button" class="sh-btn" data-share-copy>Copy link</button>
+	<span class="sh-more">
+		{links.map((l) => <a class="sh-btn" href={l.href} target="_blank" rel="noopener">{l.name}</a>)}
+	</span>
+</div>
+
+<script>
+	type Story = typeof import('../scripts/story');
+	let story: Promise<Story> | undefined;
+	const loadStory = () => (story ??= import('../scripts/story'));
+	const accent = () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || undefined;
+	const bar = document.querySelector<HTMLElement>('[data-share]');
+	const meta = bar?.dataset ?? {};
+
+	function flash(b: HTMLElement, msg: string) {
+		const prev = b.innerHTML;
+		b.textContent = msg;
+		setTimeout(() => (b.innerHTML = prev), 1600);
+	}
+	async function copy(b: HTMLElement, text: string) {
+		try {
+			await navigator.clipboard.writeText(text);
+			flash(b, 'Copied ✓');
+		} catch {
+			flash(b, 'Couldn’t copy');
+		}
+	}
+
+	// Native share sheet where it exists (phones); otherwise copy the link.
+	const native = bar?.querySelector<HTMLButtonElement>('[data-share-native]');
+	if (native && !navigator.share) native.hidden = true;
+	native?.addEventListener('click', () =>
+		navigator.share({ title: meta.title, text: meta.text, url: meta.url }).catch(() => {}),
+	);
+	bar?.querySelector<HTMLButtonElement>('[data-share-copy]')?.addEventListener('click', (e) =>
+		copy(e.currentTarget as HTMLElement, meta.url!),
+	);
+	bar?.querySelector<HTMLButtonElement>('[data-story-page]')?.addEventListener('click', async () => {
+		const { openStory } = await loadStory();
+		openStory({ title: meta.title!, label: meta.description, kicker: meta.kicker, accent: accent(), url: meta.url });
+	});
+
+	// Any stat on the page can become a Story card.
+	const icon =
+		'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3" /><path d="M10 6.5h4" /></svg>';
+	for (const tile of document.querySelectorAll<HTMLElement>('.sc-stat')) {
+		if (tile.querySelector('[data-story-value]') || tile.closest('[data-story-value]')) continue;
+		const value = tile.querySelector('.sc-stat__value')?.textContent?.trim();
+		const label = tile.querySelector('.sc-stat__label')?.textContent?.trim();
+		if (!value) continue;
+		const b = document.createElement('button');
+		b.type = 'button';
+		b.className = 'sc-story-btn';
+		b.dataset.storyValue = value;
+		if (label) b.dataset.storyLabel = label;
+		if (tile.dataset.storySource) b.dataset.storySource = tile.dataset.storySource;
+		b.innerHTML = `${icon}<span>Share</span>`;
+		b.setAttribute('aria-label', `Share “${value}” to your Story`);
+		tile.append(b);
+	}
+	document.addEventListener('click', async (e) => {
+		const el = (e.target as HTMLElement).closest<HTMLElement>('[data-story-value]');
+		if (!el) return;
+		e.preventDefault();
+		const { openStory } = await loadStory();
+		const d = el.dataset;
+		openStory({
+			value: d.storyValue,
+			label: d.storyLabel,
+			source: d.storySource,
+			title: d.storyTitle || meta.title || document.title,
+			kicker: meta.kicker,
+			accent: d.storyAccent || accent(),
+			url: meta.url,
+		});
+	});
+</script>
+
+<style>
+	.share {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		margin-top: 0.75rem;
+	}
+	.sh-more {
+		display: contents;
+	}
+	.sh-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		appearance: none;
+		font: inherit;
+		font-size: 0.78rem;
+		font-weight: 600;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-platinum);
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			border-color 0.2s,
+			background 0.2s;
+	}
+	.sh-btn[hidden] {
+		display: none;
+	}
+	.sh-btn:hover {
+		border-color: var(--accent, var(--sc-rose));
+		background: color-mix(in srgb, var(--accent, var(--sc-rose)) 12%, transparent);
+	}
+	.sh-btn svg {
+		width: 15px;
+		height: 15px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.sh-main {
+		border-color: transparent;
+		background: var(--sc-aurora);
+		color: #120d12;
+	}
+	.sh-main:hover {
+		background: var(--sc-aurora);
+		filter: brightness(1.08);
+	}
+	@media (max-width: 40rem) {
+		/* Phones get the native sheet, which already lists every app. */
+		.share:has(.sh-main:not([hidden])) .sh-more {
+			display: none;
+		}
+	}
+</style>
+
+<style is:global>
+	.sc-story-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		width: fit-content;
+		margin-top: 0.35rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-silver);
+		font: 600 0.72rem / 1.4 var(--sc-font-sans);
+		cursor: pointer;
+	}
+	.sc-story-btn:hover {
+		color: var(--sc-ivory);
+		border-color: var(--accent, var(--sc-rose));
+	}
+	.sc-story-btn svg {
+		width: 13px;
+		height: 13px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+	}
+	dialog.sc-story {
+		display: flex;
+		margin: auto;
+		gap: 1.5rem;
+		align-items: center;
+		max-width: min(40rem, calc(100vw - 2rem));
+		padding: 1.25rem;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 24px;
+		background: var(--sc-onyx);
+		color: var(--sc-platinum);
+		box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8);
+	}
+	dialog.sc-story:not([open]) {
+		display: none;
+	}
+	dialog.sc-story::backdrop {
+		background: rgb(8 7 10 / 0.72);
+		backdrop-filter: blur(6px);
+	}
+	.sc-story img {
+		width: 216px;
+		height: auto;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line);
+		flex: none;
+	}
+	.sc-story__close {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		margin: 0;
+	}
+	.sc-story__close button {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		border: 0;
+		background: rgb(255 255 255 / 0.06);
+		color: var(--sc-ivory);
+		font-size: 1.25rem;
+		cursor: pointer;
+	}
+	.sc-story__title {
+		margin: 0 0 0.5rem;
+		font: 700 1.35rem / 1.2 var(--sc-font-display);
+		color: var(--sc-ivory);
+	}
+	.sc-story ol {
+		margin: 0 0 1rem;
+		padding-left: 1.1rem;
+		font-size: 0.9rem;
+		color: var(--sc-silver);
+	}
+	.sc-story__btns {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.sc-story__btns > * {
+		padding: 0.55rem 1rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-ivory);
+		font: 600 0.85rem / 1 var(--sc-font-sans);
+		text-decoration: none;
+		cursor: pointer;
+	}
+	.sc-story__btns > :first-child:not([hidden]),
+	.sc-story__btns [hidden] + a {
+		border-color: transparent;
+		background: var(--sc-aurora);
+		color: #120d12;
+	}
+	@media (max-width: 34rem) {
+		dialog.sc-story {
+			flex-direction: column;
+		}
+		.sc-story img {
+			width: 180px;
+		}
+	}
+</style>
