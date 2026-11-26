@@ -1,6 +1,6 @@
 ---
 title: "Instagram"
-description: "Why Feed, Explore and Reels rank differently, what limits a Reel's reach, and how to check your account status."
+description: "Why Feed, Explore and Reels rank differently, what limits a Reel's reach, which formats do what, and how Instagram pays creators."
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -50,6 +50,27 @@ Adam Mosseri, head of Instagram, answers ranking questions in his own videos and
 
 His emphasis shifts between interviews, so read these by date. Sends show up in all three.
 
+## Formats that work
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-rose"><h4>Reels</h4><ul><li>Your main way to reach new people</li><li>Built to be reshared and watched to the end</li><li>Try ideas on non-followers first with Trial Reels</li></ul></div>
+<div class="sc-compare__side is-champagne"><h4>Carousels and photos</h4><ul><li>Feed content for the people who already follow you</li><li>Saves and sends work for useful, reference-style posts</li><li>Eligible for Instagram's performance bonuses</li></ul></div>
+<div class="sc-compare__side is-amethyst"><h4>Stories</h4><ul><li>Mostly seen by followers who already like you</li><li>Where the relationship lives: polls, replies, behind the scenes</li></ul></div>
+<div class="sc-compare__side is-jade"><h4>Broadcast channels and DMs</h4><ul><li>Sends are the signal Mosseri keeps naming</li><li>Make posts people forward to one specific friend</li></ul></div>
+</div>
+<figcaption>From Instagram's ranking explainer and creator pages, with creator-tested notes</figcaption>
+</figure>
+
+## How you get paid
+
+Instagram groups its money tools into three buckets. It doesn't publish one follower threshold for all of them; each tool shows your eligibility in the app's Professional Dashboard.
+
+- **From your audience:** Subscriptions (fans pay a monthly price you set and get exclusive content with a purple ring), Gifts on Reels, and Badges in Lives. Subscription payouts arrive on the 21st of the following month. *(From the platform.)*
+- **From brands:** Partnership Ads, which let a brand run your post as an ad, and Creator Marketplace, where brands find creators for paid work. *(From the platform.)*
+- **From Instagram:** Bonuses, invite-based, that "reward you for the performance of your reels, carousels and single image posts." *(From the platform.)*
+- **Brand deals are still the big one** for most Instagram creators. See [Brand deals](/earn/brand-deals/) and [Pricing](/earn/pricing/). *(Creator-tested.)*
+
 ## Who to follow for Instagram changes
 
 - **Adam Mosseri ([@mosseri](https://www.instagram.com/mosseri/))** posts regular Q&As about how ranking works and what's changing. It's the closest thing to an official changelog, and many creators never watch it.
@@ -63,4 +84,5 @@ See also: [Why the algorithm exists](/algorithms/why-feeds-exist/) and [What to 
 - Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
 - Andrew Hutchinson, [Instagram chief shares insights into its algorithms and creator monetization](https://www.socialmediatoday.com/news/instagram-chief-shares-insights-into-its-algorithms-creator-monetization/718540/), Social Media Today, June 10, 2024.
 - Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025.
+- Instagram for Creators, [Monetize with Instagram](https://creators.instagram.com/earn-cash-making-what-you-love) and [Subscriptions](https://creators.instagram.com/earn-money/subscriptions) (checked Nov 26, 2026).
 - Instagram, [Trial reels: try content with non-followers first](https://creators.instagram.com/blog/instagram-trial-reels), Dec 10, 2024.
