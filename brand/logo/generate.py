@@ -1,11 +1,11 @@
-# Regenerates every SVG in brand/logo from the mark geometry and Geist Medium outlines.
-# Usage: pip install fonttools && GEIST_TTF=path/to/Geist-Medium.ttf python3 brand/logo/generate.py brand/logo
+# Regenerates every SVG in brand/logo from the mark geometry and Syne Bold outlines.
+# Usage: pip install fonttools brotli && python3 brand/logo/generate.py brand/logo
 import math, os, sys
 from fontTools.ttLib import TTFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 OUT = sys.argv[1]; os.makedirs(OUT, exist_ok=True)
-FONT = os.environ.get('GEIST_TTF', 'Geist-Medium.ttf')  # from `npm pack geist`: dist/fonts/geist-sans/
+FONT = os.environ.get('WORDMARK_FONT', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts', 'Syne-Bold.woff2'))  # Syne Bold (SIL OFL)
 
 # ---------- mark geometry (64 x 64 grid) ----------
 S = 64; LOBES = 12; R = 28.9; AMP = 1.6  # the rosette: 12 soft scallops (platform badges use 8)
@@ -53,9 +53,12 @@ def text_path(txt, size, track_em):
         tp=TransformPen(pen,(sc,0,0,-sc,x,0)); gs[g].draw(tp)
         x+=gs[g].width*sc + track_em*size
     return pen.getCommands(), x - track_em*size
-CAP = f['OS/2'].sCapHeight
-def wordmark(color, size=20, track=0.22):
-    d,w=text_path('SELECT CREATORS', size, track)
+from fontTools.pens.boundsPen import BoundsPen
+_bp=BoundsPen(gs)
+for _ch in 'SelectCreators': gs[cmap[ord(_ch)]].draw(_bp)
+CAP = _bp.bounds[3]  # tallest glyph top (the ascender of l and t)
+def wordmark(color, size=26, track=-0.02):
+    d,w=text_path('Select Creators', size, track)
     ch=CAP*size/upm
     return d,w,ch
 def word_svg(color):

@@ -23,7 +23,7 @@ What makes it ours and not a copy of any platform's badge:
 | `logo/mark.svg` | Primary. Black seal, titanium edge, platinum check. Dark backgrounds, favicon, avatars. |
 | `logo/mark-black.svg` | One color, check knocked out. Light backgrounds, print, embossing, stamps. |
 | `logo/mark-white.svg` | One color reversed. Dark backgrounds where gradients can't render (email, video overlays). |
-| `logo/wordmark-light.svg` / `wordmark-dark.svg` | SELECT CREATORS alone, for dark / light backgrounds. |
+| `logo/wordmark-light.svg` / `wordmark-dark.svg` | The Syne wordmark alone, for dark / light backgrounds. |
 | `logo/lockup-horizontal-on-dark.svg` / `-on-light.svg` | Default lockup: headers, decks, OG images. |
 | `logo/lockup-stacked-on-dark.svg` / `-on-light.svg` | Square spaces: profile cards, merch, splash screens. |
 | `logo/png/icon-512.png` | App icon, social avatar (Instagram crops to a circle; the seal survives it). |
@@ -39,7 +39,9 @@ What makes it ours and not a copy of any platform's badge:
 
 ## Wordmark
 
-`SELECT CREATORS` in Geist Medium, all caps, tracked +0.22em, converted to outlines. Caps and wide tracking read as engraved, quiet luxury. In live UI (the site header), set it as real text with `--sc-tracking-wordmark` so it stays accessible and crisp.
+`Select Creators` in **Syne Bold**, title case, tracked −0.02em, converted to outlines. Syne is wide and confident with a slight fashion edge, which keeps the brand premium without reading like a generic tech site. The font file ships in `logo/fonts/Syne-Bold.woff2` (SIL Open Font License) so the logos can be regenerated anywhere. The site header uses the outlined horizontal lockup, so it never depends on the font loading.
+
+Pair it with Geist for everything else: Syne is for the wordmark and, at most, very large display moments.
 
 ## Color
 
