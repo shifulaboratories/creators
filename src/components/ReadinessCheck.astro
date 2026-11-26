@@ -1,0 +1,569 @@
+---
+/**
+ * "What help do you actually need?" Five taps, one honest recommendation.
+ * Runs entirely in the browser: answers are never sent or stored.
+ * Without JavaScript the questions show as a list and the page text explains the logic.
+ */
+interface Option {
+	label: string;
+	value: string;
+}
+interface Question {
+	key: string;
+	ask: string;
+	hint?: string;
+	options: Option[];
+}
+
+const questions: Question[] = [
+	{
+		key: 'followers',
+		ask: 'How big is your biggest account?',
+		options: [
+			{ label: 'Under 10K', value: '0' },
+			{ label: '10K to 100K', value: '1' },
+			{ label: '100K to 1M', value: '2' },
+			{ label: '1M+', value: '3' },
+		],
+	},
+	{
+		key: 'income',
+		ask: 'What do you make from creating in a normal month?',
+		hint: 'Everything: brand deals, ad revenue, subscriptions, products.',
+		options: [
+			{ label: 'Under $1K', value: '0' },
+			{ label: '$1K to $5K', value: '1' },
+			{ label: '$5K to $25K', value: '2' },
+			{ label: '$25K+', value: '3' },
+		],
+	},
+	{
+		key: 'inbound',
+		ask: 'How often do brands reach out to you first?',
+		options: [
+			{ label: 'Rarely or never', value: '0' },
+			{ label: 'A few times a month', value: '1' },
+			{ label: 'Every week', value: '2' },
+			{ label: 'More than I can answer', value: '3' },
+		],
+	},
+	{
+		key: 'admin',
+		ask: 'Hours a week on emails, rates and contracts?',
+		options: [
+			{ label: 'Under 2', value: '0' },
+			{ label: '2 to 5', value: '1' },
+			{ label: '5 to 10', value: '2' },
+			{ label: '10+', value: '3' },
+		],
+	},
+	{
+		key: 'goal',
+		ask: 'What do you want most in the next year?',
+		options: [
+			{ label: 'Grow my audience', value: 'grow' },
+			{ label: 'Better brand deals', value: 'deals' },
+			{ label: 'My own product or business', value: 'business' },
+			{ label: 'TV, a book or bigger stages', value: 'big' },
+		],
+	},
+];
+
+type Link = [string, string];
+interface Result {
+	tag: string;
+	title: string;
+	body: string;
+	steps: string[];
+	links: Link[];
+	agency: 'talk' | 'not-yet';
+}
+
+const results: Record<string, Result> = {
+	build: {
+		tag: 'Build first',
+		title: 'You don’t need a manager yet.',
+		body: 'A manager sells momentum you already have. Right now the best return on your time is the content itself: learn what the feed rewards, post consistently, and make the thing people share.',
+		steps: [
+			'Learn how the algorithm picks what people see.',
+			'Pick one platform to win before spreading out.',
+			'Anyone who wants to manage you for an upfront fee is a red flag. Walk away.',
+		],
+		links: [
+			['How the algorithm picks what people see', '/algorithms/how-recommenders-work/'],
+			['Platforms compared', '/platforms/'],
+			['Grow', '/grow/'],
+		],
+		agency: 'not-yet',
+	},
+	diy: {
+		tag: 'Run it yourself, with backup',
+		title: 'Handle deals yourself, and get a lawyer on call.',
+		body: 'Brands are finding you, but not so often that a manager’s cut would pay for itself. You’ll keep more by pricing well, having a lawyer read anything with usage rights or exclusivity, and buying back time with a first hire.',
+		steps: [
+			'Price every deal from a rate you can explain.',
+			'Pay a lawyer per contract instead of a percentage forever.',
+			'If production eats your week, an editor usually beats a manager as a first hire.',
+		],
+		links: [
+			['How to price a brand deal', '/earn/pricing/'],
+			['Redline a contract', '/deals/redline-a-contract/'],
+			['Hiring your team', '/team/hiring/'],
+			['When to get a manager', '/team/when-to-get-a-manager/'],
+		],
+		agency: 'not-yet',
+	},
+	manager: {
+		tag: 'Manager-ready',
+		title: 'You’re ready to talk to managers.',
+		body: 'Deals are coming in faster than you can handle them well, and the admin is costing you real hours or real money. That’s exactly when a good manager can pay for themselves. Vet hard: the wrong one costs more than none.',
+		steps: [
+			'Talk to at least three before you sign anything.',
+			'Have your own lawyer read the management agreement.',
+			'Ask what they take a cut of, and for how long after you part ways.',
+		],
+		links: [
+			['When to get a manager', '/team/when-to-get-a-manager/'],
+			['Vetting a manager', '/team/vetting-a-manager/'],
+			['Agency directory', '/team/agency-directory/'],
+		],
+		agency: 'talk',
+	},
+	team: {
+		tag: 'Manager plus specialists',
+		title: 'You’re past one manager. Build the team around you.',
+		body: 'At your size, or with the goals you picked, you’ll likely want a manager plus specialists: an agent for TV, books or top-tier brands, a lawyer, and someone watching the money. Each one has a different job and a different cut.',
+		steps: [
+			'Know which role does what before anyone pitches you.',
+			'Make sure the commissions don’t stack up on the same dollars.',
+			'Have your own lawyer read every representation agreement.',
+		],
+		links: [
+			['Manager vs agent vs lawyer', '/team/manager-vs-agent-vs-lawyer/'],
+			['Vetting a manager', '/team/vetting-a-manager/'],
+			['Agency directory', '/team/agency-directory/'],
+		],
+		agency: 'talk',
+	},
+};
+---
+
+<section class="rc not-content" data-rc data-results={JSON.stringify(results)} aria-label="Readiness check">
+	<div class="rc-bar" aria-hidden="true"><span data-rc-progress></span></div>
+	<p class="rc-step" data-rc-step aria-live="polite">5 quick questions</p>
+
+	<form class="rc-qs" data-rc-form>
+		{
+			questions.map((q, i) => (
+				<fieldset class="rc-q" data-rc-q={i}>
+					<legend>{q.ask}</legend>
+					{q.hint && <p class="rc-hint">{q.hint}</p>}
+					<div class="rc-opts">
+						{q.options.map((o) => (
+							<label class="rc-opt">
+								<input type="radio" name={q.key} value={o.value} />
+								<span>{o.label}</span>
+							</label>
+						))}
+					</div>
+				</fieldset>
+			))
+		}
+	</form>
+
+	<div class="rc-result" data-rc-result hidden tabindex="-1">
+		<p class="rc-tag" data-r-tag></p>
+		<h3 class="rc-title" data-r-title></h3>
+		<p class="rc-body" data-r-body></p>
+		<ul class="rc-steps" data-r-steps></ul>
+		<div class="rc-links" data-r-links></div>
+		<div class="rc-agency" data-r-agency="talk" hidden>
+			<p>
+				<b>Full disclosure:</b> the people behind this handbook are building a talent agency. If you’d like to talk to us, message{' '}
+				<a href="https://www.instagram.com/selectcreators/" rel="noopener" target="_blank">@selectcreators</a>{' '}on Instagram. Talk to
+				at least two others too, and use the same checklist on us.
+			</p>
+			<p class="rc-fine">
+				<a href="/about/contributors/">Who we are</a> · <a href="/about/how-we-make-money/">How we make money</a>
+			</p>
+		</div>
+		<div class="rc-agency is-quiet" data-r-agency="not-yet" hidden>
+			<p>
+				We’re building a talent agency too, and we’re still telling you to wait. When brands are emailing you every week and the admin
+				is eating your time, take this again.
+			</p>
+		</div>
+		<button type="button" class="rc-again" data-rc-again>Start over</button>
+	</div>
+
+	<div class="rc-nav" data-rc-nav hidden>
+		<button type="button" class="rc-back" data-rc-back>Back</button>
+	</div>
+	<p class="rc-private">Your answers stay on your phone or computer. Nothing is sent or saved.</p>
+</section>
+
+<style>
+	.rc {
+		--c: var(--sc-team, var(--sc-ion));
+		position: relative;
+		margin-block: 1.5rem 2rem;
+		padding: clamp(1.1rem, 4vw, 1.75rem);
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-card, var(--sc-radius-lg));
+		background:
+			radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 60%),
+			radial-gradient(90% 60% at 100% 100%, color-mix(in srgb, var(--sc-champagne) 8%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.02);
+		overflow: hidden;
+	}
+	.rc [hidden] {
+		display: none !important;
+	}
+	.rc-bar {
+		height: 4px;
+		border-radius: 4px;
+		background: var(--sc-line);
+		overflow: hidden;
+	}
+	.rc-bar span {
+		display: block;
+		height: 100%;
+		width: 0;
+		background: linear-gradient(90deg, var(--c), var(--sc-champagne));
+		transition: width var(--sc-dur-base, 0.3s) var(--sc-ease-settle, ease);
+	}
+	.rc-step {
+		margin: 0.75rem 0 0;
+		font-size: var(--sc-text-xs);
+		font-weight: 600;
+		color: var(--c);
+	}
+	.rc-qs {
+		display: grid;
+		gap: 1.5rem;
+		margin-top: 0.5rem;
+	}
+	.rc-q {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		min-width: 0;
+	}
+	.rc-q legend {
+		padding: 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.3rem, 4.5vw, 1.6rem);
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.01em;
+		color: var(--sc-ivory);
+	}
+	.rc-hint {
+		margin: 0.4rem 0 0;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+	}
+	.rc-opts {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+	.rc-opt {
+		position: relative;
+		display: flex;
+		align-items: center;
+		min-height: 56px;
+		padding: 0.75rem 0.9rem;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: var(--sc-radius-md);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-ivory);
+		font-weight: 600;
+		font-size: var(--sc-text-sm);
+		line-height: 1.3;
+		cursor: pointer;
+		transition:
+			border-color var(--sc-dur-quick, 0.15s),
+			background var(--sc-dur-quick, 0.15s),
+			transform var(--sc-dur-quick, 0.15s) var(--sc-ease-press, ease);
+	}
+	.rc-opt input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.rc-opt:hover {
+		border-color: var(--sc-line-bright);
+	}
+	.rc-opt:active {
+		transform: scale(0.98);
+	}
+	.rc-opt:has(input:checked) {
+		border-color: var(--c);
+		background: color-mix(in srgb, var(--c) 16%, transparent);
+	}
+	.rc-opt:has(input:focus-visible) {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 2px;
+	}
+
+	/* One question at a time once the script runs. */
+	.rc.is-live .rc-q {
+		display: none;
+	}
+	.rc.is-live .rc-q.is-on {
+		display: block;
+		animation: rc-in var(--sc-dur-base, 0.3s) var(--sc-ease-settle, ease) both;
+	}
+	@keyframes rc-in {
+		from {
+			opacity: 0;
+			transform: translateX(18px);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rc.is-live .rc-q.is-on,
+		.rc-result {
+			animation: none !important;
+		}
+	}
+	.rc-nav {
+		margin-top: 1rem;
+	}
+	.rc-back,
+	.rc-again {
+		min-height: 44px;
+		padding: 0.5rem 1rem;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: var(--sc-radius-pill);
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.rc-back:hover,
+	.rc-again:hover {
+		color: var(--sc-ivory);
+		border-color: var(--sc-line-bright);
+	}
+
+	.rc-result {
+		margin-top: 0.75rem;
+		animation: rc-in var(--sc-dur-base, 0.3s) var(--sc-ease-settle, ease) both;
+	}
+	.rc-result:focus {
+		outline: none;
+	}
+	.rc-tag {
+		display: inline-block;
+		margin: 0;
+		padding: 3px 12px;
+		border-radius: var(--sc-radius-pill);
+		background: color-mix(in srgb, var(--c) 20%, transparent);
+		color: var(--c);
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.rc-title {
+		margin: 0.6rem 0 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.5rem, 5vw, 2rem);
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+	}
+	.rc-body {
+		margin: 0.75rem 0 0;
+		color: var(--sc-platinum);
+		line-height: 1.6;
+	}
+	.rc-steps {
+		margin: 1rem 0 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.5rem;
+	}
+	:global(.rc-steps li) {
+		position: relative;
+		padding-left: 1.5rem;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		line-height: 1.5;
+	}
+	:global(.rc-steps li)::before {
+		content: '';
+		position: absolute;
+		left: 0.2rem;
+		top: 0.45em;
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		background: var(--c);
+		box-shadow: 0 0 10px var(--c);
+	}
+	.rc-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 1.1rem;
+	}
+	:global(.rc-links a) {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding: 0.5rem 0.95rem;
+		border-radius: var(--sc-radius-pill);
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+		font-size: var(--sc-text-sm);
+		font-weight: 700;
+		text-decoration: none;
+	}
+	:global(.rc-links a + a) {
+		background: rgb(255 255 255 / 0.06);
+		color: var(--sc-ivory);
+		border: 1px solid var(--sc-line-strong);
+	}
+	.rc-agency {
+		margin-top: 1.25rem;
+		padding: 1rem 1.1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid color-mix(in srgb, var(--sc-champagne) 40%, transparent);
+		background: color-mix(in srgb, var(--sc-champagne) 7%, transparent);
+	}
+	.rc-agency.is-quiet {
+		border-color: var(--sc-line);
+		background: rgb(255 255 255 / 0.02);
+	}
+	.rc-agency p {
+		margin: 0;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		line-height: 1.55;
+	}
+	.rc-agency b {
+		color: var(--sc-champagne);
+	}
+	.rc-agency a {
+		color: var(--sc-ivory);
+	}
+	.rc-agency .rc-fine {
+		margin-top: 0.5rem;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-silver);
+	}
+	.rc-again {
+		margin-top: 1.25rem;
+	}
+	.rc-private {
+		margin: 1.25rem 0 0;
+		color: var(--sc-steel);
+		font-size: var(--sc-text-xs);
+	}
+	@media (max-width: 380px) {
+		.rc-opts {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
+
+<script>
+	interface Result {
+		tag: string;
+		title: string;
+		body: string;
+		steps: string[];
+		links: [string, string][];
+		agency: 'talk' | 'not-yet';
+	}
+
+	/**
+	 * The whole recommendation, in one place so it's easy to check:
+	 * - Manager-ready: brands reach out every week or more, AND either 5+ hours of admin a week or $5K+ a month.
+	 *   Upgrade to "manager plus specialists" at $25K+ a month or when the goal is TV, books or bigger stages.
+	 * - Build first: brands rarely reach out AND under $1K a month.
+	 * - Everyone else: run it yourself with a lawyer on call.
+	 */
+	function recommend(a: Record<string, string>): string {
+		const n = (k: string) => Number(a[k] ?? 0);
+		if (n('inbound') >= 2 && (n('admin') >= 2 || n('income') >= 2)) {
+			return n('income') >= 3 || a.goal === 'big' ? 'team' : 'manager';
+		}
+		if (n('inbound') === 0 && n('income') === 0) return 'build';
+		return 'diy';
+	}
+
+	document.querySelectorAll<HTMLElement>('[data-rc]').forEach((root) => {
+		const results = JSON.parse(root.dataset.results || '{}') as Record<string, Result>;
+		const qs = [...root.querySelectorAll<HTMLFieldSetElement>('[data-rc-q]')];
+		const form = root.querySelector<HTMLFormElement>('[data-rc-form]')!;
+		const bar = root.querySelector<HTMLElement>('[data-rc-progress]')!;
+		const stepText = root.querySelector<HTMLElement>('[data-rc-step]')!;
+		const nav = root.querySelector<HTMLElement>('[data-rc-nav]')!;
+		const out = root.querySelector<HTMLElement>('[data-rc-result]')!;
+		let at = 0;
+
+		const show = (i: number) => {
+			at = i;
+			qs.forEach((q, j) => q.classList.toggle('is-on', j === i));
+			bar.style.width = `${(i / qs.length) * 100}%`;
+			stepText.textContent = `Question ${i + 1} of ${qs.length}`;
+			nav.hidden = i === 0;
+		};
+
+		const finish = () => {
+			const answers = Object.fromEntries(new FormData(form)) as Record<string, string>;
+			const r = results[recommend(answers)];
+			form.hidden = true;
+			nav.hidden = true;
+			bar.style.width = '100%';
+			stepText.textContent = 'Your answer';
+			out.querySelector('[data-r-tag]')!.textContent = r.tag;
+			out.querySelector('[data-r-title]')!.textContent = r.title;
+			out.querySelector('[data-r-body]')!.textContent = r.body;
+			const steps = out.querySelector('[data-r-steps]')!;
+			steps.replaceChildren(
+				...r.steps.map((s) => {
+					const li = document.createElement('li');
+					li.textContent = s;
+					return li;
+				}),
+			);
+			const links = out.querySelector('[data-r-links]')!;
+			links.replaceChildren(
+				...r.links.map(([label, href]) => {
+					const a = document.createElement('a');
+					a.href = href;
+					a.textContent = label;
+					return a;
+				}),
+			);
+			out.querySelectorAll<HTMLElement>('[data-r-agency]').forEach((el) => (el.hidden = el.dataset.rAgency !== r.agency));
+			out.hidden = false;
+			out.focus({ preventScroll: true });
+			out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		};
+
+		form.addEventListener('change', (e) => {
+			const q = (e.target as HTMLElement).closest('[data-rc-q]');
+			const i = qs.indexOf(q as HTMLFieldSetElement);
+			if (i !== at) return;
+			// A short beat so the tap registers visually before moving on.
+			window.setTimeout(() => (i + 1 < qs.length ? show(i + 1) : finish()), 180);
+		});
+		root.querySelector('[data-rc-back]')!.addEventListener('click', () => show(Math.max(0, at - 1)));
+		root.querySelector('[data-rc-again]')!.addEventListener('click', () => {
+			form.reset();
+			form.hidden = false;
+			out.hidden = true;
+			show(0);
+		});
+
+		root.classList.add('is-live');
+		show(0);
+	});
+</script>

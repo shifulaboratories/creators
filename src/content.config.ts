@@ -3,26 +3,44 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { docsLoader } from '@astrojs/starlight/loaders';
 import { docsSchema } from '@astrojs/starlight/schema';
+import { people } from './data/people';
 
 /**
  * Every guide records who wrote it, who reviewed it, when it was last checked,
  * and how confident we are in it.
  */
+const guideFields = z.object({
+	// Ids from src/data/people.ts. Shown as "By" and "Reviewed by" bylines.
+	authors: z.array(z.string()).default([]),
+	reviewers: z.array(z.string()).default([]),
+	lastReviewed: z.coerce.date().optional(),
+	confidence: z.enum(['verified', 'practitioner-view', 'speculative']).optional(),
+	status: z.enum(['outline', 'draft', 'published']).default('outline'),
+	// Underground pages must never carry affiliate links or sponsors.
+	noAffiliates: z.boolean().default(false),
+	// Optional generated cover: big word and color key (see src/styles/sections.css).
+	cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
+});
+
 const docs = defineCollection({
 	loader: docsLoader(),
-	schema: docsSchema({
-		extend: z.object({
-			authors: z.array(z.string()).default([]),
-			reviewers: z.array(z.string()).default([]),
-			lastReviewed: z.coerce.date().optional(),
-			confidence: z.enum(['verified', 'practitioner-view', 'speculative']).optional(),
-			status: z.enum(['outline', 'draft', 'published']).default('outline'),
-			// Underground pages must never carry affiliate links or sponsors.
-			noAffiliates: z.boolean().default(false),
-			// Optional generated cover: big word and color key (see src/styles/sections.css).
-			cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
+	schema: (context) =>
+		docsSchema({ extend: guideFields })(context).superRefine((d, ctx) => {
+			// Bylines must point at someone in src/data/people.ts.
+			for (const key of ['authors', 'reviewers'] as const) {
+				for (const id of d[key]) {
+					if (!people[id]) ctx.addIssue({ code: 'custom', path: [key], message: `"${id}" is not in src/data/people.ts` });
+				}
+			}
+			// "Fact-checked" is a promise: a named reviewer and a review date. See docs/publishing.md.
+			if (d.status === 'published' && (d.reviewers.length === 0 || !d.lastReviewed)) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['status'],
+					message: 'status: published needs reviewers and lastReviewed (see docs/publishing.md)',
+				});
+			}
 		}),
-	}),
 });
 
 /**

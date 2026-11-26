@@ -1,6 +1,7 @@
 ---
 // Guide header: colored section kicker, title, lead, and trust chips.
 import AskAI from './AskAI.astro';
+import { personName, CONTRIBUTORS_PATH } from '../data/people';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
 const { entry } = Astro.locals.starlightRoute;
@@ -8,6 +9,7 @@ const data = entry.data as typeof entry.data & {
 	status?: string;
 	confidence?: string;
 	authors?: string[];
+	reviewers?: string[];
 	lastReviewed?: Date;
 };
 const section = entry.id.split('/')[0];
@@ -41,7 +43,16 @@ const confidenceText: Record<string, string> = {
 	{entry.id !== 'guides' && <ul class="chips">
 		{data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
-		{data.authors && data.authors.length > 0 && <li class="chip">By {data.authors.join(', ')}</li>}
+		{data.authors && data.authors.length > 0 && (
+			<li class="chip byline">
+				By {data.authors.map((id, i) => <>{i > 0 && ', '}<a href={`${CONTRIBUTORS_PATH}#${id}`}>{personName(id)}</a></>)}
+			</li>
+		)}
+		{data.reviewers && data.reviewers.length > 0 && (
+			<li class="chip byline">
+				Reviewed by {data.reviewers.map((id, i) => <>{i > 0 && ', '}<a href={`${CONTRIBUTORS_PATH}#${id}`}>{personName(id)}</a></>)}
+			</li>
+		)}
 		{section === 'underground' && <li class="chip ember">No affiliate links</li>}
 	</ul>}
 	{entry.id !== 'guides' && (
@@ -113,6 +124,14 @@ const confidenceText: Record<string, string> = {
 	.status-published {
 		color: var(--sc-jade);
 		border-color: color-mix(in srgb, var(--sc-jade) 45%, transparent);
+	}
+	.byline a {
+		color: var(--sc-ivory);
+		text-decoration: none;
+		font-weight: 600;
+	}
+	.byline a:hover {
+		text-decoration: underline;
 	}
 	.ask {
 		margin-top: 1.1rem;
