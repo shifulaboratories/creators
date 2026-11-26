@@ -2,7 +2,7 @@
 	// Cloudflare Workers static-assets deploy for the built Astro site.
 	// Build: npm run build  ·  Deploy: npx wrangler deploy
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "select-creators",
+	"name": "creators",
 	"compatibility_date": "2026-11-01",
 	"assets": {
 		"directory": "./dist",
