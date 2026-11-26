@@ -32,6 +32,8 @@ export default defineConfig({
 			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
 			sidebar: [
 				{ label: 'Start here', link: '/' },
+				section('Platforms', 'platforms'),
+				section('Goldmines', 'goldmines'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
 				section('Deals and contracts', 'deals'),

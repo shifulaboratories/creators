@@ -19,6 +19,8 @@ const docs = defineCollection({
 			status: z.enum(['outline', 'draft', 'published']).default('outline'),
 			// Underground pages must never carry affiliate links or sponsors.
 			noAffiliates: z.boolean().default(false),
+			// Optional generated cover: big word and color key (see src/styles/sections.css).
+			cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
 		}),
 	}),
 });
@@ -66,4 +68,24 @@ const tools = defineCollection({
 		}),
 });
 
-export const collections = { docs, tools };
+/**
+ * Curated "goldmine" resources in src/data/resources/. Each says why it is worth
+ * someone's time; affiliate links must be flagged like tools.
+ */
+const resources = defineCollection({
+	loader: glob({ pattern: '**/*.yaml', base: './src/data/resources' }),
+	schema: z.object({
+		name: z.string(),
+		// A full URL, or a path starting with / for our own guides.
+		url: z.string().refine((u) => u.startsWith('/') || URL.canParse(u), 'Must be a URL or a /path'),
+		kind: z.enum(['official', 'playbook', 'hiring', 'code', 'tool', 'learning']),
+		tint: z.string().default('goldmines'),
+		coverLabel: z.string().optional(),
+		why: z.string().min(20),
+		free: z.boolean(),
+		featured: z.boolean().default(false),
+		affiliate: z.boolean().default(false),
+	}),
+});
+
+export const collections = { docs, tools, resources };

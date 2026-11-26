@@ -64,3 +64,5 @@
 		transform: translateY(8px);
 	}
 }
+:root:has(.guide-head[data-section='platforms']) { --accent: var(--sc-platforms); }
+:root:has(.guide-head[data-section='goldmines']) { --accent: var(--sc-goldmines); }
