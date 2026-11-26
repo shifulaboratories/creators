@@ -1,0 +1,9 @@
+# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
+name: CapCut
+url: https://www.capcut.com/
+slot: editing
+pricing:
+  free: true
+bestFor: Fast short-form edits on phone or desktop
+alternative: DaVinci Resolve (free version)
+affiliate: false

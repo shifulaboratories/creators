@@ -1,0 +1,9 @@
+# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
+name: OBS Studio
+url: https://obsproject.com/
+slot: editing
+pricing:
+  free: true
+bestFor: Screen recording and live streaming
+alternative: Built-in screen recorders on macOS and Windows
+affiliate: false

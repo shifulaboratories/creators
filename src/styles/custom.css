@@ -1,0 +1,9 @@
+/* Inline disclosure label rendered next to every affiliate link. */
+.affiliate-label {
+	font-size: var(--sl-text-xs);
+	border: 1px solid var(--sl-color-gray-4);
+	border-radius: 0.25rem;
+	padding: 0 0.35rem;
+	margin-inline-start: 0.35rem;
+	white-space: nowrap;
+}
