@@ -1,0 +1,229 @@
+---
+/**
+ * What creators actually use, from pages they published themselves.
+ * Also computes the gear that shows up in more than one setup.
+ */
+import { getCollection } from 'astro:content';
+
+const setups = (await getCollection('setups')).map((s) => s.data).sort((a, b) => a.creator.localeCompare(b.creator));
+const cats = [
+	{ key: 'camera', label: 'Camera', icon: 'M4 8h3l2-2h6l2 2h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
+	{ key: 'lens', label: 'Lenses', icon: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
+	{ key: 'audio', label: 'Audio', icon: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3' },
+	{ key: 'lighting', label: 'Lighting', icon: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z' },
+	{ key: 'editing', label: 'Editing', icon: 'M4 5h16v11H4zM8 20h8M12 16v4' },
+	{ key: 'support', label: 'Support and storage', icon: 'M12 3v9M7 21l5-9 5 9M5 3h14' },
+] as const;
+
+// Gear that appears in two or more setups (matched on the first two words, e.g. "Sennheiser MKH").
+const key = (s: string) => s.toLowerCase().replace(/\(.*?\)/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
+const seen = new Map<string, { name: string; who: Set<string> }>();
+for (const s of setups)
+	for (const c of cats)
+		for (const g of s.gear[c.key]) {
+			const k = key(g);
+			const v = seen.get(k) ?? { name: g.replace(/\s*\(.*?\)/g, ''), who: new Set() };
+			v.who.add(s.creator);
+			seen.set(k, v);
+		}
+const shared = [...seen.values()].filter((v) => v.who.size > 1);
+const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+---
+
+{
+	shared.length > 0 && (
+		<div class="cs-shared not-content">
+			<span class="cs-kicker">Shows up in more than one setup</span>
+			<div class="cs-pills">
+				{shared.map((v) => (
+					<span class="cs-pill">
+						{v.name} <b>×{v.who.size}</b>
+					</span>
+				))}
+			</div>
+		</div>
+	)
+}
+
+<div class="cs sc-rail not-content" data-rail>
+	{
+		setups.map((s) => (
+			<article class="cs-card">
+				<header class="cs-head">
+					<img src={`https://twenty-icons.com/${host(s.site)}/64`} onerror="this.style.visibility='hidden'" alt="" width="40" height="40" loading="lazy" decoding="async" />
+					<div>
+						<h3>{s.creator}</h3>
+						<p>{s.known}</p>
+					</div>
+					<span class="cs-date">{s.asOf}</span>
+				</header>
+				<dl class="cs-gear">
+					{cats
+						.filter((c) => s.gear[c.key].length)
+						.map((c) => (
+							<div class="cs-row">
+								<dt>
+									<svg viewBox="0 0 24 24" aria-hidden="true">
+										<path d={c.icon} />
+									</svg>
+									{c.label}
+								</dt>
+								<dd>
+									{s.gear[c.key].map((g) => (
+										<span class="cs-item">{g}</span>
+									))}
+								</dd>
+							</div>
+						))}
+				</dl>
+				{s.note && <p class="cs-note">{s.note}</p>}
+				<a class="cs-src" href={s.source} target="_blank" rel="noopener">
+					From “{s.sourceTitle}” on {host(s.source)} ↗
+				</a>
+			</article>
+		))
+	}
+</div>
+
+<script>
+	import '../scripts/rail';
+</script>
+
+<style>
+	.cs-shared {
+		margin: 1.25rem 0 0.75rem;
+		padding: 0.8rem 0.9rem;
+		border-radius: 14px;
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+		background: color-mix(in srgb, var(--accent) 6%, transparent);
+	}
+	.cs-kicker {
+		font-family: var(--sc-font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.cs-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-top: 0.5rem;
+	}
+	.cs-pill {
+		font-size: 0.82rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+	}
+	.cs-pill b {
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		color: var(--accent);
+		margin-left: 0.2rem;
+	}
+	.cs {
+		display: grid;
+		gap: 1rem;
+		margin-block: 1rem 2rem;
+	}
+	@media (min-width: 48rem) {
+		.cs {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	.cs-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		padding: 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(100% 60% at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+			rgb(255 255 255 / 0.02);
+	}
+	.cs-head {
+		display: grid;
+		grid-template-columns: 40px 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.cs-head img {
+		border-radius: 12px;
+		background: #111;
+	}
+	.cs-head h3 {
+		margin: 0;
+		font-size: 1.05rem;
+		color: var(--sc-ivory);
+	}
+	.cs-head p {
+		margin: 0.1rem 0 0;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	.cs-date {
+		font-family: var(--sc-font-mono);
+		font-size: 0.66rem;
+		padding: 0.15rem 0.5rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-silver);
+		white-space: nowrap;
+	}
+	.cs-gear {
+		display: grid;
+		gap: 0.65rem;
+		margin: 0;
+	}
+	.cs-row {
+		display: grid;
+		gap: 0.35rem;
+	}
+	.cs-row dt {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--sc-silver);
+	}
+	.cs-row svg {
+		width: 15px;
+		height: 15px;
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.cs-row dd {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin: 0;
+	}
+	.cs-item {
+		font-size: 0.82rem;
+		padding: 0.2rem 0.55rem;
+		border-radius: 8px;
+		background: rgb(255 255 255 / 0.05);
+		color: var(--sc-ivory);
+	}
+	.cs-note {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.cs-src {
+		margin-top: auto;
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		color: var(--accent);
+		text-decoration: none;
+	}
+</style>

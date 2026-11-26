@@ -30,6 +30,7 @@ function price(p: { free: boolean; fromUsdPerMonth?: number; oneTimeUsd?: number
 			tools.map((t) => (
 				<tr>
 					<td>
+						<img class="tl-logo" onerror="this.style.visibility='hidden'" src={`https://twenty-icons.com/${new URL(t.url).hostname.replace(/^www\./, '')}/32`} alt="" width="20" height="20" loading="lazy" decoding="async" />
 						{t.affiliate ? (
 							<>
 								<a href={t.affiliateUrl} rel="sponsored noopener">{t.name}</a>
@@ -49,3 +50,13 @@ function price(p: { free: boolean; fromUsdPerMonth?: number; oneTimeUsd?: number
 		}
 	</tbody>
 </table>
+
+<style>
+	.tl-logo {
+		display: inline-block;
+		vertical-align: -4px;
+		margin-right: 0.45rem;
+		border-radius: 5px;
+		background: #111;
+	}
+</style>

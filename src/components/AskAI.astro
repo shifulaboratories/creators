@@ -1,0 +1,107 @@
+---
+/**
+ * Hand a page (or the whole site) to an AI assistant in one tap.
+ * Pre-fills Claude, ChatGPT or Perplexity with a prompt that points at our
+ * plain-Markdown copy of the page, and offers "Copy as Markdown".
+ */
+import { SITE_NAME } from '../site.mjs';
+interface Props {
+	scope?: 'page' | 'site';
+	mdPath?: string; // e.g. /platforms/youtube.md
+	title?: string;
+}
+const { scope = 'page', mdPath, title } = Astro.props;
+const site = (Astro.site ?? new URL('https://creators.select')).origin;
+const pageUrl = new URL(Astro.url.pathname, site).href;
+const source = scope === 'site' ? `${site}/llms-full.txt` : mdPath ? `${site}${mdPath}` : pageUrl;
+const prompt =
+	scope === 'site'
+		? `Read ${source}, the full ${SITE_NAME} creator handbook. Use it as your main source and cite the page URLs you rely on. First ask me what platform I'm on, my niche and my goal, then help me make a plan.`
+		: `Read ${source} (the "${title}" guide from ${SITE_NAME}, ${pageUrl}). Use it as your source. Summarize it in five bullets, then ask about my platform, niche and goal and help me apply it.`;
+const q = encodeURIComponent(prompt);
+const targets = [
+	{ name: 'Claude', href: `https://claude.ai/new?q=${q}` },
+	{ name: 'ChatGPT', href: `https://chatgpt.com/?q=${q}` },
+	{ name: 'Perplexity', href: `https://www.perplexity.ai/search?q=${q}` },
+];
+---
+
+<div class="ai not-content" data-ai>
+	<span class="ai-label">
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" /></svg>
+		{scope === 'site' ? 'Ask AI about the whole library' : 'Ask AI about this guide'}
+	</span>
+	<div class="ai-btns">
+		{targets.map((t) => <a class="ai-btn" href={t.href} target="_blank" rel="noopener">{t.name} ↗</a>)}
+		{mdPath && <button type="button" class="ai-btn" data-copy={mdPath}>Copy as Markdown</button>}
+		{scope === 'site' && <a class="ai-btn" href="/llms-full.txt">llms-full.txt</a>}
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+		b.addEventListener('click', async () => {
+			const label = b.textContent;
+			try {
+				const text = await (await fetch(b.dataset.copy!)).text();
+				await navigator.clipboard.writeText(text);
+				b.textContent = 'Copied ✓';
+			} catch {
+				b.textContent = 'Couldn’t copy';
+			}
+			setTimeout(() => (b.textContent = label), 1800);
+		}),
+	);
+</script>
+
+<style>
+	.ai {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+		margin: 0 0 1.25rem;
+		padding: 0.6rem 0.75rem;
+		border-radius: 14px;
+		border: 1px solid color-mix(in srgb, var(--sc-ion) 30%, transparent);
+		background: linear-gradient(90deg, rgb(139 156 255 / 0.08), rgb(177 140 245 / 0.04));
+	}
+	.ai-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.ai-label svg {
+		width: 16px;
+		height: 16px;
+		fill: var(--sc-ion);
+	}
+	.ai-btns {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.ai-btn {
+		appearance: none;
+		font: inherit;
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		padding: 0.3rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-ivory);
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			border-color 0.2s,
+			background 0.2s;
+	}
+	.ai-btn:hover {
+		border-color: var(--sc-ion);
+		background: rgb(139 156 255 / 0.1);
+	}
+</style>

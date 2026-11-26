@@ -1,0 +1,183 @@
+/** Data behind the interactive explainers, shared with the Markdown copies for AI tools. */
+
+export const sets = {
+	'2026': [
+		['Share via copy link', 20],
+		['Reply', 5],
+		['Quote', 5],
+		['Share via DM', 5],
+		['Follow the author', 4],
+		['Share', 2.118],
+		['Repost', 1],
+		['Like', 0.708],
+		['Time spent after clicking in', 0.385],
+		['Click into the post', 0.274],
+		['Open a link', 0.2],
+		['Scroll past without stopping', -0.02],
+		['Block the author', -31.2],
+		['Not interested', -53.07],
+		['Mute the author', -58.8],
+		['Report', -234],
+	],
+	'2023': [
+		['Reply the author engages with', 75],
+		['Reply', 13.5],
+		['Profile click, then engage', 12],
+		['Open the conversation, then engage', 11],
+		['Open the conversation, stay 2+ min', 10],
+		['Retweet', 1],
+		['Like', 0.5],
+		['Watch half a video', 0.005],
+		['Negative feedback', -74],
+		['Report', -369],
+	],
+} as const;
+
+export const myths = [
+	{
+		claim: '“One report cancels out hundreds of likes.”',
+		verdict: 'False',
+		v: 'false',
+		truth: 'X’s ranking weights multiply the predicted chance of an action, not the number of times it happened. X’s code comments call this exact claim a misreading and note that the baseline chance of a report is more than 1,000 times lower than a like.',
+		src: 'X, x-algorithm source code (2026)',
+		href: 'https://github.com/xai-org/x-algorithm/blob/main/home-mixer/params/param.rs',
+		link: '/algorithms/x-open-source/',
+	},
+	{
+		claim: '“Get your haters to mass-report a post and it dies.”',
+		verdict: 'Mostly false on X',
+		v: 'misleading',
+		truth: 'X says predictions are personalized, so reports from a group mainly change what similar accounts see. It also says actions only count when the post was served in the Home timeline, so coordinating people to visit a post directly has no ranking effect.',
+		src: 'X, x-algorithm source code (2026)',
+		href: 'https://github.com/xai-org/x-algorithm/blob/main/home-mixer/params/param.rs',
+	},
+	{
+		claim: '“You need a big following to go viral on TikTok.”',
+		verdict: 'False',
+		v: 'false',
+		truth: 'TikTok says follower count and whether the account had high-performing videos before are not direct factors in For You recommendations.',
+		src: 'TikTok Newsroom, June 2020',
+		href: 'https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/',
+		link: '/platforms/tiktok/',
+	},
+	{
+		claim: '“Instagram hides your posts so you’ll pay for ads.”',
+		verdict: 'Instagram says no',
+		v: 'false',
+		truth: 'Instagram’s head says it does not suppress content to encourage people to buy ads. What does limit Reels reach, by Instagram’s own list: low resolution, other apps’ watermarks, muted audio, borders, mostly-text Reels and reposts.',
+		src: 'Adam Mosseri, Instagram, May 2023',
+		href: 'https://about.instagram.com/blog/announcements/instagram-ranking-explained',
+		link: '/platforms/instagram/',
+	},
+	{
+		claim: '“You’re shadowbanned and there’s no way to know.”',
+		verdict: 'You can check',
+		v: 'misleading',
+		truth: 'Instagram’s Account Status shows whether you’re eligible to be recommended. X’s “Under the Hood” tool shows visibility-limiting labels on your account and posts. Check before you buy anyone’s “unshadowban” fix.',
+		src: 'Instagram (2023); X, x-algorithm README (2026)',
+		href: 'https://github.com/xai-org/x-algorithm#under-the-hood-label-transparency-tool',
+	},
+	{
+		claim: '“There’s one Instagram algorithm. Crack it and you win.”',
+		verdict: 'False',
+		v: 'false',
+		truth: 'Instagram says Feed, Explore, Reels, Stories and Search each use their own ranking, with different signals. Explore weighs popularity much more than Feed does.',
+		src: 'Adam Mosseri, Instagram, May 2023',
+		href: 'https://about.instagram.com/blog/announcements/instagram-ranking-explained',
+	},
+	{
+		claim: '“YouTube just pushes whatever gets the most clicks.”',
+		verdict: 'Not since 2012',
+		v: 'false',
+		truth: 'YouTube says it added watch time in 2012 because clicks alone rewarded misleading videos, and it now also surveys viewers and counts time on videos they rate highly as more valuable.',
+		src: 'YouTube, How YouTube Works; Cristos Goodrow, Sept 2021',
+		href: 'https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/',
+		link: '/platforms/youtube/',
+	},
+	{
+		claim: '“Here’s the exact formula. Copy these weights.”',
+		verdict: 'Weights change',
+		v: 'partly',
+		truth: 'Even the one platform that publishes weights changes them. X’s reply weight was 13.5 in its 2023 release and 5 in its 2026 code, and the 2026 README says the values can be adjusted at any time. Treat any “exact formula” as a snapshot.',
+		src: 'twitter/the-algorithm-ml (2023); xai-org/x-algorithm (2026)',
+		href: 'https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md',
+		link: '/algorithms/x-open-source/',
+	},
+];
+
+export type Cell = { t: string; s: 'code' | 'platform' | 'practitioner' | 'none' };
+export type P = { key: string; name: string; tint: string; href: string; rows: Record<string, Cell> };
+
+
+export const rows = [
+	{ key: 'reach', label: 'Where new viewers come from' },
+	{ key: 'signals', label: 'Strongest signals it names' },
+	{ key: 'hurts', label: 'What limits reach' },
+	{ key: 'followers', label: 'Does follower count matter?' },
+	{ key: 'status', label: 'Can you check if you’re limited?' },
+	{ key: 'open', label: 'How open it is' },
+	{ key: 'play', label: 'The play' },
+];
+
+export const platforms: P[] = [
+	{
+		key: 'youtube',
+		name: 'YouTube',
+		tint: 'youtube',
+		href: '/platforms/youtube/',
+		rows: {
+			reach: { t: 'Recommendations on Home and Up Next, which drive more viewing than subscriptions or search.', s: 'platform' },
+			signals: { t: 'Clicks, watch time, satisfaction surveys, shares, likes and dislikes.', s: 'platform' },
+			hurts: { t: 'Clicks without satisfaction. YouTube added watch time in 2012 because clicks alone rewarded misleading videos.', s: 'platform' },
+			followers: { t: 'YouTube says recommendations don’t rely on your social graph.', s: 'platform' },
+			status: { t: 'Not covered in the sources we cite.', s: 'none' },
+			open: { t: 'Written explainers and engineering blog posts. No public ranking code.', s: 'platform' },
+			play: { t: 'Package first, pay off the click in the opening, and earn every minute after.', s: 'practitioner' },
+		},
+	},
+	{
+		key: 'tiktok',
+		name: 'TikTok',
+		tint: 'tiktok',
+		href: '/platforms/tiktok/',
+		rows: {
+			reach: { t: 'The For You feed, ranked per viewer.', s: 'platform' },
+			signals: { t: 'How people interact with the video. Finishing a longer video is a strong signal.', s: 'platform' },
+			hurts: { t: 'Spam, artificially boosted traffic, duplicated content, and videos still under review.', s: 'platform' },
+			followers: { t: 'Not a direct factor, and neither are your past hits.', s: 'platform' },
+			status: { t: 'Not covered in the sources we cite.', s: 'none' },
+			open: { t: 'One detailed newsroom explainer (2020). No public ranking code.', s: 'platform' },
+			play: { t: 'Open on the payoff, cut every dead second, and aim for people finishing and sending it.', s: 'practitioner' },
+		},
+	},
+	{
+		key: 'instagram',
+		name: 'Instagram',
+		tint: 'instagram',
+		href: '/platforms/instagram/',
+		rows: {
+			reach: { t: 'Reels and Explore, which are mostly accounts people don’t follow yet.', s: 'platform' },
+			signals: { t: 'Reels: reshares, watching all the way through, likes and audio page visits.', s: 'platform' },
+			hurts: { t: 'Low resolution, other apps’ watermarks, muted audio, borders, mostly-text Reels and reposted content.', s: 'platform' },
+			followers: { t: 'Feed is mostly accounts you follow. Reels and Explore mostly aren’t.', s: 'platform' },
+			status: { t: 'Yes. Account Status in the app shows recommendation eligibility.', s: 'platform' },
+			open: { t: 'A detailed ranking explainer from Instagram’s head (2023). No public ranking code.', s: 'platform' },
+			play: { t: 'Use Reels to reach new people and Feed for your audience. Upload clean, native files.', s: 'practitioner' },
+		},
+	},
+	{
+		key: 'x',
+		name: 'X',
+		tint: 'x',
+		href: '/algorithms/x-open-source/',
+		rows: {
+			reach: { t: 'For You mixes followed and unfollowed accounts. In 2023, about half of candidates came from each.', s: 'code' },
+			signals: { t: 'Predicted actions, weighted. In 2026: share via copy link 20, reply 5, quote 5, share via DM 5, follow 4, like 0.708.', s: 'code' },
+			hurts: { t: 'Predicted “not interested,” mute, block and report. Posts older than 48 hours are dropped from For You.', s: 'code' },
+			followers: { t: 'Posts from accounts the viewer doesn’t follow get a discount. Authors with few impressions get a boost.', s: 'code' },
+			status: { t: 'Yes. The “Under the Hood” tool shows visibility labels on your account and posts.', s: 'code' },
+			open: { t: 'Open-source ranking code, released 2023 and again in 2026, with dated updates.', s: 'code' },
+			play: { t: 'Write posts people reply to, quote and send. Avoid anything your audience would mute.', s: 'practitioner' },
+		},
+	},
+];

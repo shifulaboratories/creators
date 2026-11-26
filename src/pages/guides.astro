@@ -1,0 +1,18 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import GuideGallery from '../components/GuideGallery.astro';
+import AskAI from '../components/AskAI.astro';
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'All guides',
+		description: 'Every guide on Select Creators. Search, filter by topic, sort, or hand the whole library to your AI assistant.',
+		template: 'splash',
+		tableOfContents: false,
+		pagefind: false,
+	}}
+>
+	<GuideGallery />
+	<div style="margin-top:2rem"><AskAI scope="site" /></div>
+</StarlightPage>
