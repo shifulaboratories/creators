@@ -11,6 +11,12 @@ export default defineConfig({
 		starlight({
 			title: SITE_NAME,
 			description: SITE_DESCRIPTION,
+			logo: { src: './src/assets/logo.svg', alt: SITE_NAME },
+			favicon: '/favicon.svg',
+			components: {
+				Hero: './src/components/Hero.astro',
+				ThemeSelect: './src/components/ThemeSelect.astro',
+			},
 			social: [
 				{ icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/selectcreators/' },
 				{ icon: 'github', label: 'GitHub', href: REPO_URL },
