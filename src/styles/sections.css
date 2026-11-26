@@ -24,6 +24,8 @@
 
 :root {
 	/* Platforms blend ion and cyan; Goldmines use brass, the disclosure gold. */
+	--sc-algorithms: var(--sc-ion);
+	--sc-case-studies: var(--sc-champagne);
 	--sc-platforms: color-mix(in srgb, var(--sc-ion) 50%, var(--sc-cyan));
 	--sc-goldmines: var(--sc-brass);
 	/* Per-platform tints for covers. */
@@ -32,6 +34,8 @@
 	--sc-instagram: var(--sc-rose);
 	--sc-x: var(--sc-silver);
 }
+[data-section='algorithms'] { --accent: var(--sc-algorithms); }
+[data-section='case-studies'] { --accent: var(--sc-case-studies); }
 [data-section='platforms'] { --accent: var(--sc-platforms); }
 [data-section='goldmines'] { --accent: var(--sc-goldmines); }
 [data-section='youtube'] { --accent: var(--sc-youtube); }

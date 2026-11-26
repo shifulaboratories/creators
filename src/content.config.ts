@@ -88,4 +88,23 @@ const resources = defineCollection({
 	}),
 });
 
-export const collections = { docs, tools, resources };
+/**
+ * Talks worth watching, in src/data/videos/. Only primary sources: people who
+ * build the platforms, or practitioners speaking on the record. No reuploads.
+ */
+const videos = defineCollection({
+	loader: glob({ pattern: '**/*.yaml', base: './src/data/videos' }),
+	schema: z.object({
+		youtubeId: z.string().regex(/^[A-Za-z0-9_-]{11}$/),
+		title: z.string(),
+		channel: z.string().optional(),
+		published: z.coerce.date(),
+		speakers: z.string(),
+		// insider: works at the platform. practitioner: works with creators on the record.
+		tier: z.enum(['insider', 'practitioner']),
+		why: z.string().min(20),
+		topics: z.array(z.string()).default([]),
+	}),
+});
+
+export const collections = { docs, tools, resources, videos };

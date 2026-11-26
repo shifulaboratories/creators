@@ -1,0 +1,170 @@
+---
+/**
+ * Talks from src/data/videos/. Click-to-load: only a thumbnail ships with the page,
+ * the YouTube player (privacy-enhanced, no cookies until play) loads on tap.
+ */
+import { getCollection } from 'astro:content';
+
+interface Props {
+	tier?: 'insider' | 'practitioner';
+	topic?: string;
+	ids?: string[];
+}
+const { tier, topic, ids } = Astro.props;
+const videos = (await getCollection('videos'))
+	.map((v) => v.data)
+	.filter((v) => (!tier || v.tier === tier) && (!topic || v.topics.includes(topic)) && (!ids || ids.includes(v.youtubeId)))
+	.sort((a, b) => +b.published - +a.published);
+const tierText = { insider: 'Platform insider', practitioner: 'Practitioner' };
+const date = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+<div class="vg not-content">
+	{
+		videos.map((v) => (
+			<article class="vc" data-tier={v.tier}>
+				<button type="button" class="vc-frame" data-yt={v.youtubeId} aria-label={`Play: ${v.title}`}>
+					<img src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" width="480" height="360" />
+					<span class="vc-play" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+					</span>
+				</button>
+				<div class="vc-body">
+					<div class="vc-meta">
+						<span class={`sc-tag ${v.tier === 'insider' ? 'is-platform' : 'is-practitioner'}`}>{tierText[v.tier]}</span>
+						<span>{date(v.published)}</span>
+					</div>
+					<h3>{v.title}</h3>
+					<p class="vc-who">{v.speakers}{v.channel && <> · {v.channel}</>}</p>
+					<p>{v.why}</p>
+					<a class="vc-link" href={`https://www.youtube.com/watch?v=${v.youtubeId}`} target="_blank" rel="noopener">
+						Watch on YouTube ↗
+					</a>
+				</div>
+			</article>
+		))
+	}
+</div>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('.vc-frame[data-yt]').forEach((b) =>
+		b.addEventListener(
+			'click',
+			() => {
+				const f = document.createElement('iframe');
+				f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0`;
+				f.title = b.getAttribute('aria-label')?.replace(/^Play: /, '') ?? 'Video';
+				f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+				f.allowFullscreen = true;
+				f.className = 'vc-iframe';
+				b.replaceWith(f);
+			},
+			{ once: true },
+		),
+	);
+</script>
+
+<style>
+	.vg {
+		display: grid;
+		gap: 1rem;
+		margin-block: 1.25rem 2rem;
+	}
+	@media (min-width: 44rem) {
+		.vg {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	.vc {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-lg, 16px);
+		overflow: hidden;
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0.01));
+	}
+	.vc-frame,
+	.vc :global(.vc-iframe) {
+		position: relative;
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+		padding: 0;
+		background: #000;
+		cursor: pointer;
+	}
+	.vc-frame img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0.82;
+		transition:
+			opacity 0.3s,
+			transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.vc-frame:hover img {
+		opacity: 1;
+		transform: scale(1.03);
+	}
+	.vc-play {
+		position: absolute;
+		inset: 50% auto auto 50%;
+		translate: -50% -50%;
+		display: grid;
+		place-items: center;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		color: #0a0a0a;
+		background: var(--sc-ivory);
+		box-shadow: 0 10px 30px -8px rgb(0 0 0 / 0.7);
+		transition: transform 0.25s;
+	}
+	.vc-frame:hover .vc-play {
+		transform: scale(1.08);
+	}
+	.vc-frame:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: -2px;
+	}
+	.vc-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.95rem 1.05rem 1.15rem;
+		flex: 1;
+	}
+	.vc-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		color: var(--sc-silver);
+	}
+	.vc h3 {
+		margin: 0.25rem 0 0;
+		font-size: 1rem;
+		line-height: 1.3;
+		color: var(--sc-ivory);
+	}
+	.vc p {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.vc-who {
+		font-size: 0.78rem !important;
+		color: var(--accent) !important;
+	}
+	.vc-link {
+		margin-top: auto;
+		padding-top: 0.4rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.72rem;
+		color: var(--accent);
+		text-decoration: none;
+	}
+</style>

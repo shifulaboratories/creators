@@ -42,6 +42,10 @@ January 2026 update, as reported by TechCrunch:
 - **Avoid what gets filtered.** Spam-like behavior and content people mute or block are removed before you're seen. *(From the platform.)*
 - **Treat specific weightings as temporary.** The 2026 system learns from behavior rather than fixed rules, so old "hacks" may not carry over. *(Practitioner view.)*
 
+## Go deeper
+
+See the real weights from both releases, with an interactive calculator, in [Inside X's open-source algorithm](/algorithms/x-open-source/).
+
 ## Sources
 
 - X Engineering, [Twitter's Recommendation Algorithm](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm), 2023, and the code at [twitter/the-algorithm](https://github.com/twitter/the-algorithm).

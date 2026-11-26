@@ -1,0 +1,64 @@
+---
+title: "Inside X's open-source algorithm"
+description: "X publishes the code that ranks its For You feed. The real weights, what changed from 2023 to 2026, and what it means for what you post."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: X, open source
+  tint: x
+sidebar:
+  order: 3
+---
+
+import XWeights from '../../../components/XWeights.astro';
+
+**The short version:** X is the only major platform that publishes the code behind its main feed. It predicts how likely you are to take each of dozens of actions on a post, multiplies each prediction by a published weight, and adds them up. In the current code, the predicted chance of a reply, quote or DM share is weighted about 7 times as heavily as the chance of a like, sharing via copied link about 28 times, and "not interested," mute, block and report all carry heavy penalties. Those weights apply to predictions, not counts, which the calculator below makes concrete. <span class="sc-tag is-code">Code</span>
+
+## Two releases
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-cyan"><h4>2023: twitter/the-algorithm</h4><ul><li>About 1,500 candidates per request, roughly half from accounts you follow</li><li>A neural network of about 48M parameters predicts 10 kinds of engagement</li><li>Weights published as of April 5, 2023</li></ul></div>
+<div class="sc-compare__side is-ion"><h4>2026: xai-org/x-algorithm</h4><ul><li>A Grok-based transformer called Phoenix ranks posts from the viewer's recent engagement history</li><li>Predicts many more actions, including dwell time, shares by DM and copy link, and follows</li><li>Filtering and visibility code published, with dated updates</li></ul></div>
+</div>
+<figcaption>What each public release covers</figcaption>
+</figure>
+
+## The weights
+
+These are the numbers the ranker multiplies each predicted action by. Toggle between the two releases to see how much changed.
+
+<XWeights />
+
+## What the 2026 code shows
+
+**Where posts come from.** Posts from accounts you follow come from a service called Thunder. Posts from accounts you don't follow come from Phoenix retrieval and SimClusters, plus a shared list of popular recent posts. Both kinds are ranked by the same model. <span class="sc-tag is-code">Code</span>
+
+**Three adjustments after scoring:**
+
+- **Author diversity.** Each extra post from the same author in one feed is multiplied by a shrinking factor, down to a floor.
+- **Out-of-network discount.** Posts from accounts the viewer doesn't follow are multiplied by a factor below 1.
+- **New-author boost.** Posts from authors with few impressions are lifted toward a target position.
+
+**What gets filtered before ranking**, among others: duplicates, posts older than 48 hours, posts the viewer has already seen, posts from blocked or muted accounts, posts matching muted keywords, and, for new accounts, out-of-network posts below an engagement threshold. <span class="sc-tag is-code">Code</span>
+
+**Ranking and visibility are separate.** Ranking sets the order. A separate visibility system decides whether a post can be shown at all, based on blocks, mutes and labels other systems attach to posts and accounts. Some of those rules apply only when the post is recommended to people who don't follow you. <span class="sc-tag is-code">Code</span>
+
+**You can check your labels.** X's "Under the Hood" tool shows visibility-limiting labels on your account and posts. Use it before believing you're "shadowbanned." <span class="sc-tag is-code">Code</span>
+
+## What to post, based on the code
+
+- **Write for replies, quotes and sends, not likes.** Those weights are several times higher than a like. <span class="sc-tag is-code">Code, applied</span>
+- **Make posts people want to share outside X.** Sharing via copied link is the single highest positive weight in the 2026 code. <span class="sc-tag is-code">Code, applied</span>
+- **Don't get muted.** Predicted mutes and "not interested" carry large negative weights, and mutes also filter you out of that person's feed entirely. <span class="sc-tag is-code">Code, applied</span>
+- **Post consistently, not in bursts.** Author diversity discounts your second and third post in the same feed, and posts older than 48 hours drop out of For You. <span class="sc-tag is-practitioner">Practitioner</span>
+- **New accounts get a lift.** The new-author boost exists so low-impression accounts get seen. Your early posts matter. <span class="sc-tag is-code">Code</span>
+- **Don't treat weights as permanent.** The reply weight went from 13.5 to 5 between releases. Build for the audience, and use the code to understand direction, not to game a number.
+
+## Sources
+
+- xAI, [xai-org/x-algorithm](https://github.com/xai-org/x-algorithm), README and [`home-mixer/params/param.rs`](https://github.com/xai-org/x-algorithm/blob/main/home-mixer/params/param.rs), checked Nov 26, 2026.
+- Twitter, [twitter/the-algorithm-ml, Heavy Ranker README](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md), weights dated April 5, 2023.
+- X Engineering, [Twitter's Recommendation Algorithm](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm), 2023.
+- TechCrunch, [X open sources its algorithm while facing a transparency fine and Grok controversies](https://techcrunch.com/2026/01/20/x-open-sources-its-algorithm-while-facing-a-transparency-fine-and-grok-controversies/), Jan 20, 2026.

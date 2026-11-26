@@ -7,6 +7,10 @@ const section = (label, directory) => ({ label, items: [{ autogenerate: { direct
 
 export default defineConfig({
 	site: 'https://creators.select',
+	redirects: {
+		'/grow/algorithms': '/algorithms/how-recommenders-work/',
+		'/grow/case-studies': '/case-studies/',
+	},
 	integrations: [
 		starlight({
 			title: SITE_NAME,
@@ -32,7 +36,9 @@ export default defineConfig({
 			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
 			sidebar: [
 				{ label: 'Start here', link: '/' },
+				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
+				section('Case studies', 'case-studies'),
 				section('Goldmines', 'goldmines'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),

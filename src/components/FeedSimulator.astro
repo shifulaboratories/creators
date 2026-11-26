@@ -1,0 +1,275 @@
+---
+/**
+ * Interactive: choose what a feed rewards and watch six example posts re-rank.
+ * Score = sum of (weight x predicted probability), the same shape X publishes.
+ * Posts and probabilities are illustrative; the formula is real.
+ */
+const signals = [
+	{ key: 'click', label: 'Click', hint: 'Opens or taps the post' },
+	{ key: 'watch', label: 'Watch through', hint: 'Stays to the end' },
+	{ key: 'like', label: 'Like', hint: 'Taps the heart' },
+	{ key: 'share', label: 'Share or send', hint: 'Sends it to someone' },
+	{ key: 'reply', label: 'Reply', hint: 'Comments or replies' },
+	{ key: 'neg', label: 'Negative feedback', hint: 'Not interested, mute, report', negative: true },
+];
+const posts = [
+	{ id: 'bait', title: 'Shocking thumbnail, video doesn’t deliver', tag: 'Clickbait', p: { click: 0.9, watch: 0.1, like: 0.05, share: 0.01, reply: 0.08, neg: 0.3 } },
+	{ id: 'deep', title: '40-minute tutorial that actually teaches', tag: 'Deep value', p: { click: 0.25, watch: 0.7, like: 0.3, share: 0.15, reply: 0.05, neg: 0.02 } },
+	{ id: 'take', title: 'Spicy hot take on a creator drama', tag: 'Rage bait', p: { click: 0.5, watch: 0.3, like: 0.2, share: 0.1, reply: 0.6, neg: 0.25 } },
+	{ id: 'funny', title: '20-second sketch everyone sends to a friend', tag: 'Shareable', p: { click: 0.6, watch: 0.8, like: 0.5, share: 0.5, reply: 0.1, neg: 0.03 } },
+	{ id: 'friend', title: 'A friend’s life update', tag: 'Social', p: { click: 0.3, watch: 0.4, like: 0.6, share: 0.02, reply: 0.3, neg: 0.01 } },
+	{ id: 'repost', title: 'Someone else’s viral clip, reposted with a watermark', tag: 'Recycled', p: { click: 0.4, watch: 0.35, like: 0.2, share: 0.08, reply: 0.04, neg: 0.15 } },
+];
+const presets = [
+	{ key: 'clicks', label: 'Clicks only', w: { click: 10, watch: 0, like: 0, share: 0, reply: 0, neg: 0 }, note: 'Roughly how YouTube worked before 2012, when it added watch time because clicks alone rewarded misleading videos.' },
+	{ key: 'satisfaction', label: 'Watch time + satisfaction', w: { click: 1, watch: 10, like: 2, share: 4, reply: 1, neg: 8 }, note: 'Closer to what YouTube and TikTok describe today: did people stay, and were they glad they did?' },
+	{ key: 'conversation', label: 'Conversation', w: { click: 1, watch: 2, like: 1, share: 6, reply: 9, neg: 8 }, note: 'A feed that prizes replies and shares. Notice how the penalty for negative feedback keeps rage bait in check.' },
+	{ key: 'nopenalty', label: 'No penalty', w: { click: 1, watch: 2, like: 1, share: 6, reply: 9, neg: 0 }, note: 'Same as Conversation, but nothing is penalized. Rage bait climbs. This is why every platform we cover subtracts negative signals.' },
+];
+---
+
+<div class="sc-widget fs" data-fs>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Feed simulator</div>
+			<h4 class="sc-widget__title">You set the rewards. Watch the feed reorder.</h4>
+		</div>
+		<span class="sc-tag is-illustrative">Illustrative posts</span>
+	</div>
+
+	<div class="sc-chip-row fs-presets" role="group" aria-label="Presets">
+		{presets.map((p, i) => <button type="button" class="sc-chip" data-preset={p.key} aria-pressed={i === 1 ? 'true' : 'false'}>{p.label}</button>)}
+	</div>
+	<p class="fs-note" aria-live="polite">{presets[1].note}</p>
+
+	<div class="fs-grid">
+		<div class="fs-controls">
+			{
+				signals.map((s) => (
+					<label class={`fs-slider${s.negative ? ' is-neg' : ''}`}>
+						<span class="fs-slider__top">
+							<span>{s.label}</span>
+							<output data-out={s.key}>{presets[1].w[s.key as keyof (typeof presets)[1]['w']]}</output>
+						</span>
+						<input class="sc-range" type="range" min="0" max="10" step="1" data-w={s.key} value={presets[1].w[s.key as keyof (typeof presets)[1]['w']]} aria-label={`${s.label} weight`} />
+						<span class="fs-slider__hint">{s.negative ? 'Subtracted: ' : ''}{s.hint}</span>
+					</label>
+				))
+			}
+		</div>
+
+		<ol class="fs-feed" aria-label="Ranked feed" data-posts={JSON.stringify(posts)}>
+			{
+				posts.map((p) => (
+					<li class="fs-post" data-id={p.id}>
+						<span class="fs-rank" />
+						<span class="fs-body">
+							<span class="fs-tag">{p.tag}</span>
+							<span class="fs-title">{p.title}</span>
+							<span class="fs-bar"><span class="fs-fill" /></span>
+						</span>
+						<span class="fs-score" />
+					</li>
+				))
+			}
+		</ol>
+	</div>
+
+	<p class="sc-widget__note">
+		Score = Σ (weight × predicted chance of each action), minus the negative-feedback term. That formula is the one X publishes in its open-source code. The six posts and their probabilities are made up to show the effect.
+	</p>
+</div>
+
+<script is:inline define:vars={{ presets }}>
+	document.querySelectorAll('[data-fs]').forEach((root) => {
+		const feed = root.querySelector('.fs-feed');
+		const posts = JSON.parse(feed.dataset.posts);
+		const inputs = [...root.querySelectorAll('input[data-w]')];
+		const note = root.querySelector('.fs-note');
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		const weights = () => Object.fromEntries(inputs.map((i) => [i.dataset.w, +i.value]));
+		const paint = (i) => {
+			i.style.setProperty('--fill', (i.value / i.max) * 100 + '%');
+			root.querySelector(`[data-out="${i.dataset.w}"]`).textContent = i.value;
+		};
+
+		function render() {
+			const w = weights();
+			const scored = posts.map((p) => {
+				let s = 0;
+				for (const k in w) s += (k === 'neg' ? -3 : 1) * w[k] * p.p[k];
+				return { id: p.id, s };
+			});
+			scored.sort((a, b) => b.s - a.s);
+			const max = Math.max(...scored.map((x) => Math.abs(x.s)), 0.01);
+			// FLIP: record, reorder, animate.
+			const els = new Map([...feed.children].map((el) => [el.dataset.id, el]));
+			const first = new Map([...els].map(([id, el]) => [id, el.getBoundingClientRect().top]));
+			scored.forEach((x, i) => {
+				const el = els.get(x.id);
+				feed.appendChild(el);
+				el.querySelector('.fs-rank').textContent = String(i + 1).padStart(2, '0');
+				el.querySelector('.fs-score').textContent = x.s.toFixed(1);
+				el.querySelector('.fs-fill').style.width = Math.max(0, (x.s / max) * 100) + '%';
+				el.classList.toggle('is-neg', x.s < 0);
+				el.classList.toggle('is-top', i === 0);
+			});
+			if (reduce) return;
+			els.forEach((el, id) => {
+				const dy = first.get(id) - el.getBoundingClientRect().top;
+				if (!dy) return;
+				el.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' });
+			});
+		}
+
+		inputs.forEach((i) => {
+			paint(i);
+			i.addEventListener('input', () => {
+				paint(i);
+				root.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+				note.textContent = 'Custom weights. Try raising Reply with Negative feedback at zero.';
+				render();
+			});
+		});
+		root.querySelectorAll('[data-preset]').forEach((b) =>
+			b.addEventListener('click', () => {
+				const p = presets.find((x) => x.key === b.dataset.preset);
+				inputs.forEach((i) => {
+					i.value = p.w[i.dataset.w];
+					paint(i);
+				});
+				root.querySelectorAll('[data-preset]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				note.textContent = p.note;
+				render();
+			}),
+		);
+		render();
+	});
+</script>
+
+<style>
+	.fs-note {
+		margin: 0.7rem 0 1rem;
+		min-height: 2.6em;
+		font-size: 0.86rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.fs-grid {
+		display: grid;
+		gap: 1.25rem;
+	}
+	@media (min-width: 50rem) {
+		.fs-grid {
+			grid-template-columns: 15rem 1fr;
+			gap: 1.75rem;
+		}
+	}
+	.fs-controls {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.6rem 1rem;
+	}
+	@media (min-width: 50rem) {
+		.fs-controls {
+			grid-template-columns: 1fr;
+		}
+	}
+	.fs-slider {
+		display: block;
+		margin: 0;
+	}
+	.fs-slider__top {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.82rem;
+		color: var(--sc-ivory);
+	}
+	.fs-slider__top output {
+		font-family: var(--sc-font-mono);
+		color: var(--accent);
+	}
+	.fs-slider.is-neg {
+		--accent: var(--sc-ember);
+	}
+	.fs-slider__hint {
+		display: block;
+		font-size: 0.7rem;
+		color: var(--sc-silver);
+		opacity: 0.75;
+	}
+	.fs-feed {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.5rem;
+	}
+	.fs-post {
+		margin: 0;
+		display: grid;
+		grid-template-columns: 2rem 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.65rem 0.8rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 12px;
+		background: rgb(255 255 255 / 0.02);
+		transition:
+			border-color 0.3s,
+			background 0.3s;
+	}
+	.fs-post.is-top {
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
+	}
+	.fs-rank {
+		font-family: var(--sc-font-mono);
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.fs-post.is-top .fs-rank {
+		color: var(--accent);
+	}
+	.fs-body {
+		display: grid;
+		gap: 0.2rem;
+		min-width: 0;
+	}
+	.fs-tag {
+		font-family: var(--sc-font-mono);
+		font-size: 0.6rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--sc-silver);
+	}
+	.fs-title {
+		font-size: 0.88rem;
+		line-height: 1.3;
+		color: var(--sc-ivory);
+	}
+	.fs-bar {
+		height: 3px;
+		border-radius: 3px;
+		background: rgb(255 255 255 / 0.06);
+		overflow: hidden;
+	}
+	.fs-fill {
+		display: block;
+		height: 100%;
+		width: 0;
+		background: var(--accent);
+		transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.fs-score {
+		font-family: var(--sc-font-mono);
+		font-size: 0.8rem;
+		color: var(--sc-ivory);
+		min-width: 2.6rem;
+		text-align: right;
+	}
+	.fs-post.is-neg .fs-score {
+		color: var(--sc-ember);
+	}
+</style>
