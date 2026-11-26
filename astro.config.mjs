@@ -11,7 +11,7 @@ export default defineConfig({
 		starlight({
 			title: SITE_NAME,
 			description: SITE_DESCRIPTION,
-			logo: { src: './src/assets/logo.svg', alt: SITE_NAME },
+			logo: { src: './src/assets/logo-lockup.svg', alt: SITE_NAME, replacesTitle: true },
 			favicon: '/favicon.svg',
 			head: [
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
