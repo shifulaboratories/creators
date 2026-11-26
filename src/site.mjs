@@ -3,4 +3,4 @@
 export const SITE_NAME = 'Select Creators';
 export const SITE_DESCRIPTION =
 	'The free, open-source handbook for the creator economy, written by people who do the work.';
-export const REPO_URL = 'https://github.com/byw1/creators-select';
+export const REPO_URL = 'https://github.com/shifulaboratories/creators';
