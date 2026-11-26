@@ -1,0 +1,194 @@
+---
+/**
+ * Who's who on a creator's team: one card per role with what they do, who
+ * they work for, how they get paid and the published range. Phones: swipe rail.
+ * Every number here is cited on the page that uses it.
+ */
+const roles = [
+	{
+		tint: 'is-ion',
+		name: 'Manager',
+		emoji: '🧭',
+		does: 'Runs your career day to day: strategy, deal flow, saying no, keeping the team moving.',
+		works: 'You',
+		paid: 'Share of your gross income',
+		range: '10–20%',
+		note: '15–20% is the norm for influencer managers',
+		licensed: 'No license, but in California only licensed agents may find you work',
+	},
+	{
+		tint: 'is-champagne',
+		name: 'Agent',
+		emoji: '🤝',
+		does: 'Finds and closes paid work: brand deals, books, TV, speaking.',
+		works: 'You',
+		paid: 'Share of deals they book',
+		range: '~10%',
+		note: 'Capped at 10% for union work. California allows up to 20% with approval',
+		licensed: 'Yes in California, where finding work needs a talent agency license',
+	},
+	{
+		tint: 'is-cyan',
+		name: 'Lawyer',
+		emoji: '⚖️',
+		does: 'Reads, redlines and negotiates contracts. The only one who owes you legal advice.',
+		works: 'You',
+		paid: 'Hourly, flat fee, or a share of the deal',
+		range: '5–10%',
+		note: 'When paid on percentage. Hourly usually needs a retainer',
+		licensed: 'Yes, by the state bar',
+	},
+	{
+		tint: 'is-jade',
+		name: 'Business manager',
+		emoji: '📊',
+		does: 'Your outsourced CFO: bills, payroll, taxes, budgets, insurance, investments.',
+		works: 'You',
+		paid: 'Share of gross, or hourly',
+		range: '~5%',
+		note: 'Often a CPA firm. Usually worth it once money is complicated',
+		licensed: 'Often a licensed CPA',
+	},
+	{
+		tint: 'is-amethyst',
+		name: 'MCN / network',
+		emoji: '📡',
+		does: 'YouTube-era networks: rights management, ad sales, sometimes production help.',
+		works: 'You, through a revenue share',
+		paid: 'Cut of your YouTube revenue before you get paid',
+		range: 'Varies',
+		note: 'YouTube publishes no standard rate. Ask, in writing',
+		licensed: 'No',
+	},
+	{
+		tint: 'is-rose',
+		name: 'Brand-side agency',
+		emoji: '🎯',
+		does: 'Runs influencer campaigns for brands. Books creators, but represents the brand.',
+		works: 'The brand',
+		paid: 'By the brand',
+		range: '—',
+		note: 'Great source of deals. Not your representative',
+		licensed: 'No',
+	},
+];
+---
+
+<div class="rc sc-rail not-content" data-rail>
+	{
+		roles.map((r) => (
+			<article class={`rc-card ${r.tint}`}>
+				<header>
+					<span class="rc-emoji" aria-hidden="true">{r.emoji}</span>
+					<h3>{r.name}</h3>
+				</header>
+				<p class="rc-does">{r.does}</p>
+				<p class="rc-range">
+					<b>{r.range}</b>
+					<span>{r.note}</span>
+				</p>
+				<dl>
+					<div>
+						<dt>Works for</dt>
+						<dd>{r.works}</dd>
+					</div>
+					<div>
+						<dt>Paid by</dt>
+						<dd>{r.paid}</dd>
+					</div>
+					<div>
+						<dt>Licensed?</dt>
+						<dd>{r.licensed}</dd>
+					</div>
+				</dl>
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.rc {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+		gap: 0.75rem;
+		margin-block: 1.25rem 0.5rem;
+	}
+	.rc-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 1.1rem;
+		border: 1px solid color-mix(in srgb, var(--c) 28%, var(--sc-line));
+		border-radius: var(--sc-radius-lg);
+		background:
+			radial-gradient(140% 70% at 100% 0%, color-mix(in srgb, var(--c) 14%, transparent), transparent 65%),
+			rgb(255 255 255 / 0.02);
+	}
+	.rc-card header {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.rc-emoji {
+		display: grid;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--c) 18%, transparent);
+		font-size: 1.1rem;
+	}
+	.rc-card h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+	}
+	.rc-does {
+		margin: 0;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		line-height: 1.5;
+	}
+	.rc-range {
+		margin: 0;
+		display: grid;
+		gap: 2px;
+	}
+	.rc-range b {
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-2xl);
+		line-height: 1.1;
+		color: var(--c);
+	}
+	.rc-range span {
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+		line-height: 1.45;
+	}
+	.rc-card dl {
+		margin: auto 0 0;
+		display: grid;
+		gap: 0.4rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.rc-card dl div {
+		display: grid;
+		grid-template-columns: 5.5rem 1fr;
+		gap: 0.5rem;
+		font-size: var(--sc-text-xs);
+		line-height: 1.45;
+	}
+	.rc-card dt {
+		color: var(--sc-silver);
+	}
+	.rc-card dd {
+		margin: 0;
+		color: var(--sc-ivory);
+	}
+</style>
+
+<script>
+	import '../../scripts/rail';
+</script>

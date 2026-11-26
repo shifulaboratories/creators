@@ -1,0 +1,277 @@
+---
+/**
+ * Agency directory: public facts only, each with the reporting it came from.
+ * No rankings, no paid placement, no "best of". Filter chips by type.
+ * To add one: a type, a one-line factual description, and a dated source.
+ */
+type Kind = 'agency' | 'management' | 'network' | 'brand' | 'closed';
+interface Entry {
+	name: string;
+	kind: Kind;
+	site?: string;
+	what: string;
+	facts: string[];
+	source: { title: string; by: string; date: string; url: string }[];
+}
+
+const kinds: Record<Kind, { label: string; tint: string; blurb: string }> = {
+	agency: { label: 'Talent agencies', tint: 'is-champagne', blurb: 'Licensed agencies with creator or digital teams' },
+	management: { label: 'Management', tint: 'is-ion', blurb: 'Firms that manage creators’ careers' },
+	network: { label: 'Networks & studios', tint: 'is-amethyst', blurb: 'MCNs and creator studios' },
+	brand: { label: 'Brand-side', tint: 'is-rose', blurb: 'Work for brands, not for you' },
+	closed: { label: 'Gone or folded', tint: 'is-cyan', blurb: 'What happened to the big MCNs' },
+};
+
+const entries: Entry[] = [
+	{
+		name: 'UTA',
+		kind: 'agency',
+		site: 'https://www.unitedtalent.com/',
+		what: 'Hollywood talent agency. Owns influencer firm Digital Brand Architects.',
+		facts: ['Bought Digital Brand Architects in 2019', 'Also bought esports agency Press X in 2018'],
+		source: [{ title: 'UTA acquires Digital Brand Architects', by: 'Tubefilter', date: 'Feb 2019', url: 'https://www.tubefilter.com/2019/02/05/uta-acquires-dba-youtube-talent/' }],
+	},
+	{
+		name: 'WME',
+		kind: 'agency',
+		site: 'https://www.wmeagency.com/',
+		what: 'Hollywood talent agency with a Digital Division.',
+		facts: ['Launched Creator Labs in Oct 2026 to help clients start and grow YouTube channels'],
+		source: [{ title: 'WME’s Creator Labs team', by: 'Tubefilter', date: 'Oct 2026', url: 'https://www.tubefilter.com/2026/10/02/wme-creator-lab-celebrity-youtube-channel-launch/' }],
+	},
+	{
+		name: 'CAA',
+		kind: 'agency',
+		site: 'https://www.caa.com/',
+		what: 'Los Angeles talent agency that represents creators alongside film, TV and music talent.',
+		facts: ['Hired former UTA head of digital Brent Weinstein in May 2025'],
+		source: [{ title: 'CAA taps Brent Weinstein', by: 'Tubefilter', date: 'May 2025', url: 'https://www.tubefilter.com/2025/05/28/caa-hires-digital-agent-brent-weinstein-creative-artists-agency/' }],
+	},
+	{
+		name: 'Digital Brand Architects',
+		kind: 'management',
+		what: 'Influencer management firm focused on beauty, fashion and lifestyle creators.',
+		facts: ['Founded 2010', 'Owned by UTA since 2019, run as an independent company'],
+		source: [{ title: 'UTA acquires Digital Brand Architects', by: 'Tubefilter', date: 'Feb 2019', url: 'https://www.tubefilter.com/2019/02/05/uta-acquires-dba-youtube-talent/' }],
+	},
+	{
+		name: 'Night',
+		kind: 'management',
+		what: 'Dallas-based digital talent management and venture company founded by Reed Duchscher.',
+		facts: ['Founded 2015', 'Managed MrBeast from 2018 to May 2024', 'Bought podcast network The Roost in 2024'],
+		source: [{ title: 'Night (company)', by: 'Wikipedia', date: 'retrieved Nov 2026', url: 'https://en.wikipedia.org/wiki/Night_(company)' }],
+	},
+	{
+		name: 'Select Management Group',
+		kind: 'management',
+		what: 'Creator management company led by Scott Fisher and Adam Wescott.',
+		facts: ['Merged with Flip Management in 2018 under a new parent, Third Act'],
+		source: [{ title: 'Flip Management and Select Management merge', by: 'Tubefilter', date: 'Aug 2018', url: 'https://www.tubefilter.com/2018/08/07/flip-mgmt-select-management-merger/' }],
+	},
+	{
+		name: 'Fixated',
+		kind: 'network',
+		what: 'Creator talent and media company. Bought Studio71’s North American network.',
+		facts: ['Acquired Studio71 North America from ProSiebenSat.1 in April 2026', 'Terms not disclosed'],
+		source: [{ title: 'Fixated scoops up the Studio71 network', by: 'Tubefilter', date: 'Apr 2026', url: 'https://www.tubefilter.com/2026/04/21/fixated-acquires-studio71-north-american-creator-network/' }],
+	},
+	{
+		name: 'Whalar',
+		kind: 'brand',
+		site: 'https://www.whalar.com/',
+		what: 'Creator and social agency that runs campaigns for brands. Part of Accenture Song.',
+		facts: ['Accenture agreed to buy it in June 2026; the deal closed July 31, 2026'],
+		source: [{ title: 'Accenture to acquire Whalar', by: 'Accenture Newsroom', date: 'Jun 2026', url: 'https://newsroom.accenture.com/news/2026/accenture-to-acquire-leading-creator-and-social-agency-whalar-from-whalar-group' }],
+	},
+	{
+		name: 'Maker Studios',
+		kind: 'closed',
+		what: 'One of the biggest early YouTube networks.',
+		facts: ['Bought by Disney in 2014 for about $675M', 'At one point had as many as 60,000 creators', 'Disney cut it back to about 300 creators in 2017'],
+		source: [{ title: 'Disney is scaling back Maker Studios', by: 'Fortune', date: 'Feb 2017', url: 'https://fortune.com/2017/02/23/disney-maker-studios/' }],
+	},
+	{
+		name: 'Machinima',
+		kind: 'closed',
+		what: 'Gaming network with more than 12 million subscribers.',
+		facts: ['Shut down in February 2019, cutting 81 jobs'],
+		source: [{ title: 'Machinima shuts down for good', by: 'PCGamesN', date: 'Feb 2019', url: 'https://www.pcgamesn.com/machinima-shut-down' }],
+	},
+	{
+		name: 'Defy Media',
+		kind: 'closed',
+		what: 'Youth-focused digital media company and network.',
+		facts: ['Collapsed in 2018', 'Creators estimated about $1.7M in fees were owed to them'],
+		source: [{ title: 'The deconstruction of the MCN', by: 'Digiday', date: 'Apr 2019', url: 'https://digiday.com/marketing/deconstruction-mcn-youtube-matures-middlemen-lose-ground' }],
+	},
+];
+const order = Object.keys(kinds) as Kind[];
+---
+
+<section class="ad not-content" data-ad>
+	<div class="ad-chips" role="toolbar" aria-label="Filter by type">
+		<button type="button" class="ad-chip" aria-pressed="true" data-k="all">All <span>{entries.length}</span></button>
+		{
+			order.map((k) => (
+				<button type="button" class={`ad-chip ${kinds[k].tint}`} aria-pressed="false" data-k={k}>
+					{kinds[k].label} <span>{entries.filter((e) => e.kind === k).length}</span>
+				</button>
+			))
+		}
+	</div>
+	<div class="ad-grid">
+		{
+			entries.map((e) => (
+				<article class={`ad-card ${kinds[e.kind].tint}`} data-kind={e.kind}>
+					<p class="ad-kind">{kinds[e.kind].label}</p>
+					<h3>{e.site ? <a href={e.site} rel="noopener nofollow">{e.name}</a> : e.name}</h3>
+					<p class="ad-what">{e.what}</p>
+					<ul>
+						{e.facts.map((f) => (
+							<li>{f}</li>
+						))}
+					</ul>
+					<p class="ad-src">
+						{e.source.map((s) => (
+							<a href={s.url} rel="noopener">
+								{s.by}, {s.date} ↗
+							</a>
+						))}
+					</p>
+				</article>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.ad {
+		margin-block: 1.25rem 2rem;
+	}
+	.ad-chips {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		padding-bottom: 0.5rem;
+		scrollbar-width: none;
+	}
+	.ad-chips::-webkit-scrollbar {
+		display: none;
+	}
+	.ad-chip {
+		--c: var(--sc-ivory);
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.45rem 0.85rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-pill);
+		background: transparent;
+		color: var(--sc-platinum);
+		font: 600 var(--sc-text-sm) / 1 var(--sc-font-sans);
+		cursor: pointer;
+		transition:
+			background 0.2s,
+			border-color 0.2s,
+			color 0.2s;
+	}
+	.ad-chip span {
+		opacity: 0.6;
+		font-weight: 500;
+	}
+	.ad-chip[aria-pressed='true'] {
+		background: color-mix(in srgb, var(--c) 18%, transparent);
+		border-color: color-mix(in srgb, var(--c) 55%, transparent);
+		color: var(--sc-ivory);
+	}
+	.ad-chip:focus-visible {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 2px;
+	}
+	.ad-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+		gap: 0.75rem;
+		margin-top: 0.75rem;
+	}
+	.ad-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid var(--sc-line);
+		box-shadow: inset 0 3px 0 var(--c);
+		border-radius: var(--sc-radius-lg);
+		background: rgb(255 255 255 / 0.02);
+		animation: ad-in 0.35s var(--sc-ease-settle, ease) both;
+	}
+	.ad-card[hidden] {
+		display: none;
+	}
+	@keyframes ad-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ad-card {
+			animation: none;
+		}
+	}
+	.ad-kind {
+		margin: 0;
+		color: var(--c);
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.ad-card h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-lg);
+	}
+	.ad-card h3 a {
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	.ad-card h3 a:hover {
+		text-decoration: underline;
+	}
+	.ad-what {
+		margin: 0;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		line-height: 1.5;
+	}
+	.ad-card ul {
+		margin: 0;
+		padding-inline-start: 1.1rem;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+		line-height: 1.55;
+	}
+	.ad-src {
+		margin: auto 0 0;
+		padding-top: 0.5rem;
+		border-top: 1px solid var(--sc-line);
+		font-size: var(--sc-text-xs);
+	}
+	.ad-src a {
+		color: var(--sc-silver);
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-ad]').forEach((root) => {
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('.ad-chip')];
+		const cards = [...root.querySelectorAll<HTMLElement>('.ad-card')];
+		chips.forEach((chip) =>
+			chip.addEventListener('click', () => {
+				const k = chip.dataset.k;
+				chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+				cards.forEach((card) => (card.hidden = k !== 'all' && card.dataset.kind !== k));
+			}),
+		);
+	});
+</script>
