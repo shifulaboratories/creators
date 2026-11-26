@@ -135,8 +135,8 @@ export async function drawStory(input: StoryInput): Promise<Blob> {
 	} else y += 60;
 
 	if (input.value) {
-		// Fit the big value to the width, up to 340px tall.
-		let size = 340;
+		// Fit the big value to the width, up to 300px tall.
+		let size = 300;
 		ctx.font = `800 ${size}px ${DISPLAY}`;
 		while (ctx.measureText(input.value).width > INNER && size > 120) {
 			size -= 10;
@@ -153,7 +153,7 @@ export async function drawStory(input: StoryInput): Promise<Blob> {
 		if (input.label) {
 			ctx.fillStyle = '#f5f5f4';
 			ctx.font = `600 58px ${SANS}`;
-			for (const l of wrap(ctx, input.label, INNER, 5)) {
+			for (const l of wrap(ctx, input.label, INNER, 3)) {
 				ctx.fillText(l, X, y);
 				y += 72;
 			}
@@ -161,7 +161,7 @@ export async function drawStory(input: StoryInput): Promise<Blob> {
 		}
 		ctx.fillStyle = '#bdbdbc';
 		ctx.font = `500 40px ${SANS}`;
-		for (const l of wrap(ctx, `From “${input.title}”`, INNER, 2)) {
+		for (const l of wrap(ctx, `From “${input.title}”`, INNER, 1)) {
 			ctx.fillText(l, X, y);
 			y += 54;
 		}
@@ -183,7 +183,7 @@ export async function drawStory(input: StoryInput): Promise<Blob> {
 		if (input.label) {
 			ctx.fillStyle = '#bdbdbc';
 			ctx.font = `500 50px ${SANS}`;
-			for (const l of wrap(ctx, input.label, INNER, 5)) {
+			for (const l of wrap(ctx, input.label, INNER, 3)) {
 				ctx.fillText(l, X, y);
 				y += 66;
 			}
@@ -194,14 +194,14 @@ export async function drawStory(input: StoryInput): Promise<Blob> {
 		y += 30;
 		ctx.fillStyle = '#8a8a89';
 		ctx.font = `500 32px ${SANS}`;
-		for (const l of wrap(ctx, `Source: ${input.source}`, INNER, 3)) {
+		for (const l of wrap(ctx, `Source: ${input.source}`, INNER, 2)) {
 			ctx.fillText(l, X, y);
 			y += 44;
 		}
 	}
 
-	// Link card, kept above Instagram's bottom bar (ends at y 1560).
-	const cardY = 1330;
+	// Link card, kept above Instagram's bottom bar where the text allows.
+	const cardY = Math.max(1330, y + 20);
 	ctx.fillStyle = 'rgba(255,255,255,0.06)';
 	ctx.strokeStyle = 'rgba(255,255,255,0.18)';
 	ctx.lineWidth = 2;
