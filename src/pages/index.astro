@@ -4,6 +4,7 @@ import '@fontsource-variable/geist-mono';
 import '../styles/tokens.css';
 import '../styles/sections.css';
 import mark from '../assets/logo.svg?raw';
+import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from '../site.mjs';
 
 const sections = [
@@ -60,8 +61,7 @@ const journey = [
 
 		<header class="nav">
 			<a class="brand" href="/" aria-label={SITE_NAME}>
-				<span class="brand-mark" set:html={mark} />
-				<span class="brand-name">{SITE_NAME}</span>
+				<img class="lockup" src={lockup.src} width="187" height="28" alt={SITE_NAME} />
 			</a>
 			<nav class="nav-links" aria-label="Main">
 				<a href="/grow/">Guides</a>
@@ -316,7 +316,7 @@ const journey = [
 		</main>
 
 		<footer class="foot">
-			<span class="brand-name">{SITE_NAME}</span>
+			<img class="lockup" src={lockup.src} width="160" height="24" alt={SITE_NAME} />
 			<nav aria-label="Footer">
 				<a href="/about/how-we-make-money/">How we make money</a>
 				<a href="/about/editorial-standards/">Editorial standards</a>
@@ -482,6 +482,14 @@ const journey = [
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
+	}
+	.lockup {
+		display: block;
+		height: 28px;
+		width: auto;
+	}
+	.foot .lockup {
+		height: 24px;
 	}
 	.brand-mark :global(svg) {
 		width: 28px;
