@@ -11,5 +11,7 @@
 	},
 	// Attaches the domain on deploy (the zone is on this Cloudflare account).
 	"routes": [{ "pattern": "creators.select", "custom_domain": true }],
-	"observability": { "enabled": true }
+	"observability": { "enabled": true },
+	// Branch builds run `wrangler preview`, which needs this block (it can stay empty).
+	"previews": {}
 }
