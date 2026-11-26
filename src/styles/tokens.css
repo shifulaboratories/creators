@@ -1,0 +1,111 @@
+/*
+ * Select Creators design tokens.
+ * Source of truth: brand/tokens.json. Guidelines: brand/README.md.
+ * Everything is prefixed --sc- so it never collides with Starlight's --sl- variables.
+ */
+:root {
+	/* ---------- Color: the Obsidian scale (warm-neutral, never blue-black) ---------- */
+	--sc-obsidian: #050505; /* canvas */
+	--sc-onyx: #0b0b0b; /* raised surface */
+	--sc-carbon: #121212; /* panel */
+	--sc-graphite: #1c1c1c; /* hover panel, plate top */
+	--sc-gunmetal: #262626; /* strong divider, input */
+	--sc-slate: #4e4e4d; /* disabled text, icons at rest */
+	--sc-steel: #8a8a89; /* tertiary text, labels */
+	--sc-silver: #bdbdbc; /* secondary text */
+	--sc-platinum: #e4e4e3; /* body text */
+	--sc-ivory: #f5f5f4; /* headings, primary button */
+
+	/* Hairlines are white at low alpha so they sit on any surface. */
+	--sc-line: rgb(255 255 255 / 0.08);
+	--sc-line-strong: rgb(255 255 255 / 0.18);
+	--sc-line-bright: rgb(255 255 255 / 0.35);
+	--sc-fill-subtle: rgb(255 255 255 / 0.03);
+	--sc-fill-muted: rgb(255 255 255 / 0.06);
+
+	/* Metal: used on type and the mark only, never on large fills. */
+	--sc-titanium: linear-gradient(180deg, #fafaf9 0%, #c9c9c8 45%, #8d8d8c 100%);
+	--sc-titanium-diagonal: linear-gradient(135deg, #fafaf9 0%, #d4d4d2 50%, #8e8e8c 100%);
+	--sc-plate: linear-gradient(180deg, #1c1c1c 0%, #0a0a0a 55%, #000 100%);
+	--sc-card-metal: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px),
+		linear-gradient(135deg, #2a2a2a 0%, #121212 38%, #070707 70%, #1c1c1c 100%);
+
+	/* Signal colors: muted, used for meaning only (disclosures, status). */
+	--sc-brass: #c9a25a; /* disclosures, affiliate labels, caution */
+	--sc-sage: #8fb59a; /* success, verified facts */
+	--sc-ember: #d0705f; /* danger, scams, warnings */
+	--sc-mist: #9fb3c8; /* info, links to sources */
+
+	/* ---------- Type ---------- */
+	--sc-font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, sans-serif;
+	--sc-font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+
+	--sc-text-2xs: 0.65rem; /* 10.4px  mono labels on the card */
+	--sc-text-xs: 0.75rem; /* 12px    eyebrows, table heads */
+	--sc-text-sm: 0.875rem; /* 14px    captions, nav */
+	--sc-text-base: 1rem; /* 16px    body */
+	--sc-text-lg: 1.125rem; /* 18px    lead paragraphs */
+	--sc-text-xl: 1.375rem; /* 22px    h3 */
+	--sc-text-2xl: 1.75rem; /* 28px    h2 */
+	--sc-text-3xl: 2.375rem; /* 38px    h1 */
+	--sc-text-display: clamp(2.4rem, 5.5vw, 4.25rem); /* hero */
+
+	--sc-tracking-display: -0.045em;
+	--sc-tracking-heading: -0.025em;
+	--sc-tracking-body: -0.005em;
+	--sc-tracking-caps: 0.14em; /* mono eyebrows and labels */
+	--sc-tracking-wordmark: 0.22em; /* SELECT CREATORS */
+
+	--sc-leading-tight: 1.02;
+	--sc-leading-heading: 1.15;
+	--sc-leading-body: 1.65;
+
+	/* ---------- Space (4px base) ---------- */
+	--sc-space-1: 0.25rem;
+	--sc-space-2: 0.5rem;
+	--sc-space-3: 0.75rem;
+	--sc-space-4: 1rem;
+	--sc-space-5: 1.5rem;
+	--sc-space-6: 2rem;
+	--sc-space-7: 3rem;
+	--sc-space-8: 4rem;
+	--sc-space-9: 6rem;
+	--sc-space-10: 8rem;
+
+	/* ---------- Radii ---------- */
+	--sc-radius-xs: 6px; /* tags, kbd */
+	--sc-radius-sm: 10px; /* inputs, icon tiles */
+	--sc-radius-md: 14px; /* asides, small panels */
+	--sc-radius-lg: 20px; /* cards */
+	--sc-radius-card: 22px; /* the member card (ISO ID-1 ratio 1.586) */
+	--sc-radius-pill: 999px; /* buttons, chips */
+	/* The plate: the mark's chamfered octagon, reusable as a clip-path for avatars and tiles. */
+	--sc-plate-clip: polygon(19.5% 0, 80.5% 0, 100% 19.5%, 100% 80.5%, 80.5% 100%, 19.5% 100%, 0 80.5%, 0 19.5%);
+
+	/* ---------- Elevation ---------- */
+	--sc-shadow-hairline: 0 0 0 1px var(--sc-line);
+	--sc-shadow-lift: 0 0 0 1px rgb(255 255 255 / 0.04), 0 20px 40px -20px rgb(0 0 0 / 0.9),
+		inset 0 1px 0 rgb(255 255 255 / 0.06);
+	--sc-shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.12), inset 0 -1px 0 rgb(0 0 0 / 0.8),
+		0 40px 80px -30px rgb(0 0 0 / 1), 0 0 0 1px rgb(0 0 0 / 0.6), 0 0 120px -40px rgb(255 255 255 / 0.12);
+	--sc-glow: 0 8px 30px -10px rgb(255 255 255 / 0.35);
+	--sc-blur: blur(14px) saturate(140%);
+
+	/* ---------- Motion ---------- */
+	--sc-ease-settle: cubic-bezier(0.16, 1, 0.3, 1); /* default: fast out, long quiet landing */
+	--sc-ease-press: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--sc-ease-linear: linear;
+	--sc-dur-instant: 120ms; /* hovers, color */
+	--sc-dur-quick: 200ms; /* borders, lifts */
+	--sc-dur-base: 360ms; /* panels, tilt */
+	--sc-dur-slow: 700ms; /* reveals, sheen sweeps */
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--sc-dur-instant: 0ms;
+		--sc-dur-quick: 0ms;
+		--sc-dur-base: 0ms;
+		--sc-dur-slow: 0ms;
+	}
+}
