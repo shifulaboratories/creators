@@ -52,7 +52,7 @@ From the platform:
 - **Clicks without satisfaction backfire.** Since YouTube weighs watch time and surveys, a misleading thumbnail wins the click and loses the recommendation.
 - **Think in viewers, not subscribers.** Because recommendations don't depend on your social graph, a new channel can reach people who have never heard of it.
 - **Read retention graphs.** Where viewers drop is where the video stopped earning their time.
-- **Use the [MrBeast production handbook takeaways](/goldmines/mrbeast-production-handbook/)** for a detailed take on packaging and retention from the largest channel on the platform.
+- **Use the [MrBeast production handbook takeaways](/shortlist/mrbeast-production-handbook/)** for a detailed take on packaging and retention from the largest channel on the platform.
 
 ## Sources
 

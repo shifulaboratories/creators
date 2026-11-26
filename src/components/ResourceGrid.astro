@@ -1,5 +1,5 @@
 ---
-/** Curated "goldmine" resources from src/data/resources/, grouped by kind. */
+/** Curated "shortlist" resources from src/data/resources/, grouped by kind. */
 import { getCollection } from 'astro:content';
 import Cover from './Cover.astro';
 
@@ -36,7 +36,7 @@ const resources = (await getCollection('resources'))
 					<div class="meta">
 						<span class="pill">{r.free ? 'Free' : 'Paid'}</span>
 						{r.affiliate && <span class="pill brass">affiliate</span>}
-						{r.featured && <span class="pill gold">Goldmine</span>}
+						{r.featured && <span class="pill gold">Top pick</span>}
 					</div>
 					<h3>{r.name}</h3>
 					<p>{r.why}</p>

@@ -23,11 +23,11 @@
 [data-section='news'] { --accent: var(--sc-news); }
 
 :root {
-	/* Platforms blend ion and cyan; Goldmines use brass, the disclosure gold. */
+	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */
 	--sc-algorithms: var(--sc-ion);
 	--sc-case-studies: var(--sc-champagne);
 	--sc-platforms: color-mix(in srgb, var(--sc-ion) 50%, var(--sc-cyan));
-	--sc-goldmines: var(--sc-brass);
+	--sc-shortlist: var(--sc-brass);
 	/* Per-platform tints for covers. */
 	--sc-youtube: var(--sc-ember);
 	--sc-tiktok: var(--sc-cyan);
@@ -37,7 +37,7 @@
 [data-section='algorithms'] { --accent: var(--sc-algorithms); }
 [data-section='case-studies'] { --accent: var(--sc-case-studies); }
 [data-section='platforms'] { --accent: var(--sc-platforms); }
-[data-section='goldmines'] { --accent: var(--sc-goldmines); }
+[data-section='shortlist'] { --accent: var(--sc-shortlist); }
 [data-section='youtube'] { --accent: var(--sc-youtube); }
 [data-section='tiktok'] { --accent: var(--sc-tiktok); }
 [data-section='instagram'] { --accent: var(--sc-instagram); }

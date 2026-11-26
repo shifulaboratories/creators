@@ -1,296 +1,98 @@
 ---
 /**
- * The Select seal in 3D, pure CSS: the badge outline is stacked in thin layers
- * to give it a real edge, the check is raised off the face, and platform icons
- * orbit on a tilted ring that passes behind and in front of it.
- * No WebGL, no library. Tilts toward the pointer; respects reduced motion.
+ * The Select seal in real 3D: an extruded, beveled badge with a raised chrome
+ * check, and platform icons on glass tiles orbiting it (three.js, loaded after
+ * the page paints). Drag sideways to spin it. Until WebGL is ready, or if it
+ * never is, a flat seal shows in its place.
  */
 import mark from '../assets/logo.svg?raw';
 
 const outline = mark.match(/<path d="([^"]+)"/)?.[1] ?? '';
-const check = mark.match(/<path d="(M20[^"]+)"/)?.[1] ?? 'M20.4 32.9 L28.1 40.5 L43.8 24.8';
-const depth = 18; // layers in the edge
-const orbit = [
-	{ d: 'youtube.com', n: 'YouTube' },
-	{ d: 'tiktok.com', n: 'TikTok' },
-	{ d: 'instagram.com', n: 'Instagram' },
-	{ d: 'x.com', n: 'X' },
-	{ d: 'twitch.tv', n: 'Twitch' },
-	{ d: 'substack.com', n: 'Substack' },
-	{ d: 'patreon.com', n: 'Patreon' },
-	{ d: 'spotify.com', n: 'Spotify' },
-];
 ---
 
-<div class="s3d" data-s3d role="img" aria-label="The Select Creators seal in 3D, with platform icons orbiting it">
-	<div class="s3d-tilt">
-		<div class="s3d-sway">
-			<div class="s3d-ring s3d-ring--back" aria-hidden="true">
-				{
-					orbit.map((o, i) => (
-						<span class="s3d-orb" style={`--a:${(360 / orbit.length) * i}deg`}>
-							<span class="s3d-chip" data-l={o.n[0]}>
-								<img onerror="this.remove()" src={`https://twenty-icons.com/${o.d}/64`} alt="" width="28" height="28" loading="eager" decoding="async" />
-							</span>
-						</span>
-					))
-				}
-			</div>
-			<div class="s3d-coin" aria-hidden="true">
-				{
-					Array.from({ length: depth }, (_, i) => (
-						<svg class="s3d-layer" viewBox="0 0 64 64" style={`--z:${-(i + 1) * 0.9}px;--l:${18 + Math.round(26 * Math.sin((i / depth) * Math.PI))}%`}>
-							<path d={outline} />
-						</svg>
-					))
-				}
-				<div class="s3d-face" set:html={mark} />
-				{
-					[1, 2, 3, 4].map((z) => (
-						<svg class="s3d-check" viewBox="0 0 64 64" style={`--z:${z * 0.9}px;--o:${z === 4 ? 1 : 0.5}`}>
-							<path d={check} />
-						</svg>
-					))
-				}
-				<span class="s3d-gloss" />
-				<svg class="s3d-back" viewBox="0 0 64 64"><path d={outline} /></svg>
-			</div>
-		</div>
-	</div>
+<div class="s3d" data-s3d data-outline={outline} role="img" aria-label="The Select Creators seal in 3D, with platform icons orbiting it">
+	<span class="s3d-glow" aria-hidden="true"></span>
+	<span class="s3d-poster" aria-hidden="true" set:html={mark} />
 	<span class="s3d-floor" aria-hidden="true"></span>
 </div>
 
 <script>
-	document.querySelectorAll<HTMLElement>('[data-s3d]').forEach((el) => {
-		if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(hover: hover)').matches) return;
-		let raf = 0;
-		addEventListener(
-			'pointermove',
-			(e) => {
-				cancelAnimationFrame(raf);
-				raf = requestAnimationFrame(() => {
-					const r = el.getBoundingClientRect();
-					const x = (e.clientX - (r.left + r.width / 2)) / innerWidth;
-					const y = (e.clientY - (r.top + r.height / 2)) / innerHeight;
-					el.style.setProperty('--ry', (x * 40).toFixed(2) + 'deg');
-					el.style.setProperty('--rx', (-y * 30).toFixed(2) + 'deg');
-				});
-			},
-			{ passive: true },
-		);
-	});
+	const start = () =>
+		document.querySelectorAll<HTMLElement>('[data-s3d]').forEach(async (el) => {
+			try {
+				const probe = document.createElement('canvas');
+				if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) return;
+				const { mountSeal } = await import('../scripts/seal-scene');
+				mountSeal(el, el.dataset.outline || '');
+			} catch {
+				/* keep the flat seal */
+			}
+		});
+	if (document.readyState === 'complete') start();
+	else addEventListener('load', start, { once: true });
 </script>
 
 <style>
 	.s3d {
-		--size: min(64vw, 300px);
-		--r: calc(var(--size) * 0.82);
 		position: relative;
-		width: calc(var(--size) * 1.9);
-		max-width: 100%;
-		aspect-ratio: 1 / 0.95;
-		display: grid;
-		place-items: center;
-		perspective: 1100px;
+		width: 100%;
+		max-width: 560px;
+		aspect-ratio: 1 / 0.9;
 		margin-inline: auto;
+		/* contain keeps the canvas from ever pushing the page sideways */
+		contain: layout paint;
 	}
-	.s3d-tilt {
-		transform-style: preserve-3d;
-		transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-		transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-	}
-	.s3d-sway {
-		position: relative;
-		width: var(--size);
-		height: var(--size);
-		transform-style: preserve-3d;
-		animation: s3d-sway 9s ease-in-out infinite;
-	}
-	@keyframes s3d-sway {
-		0%,
-		100% {
-			transform: rotateY(-24deg) rotateX(8deg);
-		}
-		50% {
-			transform: rotateY(24deg) rotateX(-4deg);
-		}
-	}
-	.s3d-coin {
-		position: absolute;
-		inset: 0;
-		transform-style: preserve-3d;
-		animation: s3d-float 6s ease-in-out infinite;
-	}
-	@keyframes s3d-float {
-		50% {
-			transform: translateY(-10px);
-		}
-	}
-	.s3d-layer,
-	.s3d-face,
-	.s3d-check,
-	.s3d-back,
-	.s3d-gloss {
+	.s3d :global(.s3d-canvas) {
 		position: absolute;
 		inset: 0;
 		width: 100%;
 		height: 100%;
+		touch-action: pan-y;
+		cursor: grab;
+		opacity: 0;
+		transition: opacity 0.6s ease;
 	}
-	.s3d-layer {
-		transform: translateZ(calc(var(--z) * var(--size) / 64px * 1px));
-		fill: hsl(0 0% var(--l));
+	.s3d :global(.s3d-canvas:active) {
+		cursor: grabbing;
 	}
-	.s3d-back {
-		transform: translateZ(calc(-19 * 0.9 * var(--size) / 64)) rotateY(180deg);
-		fill: #0b0b0b;
-		stroke: #555;
-		stroke-width: 0.6;
+	.s3d:global(.is-3d) :global(.s3d-canvas) {
+		opacity: 1;
 	}
-	.s3d-face {
-		transform: translateZ(0);
-		filter: drop-shadow(0 0 0.5px rgb(255 255 255 / 0.4));
-	}
-	.s3d-face :global(svg) {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-	.s3d-check {
-		transform: translateZ(calc(var(--z) * var(--size) / 64px * 1px));
-		fill: none;
-		stroke: #d9d9d7;
-		stroke-opacity: var(--o);
-		stroke-width: 5.4;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.s3d-check:last-of-type {
-		stroke: url(#sc-ti);
-	}
-	.s3d-gloss {
-		border-radius: 50%;
-		transform: translateZ(calc(4.2 * var(--size) / 64));
-		background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.18) 45%, transparent 58%);
-		background-size: 250% 100%;
-		mix-blend-mode: screen;
-		animation: s3d-shine 6s ease-in-out infinite;
-		clip-path: circle(46% at 50% 50%);
-		pointer-events: none;
-	}
-	@keyframes s3d-shine {
-		0%,
-		20% {
-			background-position: 120% 0;
-		}
-		60%,
-		100% {
-			background-position: -40% 0;
-		}
-	}
-	/* Orbit: a tilted ring around the seal, icons counter-rotate to face you. */
-	.s3d-ring {
+	.s3d-poster {
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		width: 0;
-		height: 0;
-		transform-style: preserve-3d;
-		transform: rotateX(72deg);
-		animation: s3d-spin 28s linear infinite;
+		width: 38%;
+		translate: -50% -50%;
+		filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.6));
+		transition: opacity 0.4s ease;
 	}
-	@keyframes s3d-spin {
-		from {
-			transform: rotateX(72deg) rotateZ(0deg);
-		}
-		to {
-			transform: rotateX(72deg) rotateZ(360deg);
-		}
+	.s3d-poster :global(svg) {
+		display: block;
+		width: 100%;
+		height: auto;
 	}
-	.s3d-orb {
+	.s3d:global(.is-3d) .s3d-poster {
+		opacity: 0;
+	}
+	.s3d-glow {
 		position: absolute;
-		transform-style: preserve-3d;
-		transform: rotateZ(var(--a)) translateX(var(--r));
-	}
-	.s3d-chip {
-		position: relative;
-		display: grid;
-		place-items: center;
-		width: 46px;
-		height: 46px;
-		margin: -23px 0 0 -23px;
-		border-radius: 14px;
-		border: 1px solid rgb(255 255 255 / 0.14);
-		background: rgb(20 20 20 / 0.85);
-		box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.9);
-		/* undo the ring's angle and tilt so the icon faces the viewer */
-		animation: s3d-face 28s linear infinite;
-		transform-style: preserve-3d;
-	}
-	@keyframes s3d-face {
-		from {
-			transform: rotateZ(calc(-1 * var(--a))) rotateX(-72deg);
-		}
-		to {
-			transform: rotateZ(calc(-1 * var(--a) - 360deg)) rotateX(-72deg);
-		}
-	}
-	.s3d-chip::before {
-		content: attr(data-l);
-		position: absolute;
-		font-weight: 600;
-		color: var(--sc-silver);
-	}
-	.s3d-chip img {
-		position: relative;
-		background: #141414;
-		width: 26px;
-		height: 26px;
-		border-radius: 6px;
+		left: 50%;
+		top: 50%;
+		width: 62%;
+		aspect-ratio: 1;
+		translate: -50% -50%;
+		border-radius: 50%;
+		background: radial-gradient(closest-side, rgb(255 134 184 / 0.22), rgb(195 166 255 / 0.12) 55%, transparent);
 	}
 	.s3d-floor {
 		position: absolute;
 		left: 50%;
-		bottom: 4%;
-		width: calc(var(--size) * 0.9);
-		height: 24px;
+		bottom: 11%;
+		width: 46%;
+		height: 22px;
 		translate: -50% 0;
 		border-radius: 50%;
-		background: radial-gradient(closest-side, rgb(195 166 255 / 0.28), transparent);
-		filter: blur(8px);
-		animation: s3d-shadow 6s ease-in-out infinite;
-	}
-	@keyframes s3d-shadow {
-		50% {
-			transform: scaleX(0.85);
-			opacity: 0.6;
-		}
-	}
-	@media (max-width: 40rem) {
-		.s3d-chip {
-			width: 36px;
-			height: 36px;
-			margin: -18px 0 0 -18px;
-			border-radius: 11px;
-		}
-		.s3d-chip img {
-			width: 20px;
-			height: 20px;
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.s3d-sway,
-		.s3d-coin,
-		.s3d-ring,
-		.s3d-chip,
-		.s3d-gloss,
-		.s3d-floor {
-			animation: none;
-		}
-		.s3d-sway {
-			transform: rotateY(-18deg) rotateX(6deg);
-		}
-		.s3d-chip {
-			transform: rotateZ(calc(-1 * var(--a))) rotateX(-72deg);
-		}
+		background: radial-gradient(closest-side, rgb(195 166 255 / 0.3), transparent);
 	}
 </style>

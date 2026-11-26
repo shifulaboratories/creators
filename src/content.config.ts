@@ -69,7 +69,7 @@ const tools = defineCollection({
 });
 
 /**
- * Curated "goldmine" resources in src/data/resources/. Each says why it is worth
+ * Curated "shortlist" resources in src/data/resources/. Each says why it is worth
  * someone's time; affiliate links must be flagged like tools.
  */
 const resources = defineCollection({
@@ -79,7 +79,7 @@ const resources = defineCollection({
 		// A full URL, or a path starting with / for our own guides.
 		url: z.string().refine((u) => u.startsWith('/') || URL.canParse(u), 'Must be a URL or a /path'),
 		kind: z.enum(['official', 'playbook', 'hiring', 'code', 'tool', 'learning']),
-		tint: z.string().default('goldmines'),
+		tint: z.string().default('shortlist'),
 		coverLabel: z.string().optional(),
 		why: z.string().min(20),
 		free: z.boolean(),

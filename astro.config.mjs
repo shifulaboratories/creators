@@ -10,6 +10,8 @@ export default defineConfig({
 	redirects: {
 		'/grow/algorithms': '/algorithms/how-recommenders-work/',
 		'/grow/case-studies': '/case-studies/',
+		'/goldmines': '/shortlist/',
+		'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
 	},
 	integrations: [
 		starlight({
@@ -41,7 +43,7 @@ export default defineConfig({
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
 				section('Case studies', 'case-studies'),
-				section('Goldmines', 'goldmines'),
+				section('The Shortlist', 'shortlist'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
 				section('Deals and contracts', 'deals'),
