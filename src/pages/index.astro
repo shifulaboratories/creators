@@ -1,11 +1,13 @@
 ---
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
+import '@fontsource-variable/syne';
 import '../styles/tokens.css';
 import '../styles/sections.css';
 import '../styles/widgets.css';
 import SwipeDeck from '../components/SwipeDeck.astro';
 import TabBar from '../components/TabBar.astro';
+import Seal3D from '../components/Seal3D.astro';
 import mark from '../assets/logo.svg?raw';
 import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from '../site.mjs';
@@ -22,7 +24,7 @@ const sections = [
 ];
 
 const topics = [
-	'The algorithm', 'Brand deals', 'Paywalls', 'Redlining contracts', 'Usage rights', 'Managers',
+	'The algorithm', 'Brand deals', 'Paywalls', 'Fixing bad contracts', 'Usage rights', 'Managers',
 	'Agencies', 'Hiring editors', 'Tool picker', 'Content removal', 'Account security', 'Fake verification',
 	'Username trading', 'Case studies', 'Memberships', 'Negotiation scripts',
 ];
@@ -42,7 +44,7 @@ const journey = [
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{SITE_NAME}: the creator economy, fully disclosed</title>
+		<title>{SITE_NAME}: the creator playbook, minus the gurus</title>
 		<meta name="description" content={SITE_DESCRIPTION} />
 		<meta name="theme-color" content="#050505" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -58,7 +60,6 @@ const journey = [
 			<div class="aurora a1"></div>
 			<div class="aurora a2"></div>
 			<div class="aurora a3"></div>
-			<div class="grid"></div>
 			<div class="grain"></div>
 		</div>
 
@@ -67,82 +68,36 @@ const journey = [
 				<img class="lockup" src={lockup.src} width="187" height="28" alt={SITE_NAME} />
 			</a>
 			<nav class="nav-links" aria-label="Main">
-				<a href="/grow/">Guides</a>
+				<a href="/guides/">Guides</a>
 				<a href="/stack/">Stack</a>
 				<a href="/underground/">Underground</a>
 				<a href="/about/contribute/">Contribute</a>
 			</nav>
-			<a class="btn btn-solid btn-sm" href="/grow/">Read free</a>
+			<a class="btn btn-solid btn-sm" href="/guides/">Read free</a>
 		</header>
 
 		<main>
 			<!-- HERO -->
 			<section class="hero">
 				<div class="hero-copy">
-					<p class="eyebrow reveal"><span class="pulse"></span>Free and open source</p>
+					<p class="eyebrow reveal"><span class="pulse"></span>Free, by creators, for creators</p>
 					<h1 class="reveal" style="--d: 80ms">
-						The creator economy,<br />
-						<span class="shimmer">fully disclosed.</span>
+						The creator playbook,<br />
+						<span class="shimmer">minus the gurus.</span>
 					</h1>
 					<p class="lead reveal" style="--d: 160ms">
-						The handbook for growing, earning, negotiating and building a team as a creator. Written and reviewed by
-						people who do the work, with every affiliate link labeled.
+						How the algorithm really picks what gets seen, what a brand deal should pay, and the setups real creators
+						film with. Every claim sourced, every affiliate link labeled, free forever.
 					</p>
 					<div class="cta reveal" style="--d: 240ms">
-						<a class="btn btn-solid" href="/grow/">Start reading <span aria-hidden="true">→</span></a>
-						<a class="btn btn-ghost" href="/stack/">Pick your stack</a>
+						<a class="btn btn-solid" href="/guides/">Start reading <span aria-hidden="true">→</span></a>
+						<a class="btn btn-ghost" href="/stack/">See creators' setups</a>
 					</div>
 				</div>
 
-				<figure class="flywheel reveal" style="--d: 200ms" aria-label="The creator flywheel: content builds an audience, the audience earns revenue, revenue funds deals and a team, and the team makes more content.">
-					<svg viewBox="0 0 400 400" role="img">
-						<defs>
-							<radialGradient id="fw-core" cx="50%" cy="50%" r="50%">
-								<stop offset="0" stop-color="#fff" stop-opacity="0.16" />
-								<stop offset="1" stop-color="#fff" stop-opacity="0" />
-							</radialGradient>
-							<linearGradient id="fw-ring" x1="0" y1="0" x2="1" y2="1">
-								<stop offset="0" stop-color="var(--sc-grow)" />
-								<stop offset="0.33" stop-color="var(--sc-earn)" />
-								<stop offset="0.66" stop-color="var(--sc-deals)" />
-								<stop offset="1" stop-color="var(--sc-team)" />
-							</linearGradient>
-							<path id="fw-path" d="M200 55 A145 145 0 1 1 199.9 55" />
-						</defs>
-						<circle cx="200" cy="200" r="190" fill="none" stroke="rgb(255 255 255 / 0.06)" stroke-dasharray="2 6" class="spin-slow" />
-						<circle cx="200" cy="200" r="145" fill="none" stroke="url(#fw-ring)" stroke-opacity="0.55" stroke-width="1.5" />
-						<circle cx="200" cy="200" r="110" fill="url(#fw-core)" />
-						{[0, 1, 2, 3, 4, 5].map((i) => (
-							<circle r="3" fill="#fff" opacity="0.9">
-								<animateMotion dur="12s" repeatCount="indefinite" begin={`-${i * 2}s`}>
-									<mpath href="#fw-path" />
-								</animateMotion>
-							</circle>
-						))}
-						<g class="node" style="--accent: var(--sc-grow)">
-							<circle cx="200" cy="55" r="38" />
-							<text x="200" y="52" class="n-name">Content</text>
-							<text x="200" y="68" class="n-sub">Grow</text>
-						</g>
-						<g class="node" style="--accent: var(--sc-earn)">
-							<circle cx="345" cy="200" r="38" />
-							<text x="345" y="197" class="n-name">Revenue</text>
-							<text x="345" y="213" class="n-sub">Earn</text>
-						</g>
-						<g class="node" style="--accent: var(--sc-deals)">
-							<circle cx="200" cy="345" r="38" />
-							<text x="200" y="342" class="n-name">Deals</text>
-							<text x="200" y="358" class="n-sub">Contracts</text>
-						</g>
-						<g class="node" style="--accent: var(--sc-team)">
-							<circle cx="55" cy="200" r="38" />
-							<text x="55" y="197" class="n-name">Team</text>
-							<text x="55" y="213" class="n-sub">Hire</text>
-						</g>
-					</svg>
-					<div class="flywheel-mark" set:html={mark} />
-					<figcaption>The creator flywheel. Every guide maps to one part of it.</figcaption>
-				</figure>
+				<div class="hero-3d reveal" style="--d: 200ms">
+					<Seal3D />
+				</div>
 			</section>
 
 			<!-- MARQUEE -->
@@ -428,23 +383,23 @@ const journey = [
 		will-change: transform;
 	}
 	.a1 {
-		background: radial-gradient(circle, var(--sc-deals), transparent 62%);
+		background: radial-gradient(circle, var(--sc-rose), transparent 62%);
 		top: -35vmax;
 		left: -20vmax;
 		animation: drift1 26s ease-in-out infinite alternate;
 	}
 	.a2 {
-		background: radial-gradient(circle, var(--sc-stack), transparent 62%);
+		background: radial-gradient(circle, var(--sc-ion), transparent 62%);
 		top: -30vmax;
 		right: -30vmax;
-		opacity: 0.11;
+		opacity: 0.14;
 		animation: drift2 32s ease-in-out infinite alternate;
 	}
 	.a3 {
-		background: radial-gradient(circle, var(--sc-earn), transparent 62%);
+		background: radial-gradient(circle, var(--sc-champagne), transparent 62%);
 		top: 40vh;
 		left: 30vw;
-		opacity: 0.06;
+		opacity: 0.09;
 		animation: drift1 38s ease-in-out infinite alternate-reverse;
 	}
 	@keyframes drift1 {
@@ -591,18 +546,16 @@ const journey = [
 		border: 1px solid var(--sc-line);
 		border-radius: var(--sc-radius-pill);
 		background: var(--sc-fill-subtle);
-		font-family: var(--sc-font-mono);
-		font-size: var(--sc-text-xs);
-		letter-spacing: var(--sc-tracking-caps);
-		text-transform: uppercase;
-		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+		font-weight: 500;
+		color: var(--sc-platinum);
 	}
 	.pulse {
 		width: 7px;
 		height: 7px;
 		border-radius: 50%;
-		background: var(--sc-grow);
-		box-shadow: 0 0 0 0 color-mix(in srgb, var(--sc-grow) 60%, transparent);
+		background: var(--sc-lime);
+		box-shadow: 0 0 0 0 color-mix(in srgb, var(--sc-lime) 60%, transparent);
 		animation: pulse 2.4s infinite;
 	}
 	@keyframes pulse {
@@ -617,19 +570,19 @@ const journey = [
 		margin: 0;
 		font-size: clamp(2.5rem, 10vw, 4.75rem);
 		line-height: var(--sc-leading-tight);
-		letter-spacing: var(--sc-tracking-display);
-		font-weight: 600;
+		font-family: var(--sc-font-display);
+		letter-spacing: -0.03em;
+		font-weight: 700;
 		color: var(--sc-ivory);
 	}
 	.shimmer {
 		background: linear-gradient(
 			100deg,
-			#8d8d8c 0%,
-			#fafaf9 20%,
-			var(--sc-stack) 35%,
-			var(--sc-deals) 50%,
-			#fafaf9 65%,
-			#8d8d8c 100%
+			var(--sc-champagne) 0%,
+			var(--sc-rose) 30%,
+			var(--sc-ion) 55%,
+			var(--sc-rose) 80%,
+			var(--sc-champagne) 100%
 		);
 		background-size: 250% 100%;
 		-webkit-background-clip: text;
@@ -660,71 +613,11 @@ const journey = [
 		margin-top: 1.75rem;
 	}
 
-	/* Flywheel diagram */
-	.flywheel {
-		position: relative;
-		margin: 0 auto;
-		width: min(100%, 440px);
-	}
-	.flywheel svg {
-		width: 100%;
-		height: auto;
-		display: block;
-		overflow: visible;
-	}
-	.spin-slow {
-		transform-origin: 200px 200px;
-		animation: spin 60s linear infinite;
-	}
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-	.node circle {
-		fill: var(--sc-onyx);
-		stroke: var(--accent);
-		stroke-width: 1.5;
-		filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 45%, transparent));
-	}
-	.n-name {
-		fill: var(--sc-ivory);
-		font-size: 13px;
-		font-weight: 600;
-		text-anchor: middle;
-	}
-	.n-sub {
-		fill: var(--accent);
-		font-family: var(--sc-font-mono);
-		font-size: 9.5px;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		text-anchor: middle;
-	}
-	.flywheel-mark {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 22%;
-		transform: translate(-50%, -62%);
-		filter: drop-shadow(0 0 30px rgb(255 255 255 / 0.18));
-		animation: float 6s ease-in-out infinite;
-	}
-	.flywheel-mark :global(svg) {
-		width: 100%;
-		height: auto;
-		display: block;
-	}
-	@keyframes float {
-		50% {
-			transform: translate(-50%, -66%);
-		}
-	}
-	figcaption {
-		margin-top: 0.75rem;
-		text-align: center;
-		font-size: var(--sc-text-sm);
-		color: var(--sc-steel);
+	/* 3D seal */
+	.hero-3d {
+		display: grid;
+		place-items: center;
+		min-width: 0;
 	}
 
 	/* ---------- Marquee ---------- */
@@ -766,11 +659,9 @@ const journey = [
 	}
 	.kicker {
 		margin: 0 0 0.6rem;
-		font-family: var(--sc-font-mono);
-		font-size: var(--sc-text-xs);
-		letter-spacing: var(--sc-tracking-caps);
-		text-transform: uppercase;
-		color: var(--sc-steel);
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+		color: var(--sc-rose);
 	}
 	.kicker.brass {
 		color: var(--sc-brass);
@@ -779,8 +670,9 @@ const journey = [
 		margin: 0;
 		font-size: clamp(1.9rem, 6vw, 3rem);
 		line-height: 1.05;
-		letter-spacing: -0.035em;
-		font-weight: 600;
+		font-family: var(--sc-font-display);
+		letter-spacing: -0.025em;
+		font-weight: 700;
 		color: var(--sc-ivory);
 	}
 	.sub {
@@ -873,8 +765,7 @@ const journey = [
 		margin: 0.5rem 0 0;
 		font-family: var(--sc-font-mono);
 		font-size: var(--sc-text-2xs);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-steel);
 	}
 
@@ -976,8 +867,7 @@ const journey = [
 		display: block;
 		color: var(--sc-steel);
 		font-size: var(--sc-text-2xs);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 	}
 	.contract s {
 		text-decoration: none;
@@ -1060,8 +950,7 @@ const journey = [
 	.slot .k {
 		font-family: var(--sc-font-mono);
 		font-size: var(--sc-text-2xs);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-steel);
 	}
 	.slot.free {
@@ -1164,8 +1053,7 @@ const journey = [
 		font-family: var(--sc-font-mono);
 		font-weight: 400;
 		font-size: var(--sc-text-2xs);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-ivory);
 		margin-right: 0.5rem;
 	}
@@ -1221,7 +1109,7 @@ const journey = [
 		font-family: var(--sc-font-mono);
 		font-size: var(--sc-text-xs);
 		color: var(--accent);
-		letter-spacing: 0.1em;
+		letter-spacing: 0;
 	}
 	.journey h3 {
 		margin: 0.2rem 0 0.25rem;
@@ -1254,8 +1142,7 @@ const journey = [
 		border: 1px solid color-mix(in srgb, var(--sc-brass) 55%, transparent);
 		font-family: var(--sc-font-mono);
 		font-size: var(--sc-text-2xs);
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-brass);
 	}
 	.trust-tile h3 {

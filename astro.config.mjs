@@ -37,6 +37,7 @@ export default defineConfig({
 			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
 			sidebar: [
 				{ label: 'Start here', link: '/' },
+				{ label: 'All guides: search and browse', link: '/guides/' },
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
 				section('Case studies', 'case-studies'),

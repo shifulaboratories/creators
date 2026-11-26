@@ -20,6 +20,7 @@ const icons: Record<string, string> = {
 	grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
 	gem: 'M6 3h12l3 6-9 12L3 9zM3 9h18M12 21 8.5 9 12 3l3.5 6z',
 	menu: 'M4 7h16M4 12h16M4 17h10',
+	search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
 };
 ---
 
@@ -37,23 +38,12 @@ const icons: Record<string, string> = {
 			);
 		})
 	}
-	{
-		variant === 'docs' ? (
-			<button type="button" class="tab" popovertarget="starlight__sidebar" aria-label="All guides">
-				<svg viewBox="0 0 24 24" aria-hidden="true">
-					<path d={icons.menu} />
-				</svg>
-				<span>All</span>
-			</button>
-		) : (
-			<a href="/case-studies/" class="tab">
-				<svg viewBox="0 0 24 24" aria-hidden="true">
-					<path d={icons.menu} />
-				</svg>
-				<span>Cases</span>
-			</a>
-		)
-	}
+	<a href="/guides/?focus=1" class:list={['tab', { on: path.startsWith('/guides') }]} aria-current={path.startsWith('/guides') ? 'page' : undefined}>
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d={icons.search} />
+		</svg>
+		<span>Search</span>
+	</a>
 </nav>
 
 <script>
@@ -153,10 +143,10 @@ const icons: Record<string, string> = {
 		background: rgb(255 255 255 / 0.07);
 	}
 	.tab.on svg {
-		stroke: var(--sc-ion, #8b9cff);
+		stroke: var(--sc-ion, #c3a6ff);
 	}
 	.tab:focus-visible {
-		outline: 2px solid var(--sc-ion, #8b9cff);
+		outline: 2px solid var(--sc-ion, #c3a6ff);
 		outline-offset: 1px;
 	}
 	@media (prefers-reduced-motion: reduce) {

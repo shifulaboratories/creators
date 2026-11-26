@@ -4,81 +4,10 @@
  * and get a "moving a winner from A to B" checklist.
  * Every cell is tagged with where it comes from.
  */
-type Cell = { t: string; s: 'code' | 'platform' | 'practitioner' | 'none' };
-type P = { key: string; name: string; tint: string; href: string; rows: Record<string, Cell> };
 
-const rows = [
-	{ key: 'reach', label: 'Where new viewers come from' },
-	{ key: 'signals', label: 'Strongest signals it names' },
-	{ key: 'hurts', label: 'What limits reach' },
-	{ key: 'followers', label: 'Does follower count matter?' },
-	{ key: 'status', label: 'Can you check if you’re limited?' },
-	{ key: 'open', label: 'How open it is' },
-	{ key: 'play', label: 'The play' },
-];
-const platforms: P[] = [
-	{
-		key: 'youtube',
-		name: 'YouTube',
-		tint: 'youtube',
-		href: '/platforms/youtube/',
-		rows: {
-			reach: { t: 'Recommendations on Home and Up Next, which drive more viewing than subscriptions or search.', s: 'platform' },
-			signals: { t: 'Clicks, watch time, satisfaction surveys, shares, likes and dislikes.', s: 'platform' },
-			hurts: { t: 'Clicks without satisfaction. YouTube added watch time in 2012 because clicks alone rewarded misleading videos.', s: 'platform' },
-			followers: { t: 'YouTube says recommendations don’t rely on your social graph.', s: 'platform' },
-			status: { t: 'Not covered in the sources we cite.', s: 'none' },
-			open: { t: 'Written explainers and engineering blog posts. No public ranking code.', s: 'platform' },
-			play: { t: 'Package first, pay off the click in the opening, and earn every minute after.', s: 'practitioner' },
-		},
-	},
-	{
-		key: 'tiktok',
-		name: 'TikTok',
-		tint: 'tiktok',
-		href: '/platforms/tiktok/',
-		rows: {
-			reach: { t: 'The For You feed, ranked per viewer.', s: 'platform' },
-			signals: { t: 'How people interact with the video. Finishing a longer video is a strong signal.', s: 'platform' },
-			hurts: { t: 'Spam, artificially boosted traffic, duplicated content, and videos still under review.', s: 'platform' },
-			followers: { t: 'Not a direct factor, and neither are your past hits.', s: 'platform' },
-			status: { t: 'Not covered in the sources we cite.', s: 'none' },
-			open: { t: 'One detailed newsroom explainer (2020). No public ranking code.', s: 'platform' },
-			play: { t: 'Open on the payoff, cut every dead second, and aim for people finishing and sending it.', s: 'practitioner' },
-		},
-	},
-	{
-		key: 'instagram',
-		name: 'Instagram',
-		tint: 'instagram',
-		href: '/platforms/instagram/',
-		rows: {
-			reach: { t: 'Reels and Explore, which are mostly accounts people don’t follow yet.', s: 'platform' },
-			signals: { t: 'Reels: reshares, watching all the way through, likes and audio page visits.', s: 'platform' },
-			hurts: { t: 'Low resolution, other apps’ watermarks, muted audio, borders, mostly-text Reels and reposted content.', s: 'platform' },
-			followers: { t: 'Feed is mostly accounts you follow. Reels and Explore mostly aren’t.', s: 'platform' },
-			status: { t: 'Yes. Account Status in the app shows recommendation eligibility.', s: 'platform' },
-			open: { t: 'A detailed ranking explainer from Instagram’s head (2023). No public ranking code.', s: 'platform' },
-			play: { t: 'Use Reels to reach new people and Feed for your audience. Upload clean, native files.', s: 'practitioner' },
-		},
-	},
-	{
-		key: 'x',
-		name: 'X',
-		tint: 'x',
-		href: '/algorithms/x-open-source/',
-		rows: {
-			reach: { t: 'For You mixes followed and unfollowed accounts. In 2023, about half of candidates came from each.', s: 'code' },
-			signals: { t: 'Predicted actions, weighted. In 2026: share via copy link 20, reply 5, quote 5, share via DM 5, follow 4, like 0.708.', s: 'code' },
-			hurts: { t: 'Predicted “not interested,” mute, block and report. Posts older than 48 hours are dropped from For You.', s: 'code' },
-			followers: { t: 'Posts from accounts the viewer doesn’t follow get a discount. Authors with few impressions get a boost.', s: 'code' },
-			status: { t: 'Yes. The “Under the Hood” tool shows visibility labels on your account and posts.', s: 'code' },
-			open: { t: 'Open-source ranking code, released 2023 and again in 2026, with dated updates.', s: 'code' },
-			play: { t: 'Write posts people reply to, quote and send. Avoid anything your audience would mute.', s: 'practitioner' },
-		},
-	},
-];
-const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitioner', none: 'Unknown' };
+
+import { rows, platforms } from '../lib/widget-data';
+const tagText = { code: 'From the code', platform: 'From the platform', practitioner: 'Creator-tested', none: 'Unknown' };
 ---
 
 <div class="sc-widget pc" data-pc data-platforms={JSON.stringify(platforms)}>
@@ -133,13 +62,13 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 		<div class="sc-widget__kicker">Moving a winner across</div>
 		<p data-port></p>
 	</div>
-	<p class="sc-widget__note">Each cell is tagged: <span class="sc-tag is-code">Code</span> published source code, <span class="sc-tag is-platform">Platform</span> the platform’s own explainer, <span class="sc-tag is-practitioner">Practitioner</span> our read, consistent with those sources. Sources are listed on each platform guide.</p>
+	<p class="sc-widget__note">Each cell is tagged: <span class="sc-tag is-code">From the code</span> published source code, <span class="sc-tag is-platform">From the platform</span> the platform’s own explainer, <span class="sc-tag is-practitioner">Creator-tested</span> our read, consistent with those sources. Sources are listed on each platform guide.</p>
 </div>
 
 <script>
 	type Cell = { t: string; s: string };
 	type P = { key: string; name: string; tint: string; href: string; rows: Record<string, Cell> };
-	const tagText: Record<string, string> = { code: 'Code', platform: 'Platform', practitioner: 'Practitioner', none: 'Unknown' };
+	const tagText: Record<string, string> = { code: 'From the code', platform: 'From the platform', practitioner: 'Creator-tested', none: 'Unknown' };
 	document.querySelectorAll<HTMLElement>('[data-pc]').forEach((root) => {
 		const platforms: P[] = JSON.parse(root.dataset.platforms!);
 		const pick = { a: platforms[0].key, b: platforms[1].key } as Record<string, string>;
@@ -195,8 +124,7 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 	.pc-side {
 		font-family: var(--sc-font-mono);
 		font-size: 0.68rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-silver);
 		width: 2.6rem;
 		align-self: center;
@@ -223,8 +151,7 @@ const tagText = { code: 'Code', platform: 'Platform', practitioner: 'Practitione
 		grid-column: 1 / -1;
 		font-family: var(--sc-font-mono);
 		font-size: 0.68rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		letter-spacing: 0;
 		color: var(--sc-silver);
 	}
 	.pc-cell {

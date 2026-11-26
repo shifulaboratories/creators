@@ -107,4 +107,29 @@ const videos = defineCollection({
 	}),
 });
 
-export const collections = { docs, tools, resources, videos };
+/**
+ * Creator setups in src/data/setups/: only gear a creator has published
+ * themselves, with the page it came from and the date it describes.
+ */
+const setups = defineCollection({
+	loader: glob({ pattern: '**/*.yaml', base: './src/data/setups' }),
+	schema: z.object({
+		creator: z.string(),
+		known: z.string(),
+		site: z.url(),
+		source: z.url(),
+		sourceTitle: z.string(),
+		asOf: z.string(),
+		note: z.string().optional(),
+		gear: z.object({
+			camera: z.array(z.string()).default([]),
+			lens: z.array(z.string()).default([]),
+			audio: z.array(z.string()).default([]),
+			lighting: z.array(z.string()).default([]),
+			editing: z.array(z.string()).default([]),
+			support: z.array(z.string()).default([]),
+		}),
+	}),
+});
+
+export const collections = { docs, tools, resources, videos, setups };

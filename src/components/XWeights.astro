@@ -6,38 +6,7 @@
  *  2023: twitter/the-algorithm-ml, projects/home/recap/README.md (weights dated April 5, 2023)
  *  2026: xai-org/x-algorithm, home-mixer/params/param.rs (checked Nov 26, 2026)
  */
-const sets = {
-	'2026': [
-		['Share via copy link', 20],
-		['Reply', 5],
-		['Quote', 5],
-		['Share via DM', 5],
-		['Follow the author', 4],
-		['Share', 2.118],
-		['Repost', 1],
-		['Like', 0.708],
-		['Time spent after clicking in', 0.385],
-		['Click into the post', 0.274],
-		['Open a link', 0.2],
-		['Scroll past without stopping', -0.02],
-		['Block the author', -31.2],
-		['Not interested', -53.07],
-		['Mute the author', -58.8],
-		['Report', -234],
-	],
-	'2023': [
-		['Reply the author engages with', 75],
-		['Reply', 13.5],
-		['Profile click, then engage', 12],
-		['Open the conversation, then engage', 11],
-		['Open the conversation, stay 2+ min', 10],
-		['Retweet', 1],
-		['Like', 0.5],
-		['Watch half a video', 0.005],
-		['Negative feedback', -74],
-		['Report', -369],
-	],
-} as const;
+import { sets } from '../lib/widget-data';
 const fmt = (n: number) => (Math.abs(n) >= 10 ? String(n) : String(+n.toFixed(3)));
 // sqrt scale so a 0.7 like is still visible next to a 234 report
 const maxAbs = 369;

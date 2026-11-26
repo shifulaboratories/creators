@@ -13,7 +13,7 @@ sidebar:
 
 import XWeights from '../../../components/XWeights.astro';
 
-**The short version:** X is the only major platform that publishes the code behind its main feed. It predicts how likely you are to take each of dozens of actions on a post, multiplies each prediction by a published weight, and adds them up. In the current code, the predicted chance of a reply, quote or DM share is weighted about 7 times as heavily as the chance of a like, sharing via copied link about 28 times, and "not interested," mute, block and report all carry heavy penalties. Those weights apply to predictions, not counts, which the calculator below makes concrete. <span class="sc-tag is-code">Code</span>
+**The short version:** X is the only major platform that publishes the code behind its main feed. It predicts how likely you are to take each of dozens of actions on a post, multiplies each prediction by a published weight, and adds them up. In the current code, the predicted chance of a reply, quote or DM share is weighted about 7 times as heavily as the chance of a like, sharing via copied link about 28 times, and "not interested," mute, block and report all carry heavy penalties. Those weights apply to predictions, not counts, which the calculator below makes concrete. <span class="sc-tag is-code">From the code</span>
 
 ## Two releases
 
@@ -33,7 +33,7 @@ These are the numbers the ranker multiplies each predicted action by. Toggle bet
 
 ## What the 2026 code shows
 
-**Where posts come from.** Posts from accounts you follow come from a service called Thunder. Posts from accounts you don't follow come from Phoenix retrieval and SimClusters, plus a shared list of popular recent posts. Both kinds are ranked by the same model. <span class="sc-tag is-code">Code</span>
+**Where posts come from.** Posts from accounts you follow come from a service called Thunder. Posts from accounts you don't follow come from Phoenix retrieval and SimClusters, plus a shared list of popular recent posts. Both kinds are ranked by the same model. <span class="sc-tag is-code">From the code</span>
 
 **Three adjustments after scoring:**
 
@@ -41,19 +41,19 @@ These are the numbers the ranker multiplies each predicted action by. Toggle bet
 - **Out-of-network discount.** Posts from accounts the viewer doesn't follow are multiplied by a factor below 1.
 - **New-author boost.** Posts from authors with few impressions are lifted toward a target position.
 
-**What gets filtered before ranking**, among others: duplicates, posts older than 48 hours, posts the viewer has already seen, posts from blocked or muted accounts, posts matching muted keywords, and, for new accounts, out-of-network posts below an engagement threshold. <span class="sc-tag is-code">Code</span>
+**What gets filtered before ranking**, among others: duplicates, posts older than 48 hours, posts the viewer has already seen, posts from blocked or muted accounts, posts matching muted keywords, and, for new accounts, out-of-network posts below an engagement threshold. <span class="sc-tag is-code">From the code</span>
 
-**Ranking and visibility are separate.** Ranking sets the order. A separate visibility system decides whether a post can be shown at all, based on blocks, mutes and labels other systems attach to posts and accounts. Some of those rules apply only when the post is recommended to people who don't follow you. <span class="sc-tag is-code">Code</span>
+**Ranking and visibility are separate.** Ranking sets the order. A separate visibility system decides whether a post can be shown at all, based on blocks, mutes and labels other systems attach to posts and accounts. Some of those rules apply only when the post is recommended to people who don't follow you. <span class="sc-tag is-code">From the code</span>
 
-**You can check your labels.** X's "Under the Hood" tool shows visibility-limiting labels on your account and posts. Use it before believing you're "shadowbanned." <span class="sc-tag is-code">Code</span>
+**You can check your labels.** X's "Under the Hood" tool shows visibility-limiting labels on your account and posts. Use it before believing you're "shadowbanned." <span class="sc-tag is-code">From the code</span>
 
 ## What to post, based on the code
 
 - **Write for replies, quotes and sends, not likes.** Those weights are several times higher than a like. <span class="sc-tag is-code">Code, applied</span>
 - **Make posts people want to share outside X.** Sharing via copied link is the single highest positive weight in the 2026 code. <span class="sc-tag is-code">Code, applied</span>
 - **Don't get muted.** Predicted mutes and "not interested" carry large negative weights, and mutes also filter you out of that person's feed entirely. <span class="sc-tag is-code">Code, applied</span>
-- **Post consistently, not in bursts.** Author diversity discounts your second and third post in the same feed, and posts older than 48 hours drop out of For You. <span class="sc-tag is-practitioner">Practitioner</span>
-- **New accounts get a lift.** The new-author boost exists so low-impression accounts get seen. Your early posts matter. <span class="sc-tag is-code">Code</span>
+- **Post consistently, not in bursts.** Author diversity discounts your second and third post in the same feed, and posts older than 48 hours drop out of For You. <span class="sc-tag is-practitioner">Creator-tested</span>
+- **New accounts get a lift.** The new-author boost exists so low-impression accounts get seen. Your early posts matter. <span class="sc-tag is-code">From the code</span>
 - **Don't treat weights as permanent.** The reply weight went from 13.5 to 5 between releases. Build for the audience, and use the code to understand direction, not to game a number.
 
 ## Sources

@@ -38,7 +38,7 @@ From the platform:
 - **Post original, native files.** Export clean, high-resolution video without another app's watermark. *(From the platform.)*
 - **Use Feed for your existing audience** and Reels to reach new people. *(From the platform, applied.)*
 - **Check Account Status before assuming a "shadowban."** It shows recommendation eligibility directly. *(From the platform.)*
-- **Saves and shares beat likes** for content meant to be useful. *(Practitioner view.)*
+- **Saves and shares beat likes** for content meant to be useful. *(Creator-tested.)*
 
 ## Sources
 

@@ -1,0 +1,516 @@
+---
+/**
+ * Every guide as a filterable, sortable, searchable gallery.
+ * Instant search over titles and summaries, plus full-text results from the
+ * site search index (Pagefind) once you've typed three letters.
+ * State lives in the URL (?q=&s=&sort=) so a filtered view can be shared.
+ */
+import { getCollection } from 'astro:content';
+import Cover from './Cover.astro';
+
+const labels: Record<string, string> = {
+	algorithms: 'The algorithm',
+	platforms: 'Platforms',
+	'case-studies': 'Case studies',
+	goldmines: 'Goldmines',
+	grow: 'Grow',
+	earn: 'Earn',
+	deals: 'Deals',
+	team: 'Team',
+	stack: 'Stack',
+	protect: 'Protect',
+	underground: 'Underground',
+	news: 'News',
+};
+const order = Object.keys(labels);
+const entries = (await getCollection('docs'))
+	.filter((e) => e.id.includes('/') && !e.id.endsWith('/index') && labels[e.id.split('/')[0]])
+	.map((e) => {
+		const section = e.id.split('/')[0];
+		const d = e.data as typeof e.data & { cover?: { label?: string; tint?: string }; status?: string; confidence?: string; lastReviewed?: Date };
+		const words = (e.body ?? '').replace(/<[^>]+>|import .*|[#*_`>|-]/g, ' ').split(/\s+/).filter(Boolean).length;
+		return {
+			id: e.id,
+			href: `/${e.id}/`,
+			section,
+			sectionLabel: labels[section],
+			title: e.data.title,
+			description: e.data.description ?? '',
+			coverLabel: d.cover?.label,
+			tint: d.cover?.tint ?? section,
+			status: d.status ?? 'outline',
+			confidence: d.confidence,
+			reviewed: d.lastReviewed ? d.lastReviewed.toISOString().slice(0, 10) : '',
+			minutes: Math.max(1, Math.round(words / 220)),
+			rank: order.indexOf(section) * 100 + (e.data.sidebar?.order ?? 50),
+		};
+	})
+	.sort((a, b) => a.rank - b.rank);
+const sections = order.filter((s) => entries.some((e) => e.section === s));
+const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft', published: 'Reviewed' };
+---
+
+<div class="gg not-content" data-gg>
+	<div class="gg-bar">
+		<label class="gg-search">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+			<input type="search" placeholder="Search every guide… try “brand deal” or “retention”" aria-label="Search guides" data-q autocomplete="off" enterkeyhint="search" />
+			<kbd>/</kbd>
+		</label>
+		<div class="gg-row">
+			<div class="gg-chips" role="group" aria-label="Filter by section" data-chips>
+				<button type="button" class="sc-chip" data-s="" aria-pressed="true">All <span>{entries.length}</span></button>
+				{
+					sections.map((s) => (
+						<button type="button" class="sc-chip" data-s={s} data-section={s} aria-pressed="false">
+							{labels[s]} <span>{entries.filter((e) => e.section === s).length}</span>
+						</button>
+					))
+				}
+			</div>
+			<button type="button" class="sc-chip gg-ready" data-ready aria-pressed="false" title="Hide outlines">Written only</button>
+			<label class="gg-sort">
+				<span>Sort</span>
+				<select data-sort aria-label="Sort guides">
+					<option value="rec">Recommended</option>
+					<option value="new">Recently reviewed</option>
+					<option value="short">Quickest read</option>
+					<option value="az">A to Z</option>
+				</select>
+			</label>
+		</div>
+	</div>
+
+	<p class="gg-count" aria-live="polite" data-count></p>
+
+	<div class="gg-grid" data-grid>
+		{
+			entries.map((e) => (
+				<a
+					class="gg-card"
+					href={e.href}
+					data-section={e.tint}
+					data-id={e.id}
+					data-sec={e.section}
+					data-title={e.title}
+					data-text={`${e.title} ${e.description} ${e.sectionLabel}`.toLowerCase()}
+					data-status={e.status}
+					data-reviewed={e.reviewed}
+					data-min={e.minutes}
+					data-rank={e.rank}
+				>
+					<Cover title={e.title} section={e.tint} label={e.coverLabel ?? e.title} kicker={e.sectionLabel} />
+					<div class="gg-body">
+						<h3>{e.title}</h3>
+						<p>{e.description}</p>
+						<div class="gg-meta">
+							<span class={`gg-st s-${e.status}`}>{statusText[e.status]}</span>
+							{e.confidence === 'verified' && <span class="sc-tag is-platform">Sourced</span>}
+							<span>{e.minutes} min read</span>
+						</div>
+						<p class="gg-hit" data-hit hidden />
+					</div>
+				</a>
+			))
+		}
+	</div>
+
+	<div class="gg-empty" data-empty hidden>
+		<p>Nothing matches yet.</p>
+		<a class="gg-ask" data-ask-empty href="https://claude.ai/new" target="_blank" rel="noopener">Ask Claude using this site →</a>
+	</div>
+</div>
+
+<script>
+	type Hit = { url: string; excerpt: string };
+	const root = document.querySelector<HTMLElement>('[data-gg]');
+	if (root) {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const sortSel = root.querySelector<HTMLSelectElement>('[data-sort]')!;
+		const ready = root.querySelector<HTMLButtonElement>('[data-ready]')!;
+		const isReady = () => ready.getAttribute('aria-pressed') === 'true';
+		const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+		const count = root.querySelector<HTMLElement>('[data-count]')!;
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+		const askEmpty = root.querySelector<HTMLAnchorElement>('[data-ask-empty]')!;
+		const cards = [...grid.querySelectorAll<HTMLElement>('.gg-card')];
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-s]')];
+		let section = '';
+		let ftHits = new Map<string, string>();
+		let ftToken = 0;
+
+		// Pagefind is generated at build time; load it lazily on first search.
+		let pf: any = null;
+		const loadPf = async () => {
+			if (pf) return pf;
+			try {
+				const url = '/pagefind/pagefind.js';
+				pf = await import(/* @vite-ignore */ url);
+				await pf.options?.({ excerptLength: 18 });
+			} catch {
+				pf = false;
+			}
+			return pf;
+		};
+
+		const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+		const terms = () => norm(q.value).split(/\s+/).filter(Boolean);
+		const score = (el: HTMLElement, t: string[]) => {
+			if (!t.length) return 1;
+			const text = el.dataset.text!;
+			const title = norm(el.dataset.title!);
+			let s = 0;
+			for (const w of t) {
+				if (title.includes(w)) s += 3;
+				else if (text.includes(w)) s += 1;
+				else if (!ftHits.has(el.dataset.id!)) return 0;
+			}
+			return s + (ftHits.has(el.dataset.id!) ? 1 : 0);
+		};
+
+		const render = () => {
+			const t = terms();
+			const scored = cards.map((el) => ({ el, s: score(el, t) }));
+			const visible = scored.filter(({ el, s }) => s > 0 && (!section || el.dataset.sec === section) && (!isReady() || el.dataset.status !== 'outline'));
+			const by = sortSel.value;
+			visible.sort((a, b) => {
+				if (t.length && by === 'rec' && b.s !== a.s) return b.s - a.s;
+				if (by === 'new') return (b.el.dataset.reviewed || '').localeCompare(a.el.dataset.reviewed || '');
+				if (by === 'short') return +a.el.dataset.min! - +b.el.dataset.min!;
+				if (by === 'az') return a.el.dataset.title!.localeCompare(b.el.dataset.title!);
+				return +a.el.dataset.rank! - +b.el.dataset.rank!;
+			});
+			const show = new Set(visible.map((v) => v.el));
+			cards.forEach((el) => {
+				el.hidden = !show.has(el);
+				const hit = el.querySelector<HTMLElement>('[data-hit]')!;
+				const ex = t.length ? ftHits.get(el.dataset.id!) : '';
+				hit.hidden = !ex;
+				if (ex) hit.innerHTML = '…' + ex + '…';
+			});
+			visible.forEach(({ el }) => grid.appendChild(el));
+			count.textContent = `${visible.length} guide${visible.length === 1 ? '' : 's'}${t.length ? ` for “${q.value.trim()}”` : ''}`;
+			empty.hidden = visible.length > 0;
+			askEmpty.href = 'https://claude.ai/new?q=' + encodeURIComponent(`Using ${location.origin}/llms-full.txt as your source, answer: ${q.value.trim() || 'what should a new creator read first?'}`);
+			// URL state, shareable
+			const p = new URLSearchParams();
+			if (q.value.trim()) p.set('q', q.value.trim());
+			if (section) p.set('s', section);
+			if (by !== 'rec') p.set('sort', by);
+			if (isReady()) p.set('ready', '1');
+			history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+		};
+
+		const fullText = async () => {
+			const value = q.value.trim();
+			const token = ++ftToken;
+			if (value.length < 3) {
+				ftHits = new Map();
+				return render();
+			}
+			const api = await loadPf();
+			if (!api) return;
+			const res = await api.debouncedSearch(value, {}, 180);
+			if (!res || token !== ftToken) return;
+			const data: Hit[] = await Promise.all(res.results.slice(0, 30).map((r: any) => r.data()));
+			ftHits = new Map(data.map((d) => [d.url.replace(/^\/|\/$/g, ''), d.excerpt]));
+			render();
+		};
+
+		q.addEventListener('input', () => {
+			render();
+			fullText();
+		});
+		sortSel.addEventListener('change', render);
+		ready.addEventListener('click', () => {
+			ready.setAttribute('aria-pressed', String(!isReady()));
+			render();
+		});
+		chips.forEach((c) =>
+			c.addEventListener('click', () => {
+				section = c.dataset.s!;
+				chips.forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
+				render();
+			}),
+		);
+		addEventListener('keydown', (e) => {
+			if (e.key === '/' && document.activeElement !== q && !(e.target as HTMLElement).closest('input,textarea')) {
+				e.preventDefault();
+				q.focus();
+			}
+		});
+
+		const p = new URLSearchParams(location.search);
+		q.value = p.get('q') ?? '';
+		section = p.get('s') ?? '';
+		sortSel.value = p.get('sort') ?? 'rec';
+		ready.setAttribute('aria-pressed', String(p.get('ready') === '1'));
+		chips.forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.s === section)));
+		render();
+		if (q.value) fullText();
+		if (p.has('focus')) q.focus();
+	}
+</script>
+
+<style>
+	.gg {
+		--accent: var(--sc-ion);
+	}
+	.gg-bar {
+		position: sticky;
+		top: calc(var(--sl-nav-height, 3.5rem) + 0.5rem);
+		z-index: 5;
+		display: grid;
+		gap: 0.7rem;
+		padding: 0.85rem;
+		margin-bottom: 0.75rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 18px;
+		background: rgb(10 10 10 / 0.82);
+		backdrop-filter: blur(16px) saturate(1.3);
+		-webkit-backdrop-filter: blur(16px) saturate(1.3);
+	}
+	.gg-search {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0 0.9rem;
+		height: 3rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		transition:
+			border-color 0.2s,
+			box-shadow 0.2s;
+	}
+	.gg-search:focus-within {
+		border-color: var(--sc-ion);
+		box-shadow: 0 0 0 4px rgb(195 166 255 / 0.15);
+	}
+	.gg-search svg {
+		width: 18px;
+		height: 18px;
+		flex: none;
+		fill: none;
+		stroke: var(--sc-silver);
+		stroke-width: 2;
+		stroke-linecap: round;
+	}
+	.gg-search input {
+		flex: 1;
+		min-width: 0;
+		border: 0;
+		outline: 0;
+		background: transparent;
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 1rem;
+	}
+	.gg-search input::placeholder {
+		color: #7d7d7c;
+	}
+	.gg-search kbd {
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		padding: 0.1rem 0.4rem;
+		border-radius: 6px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-silver);
+	}
+	@media (hover: none) {
+		.gg-search kbd {
+			display: none;
+		}
+	}
+	.gg-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		min-width: 0;
+	}
+	.gg-chips {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		flex: 1;
+		min-width: 0;
+		mask-image: linear-gradient(90deg, #000 92%, transparent);
+		padding-right: 1rem;
+	}
+	.gg-chips::-webkit-scrollbar {
+		display: none;
+	}
+	.gg-chips .sc-chip {
+		white-space: nowrap;
+		flex: none;
+	}
+	.gg-chips .sc-chip span {
+		opacity: 0.6;
+		margin-left: 0.2rem;
+	}
+	.gg-ready {
+		flex: none;
+		white-space: nowrap;
+	}
+	@media (max-width: 40rem) {
+		.gg-row {
+			flex-wrap: wrap;
+		}
+		.gg-chips {
+			flex-basis: 100%;
+		}
+		.gg-bar {
+			padding: 0.6rem;
+			gap: 0.55rem;
+		}
+	}
+	.gg-sort {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		flex: none;
+		font-family: var(--sc-font-mono);
+		font-size: 0.7rem;
+		color: var(--sc-silver);
+	}
+	.gg-sort select {
+		font: inherit;
+		color: var(--sc-ivory);
+		background: rgb(255 255 255 / 0.04);
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 10px;
+		padding: 0.35rem 0.5rem;
+	}
+	@media (max-width: 40rem) {
+		.gg-sort span {
+			display: none;
+		}
+	}
+	.gg-toggle-unused {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+		cursor: pointer;
+	}
+	.gg-toggle input {
+		accent-color: var(--sc-ion);
+	}
+	.gg-count {
+		margin: 0 0 0.75rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.gg-grid {
+		display: grid;
+		gap: 0.9rem;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr));
+	}
+	.gg-card {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--sc-line);
+		border-radius: 18px;
+		overflow: hidden;
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0.01));
+		text-decoration: none;
+		color: inherit;
+		animation: gg-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		transition:
+			border-color 0.2s,
+			transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.gg-card[hidden] {
+		display: none;
+	}
+	.gg-card:hover {
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+		transform: translateY(-3px);
+	}
+	.gg-card:active {
+		transform: scale(0.98);
+	}
+	@keyframes gg-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+	}
+	.gg-card :global(.cover) {
+		border-radius: 0;
+	}
+	.gg-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.85rem 0.95rem 1rem;
+		flex: 1;
+	}
+	.gg-body h3 {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.3;
+		color: var(--sc-ivory);
+	}
+	.gg-body p {
+		margin: 0;
+		font-size: 0.84rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.gg-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+		margin-top: auto;
+		padding-top: 0.45rem;
+		font-family: var(--sc-font-mono);
+		font-size: 0.66rem;
+		color: var(--sc-silver);
+	}
+	.gg-st {
+		letter-spacing: 0;
+		padding: 0.05rem 0.45rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+	}
+	.gg-st.s-draft {
+		color: var(--accent);
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+	}
+	.gg-st.s-published {
+		color: var(--sc-jade);
+		border-color: color-mix(in srgb, var(--sc-jade) 50%, transparent);
+	}
+	.gg-hit {
+		font-size: 0.78rem !important;
+		padding: 0.45rem 0.55rem;
+		border-radius: 10px;
+		background: rgb(255 255 255 / 0.04);
+	}
+	.gg-hit :global(mark) {
+		background: color-mix(in srgb, var(--sc-ion) 35%, transparent);
+		color: var(--sc-ivory);
+		border-radius: 3px;
+		padding: 0 2px;
+	}
+	.gg-empty {
+		text-align: center;
+		padding: 3rem 1rem;
+		color: var(--sc-silver);
+	}
+	.gg-ask {
+		color: var(--sc-ion);
+		font-family: var(--sc-font-mono);
+		font-size: 0.85rem;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.gg-card {
+			animation: none;
+		}
+	}
+</style>
