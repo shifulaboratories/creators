@@ -1,6 +1,17 @@
 ---
 title: "Pricing your rates"
 description: "Check your rate against every published benchmark for your platform and size, add usage and ad rights, and copy a quote."
+payoff: "See every published rate range for your size, then quote with confidence."
+moves:
+  - do: "Run the rate check below for your main platform and size."
+    why: "The published ranges disagree a lot, which means there's room to ask."
+    source: "Later, IMH, Collabstr"
+  - do: "Start your quote near the middle of the ranges, not the bottom."
+    why: "Brands counter. Collabstr creators listed YouTube work at $311 and were paid $255 on average."
+    source: "Collabstr"
+  - do: "On TikTok, lead with your average views if they beat your follower count."
+    why: "Later says TikTok rates are usually based on views."
+    source: "Later"
 status: draft
 confidence: practitioner-view
 lastReviewed: 2026-11-26
@@ -12,6 +23,7 @@ sidebar:
 
 import RateCalculator from '../../../components/money/RateCalculator.astro';
 import Sources from '../../../components/money/Sources.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** nobody publishes a real market price for creator posts, but a few companies publish ranges. They disagree a lot, which is useful to know: if one brand calls your rate crazy, another report says it’s normal. Use the rate check below to see every range that covers your size, start your quote near the middle, and price usage rights, ads and exclusivity as separate lines.
 
@@ -56,4 +68,6 @@ When the three disagree, quote the highest one you can defend, then negotiate. T
 
 We’d rather show what creators actually got paid than what agencies say. A rate-report form, where creators share anonymized deals, is on the roadmap. Want to help? See [Contribute](/about/contribute/).
 
-<Sources ids={['imh', 'later26', 'later25', 'collabstr']} />
+<DeepDive title="Sources" hint="4 sources">
+<Sources bare ids={['imh', 'later26', 'later25', 'collabstr']} />
+</DeepDive>

@@ -1,0 +1,562 @@
+---
+/**
+ * The one site header, shared by the home page and every guide page:
+ * logo, four menus (Platforms, Grow, Get paid, Business), Guides, search.
+ * On phones: logo, search and a Menu button that opens a full-screen menu,
+ * which also lists the pages in the section you're reading.
+ *
+ * Search comes in through the "search" slot (Starlight's search modal on
+ * guide pages, a link to /guides/ on the home page).
+ */
+import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
+import lockup from '../assets/logo-lockup.svg';
+import { navFor, groupFor } from '../data/nav';
+import { SITE_NAME } from '../site.mjs';
+import { localeOfPath, basePath, localize, t, LOCALES, HTML_LANG } from '../i18n';
+
+interface Props {
+	/** Pages in the current section, shown at the top of the phone menu. */
+	section?: { label: string; links: { label: string; href: string; current: boolean }[] };
+}
+const { section } = Astro.props;
+const locale = localeOfPath(Astro.url.pathname);
+const T = t(locale).nav;
+const NAV = navFor(locale);
+const L = (p: string) => localize(locale, p);
+const path = basePath(Astro.url.pathname);
+const active = groupFor(path);
+const onGuides = path.startsWith('/guides');
+// The same page in each language. Single news updates are English-only, so they
+// switch to that language's news front page instead.
+const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
+const langs = LOCALES.map((l) => ({ l, href: sameIn(l), short: l === 'pt-br' ? 'PT' : l.toUpperCase(), name: t(l).langName }));
+
+const icons: Record<string, string> = {
+	instagram: siInstagram.path,
+	tiktok: siTiktok.path,
+	youtube: siYoutube.path,
+	facebook: siFacebook.path,
+	x: siX.path,
+	general: 'M12 3c.5 4 2.5 6 6.5 6.5-4 .5-6 2.5-6.5 6.5-.5-4-2.5-6-6.5-6.5C9.5 9 11.5 7 12 3z',
+};
+const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
+---
+
+<div class="sn" data-sn>
+	<a class="sn-logo" href={L('/')} aria-label={`${SITE_NAME} ${T.home}`}>
+		<img src={lockup.src} width="187" height="28" alt={SITE_NAME} />
+	</a>
+
+	<nav class="sn-links" aria-label={T.main}>
+		<a class:list={['sn-top', { on: onGuides }]} href={L('/guides/')} aria-current={onGuides ? 'page' : undefined}>{T.guides}</a>
+		{
+			NAV.map((g) => (
+				<div class="sn-item" data-item>
+					<button type="button" class:list={['sn-top', { on: active === g.id }]} aria-expanded="false" data-trigger>
+						{g.label}
+						<svg viewBox="0 0 12 12" aria-hidden="true">
+							<path d="M3 4.5 6 7.5 9 4.5" />
+						</svg>
+					</button>
+					<div class:list={['sn-panel', { wide: g.id === 'platforms' }]} data-panel>
+						<ul>
+							{g.links.map((l) => (
+								<li>
+									<a href={l.href} data-section={tint(l.icon)}>
+										{l.icon && (
+											<span class="ic" aria-hidden="true">
+												{icons[l.icon] ? (
+													<svg viewBox="0 0 24 24">
+														<path d={icons[l.icon]} />
+													</svg>
+												) : (
+													<b>in</b>
+												)}
+											</span>
+										)}
+										<span class="t">
+											<strong>{l.label}</strong>
+											{l.text && <span>{l.text}</span>}
+										</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			))
+		}
+	</nav>
+
+	<div class="sn-right">
+		<div class="sn-search"><slot name="search" /></div>
+		<nav class="sn-lang" aria-label={T.language}>
+			{langs.map((x) => (
+				<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} title={x.name} aria-current={x.l === locale ? 'true' : undefined}>{x.short}</a>
+			))}
+		</nav>
+		<button type="button" class="sn-menu" aria-label={T.openMenu} aria-haspopup="dialog" data-open-menu>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+		</button>
+	</div>
+</div>
+
+<dialog class="sm" id="site-menu" aria-label={T.menu} data-site-menu>
+	<div class="sm-head">
+		<a class="sn-logo" href={L('/')} aria-label={`${SITE_NAME} ${T.home}`}>
+			<img src={lockup.src} width="160" height="24" alt={SITE_NAME} />
+		</a>
+		<button type="button" class="sm-close" aria-label={T.closeMenu} data-close-menu>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+		</button>
+	</div>
+	<div class="sm-body">
+		<a class="sm-search" href={L('/guides/') + '?focus=1'}>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+			{T.searchAll}
+		</a>
+
+		{
+			section && section.links.length > 1 && (
+				<section class="sm-group">
+					<h2>{T.inSection(section.label)}</h2>
+					<ul class="sm-list">
+						{section.links.map((l) => (
+							<li>
+								<a href={l.href} aria-current={l.current ? 'page' : undefined} class:list={{ on: l.current }}>
+									{l.label}
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		{
+			NAV.map((g) => (
+				<section class="sm-group">
+					<h2>{g.label}</h2>
+					<ul class:list={['sm-list', { chips: g.id === 'platforms' }]}>
+						{g.links.map((l) => (
+							<li>
+								<a href={l.href} data-section={tint(l.icon)}>
+									{l.label}
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
+		}
+
+		<p class="sm-foot">
+			<a href={L('/guides/')}>{T.allGuides}</a>
+			<a href={L('/about/')}>{T.about}</a>
+			<a href={L('/about/contribute/')}>{T.contribute}</a>
+			<a href="https://www.instagram.com/selectcreators/">Instagram</a>
+		</p>
+		<nav class="sm-lang" aria-label={T.language}>
+			{langs.map((x) => (
+				<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} aria-current={x.l === locale ? 'true' : undefined}>{x.name}</a>
+			))}
+		</nav>
+	</div>
+</dialog>
+
+<script>
+	const sn = document.querySelector<HTMLElement>('[data-sn]');
+	const menu = document.querySelector<HTMLDialogElement>('[data-site-menu]');
+	if (sn) {
+		const items = [...sn.querySelectorAll<HTMLElement>('[data-item]')];
+		const close = (except?: HTMLElement) =>
+			items.forEach((it) => {
+				if (it === except) return;
+				it.classList.remove('open');
+				it.querySelector('[data-trigger]')!.setAttribute('aria-expanded', 'false');
+			});
+		items.forEach((it) => {
+			const btn = it.querySelector<HTMLButtonElement>('[data-trigger]')!;
+			btn.addEventListener('click', () => {
+				const open = !it.classList.contains('open');
+				close(it);
+				it.classList.toggle('open', open);
+				btn.setAttribute('aria-expanded', String(open));
+			});
+		});
+		document.addEventListener('click', (e) => {
+			if (!(e.target as HTMLElement).closest('[data-item]')) close();
+		});
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') close();
+		});
+	}
+	if (menu) {
+		document.addEventListener('click', (e) => {
+			const t = e.target as HTMLElement;
+			if (t.closest('[data-open-menu]')) {
+				e.preventDefault();
+				menu.showModal();
+				document.documentElement.classList.add('sm-open');
+			} else if (t.closest('[data-close-menu]') || t === menu) {
+				menu.close();
+			}
+		});
+		menu.addEventListener('close', () => document.documentElement.classList.remove('sm-open'));
+	}
+</script>
+
+<style>
+	.sn {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		height: 100%;
+		width: 100%;
+	}
+	.sn-logo {
+		display: flex;
+		flex: none;
+	}
+	.sn-logo img {
+		display: block;
+		height: 26px;
+		width: auto;
+	}
+
+	/* Desktop links */
+	.sn-links {
+		display: flex;
+		align-items: center;
+		gap: 0.15rem;
+	}
+	.sn-top {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		height: 2.25rem;
+		padding: 0 0.8rem;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: 0.92rem;
+		font-weight: 500;
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			color 0.15s,
+			background-color 0.15s;
+	}
+	.sn-top:hover,
+	.sn-item.open .sn-top,
+	.sn-top:focus-visible {
+		color: var(--sc-ivory);
+		background: rgb(255 255 255 / 0.06);
+	}
+	.sn-top.on {
+		color: var(--sc-ivory);
+	}
+	.sn-top svg {
+		width: 10px;
+		height: 10px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		transition: transform 0.15s;
+	}
+	.sn-item.open .sn-top svg {
+		transform: rotate(180deg);
+	}
+	.sn-item {
+		position: relative;
+	}
+	.sn-panel {
+		position: absolute;
+		top: calc(100% + 0.5rem);
+		left: -0.5rem;
+		z-index: 50;
+		display: none;
+		min-width: 19rem;
+		padding: 0.5rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line-strong);
+		background: #111014;
+		box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.8);
+	}
+	.sn-panel.wide {
+		min-width: 25rem;
+	}
+	.sn-panel.wide ul {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	.sn-panel.wide li:last-child {
+		grid-column: 1 / -1;
+		border-top: 1px solid var(--sc-line);
+		margin-top: 0.25rem;
+		padding-top: 0.25rem;
+	}
+	.sn-item.open .sn-panel {
+		display: block;
+	}
+	@media (hover: hover) {
+		.sn-item:hover .sn-panel {
+			display: block;
+		}
+		/* Bridge the gap so the panel stays open while the pointer moves down. */
+		.sn-item:hover::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 100%;
+			height: 0.6rem;
+		}
+	}
+	.sn-panel ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sn-panel li {
+		margin: 0;
+	}
+	.sn-panel a {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0.55rem 0.65rem;
+		border-radius: 10px;
+		color: inherit;
+		text-decoration: none;
+	}
+	.sn-panel a:hover,
+	.sn-panel a:focus-visible {
+		background: rgb(255 255 255 / 0.06);
+	}
+	.sn-panel .t {
+		display: grid;
+		gap: 0.05rem;
+	}
+	.sn-panel strong {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.sn-panel .t span {
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	.ic {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 9px;
+		background: color-mix(in srgb, var(--accent, #fff) 16%, transparent);
+	}
+	.ic svg {
+		width: 0.95rem;
+		height: 0.95rem;
+		fill: var(--accent, #fff);
+	}
+	.ic b {
+		font-family: var(--sc-font-display);
+		font-size: 0.8rem;
+		color: var(--accent);
+	}
+
+	.sn-right {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-left: auto;
+		min-width: 0;
+	}
+	.sn-menu {
+		display: none;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sc-ivory);
+		cursor: pointer;
+	}
+	.sn-menu svg,
+	.sm-close svg,
+	.sm-search svg {
+		width: 1.35rem;
+		height: 1.35rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+	}
+
+	@media (max-width: 62rem) {
+		.sn-links,
+		.sn-lang {
+			display: none;
+		}
+		.sn-menu {
+			display: grid;
+		}
+	}
+
+	/* Phone menu */
+	.sm {
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		max-height: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: #0b0a0d;
+		color: var(--sc-ivory);
+	}
+	.sm::backdrop {
+		background: rgb(0 0 0 / 0.6);
+	}
+	.sm[open] {
+		display: flex;
+		flex-direction: column;
+	}
+	.sm-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex: none;
+		height: 3.75rem;
+		padding: 0 1rem;
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.sm-close {
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 0;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.06);
+		color: var(--sc-ivory);
+		cursor: pointer;
+	}
+	.sm-body {
+		flex: 1;
+		overflow-y: auto;
+		padding: 1rem 1rem calc(2rem + env(safe-area-inset-bottom));
+	}
+	.sm-search {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		height: 3rem;
+		padding: 0 1rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.04);
+		color: var(--sc-silver);
+		text-decoration: none;
+	}
+	.sm-group {
+		margin-top: 1.6rem;
+	}
+	.sm-group h2 {
+		margin: 0 0 0.5rem;
+		padding: 0;
+		border: 0;
+		font-family: inherit;
+		font-size: 0.78rem;
+		font-weight: 600;
+		letter-spacing: 0;
+		color: var(--sc-silver);
+	}
+	.sm-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sm-list li {
+		margin: 0;
+	}
+	.sm-list a {
+		display: block;
+		padding: 0.6rem 0;
+		font-size: 1.05rem;
+		font-weight: 500;
+		color: var(--sc-ivory);
+		text-decoration: none;
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.sm-list a.on {
+		color: var(--sc-ion);
+	}
+	.sm-list.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+	.sm-list.chips a {
+		padding: 0.45rem 0.85rem;
+		border: 1px solid color-mix(in srgb, var(--accent, #fff) 30%, var(--sc-line));
+		border-radius: 999px;
+		font-size: 0.92rem;
+	}
+	.sm-foot {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin: 2rem 0 0;
+		font-size: 0.85rem;
+	}
+	.sm-foot a {
+		color: var(--sc-silver);
+	}
+
+	/* Language switch: EN · ES · PT on wide screens, full names in the phone menu. */
+	.sn-lang {
+		display: flex;
+		gap: 2px;
+		padding: 2px;
+		border: 1px solid var(--sc-line);
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 600;
+	}
+	.sn-lang a,
+	.sm-lang a {
+		padding: 0.25rem 0.5rem;
+		border-radius: 999px;
+		color: var(--sc-steel);
+		text-decoration: none;
+	}
+	.sn-lang a[aria-current],
+	.sm-lang a[aria-current] {
+		background: rgb(255 255 255 / 0.1);
+		color: var(--sc-ivory);
+	}
+	.sm-lang {
+		display: flex;
+		gap: 0.4rem;
+		margin: 1.25rem 0 0;
+		font-size: 0.9rem;
+	}
+	.sm-lang a {
+		padding: 0.4rem 0.8rem;
+		border: 1px solid var(--sc-line);
+	}
+</style>
+
+<style is:global>
+	html.sm-open {
+		overflow: hidden;
+	}
+</style>

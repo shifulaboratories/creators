@@ -3,10 +3,15 @@ import { getCollection } from 'astro:content';
 import { renderOg } from '../../lib/og';
 import { accentFor } from '../../lib/share';
 import { splitId, sectionLabel } from '../../i18n';
+import { getNews, newsId, NEWS_PLATFORM_INFO } from '../../lib/news';
 
 // One preview image per guide, plus the home page and the gallery, built once at deploy.
 export const getStaticPaths = (async () => {
 	const docs = await getCollection('docs');
+	const news = (await getNews()).map((n) => ({
+		params: { slug: newsId(n) },
+		props: { title: n.data.title, description: n.data.summary, kicker: `News · ${NEWS_PLATFORM_INFO[n.data.platform].name}`, accent: accentFor(`news/${n.data.platform}`) },
+	}));
 	return [
 		{
 			params: { slug: 'home' },
@@ -15,11 +20,11 @@ export const getStaticPaths = (async () => {
 		// Home page previews in Spanish and Portuguese.
 		{
 			params: { slug: 'es/home' },
-			props: { title: 'El manual del creador, sin gurús.', description: 'Cómo elige el algoritmo lo que se ve, cuánto deberían pagar las marcas y con qué graban los creadores reales. Todo con fuentes.', kicker: undefined, accent: '#ff86b8' },
+			props: { title: 'El manual del creador, sin gurús.', description: 'Cómo elige el algoritmo lo que se ve, cuánto deberían pagar las marcas y cómo manejar el negocio. Todo con fuentes.', kicker: undefined, accent: '#ff86b8' },
 		},
 		{
 			params: { slug: 'pt-br/home' },
-			props: { title: 'O manual do criador, sem gurus.', description: 'Como o algoritmo escolhe o que aparece, quanto as publis deveriam pagar e com que equipamento os criadores gravam. Tudo com fonte.', kicker: undefined, accent: '#ff86b8' },
+			props: { title: 'O manual do criador, sem gurus.', description: 'Como o algoritmo escolhe o que aparece, quanto as publis deveriam pagar e como cuidar do negócio. Tudo com fonte.', kicker: undefined, accent: '#ff86b8' },
 		},
 		{
 			params: { slug: 'guides' },
@@ -40,6 +45,7 @@ export const getStaticPaths = (async () => {
 					},
 				};
 			}),
+		...news,
 	];
 }) satisfies GetStaticPaths;
 

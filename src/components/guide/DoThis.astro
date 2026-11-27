@@ -1,0 +1,110 @@
+---
+/**
+ * "Do this today": up to three concrete moves at the top of a guide, each with
+ * one line on why it works and where that comes from. Set `moves:` in a guide's
+ * frontmatter; it replaces the three-point short version on that page.
+ */
+interface Move {
+	do: string;
+	why: string;
+	source?: string;
+}
+interface Props {
+	moves: Move[];
+	title?: string;
+}
+import { currentLocale, t } from '../../i18n';
+const G = t(currentLocale(Astro)).guide;
+const { moves, title = G.doThis } = Astro.props;
+---
+
+<section class="do not-content" aria-labelledby="do-title">
+	<p class="do-title" id="do-title">{title}</p>
+	<ol>
+		{
+			moves.map((m) => (
+				<li>
+					<p class="do-what">{m.do}</p>
+					<p class="do-why">
+						{m.why}
+						{m.source && <span class="do-src">{m.source}</span>}
+					</p>
+				</li>
+			))
+		}
+	</ol>
+</section>
+
+<style>
+	.do {
+		margin-top: 1.5rem;
+		padding: 1.15rem 1.15rem 0.4rem;
+		border-radius: 20px;
+		border: 1px solid color-mix(in srgb, var(--accent, var(--sc-ion)) 30%, transparent);
+		background:
+			radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent, var(--sc-ion)) 13%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.025);
+	}
+	.do-title {
+		margin: 0 0 0.9rem;
+		width: fit-content;
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		background: var(--sc-lime);
+		color: #0b0b0b;
+		font-size: 0.75rem;
+		font-weight: 700;
+		transform: rotate(-1.5deg);
+	}
+	ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		counter-reset: move;
+	}
+	li {
+		position: relative;
+		margin: 0;
+		padding: 0 0 0.95rem 2.3rem;
+		counter-increment: move;
+	}
+	li + li {
+		padding-top: 0.95rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	li::before {
+		content: counter(move);
+		position: absolute;
+		left: 0;
+		display: grid;
+		place-items: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--accent, var(--sc-ion)) 22%, transparent);
+		color: var(--accent, var(--sc-ion));
+		font: 700 0.8rem / 1 var(--sc-font-display);
+	}
+	.do-what {
+		margin: 0;
+		font-size: 1.05rem;
+		line-height: 1.4;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.do-why {
+		margin: 0.3rem 0 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.do-src {
+		display: inline-block;
+		margin-left: 0.35rem;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.do-src::before {
+		content: 'Source: ';
+	}
+</style>

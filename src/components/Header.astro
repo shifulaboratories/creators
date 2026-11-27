@@ -1,0 +1,17 @@
+---
+// Starlight header override: the shared site nav, with Starlight's search modal.
+import Search from 'virtual:starlight/components/Search';
+import SiteNav from './SiteNav.astro';
+
+type Entry = { type: 'link' | 'group'; label: string; href?: string; isCurrent?: boolean; entries?: Entry[] };
+const sidebar = (Astro.locals.starlightRoute.sidebar ?? []) as Entry[];
+const flat = (es: Entry[]): Entry[] => es.flatMap((e) => (e.type === 'group' ? flat(e.entries ?? []) : [e]));
+const group = sidebar.find((g) => g.type === 'group' && flat(g.entries ?? []).some((e) => e.isCurrent));
+const section = group
+	? { label: group.label, links: flat(group.entries ?? []).map((e) => ({ label: e.label, href: e.href!, current: !!e.isCurrent })) }
+	: undefined;
+---
+
+<SiteNav section={section}>
+	<Search slot="search" />
+</SiteNav>

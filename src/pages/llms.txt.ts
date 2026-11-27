@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { splitId } from '../i18n';
 import { SITE, isPublic } from '../lib/markdown';
 import { SITE_NAME, SITE_DESCRIPTION } from '../site.mjs';
+import { getNews, newsPath, isoDate } from '../lib/news';
 
 // https://llmstxt.org: a map of the site for AI assistants.
 export const GET: APIRoute = async () => {
@@ -17,6 +18,8 @@ export const GET: APIRoute = async () => {
 		out += `\n## ${k.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase())}\n\n`;
 		for (const d of list) out += `- [${d.data.title}](${SITE}/${d.id}.md): ${d.data.description ?? ''}\n`;
 	}
+	out += `\n## Platform news updates\n\n`;
+	for (const n of await getNews()) out += `- [${n.data.title}](${SITE}${newsPath(n).slice(0, -1)}.md): ${isoDate(n.data.announced)}, ${n.data.summary}\n`;
 	const translated = (await getCollection('docs')).filter((e) => isPublic(e) && splitId(e.id).locale !== 'en');
 	if (translated.length) {
 		out += `\n## Translations (Spanish, Brazilian Portuguese)\n\n`;

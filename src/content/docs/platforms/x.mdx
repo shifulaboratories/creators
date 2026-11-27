@@ -1,0 +1,115 @@
+---
+title: "X"
+description: "How the For You feed finds, ranks and filters posts, from X's own open-source code, and how the new Original Content Rewards program pays."
+payoff: "How to write posts X spreads beyond your followers, and what it takes to get paid for them."
+moves:
+  - do: "End your next post with a question people want to answer, not a request to like it."
+    why: "In X's 2026 code, replies outweigh a like several times over. Begging for engagement can get you removed from payouts."
+    source: "X code, 2026; X Help"
+  - do: "Write something worth copying the link to and sending to a friend."
+    why: "Sharing via copy link carries the biggest positive weight in the 2026 code."
+    source: "X code, 2026"
+  - do: "Check your last 90 days of verified impressions against the 500K bar."
+    why: "That plus 500 verified followers and Premium unlocks Original Content Rewards."
+    source: "X Help, 2026"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: X
+  tint: x
+sidebar:
+  order: 6
+---
+
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** X picks a pool of candidate posts from people you follow and people you don't, ranks them by how likely you are to engage, then filters for variety and safety. X has published its code twice, in 2023 and in January 2026. Since September 2026, X pays creators for original posts seen by Premium subscribers.
+
+## Half the feed is strangers
+
+In 2023, X said about half of each For You feed came from accounts people didn't follow. So a strong post can travel well past your followers. Every feed goes through three steps:
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li><strong>Find candidates</strong><span>Posts from accounts you follow and from accounts you don't.</span></li>
+<li class="is-active"><strong>Rank</strong><span>A model predicts how likely you are to like, reply or repost.</span></li>
+<li><strong>Filter</strong><span>Remove blocked and muted content and spam, and balance the mix.</span></li>
+</ol>
+<figcaption>The three stages of the For You feed, from X's published code</figcaption>
+</figure>
+
+## Write for replies and shares
+
+X has published the weights it gives each action. In the 2026 code, sharing via copy link counts most, and replies, quotes and DM shares each outweigh a like several times over. See every weight in [Inside X's open-source algorithm](/algorithms/x-open-source/).
+
+<BeforeAfter
+  illustration
+  before={{ title: "“New video is up! Like and repost 🙏”", note: "Asks for the weakest action, and repeated engagement requests can get you removed from payouts." }}
+  after={{ title: "“Hot take: most morning routines are just procrastination with better lighting. What's the one habit that actually stuck for you?”", note: "A point of view people want to answer, and a post someone sends to a friend." }}
+/>
+
+The 2026 system learns from behavior rather than fixed rules, so treat any specific “hack” as temporary. The direction is stable: posts people talk about and pass on.
+
+## Post check
+
+<QuickCheck
+  title="Before you post"
+  id="x-post"
+  items={[
+    { text: "It's your own take, not a repost or lightly edited copy", hint: "Copied and aggregated posts don't count for payouts." },
+    { text: "Someone would reply, not just like it" },
+    { text: "Someone would send it to a friend" },
+    { text: "No “like and repost” ask" },
+    { text: "Nothing people are likely to mute or report", hint: "Muted and spam-like content is filtered before anyone sees it." },
+  ]}
+  done="Post it."
+/>
+
+Threads and Articles are for depth; a single sharp post is for reach. Video, images and text count the same for payouts. Commentary counts as original if you add a genuine point of view.
+
+## How you get paid
+
+X closed Creator Revenue Sharing to new members on August 7, 2026, and replaced it with **Original Content Rewards**, open since September 8, 2026.
+
+<figure class="sc-figure">
+<div class="sc-stats">
+<div class="sc-stat is-ion"><span class="sc-stat__value">500K</span><span class="sc-stat__label">Home timeline impressions from verified users in 90 days (replies don't count)</span></div>
+<div class="sc-stat is-jade"><span class="sc-stat__value">500</span><span class="sc-stat__label">verified followers</span></div>
+<div class="sc-stat is-champagne"><span class="sc-stat__value">Premium</span><span class="sc-stat__label">an active Premium, Premium+ or Premium Business subscription</span></div>
+<div class="sc-stat is-rose"><span class="sc-stat__value">$30</span><span class="sc-stat__label">minimum payout, paid every two weeks</span></div>
+</div>
+<figcaption>Per X's help center, checked Nov 26, 2026. You must also be 18+, in an eligible country, and in good standing.</figcaption>
+</figure>
+
+You're paid for unique views from **Premium subscribers** on the Home timeline, so a post that only travels among free accounts earns little even if it goes wide. Repeat, promoted and fake views don't count, and X doesn't publish a rate. Bots, automation and repeated engagement requests get you removed.
+
+<DeepDive title="What X has said, in its own words" hint="The 2023 and 2026 code releases">
+
+### 2023 release (X Engineering)
+
+- **Candidate sourcing:** about 1,500 candidate posts per request, on average half from accounts you follow and half from accounts you don't.
+- **Ranking:** a neural network of about 48 million parameters predicts the probability of several kinds of engagement. Likes, reposts and replies are named as positive engagement.
+- **Filtering:** heuristics and filters build "a balanced and diverse feed."
+
+### January 2026 release (as reported by TechCrunch)
+
+- X released new code for the feed. It relies on a **Grok-based transformer** that learns relevance from sequences of what users engage with, with no hand-built features for content relevance.
+- Filters remove blocked accounts, muted keywords, and content judged too violent or spam-like. Ranking weighs the likelihood of a like, reply, repost or other engagement, plus diversity.
+
+### What counts for payouts
+
+"Qualified impressions": unique views from Premium subscribers on the Home timeline where at least half the post is on screen.
+
+</DeepDive>
+
+<DeepDive title="Sources" hint="4 sources, checked Nov 26, 2026">
+
+- X Engineering, [Twitter's Recommendation Algorithm](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm), 2023, and the code at [twitter/the-algorithm](https://github.com/twitter/the-algorithm).
+- xAI, [xai-org/x-algorithm](https://github.com/xai-org/x-algorithm), January 2026.
+- TechCrunch, [X open sources its algorithm while facing a transparency fine and Grok controversies](https://techcrunch.com/2026/01/20/x-open-sources-its-algorithm-while-facing-a-transparency-fine-and-grok-controversies/), Jan 20, 2026.
+- X Help Center, [Original Content Rewards Program](https://help.x.com/en/using-x/original-content-rewards) (checked Nov 26, 2026).
+
+</DeepDive>

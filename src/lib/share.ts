@@ -56,13 +56,15 @@ export const ACCENTS: Record<string, string> = {
 	tiktok: C.cyan,
 	instagram: C.rose,
 	x: C.silver,
+	facebook: '#7ea6ff',
+	linkedin: '#6fb6e8',
 };
 
 /** Accent for a docs entry id like "platforms/youtube" or "grow". */
 export function accentFor(id: string, tint?: string): string {
 	if (tint && ACCENTS[tint]) return ACCENTS[tint];
 	const [section, page] = id.split('/');
-	if (section === 'platforms' && page && ACCENTS[page]) return ACCENTS[page];
+	if ((section === 'platforms' || section === 'news') && page && ACCENTS[page]) return ACCENTS[page];
 	return ACCENTS[section] ?? C.rose;
 }
 

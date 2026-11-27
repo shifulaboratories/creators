@@ -1,0 +1,83 @@
+---
+/** A ready-to-send message (email, DM, reply) with a one-tap Copy button. */
+interface Props {
+	label: string;
+	text: string;
+	note?: string;
+}
+import { currentLocale, t } from '../../i18n';
+const G = t(currentLocale(Astro)).guide;
+const { label, text, note } = Astro.props;
+---
+
+<figure class="cb not-content" data-cb>
+	<div class="cb-head">
+		<p class="cb-label">{label}</p>
+		<button type="button" class="cb-btn" data-cb-btn data-copy={G.copy} data-copied={G.copied} data-fail={G.selectCopy}>{G.copy}</button>
+	</div>
+	<pre class="cb-text" data-cb-text>{text.trim()}</pre>
+	{note && <figcaption>{note}</figcaption>}
+</figure>
+
+<script>
+	for (const root of document.querySelectorAll<HTMLElement>('[data-cb]')) {
+		const btn = root.querySelector<HTMLButtonElement>('[data-cb-btn]')!;
+		const text = root.querySelector('[data-cb-text]')!.textContent ?? '';
+		btn.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(text);
+				btn.textContent = btn.dataset.copied!;
+			} catch {
+				btn.textContent = btn.dataset.fail!;
+			}
+			setTimeout(() => (btn.textContent = btn.dataset.copy!), 1800);
+		});
+	}
+</script>
+
+<style>
+	.cb {
+		margin: 1.75rem 0;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.025);
+		overflow: hidden;
+	}
+	.cb-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.7rem 0.8rem 0.7rem 1.1rem;
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.cb-label {
+		margin: 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.cb-btn {
+		padding: 0.35rem 0.9rem;
+		border-radius: 999px;
+		border: 0;
+		background: var(--sc-ivory);
+		color: #0b0b0b;
+		font: 600 0.8rem / 1 var(--sc-font-sans);
+		cursor: pointer;
+	}
+	.cb-text {
+		margin: 0;
+		padding: 1rem 1.1rem;
+		background: none;
+		border: 0;
+		white-space: pre-wrap;
+		font: 400 0.95rem / 1.55 var(--sc-font-sans);
+		color: var(--sc-platinum);
+	}
+	figcaption {
+		padding: 0 1.1rem 0.9rem;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+</style>
