@@ -332,7 +332,7 @@ export const paths: Path[] = [
 	{
 		key: 'affiliate',
 		name: 'Affiliate links',
-		tint: 'goldmines',
+		tint: 'shortlist',
 		who: 'Retailers and apps, a commission when someone buys through your link.',
 		keep: 'A commission set by each program. Check the program’s own rate card, not a blog post.',
 		srcs: ['ftc'],

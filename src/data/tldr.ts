@@ -51,7 +51,7 @@ export const TLDR: Record<string, string[]> = {
 		'He watches retention more closely than anything else and won’t pad a video for length.',
 		'He got good by making a lot of videos and improving one thing at a time.',
 	],
-	'goldmines/mrbeast-production-handbook': [
+	'shortlist/mrbeast-production-handbook': [
 		'Start with the title and thumbnail, and make the first minute deliver what they promised.',
 		'Treat the “critical components” of a video like a baby: never leave one to a coin flip.',
 		'It’s one channel’s playbook, built for its format and scale. It’s not a universal formula.',
