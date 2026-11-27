@@ -15,9 +15,9 @@ sidebar:
 | --- | --- |
 | A fact is wrong or out of date | [Open an issue on GitHub](https://github.com/shifulaboratories/creators/issues/new), or use **Edit page** at the bottom of any page and propose the fix yourself |
 | A link is broken or an affiliate link isn't labeled | [Open an issue on GitHub](https://github.com/shifulaboratories/creators/issues/new) |
-| You're named on a page and something about you is wrong | Message us privately on [Instagram (@selectcreators)](https://www.instagram.com/selectcreators/). GitHub issues are public, so don't post personal details there |
-| Your copyrighted work is used without permission | Message us privately on [Instagram](https://www.instagram.com/selectcreators/) with a link to your original and the page that uses it |
-| Safety: a page exposes private information or puts someone at risk | Message us privately on [Instagram](https://www.instagram.com/selectcreators/) and start the message with **Safety** |
+| You're named on a page and something about you is wrong | Email [support@creators.select](mailto:support@creators.select). GitHub issues are public, so don't post personal details there |
+| Your copyrighted work is used without permission | Email [support@creators.select](mailto:support@creators.select) with a link to your original and the page that uses it |
+| Safety: a page exposes private information or puts someone at risk | Email [support@creators.select](mailto:support@creators.select) with **Safety** at the start of the subject line |
 
 Tell us which page, what's wrong, and if you can, a source that shows the right answer.
 
@@ -55,7 +55,7 @@ What we won't do is remove accurate, sourced reporting just because it's unflatt
 
 ## Copyright
 
-We link to and briefly quote other people's work to report on it and credit it. We don't host leaked documents or rehost other people's videos. If you believe a page uses your work beyond that, message us with your original and the page in question, and we'll review it and remove anything that shouldn't be there.
+We link to and briefly quote other people's work to report on it and credit it. We don't host leaked documents or rehost other people's videos. If you believe a page uses your work beyond that, email [support@creators.select](mailto:support@creators.select) with your original and the page in question, and we'll review it and remove anything that shouldn't be there.
 
 ## Mistakes we've corrected
 
