@@ -1,0 +1,182 @@
+---
+/**
+ * The Jobs page's boards, grouped by the kind of work you want. Brand logos
+ * from Simple Icons where one exists, a line icon otherwise. No affiliate
+ * links, nobody pays to be listed. Keep each description factual.
+ */
+import { siBehance, siFiverr, siMeta, siTiktok, siUpwork, siYoutube } from 'simple-icons';
+import { lineIcons } from '../../lib/glyphs';
+
+type Board = { name: string; href: string; for: string; logo?: string; icon?: string };
+type Group = { id: string; title: string; lead: string; tint: string; boards: Board[] };
+
+const groups: Group[] = [
+	{
+		id: 'channels',
+		title: 'Work for a creator',
+		lead: 'Editors, thumbnail designers, writers, producers and channel strategists.',
+		tint: 'var(--sc-cyan)',
+		boards: [
+			{ name: 'YT Jobs', href: 'https://ytjobs.co/', for: 'Built for YouTube teams. Channels post editor, thumbnail and strategy roles', logo: siYoutube.path },
+			{ name: 'Contra', href: 'https://contra.com/', for: 'Commission-free freelance profiles and projects for creative work', icon: 'pen' },
+			{ name: 'Upwork', href: 'https://www.upwork.com/', for: 'Freelance gigs in every role and budget', logo: siUpwork.path },
+			{ name: 'Fiverr', href: 'https://www.fiverr.com/', for: 'Sell fixed packages, like a thumbnail or an intro', logo: siFiverr.path },
+		],
+	},
+	{
+		id: 'companies',
+		title: 'Work at a creator-economy company',
+		lead: 'Talent agencies, management firms, influencer marketing, platforms and creator tools.',
+		tint: 'var(--sc-amethyst)',
+		boards: [
+			{ name: 'Net Influencer Job Center', href: 'https://www.netinfluencer.com/jobs/', for: 'A job board just for the creator economy, sorted by company type', icon: 'target' },
+			{ name: 'Life at TikTok', href: 'https://lifeattiktok.com/', for: 'TikTok’s own careers site, including creator and partnerships teams', logo: siTiktok.path },
+			{ name: 'YouTube careers', href: 'https://www.youtube.com/jobs/', for: 'Roles at YouTube, listed through Google', logo: siYoutube.path },
+			{ name: 'Meta careers', href: 'https://www.metacareers.com/', for: 'Instagram, Facebook and Threads roles', logo: siMeta.path },
+		],
+	},
+	{
+		id: 'production',
+		title: 'Production and creative crews',
+		lead: 'Shoots, sets and post-production for branded content, film and TV.',
+		tint: 'var(--sc-champagne)',
+		boards: [
+			{ name: 'ProductionHUB', href: 'https://www.productionhub.com/jobs', for: 'Film, video and event production jobs and crew listings', icon: 'camera' },
+			{ name: 'Staff Me Up', href: 'https://www.staffmeup.com/', for: 'TV, film and digital production staffing', icon: 'play' },
+			{ name: 'Mandy', href: 'https://www.mandy.com/', for: 'Cast and crew jobs, including paid shoots', icon: 'mic' },
+			{ name: 'Behance', href: 'https://www.behance.net/joblist', for: 'Design, motion and creative jobs, with your portfolio attached', logo: siBehance.path },
+		],
+	},
+];
+---
+
+<div class="jb not-content">
+	{
+		groups.map((g) => (
+			<section class="jb-group" style={`--accent:${g.tint}`} id={g.id}>
+				<h2>{g.title}</h2>
+				<p class="jb-lead">{g.lead}</p>
+				<ul>
+					{g.boards.map((b) => (
+						<li>
+							<a href={b.href} rel="noopener" target="_blank">
+								<span class:list={['jb-ic', { brand: !!b.logo }]} aria-hidden="true">
+									<svg viewBox="0 0 24 24">
+										<path d={b.logo ?? lineIcons[b.icon ?? 'link']} />
+									</svg>
+								</span>
+								<span class="jb-t">
+									<strong>{b.name}</strong>
+									<span>{b.for}</span>
+								</span>
+								<svg class="jb-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
+</div>
+
+<style>
+	.jb {
+		display: grid;
+		gap: 2.25rem;
+		margin-top: 1.5rem;
+	}
+	.jb-group h2 {
+		margin: 0;
+		font-size: 1.25rem;
+	}
+	.jb-lead {
+		margin: 0.3rem 0 0.9rem;
+		color: var(--sc-silver);
+		font-size: 0.95rem;
+	}
+	.jb ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+		gap: 0.6rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.jb li {
+		margin: 0;
+	}
+	.jb a {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		height: 100%;
+		padding: 0.85rem 0.95rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 9%, #111014), #0d0c10);
+		color: inherit;
+		text-decoration: none;
+		transition:
+			border-color 0.15s,
+			transform 0.15s;
+	}
+	.jb a:hover,
+	.jb a:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 45%, var(--sc-line));
+		transform: translateY(-1px);
+	}
+	.jb-ic {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2.6rem;
+		height: 2.6rem;
+		border-radius: 12px;
+		color: var(--accent);
+		background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+	}
+	.jb-ic svg {
+		width: 1.2rem;
+		height: 1.2rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.jb-ic.brand svg {
+		fill: currentColor;
+		stroke: none;
+	}
+	.jb-t {
+		display: grid;
+		gap: 0.15rem;
+		min-width: 0;
+	}
+	.jb-t strong {
+		color: var(--sc-ivory);
+		font-size: 0.98rem;
+	}
+	.jb-t span {
+		color: var(--sc-silver);
+		font-size: 0.84rem;
+		line-height: 1.4;
+	}
+	.jb-go {
+		flex: none;
+		width: 1rem;
+		height: 1rem;
+		margin-left: auto;
+		fill: none;
+		stroke: var(--sc-steel);
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.jb a {
+			transition: none;
+		}
+	}
+</style>

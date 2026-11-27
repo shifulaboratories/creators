@@ -46,7 +46,7 @@ const en = {
 	},
 	pager: { upNext: 'Up next', back: 'Back', more: 'More guides', hint: 'Tip: swipe sideways anywhere to flip between guides.', words: 'Words in this guide', glossary: 'Full glossary' },
 	grid: { status: { outline: 'Outline', draft: 'Draft', published: 'Reviewed' } as Record<string, string>, english: 'In English' },
-	tabs: { home: 'Home', guides: 'Guides', menu: 'Menu', learn: 'Learn', platforms: 'Platforms', shortlist: 'Shortlist', search: 'Search', nav: 'Quick navigation' },
+	tabs: { home: 'Home', guides: 'Resources', menu: 'Menu', learn: 'Learn', platforms: 'Platforms', shortlist: 'Shortlist', search: 'Search', nav: 'Quick navigation' },
 	ai: {
 		button: 'Ask AI',
 		sheetTitle: 'Ask AI about this guide',
@@ -77,7 +77,7 @@ const en = {
 		toStory: (v: string) => `Share “${v}” to your Story`,
 	},
 	gallery: {
-		title: 'Guides',
+		title: 'Resources',
 		description: 'Free, sourced guides for creators on algorithms, growth, brand deals, paywalls, taxes and account safety.',
 		search: (n: number) => `Search ${n} guides`,
 		searchLabel: 'Search guides',
@@ -222,7 +222,7 @@ const es: UI = {
 	},
 	pager: { upNext: 'Sigue', back: 'Atrás', more: 'Más guías', hint: 'Tip: desliza hacia los lados en cualquier parte para pasar de guía.', words: 'Términos de esta guía (en inglés)', glossary: 'Glosario completo' },
 	grid: { status: { outline: 'Esquema', draft: 'Borrador', published: 'Revisado' }, english: 'En inglés' },
-	tabs: { home: 'Inicio', guides: 'Guías', menu: 'Menú', learn: 'Aprende', platforms: 'Plataformas', shortlist: 'Selección', search: 'Buscar', nav: 'Navegación rápida' },
+	tabs: { home: 'Inicio', guides: 'Recursos', menu: 'Menú', learn: 'Aprende', platforms: 'Plataformas', shortlist: 'Selección', search: 'Buscar', nav: 'Navegación rápida' },
 	ai: {
 		button: 'Abrir en IA',
 		sheetTitle: 'Pregúntale a la IA sobre esta guía',
@@ -253,7 +253,7 @@ const es: UI = {
 		toStory: (v) => `Compartir “${v}” en tu Story`,
 	},
 	gallery: {
-		title: 'Guías',
+		title: 'Recursos',
 		description: 'Guías gratuitas y con fuentes para creadores sobre algoritmos, crecimiento, colaboraciones con marcas, paywalls, impuestos y seguridad de cuentas.',
 		search: (n) => `Busca entre ${n} guías`,
 		searchLabel: 'Buscar guías',
@@ -396,7 +396,7 @@ const pt: UI = {
 	},
 	pager: { upNext: 'A seguir', back: 'Voltar', more: 'Mais guias', hint: 'Dica: deslize para os lados em qualquer lugar para trocar de guia.', words: 'Termos deste guia (em inglês)', glossary: 'Glossário completo' },
 	grid: { status: { outline: 'Esboço', draft: 'Rascunho', published: 'Revisado' }, english: 'Em inglês' },
-	tabs: { home: 'Início', guides: 'Guias', menu: 'Menu', learn: 'Aprenda', platforms: 'Plataformas', shortlist: 'Seleção', search: 'Buscar', nav: 'Navegação rápida' },
+	tabs: { home: 'Início', guides: 'Recursos', menu: 'Menu', learn: 'Aprenda', platforms: 'Plataformas', shortlist: 'Seleção', search: 'Buscar', nav: 'Navegação rápida' },
 	ai: {
 		button: 'Abrir na IA',
 		sheetTitle: 'Pergunte à IA sobre este guia',
@@ -427,7 +427,7 @@ const pt: UI = {
 		toStory: (v) => `Compartilhar “${v}” nos seus Stories`,
 	},
 	gallery: {
-		title: 'Guias',
+		title: 'Recursos',
 		description: 'Guias gratuitos e com fontes para criadores sobre algoritmos, crescimento, publis com marcas, paywalls, impostos e segurança de contas.',
 		search: (n) => `Busque entre ${n} guias`,
 		searchLabel: 'Buscar guias',

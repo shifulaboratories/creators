@@ -25,6 +25,9 @@
 [data-section='protect'] { --accent: var(--sc-protect); }
 [data-section='underground'] { --accent: var(--sc-underground); }
 [data-section='news'] { --accent: var(--sc-news); }
+[data-section='jobs'] { --accent: var(--sc-champagne); }
+[data-section='creators'] { --accent: var(--sc-amethyst); }
+[data-section='about'] { --accent: var(--sc-ion); }
 [data-section='money'] { --accent: var(--sc-money); }
 [data-section='paywall'] { --accent: var(--sc-paywall); }
 [data-section='glossary'] { --accent: var(--sc-ion); }

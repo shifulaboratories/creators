@@ -1,7 +1,8 @@
 ---
 /**
  * The one site header, shared by the home page and every guide page:
- * logo, Guides, three menus (Grow with the platforms, Get paid, Business), search.
+ * logo, the five items from src/data/nav.ts (Resources, Jobs, Directories, News,
+ * Contributors), search.
  * On phones: logo, search and a Menu button that opens a full-screen menu,
  * which also lists the pages in the section you're reading.
  *
@@ -26,7 +27,6 @@ const NAV = navFor(locale);
 const L = (p: string) => localize(locale, p);
 const path = basePath(Astro.url.pathname);
 const active = groupFor(path);
-const onGuides = path.startsWith('/guides');
 // The same page in each language. Single news updates are English-only, so they
 // switch to that language's news front page instead.
 const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
@@ -44,7 +44,7 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 // A line icon for each menu link, from the section it points to.
 const linkIcon = (href: string) => {
 	const key = href.replace(/^\/(es|pt-br)\//, '/').split('/')[1] ?? '';
-	return { key, d: lineIcons[({ rates: 'tag', tools: 'box' } as Record<string, string>)[key] ?? key] };
+	return { key, d: lineIcons[({ rates: 'tag', tools: 'box', creators: 'user', about: 'user', guides: 'shortlist' } as Record<string, string>)[key] ?? key] };
 };
 ---
 
@@ -54,9 +54,13 @@ const linkIcon = (href: string) => {
 	</a>
 
 	<nav class="sn-links" aria-label={T.main}>
-		<a class:list={['sn-top', { on: onGuides }]} href={L('/guides/')} aria-current={onGuides ? 'page' : undefined}>{T.guides}</a>
 		{
-			NAV.map((g) => (
+			NAV.map((g) =>
+				!g.links ? (
+					<a class:list={['sn-top', { on: active === g.id }]} href={g.href} aria-current={active === g.id ? 'page' : undefined}>
+						{g.label}
+					</a>
+				) : (
 				<div class="sn-item" data-item>
 					<button type="button" class:list={['sn-top', { on: active === g.id }]} aria-expanded="false" data-trigger>
 						{g.label}
@@ -108,7 +112,8 @@ const linkIcon = (href: string) => {
 						</ul>
 					</div>
 				</div>
-			))
+				),
+			)
 		}
 	</nav>
 
@@ -172,9 +177,27 @@ const linkIcon = (href: string) => {
 		}
 
 		{
-			NAV.map((g) => (
-				<section class="sm-group">
-					<h2>{g.label}</h2>
+			NAV.map((g) =>
+				!g.links ? (
+					<a href={g.href} class:list={['sm-solo', { on: active === g.id }]} data-section={linkIcon(g.href).key} aria-current={active === g.id ? 'page' : undefined}>
+						<span class="li" aria-hidden="true">
+							<svg viewBox="0 0 24 24">
+								<path d={linkIcon(g.href).d} />
+							</svg>
+						</span>
+						{g.label}
+					</a>
+				) : (
+				<details class="sm-group sm-acc">
+					<summary>
+						<span class="li" aria-hidden="true" data-section={g.id === 'resources' ? 'shortlist' : 'creators'}>
+							<svg viewBox="0 0 24 24">
+								<path d={g.id === 'resources' ? lineIcons.glossary : lineIcons.team} />
+							</svg>
+						</span>
+						{g.label}
+						<svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
+					</summary>
 					{g.chips && (
 						<ul class="sm-list chips">
 							{g.chips.map((l) => (
@@ -202,14 +225,13 @@ const linkIcon = (href: string) => {
 							</li>
 						))}
 					</ul>
-				</section>
-			))
+				</details>
+				),
+			)
 		}
 
 		<p class="sm-foot">
-			<a href={L('/guides/')}>{T.allGuides}</a>
 			<a href="/glossary/" hreflang={locale === 'en' ? undefined : 'en'}>{T.glossary}</a>
-			<a href="/creators/" hreflang={locale === 'en' ? undefined : 'en'}>Creator directory</a>
 			<a href={L('/about/')}>{T.about}</a>
 			<a href="/changelog/" hreflang={locale === 'en' ? undefined : 'en'}>What’s new</a>
 		</p>
@@ -583,10 +605,10 @@ const linkIcon = (href: string) => {
 		padding: 0;
 		border: 0;
 		font-family: inherit;
-		font-size: 0.78rem;
+		font-size: 1.15rem;
 		font-weight: 600;
 		letter-spacing: 0;
-		color: var(--sc-silver);
+		color: var(--sc-ivory);
 	}
 	.sm-section summary {
 		cursor: pointer;
@@ -633,6 +655,63 @@ const linkIcon = (href: string) => {
 		border: 1px solid color-mix(in srgb, var(--accent, #fff) 30%, var(--sc-line));
 		border-radius: 999px;
 		font-size: 0.92rem;
+	}
+	/* The five top items as big rows: Resources and Directories open in place. */
+	.sm-acc summary {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.7rem 0;
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+		border-bottom: 1px solid var(--sc-line);
+		cursor: pointer;
+		list-style: none;
+	}
+	.sm-acc summary::-webkit-details-marker {
+		display: none;
+	}
+	.sm-acc .chev {
+		width: 12px;
+		height: 12px;
+		margin-left: auto;
+		fill: none;
+		stroke: var(--sc-silver);
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		transition: transform 0.15s;
+	}
+	.sm-acc[open] .chev {
+		transform: rotate(180deg);
+	}
+	.sm-acc[open] > summary {
+		margin-bottom: 0.75rem;
+	}
+	.sm-acc + .sm-solo,
+	.sm-solo + .sm-acc,
+	.sm-acc + .sm-acc {
+		margin-top: 0;
+	}
+	/* Jobs, News and Contributors: one tap, no submenu. */
+	.sm-solo {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-top: 1.1rem;
+		padding: 0.7rem 0;
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+		text-decoration: none;
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.sm-solo + .sm-solo {
+		margin-top: 0;
+	}
+	.sm-solo.on {
+		color: var(--sc-ion);
 	}
 	.sm-foot {
 		display: flex;
