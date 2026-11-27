@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "ElevenLabs"
+url: https://elevenlabs.io/
+slot: ai
+what: "AI voices for voiceovers, dubbing your videos into other languages and cloning your own voice."
+who: "Faceless channels and creators dubbing into other languages."
+pricing:
+  free: true
+  fromUsdPerMonth: 6
+  note: "Free plan with 10k credits a month; Starter is $6/mo"
+pricingUrl: https://elevenlabs.io/pricing
+lastVerified: 2026-11-27
+bestFor: "Voiceovers and dubbing"
+alternative: "Your own voice and Audacity (free)"
+affiliate: false

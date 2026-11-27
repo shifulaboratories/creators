@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Restream"
+url: https://restream.io/
+slot: streaming
+what: "Stream to many platforms at once, like YouTube, Twitch and LinkedIn, from one place."
+who: "Streamers and podcasters who want to be live everywhere."
+platforms: [twitch, youtube, linkedin]
+pricing:
+  free: true
+  fromUsdPerMonth: 19
+  note: "Standard is $19/mo; yearly saves 20%"
+pricingUrl: https://restream.io/pricing
+lastVerified: 2026-11-27
+bestFor: "Multistreaming to several platforms at once"
+alternative: "OBS Studio (free, one platform at a time)"
+affiliate: false

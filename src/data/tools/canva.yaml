@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Canva"
+url: https://www.canva.com/
+slot: design
+what: "Drag-and-drop design for thumbnails, carousels, media kits and brand assets, with thousands of templates."
+who: "Any creator who needs good-looking graphics fast."
+pricing:
+  free: true
+  fromUsdPerMonth: 12.99
+  note: "Pro is $12.99/mo or $119.99/yr, for up to 5 people"
+pricingUrl: https://www.canva.com/pro/
+lastVerified: 2026-11-27
+bestFor: "Thumbnails, carousels and quick graphics"
+alternative: "Figma (free plan)"
+affiliate: false

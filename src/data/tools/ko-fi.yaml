@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Ko-fi"
+url: https://ko-fi.com/
+slot: community
+what: "A tip page plus memberships, a shop and commissions, with no cut taken from tips."
+who: "Creators who want a simple way for fans to tip or support."
+pricing:
+  free: true
+  fromUsdPerMonth: 6
+  note: "No Ko-fi cut on tips; Gold is $6/mo"
+pricingUrl: https://ko-fi.com/gold
+lastVerified: 2026-11-27
+bestFor: "Tips and simple memberships"
+alternative: "Patreon (10% for new creators)"
+affiliate: false

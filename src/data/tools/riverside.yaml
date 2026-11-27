@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Riverside"
+url: https://riverside.com/
+slot: podcast
+what: "Records remote interviews in studio quality, each guest recorded locally, then edits and clips them."
+who: "Podcasters and interview shows with remote guests."
+platforms: [podcast, youtube]
+pricing:
+  free: true
+  fromUsdPerMonth: 29
+  note: "Pro is $29/mo, or $24/mo billed yearly"
+pricingUrl: https://riverside.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Remote podcast and interview recording"
+alternative: "Zoom (free, lower quality)"
+affiliate: false

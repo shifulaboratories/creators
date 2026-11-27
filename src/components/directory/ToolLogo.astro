@@ -1,0 +1,52 @@
+---
+/** A tool's logo (simple-icons) on a calm tile, or its first letter when there isn't one. */
+import { iconFor } from '../../lib/tool-directory';
+interface Props {
+	slug: string;
+	name: string;
+	size?: 'sm' | 'lg';
+}
+const { slug, name, size = 'sm' } = Astro.props;
+const icon = iconFor(slug);
+---
+
+<span class={`tl tl--${size}`} aria-hidden="true">
+	{icon ? (
+		<svg viewBox="0 0 24 24" role="img"><path d={icon.path} /></svg>
+	) : (
+		<b>{name.replace(/^[^A-Za-z0-9]+/, '').charAt(0).toUpperCase()}</b>
+	)}
+</span>
+
+<style>
+	.tl {
+		flex: none;
+		display: grid;
+		place-items: center;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
+		color: var(--sc-ivory);
+	}
+	.tl--sm {
+		width: 2.6rem;
+		height: 2.6rem;
+	}
+	.tl--lg {
+		width: 4rem;
+		height: 4rem;
+		border-radius: 18px;
+	}
+	.tl svg {
+		width: 46%;
+		height: 46%;
+		fill: currentColor;
+	}
+	.tl b {
+		font: 700 1.05rem / 1 var(--sc-font-display);
+		color: var(--accent);
+	}
+	.tl--lg b {
+		font-size: 1.6rem;
+	}
+</style>

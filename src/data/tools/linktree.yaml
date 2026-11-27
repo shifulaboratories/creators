@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Linktree"
+url: https://linktr.ee/
+slot: storefront
+what: "The original link-in-bio page, with paid plans that add selling, design and analytics."
+who: "Creators who mainly share links."
+pricing:
+  free: true
+  note: "Pro sells with 0% Linktree fees; plan prices not in its help center"
+pricingUrl: https://linktr.ee/help/articles/11410206-about-transaction-processing-fees
+lastVerified: 2026-11-27
+bestFor: "A simple link page"
+alternative: "Beacons (free plan)"
+review: linktree
+affiliate: false

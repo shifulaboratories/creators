@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "beehiiv"
+url: https://www.beehiiv.com/
+slot: email
+what: "A newsletter platform with growth tools, an ad network and paid subscriptions, taking 0% of subscription revenue."
+who: "Newsletter-first creators who want to monetize."
+pricing:
+  free: true
+  fromUsdPerMonth: 49
+  feePct: 0
+  note: "Lite is $49/mo billed yearly; 0% of paid subscriptions, plus Stripe fees"
+pricingUrl: https://www.beehiiv.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Running and monetizing a newsletter"
+alternative: "Substack (free to publish)"
+affiliate: false

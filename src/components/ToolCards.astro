@@ -2,7 +2,9 @@
 /** Software picks from src/data/tools/ as cards: what it's for, price, and the free alternative. */
 import { getCollection } from 'astro:content';
 
-const tools = (await getCollection('tools')).map((t) => t.data).sort((a, b) => a.name.localeCompare(b.name));
+// The free starter kit; every other tool is in the directory (/stack/directory/).
+const STARTER = ['capcut', 'davinci-resolve', 'canva', 'audacity', 'obs-studio', 'buffer', 'metricool', 'beacons'];
+const tools = (await getCollection('tools')).filter((t) => STARTER.includes(t.id)).map((t) => t.data).sort((a, b) => a.name.localeCompare(b.name));
 const price = (p: { free: boolean; fromUsdPerMonth?: number; oneTimeUsd?: number }) =>
 	[p.free ? (p.fromUsdPerMonth || p.oneTimeUsd ? 'Free tier' : 'Free') : '', p.fromUsdPerMonth ? `from $${p.fromUsdPerMonth}/mo` : '', p.oneTimeUsd ? `$${p.oneTimeUsd} one-time` : '']
 		.filter(Boolean)

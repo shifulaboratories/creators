@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Streamlabs"
+url: https://streamlabs.com/
+slot: streaming
+what: "Streaming software built on OBS with alerts, overlays and a tip page included."
+who: "New streamers who want overlays and alerts set up fast."
+platforms: [twitch, youtube, kick]
+pricing:
+  free: true
+  fromUsdPerMonth: 15.75
+  note: "Ultra starts at $15.75/mo; no Streamlabs fee on tips on the free plan"
+pricingUrl: https://streamlabs.com/ultra
+lastVerified: 2026-11-27
+bestFor: "Alerts, overlays and tips for streamers"
+alternative: "OBS Studio (free)"
+affiliate: false

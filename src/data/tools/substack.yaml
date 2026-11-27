@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Substack"
+url: https://substack.com/
+slot: email
+what: "Free publishing for newsletters, podcasts and video, with paid subscriptions and a reader network."
+who: "Writers who want to start free and get found inside Substack."
+pricing:
+  free: true
+  feePct: 0.1
+  note: "Free to publish; 10% of paid subscriptions, plus Stripe fees"
+pricingUrl: https://support.substack.com/hc/en-us/articles/360037607131-How-much-does-Substack-cost
+lastVerified: 2026-11-27
+bestFor: "A free newsletter with paid subscriptions"
+alternative: "beehiiv (0% of subscriptions)"
+affiliate: false

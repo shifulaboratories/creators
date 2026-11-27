@@ -1,9 +1,16 @@
-# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
-name: CapCut
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "CapCut"
 url: https://www.capcut.com/
 slot: editing
+what: "A video editor for phone, desktop and web with templates, auto-captions and effects built for short-form."
+who: "Short-form creators who edit on their phone."
+platforms: [tiktok, instagram, youtube]
 pricing:
   free: true
-bestFor: Fast short-form edits on phone or desktop
-alternative: DaVinci Resolve (free version)
+  fromUsdPerMonth: 19.99
+  note: "Pro is $19.99/mo"
+pricingUrl: https://www.capcut.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Fast short-form edits on phone or desktop"
+alternative: "DaVinci Resolve (free version)"
 affiliate: false

@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Social Blade"
+url: https://socialblade.com/
+slot: growth
+what: "Public stats for YouTube, Twitch, Instagram, TikTok and more: follower history, rankings and growth over time."
+who: "Anyone benchmarking their channel or checking a creator’s growth."
+platforms: [youtube, twitch, instagram, tiktok]
+pricing:
+  free: true
+  note: "Public stats are free to browse"
+pricingUrl: https://socialblade.com/
+lastVerified: 2026-11-27
+bestFor: "Checking any channel’s public growth"
+alternative: "Your own platform analytics (free)"
+affiliate: false

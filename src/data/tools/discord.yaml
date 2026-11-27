@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Discord"
+url: https://discord.com/
+slot: community
+what: "Free group chat, voice and video servers where creators build communities around their content."
+who: "Gaming, streaming and any creator with an active community."
+platforms: [twitch, youtube]
+pricing:
+  free: true
+  note: "Free to create and run a server"
+pricingUrl: https://discord.com/
+lastVerified: 2026-11-27
+bestFor: "A free community server for your fans"
+alternative: "Telegram or WhatsApp channels (free)"
+affiliate: false

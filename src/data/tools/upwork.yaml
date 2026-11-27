@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Upwork"
+url: https://www.upwork.com/
+slot: hiring
+what: "A general freelance marketplace for editors, designers, writers and assistants, paid hourly or by project."
+who: "Creators hiring help outside YouTube-specific roles."
+pricing:
+  free: true
+  note: "Freelancers pay 20% to 5% by billings; clients pay 2.75% processing"
+pricingUrl: https://support.upwork.com/hc/en-us/articles/211062538-Freelancer-Service-Fees
+lastVerified: 2026-11-27
+bestFor: "Hiring freelancers for any job"
+alternative: "YT Jobs (YouTube roles)"
+guide: /team/
+affiliate: false

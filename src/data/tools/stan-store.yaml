@@ -1,0 +1,17 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Stan"
+url: https://stan.store/
+slot: storefront
+what: "A link-in-bio storefront for selling digital products, courses, coaching calls and memberships from one page."
+who: "Creators already selling, past about $320 a month in sales."
+pricing:
+  free: false
+  fromUsdPerMonth: 29
+  feePct: 0
+  note: "$29/mo, 0% Stan fee; card processing on top"
+pricingUrl: https://help.stan.store/article/83-stan-stripes-transaction-fees
+lastVerified: 2026-11-27
+bestFor: "Selling products and calls from your bio link"
+alternative: "Beacons (free plan)"
+review: stan-store
+affiliate: false

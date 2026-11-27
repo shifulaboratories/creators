@@ -1,9 +1,16 @@
-# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
-name: DaVinci Resolve
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "DaVinci Resolve"
 url: https://www.blackmagicdesign.com/products/davinciresolve
 slot: editing
+what: "Professional desktop editing, color, audio and effects in one app, with a free version most creators never outgrow."
+who: "Long-form YouTubers and anyone who wants pro color for free."
+platforms: [youtube]
 pricing:
   free: true
-bestFor: Long-form and color-heavy editing on desktop
-alternative: Shotcut (free, open source)
+  oneTimeUsd: 295
+  note: "Studio version is a $295 one-time purchase"
+pricingUrl: https://www.blackmagicdesign.com/products/davinciresolve
+lastVerified: 2026-11-27
+bestFor: "Long-form and color-heavy editing on desktop"
+alternative: "Shotcut (free, open source)"
 affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Patreon"
+url: https://www.patreon.com/
+slot: community
+what: "Memberships where fans pay monthly or per post for your work, with tiers, posts and a shop."
+who: "Creators with a loyal audience who want recurring fan income."
+pricing:
+  free: true
+  feePct: 0.1
+  note: "Free to start; 10% of income for new creators, plus processing and payout fees"
+pricingUrl: https://www.patreon.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Monthly memberships from your biggest fans"
+alternative: "Ko-fi (no cut on tips)"
+guide: /paywall/
+affiliate: false

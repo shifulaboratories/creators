@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Kajabi"
+url: https://kajabi.com/
+slot: courses
+what: "An all-in-one platform for courses, coaching, communities, email and a website, with no revenue share."
+who: "Established educators with a product line, not beginners."
+pricing:
+  free: false
+  fromUsdPerMonth: 179
+  feePct: 0
+  note: "Basic is $179/mo, or $143/mo billed yearly; 0% revenue share; 14-day trial"
+pricingUrl: https://kajabi.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Running a full course business in one place"
+alternative: "Stan (from $29/mo)"
+affiliate: false

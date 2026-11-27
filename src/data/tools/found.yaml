@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Found"
+url: https://found.com/
+slot: banking
+what: "Business banking for the self-employed with built-in bookkeeping and tax set-asides."
+who: "Solo creators who want banking and bookkeeping together."
+pricing:
+  free: true
+  fromUsdPerMonth: 35
+  note: "Free plan; Plus is $35/mo or $26.25/mo billed yearly"
+pricingUrl: https://found.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Banking with taxes set aside automatically"
+alternative: "Karat (free)"
+guide: /money/
+affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "OpusClip"
+url: https://www.opus.pro/
+slot: clipping
+what: "AI that finds the best moments in a long video and cuts them into captioned vertical clips."
+who: "Podcasters and long-form creators who want shorts without an editor."
+platforms: [youtube, tiktok, instagram]
+pricing:
+  free: true
+  fromUsdPerMonth: 15
+  note: "Free plan has a watermark and 60 credits a month; Starter is $15/mo"
+pricingUrl: https://www.opus.pro/pricing
+lastVerified: 2026-11-27
+bestFor: "Turning long videos into shorts automatically"
+alternative: "CapCut (free, by hand)"
+affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Descript"
+url: https://www.descript.com/
+slot: editing
+what: "Edit video and podcasts by editing the transcript, like a doc. Cut words and the video cuts with them."
+who: "Talking-head YouTubers and podcasters who hate timelines."
+platforms: [youtube, podcast]
+pricing:
+  free: true
+  fromUsdPerMonth: 24
+  note: "Hobbyist is $24/mo, or $16/mo billed yearly"
+pricingUrl: https://www.descript.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Editing talking videos and podcasts by text"
+alternative: "CapCut (free plan)"
+affiliate: false

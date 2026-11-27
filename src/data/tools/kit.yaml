@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Kit"
+url: https://kit.com/
+slot: email
+what: "Email marketing built for creators (formerly ConvertKit), with landing pages, automations and paid newsletters."
+who: "Creators building an email list they own."
+pricing:
+  free: true
+  fromUsdPerMonth: 39
+  note: "Free up to 10,000 subscribers; Creator is $39/mo"
+pricingUrl: https://kit.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Growing and automating an email list"
+alternative: "beehiiv (free plan)"
+affiliate: false

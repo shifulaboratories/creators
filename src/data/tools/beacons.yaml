@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Beacons"
+url: https://beacons.ai/
+slot: storefront
+what: "A link-in-bio page with a store, media kit, email list and brand outreach tools in one app."
+who: "New creators who want a free store and media kit."
+pricing:
+  free: true
+  fromUsdPerMonth: 10
+  note: "Free and $10 plans take 9% of sales; Creator Plus is $30/mo with 0%"
+pricingUrl: https://help.beacons.ai/en/articles/4695681
+lastVerified: 2026-11-27
+bestFor: "A free link in bio with a store and media kit"
+alternative: "Linktree (free plan)"
+review: beacons
+affiliate: false
