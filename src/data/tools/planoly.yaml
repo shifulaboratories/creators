@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Planoly"
+url: https://www.planoly.com/
+slot: scheduling
+what: "A visual planner and scheduler for Instagram, TikTok and Pinterest with a drag-and-drop grid preview."
+who: "Instagram-first creators who plan by how the grid looks."
+platforms: [instagram, tiktok]
+pricing:
+  free: true
+  fromUsdPerMonth: 14
+  note: "Starter is $14/mo; yearly saves up to 15%; free plan in the app with 10 uploads/mo; 14-day trial"
+pricingUrl: https://www.planoly.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Planning a good-looking Instagram grid"
+alternative: "Later or Buffer (free plans)"
+affiliate: false

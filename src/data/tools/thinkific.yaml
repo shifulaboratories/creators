@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Thinkific"
+url: https://www.thinkific.com/
+slot: courses
+what: "A course platform for structured courses with quizzes, certificates and communities."
+who: "Educators building a serious course catalogue."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 82
+  note: "Start is $109/mo, or $82/mo billed yearly; 30-day free trial"
+pricingUrl: https://www.thinkific.com/pricing/
+lastVerified: 2026-11-27
+bestFor: "Structured courses with quizzes and certificates"
+alternative: "Teachable (from $29/mo)"
+affiliate: false

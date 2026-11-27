@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Loom"
+url: https://www.loom.com/
+slot: editing
+what: "Record your screen and camera, then share a link right away. Viewers can comment and react."
+who: "Creators sending quick walkthroughs to editors, sponsors or a team."
+platforms: []
+pricing:
+  free: true
+  fromUsdPerMonth: 18
+  note: "Business is $18 per user/mo; yearly billing saves up to 17%; free Starter has 25 videos of up to 5 minutes"
+pricingUrl: https://www.loom.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Quick screen recordings shared by link"
+alternative: "Loom Starter (free)"
+affiliate: false

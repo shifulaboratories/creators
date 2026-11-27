@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Submagic"
+url: https://www.submagic.co/
+slot: clipping
+what: "Adds animated captions, emojis, zooms and B-roll to short videos automatically."
+who: "Short-form creators who want punchy captions fast."
+platforms: [tiktok, instagram, youtube]
+pricing:
+  free: false
+  fromUsdPerMonth: 19
+  note: "Starter lists at $19/mo billed yearly; on sale for $12/mo when checked"
+pricingUrl: https://www.submagic.co/pricing
+lastVerified: 2026-11-27
+bestFor: "Animated captions on shorts"
+alternative: "CapCut (free auto captions)"
+affiliate: false

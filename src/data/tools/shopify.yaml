@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Shopify"
+url: https://www.shopify.com/
+slot: storefront
+what: "A full online store builder for physical and digital products, with checkout, apps and print-on-demand add-ons."
+who: "Creators with a real product line who want their own store."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 29
+  note: "Basic is $39/mo, or $29/mo billed yearly; 3 days free, then $1/mo for 3 months"
+pricingUrl: https://www.shopify.com/pricing
+lastVerified: 2026-11-27
+bestFor: "A full store for a serious product line"
+alternative: "Fourthwall (free to start)"
+affiliate: false

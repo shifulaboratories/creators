@@ -1,0 +1,17 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Circle"
+url: https://circle.so/
+slot: community
+what: "A home for a paid or free community with posts, events, chat, courses and memberships under your brand."
+who: "Creators moving a community off social media into their own space."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 89
+  feePct: 0.02
+  note: "Professional is $89/mo billed yearly with a 2% transaction fee; 14-day trial, no card"
+pricingUrl: https://circle.so/pricing
+lastVerified: 2026-11-27
+bestFor: "A branded paid community with courses and events"
+alternative: "Skool or Discord (free)"
+affiliate: false

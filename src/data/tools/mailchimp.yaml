@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Mailchimp"
+url: https://mailchimp.com/
+slot: email
+what: "A long-running email marketing tool with templates, signup forms, automations and audience segments."
+who: "Creators who already know it or need wide integrations."
+platforms: [newsletter]
+pricing:
+  free: true
+  fromUsdPerMonth: 13
+  note: "Essentials starts at $13/mo and rises with contacts; free plan up to 250 contacts and 500 sends/mo"
+pricingUrl: https://mailchimp.com/pricing/marketing/
+lastVerified: 2026-11-27
+bestFor: "Email marketing with lots of integrations"
+alternative: "Kit (free plan)"
+affiliate: false

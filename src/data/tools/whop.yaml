@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Whop"
+url: https://whop.com/
+slot: storefront
+what: "A storefront and checkout for paid communities, courses, software and memberships, with a marketplace buyers browse."
+who: "Creators selling access to a Discord, course or paid group."
+platforms: []
+pricing:
+  free: true
+  feePct: 0.027
+  note: "Free to start; domestic cards cost 2.7% + $0.30 per sale, more for international cards and add-ons"
+pricingUrl: https://docs.whop.com/fees
+lastVerified: 2026-11-27
+bestFor: "Selling paid community access with built-in checkout"
+alternative: "Gumroad (no monthly fee)"
+affiliate: false
