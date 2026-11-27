@@ -77,7 +77,7 @@ const widgetText: Record<string, string> = {
 function guideText(name: string, props: string): string {
 	const strings = [...props.matchAll(/(?:"((?:[^"\\]|\\.)*)"|`([^`]*)`)/g)]
 		.map((m) => (m[1] ?? m[2] ?? '').replace(/\\"/g, '"').trim())
-		.filter((t) => t && !/^(is-|[a-z]+-[a-z-]+$)/.test(t));
+		.filter((t) => t && !['text', 'hint', 'label', 'title', 'lines', 'note'].includes(t) && !/^(is-|[a-z]+-[a-z-]+$)/.test(t));
 	if (name === 'CopyBlock') return strings.map((t, i) => (i === 1 ? '```\n' + t + '\n```' : `**${t}**`)).join('\n\n');
 	return strings.map((t) => `- ${t}`).join('\n');
 }
