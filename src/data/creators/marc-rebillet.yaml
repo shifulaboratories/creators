@@ -1,0 +1,37 @@
+name: Marc Rebillet
+known: Improvised live-looped songs, often in a bathrobe, on YouTube and in concert
+niche: music
+platforms: [youtube]
+about: Marc Rebillet is a musician who builds songs on the spot by looping keyboard, drums and vocals, often from suggestions by his audience. His online videos led to touring.
+tools:
+  - name: MainStage
+    use: Live performance environment for his Logic sounds
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"
+  - name: Boss RC-505
+    use: Loop station for layering parts live
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"
+  - name: M-Audio Axiom 49
+    use: MIDI keyboard he performs on, chosen for its drum pads
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"
+  - name: Native Instruments Massive
+    use: Synth sounds
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"
+  - name: Cinesamples Drums of War
+    use: Virtual percussion, including a taiko kit
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"
+advice:
+  - text: He builds custom drum kits by piecing together downloaded one-shot samples.
+    quote: false
+    source: https://www.attackmagazine.com/?p=67216
+    sourceTitle: "Marc Rebillet: The Man Behind the Meme (Attack Magazine)"
+    date: "Jan 2019"

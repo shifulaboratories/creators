@@ -1,0 +1,25 @@
+name: Humphrey Yang
+known: Personal finance explainers on TikTok and YouTube
+niche: business
+platforms: [tiktok, youtube]
+about: A former financial advisor who began making TikToks and YouTube videos in 2019 to answer common personal finance questions. He funds much of his work through a Patreon community and is selective about sponsors.
+tools:
+  - name: Patreon
+    use: Community membership model he uses to make money from his content
+    source: https://fortune.com/2021/10/07/tiktok-financial-advice-humphrey-yang-personal-finance-social-media
+    sourceTitle: "Why I give financial advice for free on TikTok (Fortune, by Humphrey Yang)"
+    date: "Oct 2021"
+advice:
+  - text: "I screen every brand heavily and turn down 99% of opportunities that flow through my inbox."
+    source: https://fortune.com/2021/10/07/tiktok-financial-advice-humphrey-yang-personal-finance-social-media
+    sourceTitle: "Why I give financial advice for free on TikTok (Fortune, by Humphrey Yang)"
+    date: "Oct 2021"
+  - text: Don't sell a course on information people can find with a quick search. A paid product should deliver value well beyond its price.
+    quote: false
+    source: https://fortune.com/2021/10/07/tiktok-financial-advice-humphrey-yang-personal-finance-social-media
+    sourceTitle: "Why I give financial advice for free on TikTok (Fortune, by Humphrey Yang)"
+    date: "Oct 2021"
+  - text: "Integrity is what will set you apart from the rest"
+    source: https://fortune.com/2021/10/07/tiktok-financial-advice-humphrey-yang-personal-finance-social-media
+    sourceTitle: "Why I give financial advice for free on TikTok (Fortune, by Humphrey Yang)"
+    date: "Oct 2021"
