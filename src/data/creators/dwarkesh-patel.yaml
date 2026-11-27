@@ -1,0 +1,36 @@
+name: Dwarkesh Patel
+known: Long-form interviews on AI, history and science (Dwarkesh Podcast)
+niche: podcast
+platforms: [podcast, youtube, newsletter]
+site: https://www.dwarkesh.com/
+about: Dwarkesh Patel hosts the Dwarkesh Podcast, known for long, heavily researched interviews with researchers, historians and founders. He also writes essays on his blog.
+tools:
+  - name: Anki
+    use: Spaced repetition flashcards for the material he studies before each interview
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"
+  - name: Mochi
+    use: Named alongside Anki as a spaced repetition app for interview prep
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"
+  - name: LLM chatbots
+    use: Going back and forth with LLMs when he is confused by a topic during prep
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"
+advice:
+  - text: I spend about a week preparing for each interview on the podcast.
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"
+  - text: Implementing something forces you to solidify your understanding of its submodules and how they all fit together.
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"
+  - text: Write down your own hot takes on a subject before the interview, as a blog post or by explaining them to a friend, so you know what you actually think.
+    quote: false
+    source: https://mercury.com/blog/dwarkesh-patel-interview-prep
+    sourceTitle: "How I prepare for interviews, by Dwarkesh Patel (Mercury)"
+    date: "Mar 2026"

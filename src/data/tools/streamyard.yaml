@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "StreamYard"
+url: https://streamyard.com/
+slot: streaming
+what: "A browser-based live studio for streaming and recording with guests, then sending it to several platforms at once."
+who: "Podcasters and talk-show style streamers who bring on guests."
+platforms: [youtube, linkedin, x]
+pricing:
+  free: true
+  fromUsdPerMonth: 14.99
+  note: "Essential $18.99/mo, or $14.99/mo billed yearly; free plan adds a StreamYard logo and limits"
+pricingUrl: https://streamyard.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Live interviews and multistreaming with no software to install"
+alternative: "OBS Studio (free)"
+affiliate: false

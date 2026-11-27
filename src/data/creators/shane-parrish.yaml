@@ -1,0 +1,31 @@
+name: Shane Parrish
+known: Founder of Farnam Street and host of The Knowledge Project podcast
+niche: education
+platforms: [newsletter, podcast]
+site: https://fs.blog/
+about: Shane Parrish is a former Canadian intelligence officer who founded the Farnam Street blog and the Brain Food newsletter. He hosts The Knowledge Project podcast.
+tools:
+  - name: FeedBurner
+    use: How he first collected email subscribers; its shutdown cost him much of his audience
+    source: https://tim.blog/2023/09/29/shane-parrish-farnam-street-transcript/
+    sourceTitle: "The Tim Ferriss Show transcript: Shane Parrish of Farnam Street"
+    date: "Sep 2023"
+advice:
+  - text: I don't want anybody to be between me and the people who've chosen to read me
+    source: https://tim.blog/2023/09/29/shane-parrish-farnam-street-transcript/
+    sourceTitle: "The Tim Ferriss Show transcript: Shane Parrish of Farnam Street"
+    date: "Sep 2023"
+  - text: I don't look at stats on the website. I look at the email stats once a week
+    source: https://tim.blog/2023/09/29/shane-parrish-farnam-street-transcript/
+    sourceTitle: "The Tim Ferriss Show transcript: Shane Parrish of Farnam Street"
+    date: "Sep 2023"
+  - text: If he were starting today, he would focus on email and skip podcasts.
+    quote: false
+    source: https://tim.blog/2023/09/29/shane-parrish-farnam-street-transcript/
+    sourceTitle: "The Tim Ferriss Show transcript: Shane Parrish of Farnam Street"
+    date: "Sep 2023"
+  - text: Make evergreen work. Old pieces and interviews can be re-aired or resurfaced years later.
+    quote: false
+    source: https://tim.blog/2023/09/29/shane-parrish-farnam-street-transcript/
+    sourceTitle: "The Tim Ferriss Show transcript: Shane Parrish of Farnam Street"
+    date: "Sep 2023"

@@ -1,0 +1,40 @@
+name: Andrew Rea
+known: Binging with Babish, recreating food from movies and TV on YouTube
+niche: entertainment
+platforms: [youtube]
+about: Andrew Rea is a former visual effects artist who created Binging with Babish, a YouTube cooking show that recreates dishes from films and TV. He shot, edited and hosted the show himself in its early years.
+tools:
+  - name: Sony a7S
+    use: Main camera for the show
+    source: https://www.premiumbeat.com/blog/behind-the-scenes-binging-with-babish/
+    sourceTitle: "Behind the scenes of Binging with Babish (PremiumBeat)"
+    date: "Jul 2017"
+  - name: Zeiss 35mm f/2.8
+    use: Lens paired with the a7S
+    source: https://www.premiumbeat.com/blog/behind-the-scenes-binging-with-babish/
+    sourceTitle: "Behind the scenes of Binging with Babish (PremiumBeat)"
+    date: "Jul 2017"
+  - name: Aputure LS 1c
+    use: Single key light, plus a reflector and a small LED panel for fill
+    source: https://www.premiumbeat.com/blog/behind-the-scenes-binging-with-babish/
+    sourceTitle: "Behind the scenes of Binging with Babish (PremiumBeat)"
+    date: "Jul 2017"
+advice:
+  - text: Don't try to imitate others. If you want to grow a brand, put your own unique voice out there.
+    quote: false
+    source: https://entrepreneur.com/science-technology/this-self-taught-cook-shows-more-than-2-million-subscribers/311132
+    sourceTitle: "This self-taught cook shows more than 2 million subscribers (Entrepreneur)"
+    date: "Mar 2018"
+  - text: "I really wanted to grow it on its own merits, which is why I didn't monetize it for the first year and a half."
+    source: https://entrepreneur.com/science-technology/this-self-taught-cook-shows-more-than-2-million-subscribers/311132
+    sourceTitle: "This self-taught cook shows more than 2 million subscribers (Entrepreneur)"
+    date: "Mar 2018"
+  - text: He batches production by bringing in a film crew for one week each quarter, working 12-hour days for five or six days.
+    quote: false
+    source: https://entrepreneur.com/science-technology/this-self-taught-cook-shows-more-than-2-million-subscribers/311132
+    sourceTitle: "This self-taught cook shows more than 2 million subscribers (Entrepreneur)"
+    date: "Mar 2018"
+  - text: "I've put a huge effort into constantly and reliably interacting with my audience"
+    source: https://www.premiumbeat.com/blog/behind-the-scenes-binging-with-babish/
+    sourceTitle: "Behind the scenes of Binging with Babish (PremiumBeat)"
+    date: "Jul 2017"
