@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the editorial standards
+    url: https://creators.select/about/editorial-standards/
+    about: How we source claims, label confidence and handle affiliate links.
+  - name: Private or legal matter
+    url: https://creators.select/about/corrections/
+    about: For anything you don't want in public, email support@creators.select instead of opening an issue.
