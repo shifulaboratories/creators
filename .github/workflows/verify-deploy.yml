@@ -1,0 +1,135 @@
+# Confirms creators.select actually serves each merge to main.
+#
+# Every build writes its commit to /version.json (src/pages/version.json.ts).
+# After a push to main this polls it until the live commit is the pushed one
+# (or newer). If Cloudflare's build fails or the site is still stale after the
+# wait, it retries once through the Deploy Hook, waits again, and if the site is
+# still stale it fails and opens a "Live site is stale" issue assigned to the
+# owner. The next successful check closes that issue.
+#
+# Retrying needs the repository secret CLOUDFLARE_DEPLOY_HOOK (Cloudflare >
+# Workers & Pages > creators > Settings > Builds > Deploy Hooks, branch main),
+# the same one roadmap.yml uses. Without it the check still alerts.
+#
+# Runs on public-repo Actions minutes, so it costs nothing.
+name: Verify deploy
+
+on:
+  push:
+    branches: [main]
+  # Catches drift between merges (e.g. a deploy that was rolled back).
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+# A newer merge supersedes an older check; a scheduled check waits its turn.
+concurrency:
+  group: verify-deploy
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
+permissions:
+  contents: read
+  checks: read
+  issues: write
+
+env:
+  ALERT_TITLE: 'Live site is stale: a deploy did not go out'
+  OWNER_LOGIN: byw1
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Wait for the new build to go live
+        id: first
+        env:
+          EXPECTED: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          WAIT_MINUTES: ${{ github.event_name == 'push' && '25' || '2' }}
+        run: |
+          set +e
+          scripts/verify-deploy.sh
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Retry through the Deploy Hook
+        id: retry
+        if: steps.first.outputs.code != '0'
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "No CLOUDFLARE_DEPLOY_HOOK secret, so no automatic retry."
+            echo "triggered=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" && echo && echo "Rebuild of main triggered."
+          echo "triggered=true" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for the retry to go live
+        id: second
+        if: steps.retry.outputs.triggered == 'true'
+        env:
+          EXPECTED: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          WAIT_MINUTES: '25'
+          CHECK_BUILD: '0'
+        run: |
+          set +e
+          scripts/verify-deploy.sh
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FIRST: ${{ steps.first.outputs.code }}
+          SECOND: ${{ steps.second.outputs.code }}
+          RETRIED: ${{ steps.retry.outputs.triggered }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SHA: ${{ github.sha }}
+        run: |
+          open_alert=$(gh issue list --state open --search "\"$ALERT_TITLE\" in:title" --json number --jq '.[0].number // empty')
+
+          if [ "$FIRST" = 0 ] || [ "$SECOND" = 0 ]; then
+            note="Live site serves ${SHA:0:7}."
+            [ "$SECOND" = 0 ] && note="$note It went live after an automatic retry."
+            echo "$note" | tee -a "$GITHUB_STEP_SUMMARY"
+            if [ -n "$open_alert" ]; then
+              gh issue close "$open_alert" --reason completed --comment "Recovered: $note ([run]($RUN_URL))"
+            fi
+            exit 0
+          fi
+
+          if [ "$FIRST" = 2 ]; then why="Cloudflare reported the production build as failed"; else why="the live site was still on an older commit after 25 minutes"; fi
+          if [ "$RETRIED" = true ]; then
+            retry="An automatic rebuild through the Deploy Hook didn't fix it either."
+          else
+            retry="No automatic retry: the repository secret \`CLOUDFLARE_DEPLOY_HOOK\` isn't set."
+          fi
+          body=$(printf '%s\n' \
+            "creators.select is not serving \`${SHA:0:7}\` from main: $why. $retry" \
+            "" \
+            "**To fix:** open Cloudflare > Workers & Pages > creators > Deployments (or Builds), check the failed build's log, and select **Retry build**. Merging any new PR also triggers a fresh build." \
+            "" \
+            "[Check run]($RUN_URL) · this issue closes itself once the live site catches up." \
+            "" \
+            "---" \
+            "" \
+            "For the team: opened by .github/workflows/verify-deploy.yml. The live commit is at https://creators.select/version.json.")
+          if [ -n "$open_alert" ]; then
+            gh issue comment "$open_alert" --body "$body"
+          else
+            gh issue create --title "$ALERT_TITLE" --body "$body" --assignee "$OWNER_LOGIN" \
+              --label internal --label P0 --label "area: site" --label "type: fix" \
+              || gh issue create --title "$ALERT_TITLE" --body "$body" --assignee "$OWNER_LOGIN"
+          fi
+          echo "Stale: $why. $retry" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
