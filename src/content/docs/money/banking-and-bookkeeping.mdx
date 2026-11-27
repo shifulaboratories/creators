@@ -22,6 +22,7 @@ sidebar:
 ---
 
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** three accounts, one weekly habit, and a rule for paying yourself. That's most of "having your finances together" as a creator.
@@ -30,7 +31,7 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 We don't recommend specific banks or apps here, and nobody pays us to mention one. Compare fees and protections yourself.
 :::
 
-## The three-account setup
+## Open three accounts
 
 <figure class="sc-figure">
 <div class="sc-flow">
@@ -40,45 +41,49 @@ We don't recommend specific banks or apps here, and nobody pays us to mention on
 <div class="sc-flow__link"></div>
 <div class="sc-flow__node is-jade">Personal account<small>A regular "paycheck" to you</small></div>
 </div>
-<figcaption>Money moves one way: in, taxes out, then you <span class="sc-tag is-practitioner">Creator-tested</span></figcaption>
+<figcaption>Money moves one way: in, taxes out, then you</figcaption>
 </figure>
 
 - **Business checking:** brand payments, platform payouts and business costs. Nothing personal. This one habit makes taxes, bookkeeping and any LLC protection work.
 - **Tax savings:** move your [set-aside percentage](/money/set-aside/) here every time money lands. Pay the IRS from it, and don't touch it otherwise.
 - **Personal:** pay yourself a set amount on a schedule, like the 1st and 15th, instead of grabbing money when you need it. Leave a buffer in business checking for slow months.
 
-## Is your money actually protected?
+## Check your money is actually protected
 
 Many slick money apps aren't banks. They partner with a bank, sometimes through a middleman. FDIC deposit insurance pays out if an **insured bank** fails, not if the app or the middleman in between fails.
 
-That's not theoretical. When the fintech middleman Synapse collapsed in 2024, customers of apps built on it were locked out of their money, and a court-appointed trustee found up to **$96 million** of customer funds missing. NBC News reported that the FDIC made clear its insurance fund doesn't cover the failure of nonbanks like Synapse. <span class="sc-tag is-platform">Reporting</span>
+That's not theoretical. When the fintech middleman Synapse collapsed in 2024, customers of apps built on it were locked out of their money, and a court-appointed trustee found up to **$96 million** of customer funds missing. NBC News reported that the FDIC made clear its insurance fund doesn't cover the failure of nonbanks like Synapse.
 
 **Check before you park money anywhere:** which bank actually holds it, whether that bank is FDIC-insured (look it up on the FDIC's BankFind tool), and whether your money sits in an account in your name.
 
-## The 15-minute weekly routine
+## Do a 15-minute check every week
 
-<figure class="sc-figure">
-<ol class="sc-steps">
-<li class="is-active"><strong>Match money in</strong><span>Every deposit gets a label: which brand or platform, which deal.</span></li>
-<li><strong>Match money out</strong><span>Every business charge gets a category and a receipt photo.</span></li>
-<li><strong>Check invoices</strong><span>Who owes you, and who's late? See <a href="/deals/getting-paid/">Getting paid</a>.</span></li>
-<li><strong>Move the tax slice</strong><span>Anything you missed goes to tax savings now.</span></li>
-</ol>
-<figcaption>A spreadsheet works fine to start. Bookkeeping software earns its fee once you have lots of transactions or an S corp <span class="sc-tag is-practitioner">Creator-tested</span></figcaption>
-</figure>
+<QuickCheck
+  title="Weekly money check"
+  id="money-weekly"
+  items={[
+    { text: "Every deposit labeled", hint: "Which brand or platform, which deal." },
+    { text: "Every business charge categorized, receipt photo saved" },
+    { text: "Checked who owes you and who's late", hint: "See [Getting paid](/deals/getting-paid/)." },
+    { text: "Moved any missed tax slice to tax savings" },
+  ]}
+  done="Done for the week."
+/>
 
-**How long to keep records:** the IRS's general rule is **3 years** from filing. It's 6 years if you left out more than 25% of your gross income, 7 years for a bad-debt or worthless-securities deduction, and indefinitely if you never filed. Employment tax records (if you run payroll) need at least 4 years. Keep copies of every return. <span class="sc-tag is-platform">IRS</span>
+A spreadsheet works fine to start. Bookkeeping software earns its fee once you have lots of transactions or an S corp.
 
-## Credit: build it on purpose
+Keep records for at least three years after you file (details below).
+
+## Build credit on purpose
 
 - **Get an EIN** (free from the IRS) and use it on bank accounts and W-9s. It keeps your Social Security number off brand paperwork.
 - **A business credit card** for business costs only makes bookkeeping easier, and paying it in full builds a payment history. Most small-business cards still ask for a personal guarantee, so you're on the hook if the business can't pay.
 - **Careful with cash advances.** Creator-focused financing that pays you now for future earnings can carry fees that work out far higher than a loan's interest. Read the total cost, not the monthly number.
 - Lenders and landlords often ask self-employed people for **two years of tax returns** instead of pay stubs. Clean returns with realistic income help here, which is one reason not to stretch write-offs.
 
-<span class="sc-tag is-practitioner">Practitioner view</span>
 
-## Retirement: the big legal tax break
+
+## Use the big legal tax break: retirement
 
 When you're self-employed, there's no employer 401(k), but you can open your own. Money you put in can lower this year's taxable income (or grow tax-free later with a Roth version).
 
@@ -92,6 +97,12 @@ When you're self-employed, there's no employer 401(k), but you can open your own
 </figure>
 
 A **solo 401(k)** is for a business with no employees other than you (and a spouse). Once it holds $250,000 or more, you file a yearly Form 5500-EZ. Ask your CPA which plan fits before year-end, since deadlines differ.
+
+<DeepDive title="How long to keep records" hint="The IRS rules">
+
+**How long to keep records:** the IRS's general rule is **3 years** from filing. It's 6 years if you left out more than 25% of your gross income, 7 years for a bad-debt or worthless-securities deduction, and indefinitely if you never filed. Employment tax records (if you run payroll) need at least 4 years. Keep copies of every return.
+
+</DeepDive>
 
 <DeepDive title="Sources" hint="6 sources">
 <TaxSources bare ids={['records', 'ein', 'synapse', 'retire', 'n2567', 'solo401k']} />
