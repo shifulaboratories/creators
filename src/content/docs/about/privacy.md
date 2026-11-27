@@ -63,7 +63,8 @@ Fonts and images (apart from YouTube previews) are served from our own site, so 
 ## Contacting us and contributing
 
 - **GitHub:** issues, edits and pull requests are public, and your GitHub username is attached to them. [GitHub's privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) applies. Don't post personal information in an issue.
-- **Instagram messages:** if you message us on Instagram, we see what you send and your profile. We use it only to reply and to handle your request, and Instagram's own policies apply to the platform.
+- **Email:** if you write to [support@creators.select](mailto:support@creators.select), we see your email address and what you send. We use it only to reply and to handle your request, and we delete it when it's no longer needed for that.
+- **Instagram messages:** if you message us on Instagram, we see what you send and your profile, and Instagram's own policies apply to the platform.
 
 ## Links to other sites
 
@@ -75,7 +76,7 @@ This site is meant for a general audience and isn't directed at children under 1
 
 ## Your rights
 
-Because we don't run accounts, analytics or mailing lists, we don't hold a profile about you. If you've contacted us and want what you sent deleted, or you have a question about your data, message us on [Instagram (@selectcreators)](https://www.instagram.com/selectcreators/). Requests about data Cloudflare, YouTube or GitHub hold are best sent to them directly, through the links above.
+Because we don't run accounts, analytics or mailing lists, we don't hold a profile about you. If you've contacted us and want what you sent deleted, or you have a question about your data, email [support@creators.select](mailto:support@creators.select). Requests about data Cloudflare, YouTube or GitHub hold are best sent to them directly, through the links above.
 
 ## If this changes
 

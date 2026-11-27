@@ -66,7 +66,7 @@ Pages to review (draft text is in PR #6 on GitHub until it merges):
 - [ ] Who is the publisher of record? Currently no legal entity is named on the site. Advise whether to publish through an LLC, and whether the site needs Terms of Use (no Terms page exists yet).
 - [ ] Media liability or errors-and-omissions insurance: advise whether it's warranted before launching the Underground section.
 - [ ] Anti-SLAPP coverage: advise based on where the publisher is based.
-- [ ] Contact: the site only offers Instagram DMs and GitHub for contact. Advise whether a postal or email address is required for privacy, DMCA or legal notices.
+- [ ] Contact: the site offers support@creators.select, Instagram DMs and GitHub for contact. Advise whether a postal address is also required for privacy, DMCA or legal notices.
 
 ## 8. Decision for launch
 

@@ -13,9 +13,13 @@ sidebar:
 
 Deals, contracts, negotiation and team-building for creators, with the same standards you see on this site: clear terms, sourced advice, and no surprises about who gets paid what.
 
+## Who's behind it
+
+Select Creators was founded by **William Lee**. Find William on [LinkedIn](https://linkedin.com/in/bywilliaml), [Instagram (@bywilliaml)](https://www.instagram.com/bywilliaml/), [X (@bywilliaml)](https://x.com/bywilliaml) and at [bywilliaml.com](https://bywilliaml.com).
+
 ## How to reach us
 
-Message us on [Instagram (@selectcreators)](https://www.instagram.com/selectcreators/) and tell us a little about what you make and what you need help with.
+Email [support@creators.select](mailto:support@creators.select) or message [@selectcreators on Instagram](https://www.instagram.com/selectcreators/), and tell us a little about what you make and what you need help with.
 
 ## How this affects the handbook
 
