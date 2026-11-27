@@ -1,0 +1,168 @@
+---
+/** One tool's review card: verdict, plans with fees, the good, what to watch. Data: src/lib/reviews-data.ts. */
+import { reviewBySlug } from '../../lib/reviews-data';
+import './tools.css';
+interface Props {
+	slug: string;
+	compact?: boolean;
+}
+const { slug, compact = false } = Astro.props;
+const r = reviewBySlug(slug);
+const money = (n: number) => (n === 0 ? 'Free' : `$${n.toLocaleString('en-US')}/mo`);
+const fee = (p: (typeof r.plans)[number]) =>
+	Number.isNaN(p.feePct) ? 'Not published' : p.feePct === 0 && !p.feeFixed ? '0%' : `${Math.round(p.feePct * 100)}%${p.feeFixed ? ` + $${p.feeFixed.toFixed(2)}` : ''}`;
+const checked = new Date(r.checked + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const proc = r.processing.text.charAt(0).toLowerCase() + r.processing.text.slice(1);
+---
+
+<article class="rv not-content" data-section="reviews">
+	<header class="rv-head">
+		<div>
+			<h3>{r.name}</h3>
+			<p class="rv-what">{r.what}</p>
+		</div>
+		<a class="tw-btn" href={r.url} rel="noopener nofollow" target="_blank">Visit site ↗</a>
+	</header>
+	<p class="rv-verdict"><b>Our take:</b> {r.verdict}</p>
+	<div class="rv-scroll">
+		<table>
+			<thead><tr><th>Plan</th><th>Price</th><th>{r.kind === 'brand-deals' ? 'Fee from your pay' : `${r.name}’s cut of each sale`}</th></tr></thead>
+			<tbody>
+				{r.plans.map((p) => (
+					<tr>
+						<td>{p.name}{p.note && <small>{p.note}</small>}</td>
+						<td>{p.monthly === null ? <span class="rv-na">See site</span> : money(p.monthly)}{p.annual && <small>${p.annual.toLocaleString('en-US')}/yr billed yearly</small>}</td>
+						<td>{fee(p)}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+	<p class="rv-proc">Plus {proc}. {r.trial}.</p>
+	{!compact && (
+		<div class="rv-cols">
+			<div class="rv-good">
+				<h4>Good</h4>
+				<ul>{r.good.map((g) => <li>{g}</li>)}</ul>
+			</div>
+			<div class="rv-watch">
+				<h4>Watch out for</h4>
+				<ul>{r.watch.map((g) => <li>{g}</li>)}</ul>
+			</div>
+		</div>
+	)}
+	<p class="rv-src">
+		Checked {checked} against {r.sources.map((s, i) => <>{i > 0 && ', '}<a href={s.url} rel="noopener">{s.publisher}{s.date ? ` (${s.date})` : ''}</a></>)}.
+	</p>
+</article>
+
+<style>
+	.rv {
+		margin: 1.25rem 0;
+		padding: clamp(1rem, 3vw, 1.4rem);
+		border-radius: var(--sc-radius-lg, 24px);
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(80% 60% at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+			var(--sc-fill-subtle);
+	}
+	.rv-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+	.rv-head h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.6rem;
+		letter-spacing: -0.03em;
+		color: var(--sc-ivory);
+	}
+	.rv-what {
+		margin: 0.3rem 0 0;
+		color: var(--sc-silver);
+		font-size: 0.9rem;
+	}
+	.rv-head .tw-btn {
+		flex: none;
+		min-height: 2.4rem;
+		font-size: 0.82rem;
+	}
+	.rv-verdict {
+		margin: 1rem 0;
+		padding: 0.85rem 1rem;
+		border-radius: var(--sc-radius-md);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+		color: var(--sc-ivory);
+		line-height: 1.5;
+	}
+	.rv-scroll {
+		overflow-x: auto;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.88rem;
+	}
+	th,
+	td {
+		padding: 0.6rem 0.8rem;
+		border-bottom: 1px solid var(--sc-line);
+		text-align: left;
+		vertical-align: top;
+		color: var(--sc-platinum);
+	}
+	th {
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+		font-weight: 600;
+	}
+	tr:last-child td {
+		border-bottom: 0;
+	}
+	td small {
+		display: block;
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.rv-na {
+		color: var(--sc-steel);
+	}
+	.rv-proc,
+	.rv-src {
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+		margin: 0.6rem 0 0;
+	}
+	.rv-cols {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 0.8rem;
+		margin-top: 1rem;
+	}
+	.rv-cols h4 {
+		margin: 0 0 0.4rem;
+		font-size: 0.85rem;
+	}
+	.rv-good h4 {
+		color: var(--sc-jade);
+	}
+	.rv-watch h4 {
+		color: var(--sc-champagne);
+	}
+	.rv-cols ul {
+		margin: 0;
+		padding-left: 1.1rem;
+		display: grid;
+		gap: 0.4rem;
+		font-size: 0.88rem;
+		color: var(--sc-platinum);
+	}
+	.rv-cols li {
+		margin: 0;
+	}
+</style>

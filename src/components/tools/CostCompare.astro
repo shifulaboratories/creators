@@ -1,0 +1,128 @@
+---
+/**
+ * "Which is cheapest at my sales?" For each storefront, the cheapest published plan
+ * at the reader's monthly sales and order count: subscription + the tool's cut + processing.
+ */
+import { REVIEWS } from '../../lib/reviews-data';
+import './tools.css';
+interface Props {
+	slugs?: string[];
+}
+const { slugs } = Astro.props;
+const list = REVIEWS.filter((r) => r.kind === 'storefront' && (!slugs || slugs.includes(r.slug))).map((r) => ({
+	slug: r.slug,
+	name: r.name,
+	processing: r.processing,
+	plans: r.plans.filter((p) => p.monthly !== null && !Number.isNaN(p.feePct)),
+	unpriced: r.plans.some((p) => p.monthly === null),
+}));
+---
+
+<div class="sc-widget cmp not-content" data-section="reviews" data-cmp data-list={JSON.stringify(list)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Fee check</div>
+			<h4 class="sc-widget__title">What each one costs at your sales</h4>
+		</div>
+	</div>
+	<div class="tw-grid">
+		<label class="tw-field"><span>Sales a month ($)</span><input inputmode="numeric" data-in="sales" value="1,000" /></label>
+		<label class="tw-field"><span>Orders a month</span><input inputmode="numeric" data-in="orders" value="40" /><small>Average price: <b data-out="avg"></b></small></label>
+	</div>
+	<ol class="cmp-list" data-rows aria-live="polite"></ol>
+	<p class="sc-widget__note">For each tool, the cheapest plan at these numbers: monthly price + the tool’s cut of each sale + card processing (Stripe’s US rate of 2.9% + $0.30 where the tool passes it on). Monthly billing; yearly plans are cheaper. Taxes, payout fees and international cards are left out. Prices come from each tool’s own pages, linked in the reviews.</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	type P = { name: string; monthly: number; feePct: number; feeFixed?: number };
+	type T = { slug: string; name: string; processing: { pct: number; fixed: number }; plans: P[]; unpriced: boolean };
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+	document.querySelectorAll<HTMLElement>('[data-cmp]').forEach((root) => {
+		const list: T[] = JSON.parse(root.dataset.list!);
+		const ins = [...root.querySelectorAll<HTMLInputElement>('[data-in]')];
+		const v = (k: string) => num(ins.find((i) => i.dataset.in === k)!.value);
+		const render = () => {
+			const sales = v('sales');
+			const orders = v('orders');
+			root.querySelector('[data-out="avg"]')!.textContent = orders ? '$' + (sales / orders).toFixed(2) : '–';
+			const rows = list
+				.map((t) => {
+					const opts = t.plans.map((p) => ({ p, cost: p.monthly + sales * p.feePct + orders * (p.feeFixed ?? 0) + sales * t.processing.pct + orders * t.processing.fixed }));
+					const best = opts.sort((a, b) => a.cost - b.cost)[0];
+					return { t, best };
+				})
+				.filter((x) => x.best)
+				.sort((a, b) => a.best.cost - b.best.cost);
+			const max = Math.max(...rows.map((r) => r.best.cost), 1);
+			root.querySelector('[data-rows]')!.innerHTML = rows
+				.map(
+					({ t, best }, i) => `<li${i === 0 ? ' class="is-best"' : ''}>
+						<div class="cmp-row"><span class="cmp-name">${t.name}<small>${best.p.name}${t.unpriced ? ' · paid plan prices: see site' : ''}</small></span><span class="cmp-cost"><b>${usd(best.cost)}</b><small>you keep ${usd(Math.max(0, sales - best.cost))}</small></span></div>
+						<div class="tw-meter"><i style="width:${(best.cost / max) * 100}%"></i></div>
+					</li>`,
+				)
+				.join('') +
+				list
+					.filter((t) => !t.plans.length)
+					.map((t) => `<li class="is-na"><div class="cmp-row"><span class="cmp-name">${t.name}<small>Plan prices aren’t published in its help center</small></span><span class="cmp-cost"><b>See site</b></span></div></li>`)
+					.join('');
+		};
+		ins.forEach((i) => {
+			i.addEventListener('input', render);
+			i.addEventListener('blur', () => (i.value = num(i.value).toLocaleString('en-US')));
+		});
+		render();
+	});
+</script>
+
+<style>
+	.cmp-list {
+		list-style: none;
+		padding: 0;
+		margin: 1.1rem 0 0;
+		display: grid;
+		gap: 0.8rem;
+	}
+	.cmp-list :global(li) {
+		margin: 0;
+		padding: 0.75rem 0.9rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+	}
+	.cmp-list :global(li.is-best) {
+		border-color: color-mix(in srgb, var(--sc-jade) 45%, transparent);
+		background: color-mix(in srgb, var(--sc-jade) 7%, transparent);
+	}
+	.cmp-list :global(li.is-na) {
+		border-style: dashed;
+	}
+	.cmp-list :global(.cmp-row) {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.8rem;
+	}
+	.cmp-list :global(.cmp-name) {
+		font-weight: 650;
+		color: var(--sc-ivory);
+	}
+	.cmp-list :global(small) {
+		display: block;
+		font-weight: 400;
+		font-size: 0.74rem;
+		color: var(--sc-steel);
+	}
+	.cmp-list :global(.cmp-cost) {
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+	.cmp-list :global(.cmp-cost b) {
+		color: var(--sc-ivory);
+		font-size: 1.05rem;
+	}
+	.cmp-list :global(.tw-meter) {
+		height: 0.4rem;
+		margin-top: 0.5rem;
+	}
+</style>

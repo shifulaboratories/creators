@@ -1,0 +1,43 @@
+---
+title: "Creator tool reviews: Stan, Beacons, Linktree, Gumroad and more"
+description: "Independent reviews of creator tools with their real fees: Stan Store, Beacons, Linktree, Gumroad, Passionfroot and Collabstr. No affiliate links, nobody paid for placement."
+payoff: "Real prices and fees for the tools creators sell with, and which is cheapest at your sales."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+noAffiliates: true
+cover:
+  label: "Reviews"
+sidebar:
+  order: 0
+  label: "All reviews"
+faq:
+  - q: "What is the cheapest link-in-bio store?"
+    a: "It depends on your sales. Under about $320 a month, a free plan with a percentage fee (Beacons Free, 9%) usually costs least. Above that, a flat plan with 0% fees (Stan at $29, Beacons Creator Plus at $30) wins. The calculator on this page works it out at your numbers."
+  - q: "Are these reviews sponsored?"
+    a: "No. There are no affiliate links and no tool paid to be included or ranked. Every price comes from the tool’s own pricing page or help center, linked on each review."
+  - q: "How often are prices checked?"
+    a: "Each review shows the date its prices were last checked against the tool’s own pages. If you spot a change, open an issue on GitHub and we’ll update it."
+---
+
+import Review from '../../../components/tools/Review.astro';
+import CostCompare from '../../../components/tools/CostCompare.astro';
+import ReviewList from '../../../components/tools/ReviewList.astro';
+import Faq from '../../../components/tools/Faq.astro';
+
+Most “best link in bio” lists are paid placements or affiliate pages. These aren’t. We read each tool’s own pricing page and help center, wrote down what it charges, and worked out what it costs at real sales. Where a tool doesn’t publish a number, we say so instead of guessing.
+
+## Which is cheapest at your sales?
+
+<CostCompare />
+
+<ReviewList />
+
+## How we review
+
+- **Prices from the source.** Every plan price and fee comes from the tool’s own pricing page or help center, linked on the card with the date we checked.
+- **Total cost, not sticker price.** We add the plan, the tool’s cut of each sale and card processing, because that’s what leaves your account.
+- **No affiliate links, no paid placement.** Nobody paid to be here, and the order comes from the math.
+- **Open to correction.** The data lives in one file on [GitHub](https://github.com/shifulaboratories/creators/blob/main/src/lib/reviews-data.ts). If a price changes, [open an issue](https://github.com/shifulaboratories/creators/issues).
+
+<Faq />

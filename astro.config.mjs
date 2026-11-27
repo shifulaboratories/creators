@@ -116,6 +116,7 @@ export default defineConfig({
 				section('money'),
 				section('tools'),
 				section('rates'),
+				section('reviews'),
 				section('team'),
 				section('stack'),
 				section('protect'),

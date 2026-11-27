@@ -31,6 +31,7 @@
 /* Free tools: the warm champagne of the brand's aurora gradient. */
 [data-section='tools'] { --accent: var(--sc-champagne); }
 [data-section='rates'] { --accent: var(--sc-amethyst); }
+[data-section='reviews'] { --accent: var(--sc-cyan); }
 
 :root {
 	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */

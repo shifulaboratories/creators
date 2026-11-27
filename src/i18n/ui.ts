@@ -28,6 +28,7 @@ const en = {
 		glossary: 'Glossary',
 		tools: 'Free tools',
 		rates: 'Creator rates',
+		reviews: 'Tool reviews',
 		guides: 'All guides',
 	} as Record<string, string>,
 	page: {
@@ -203,6 +204,7 @@ const es: UI = {
 		glossary: 'Glosario',
 		tools: 'Herramientas gratis',
 		rates: 'Tarifas de creadores',
+		reviews: 'Reseñas de herramientas',
 		guides: 'Todas las guías',
 	},
 	page: {
@@ -270,6 +272,7 @@ const es: UI = {
 		english: 'EN',
 		topicText: {
 			rates: ['Tarifas de creadores', 'Lo que cobran los creadores, por plataforma y seguidores'],
+			reviews: ['Reseñas de herramientas', 'Stan, Beacons, Linktree y más, con sus comisiones reales'],
 			tools: ['Herramientas gratis', 'Media kit, factura y calculadoras de tarifas, engagement e impuestos'],
 			algorithms: ['Cómo funcionan los algoritmos', 'Qué premian los feeds, según la investigación de las propias plataformas'],
 			grow: ['Crecer', 'Nicho, hooks, formatos, frecuencia y analíticas'],
@@ -375,6 +378,7 @@ const pt: UI = {
 		glossary: 'Glossário',
 		tools: 'Ferramentas grátis',
 		rates: 'Preços de criadores',
+		reviews: 'Análises de ferramentas',
 		guides: 'Todos os guias',
 	},
 	page: {
@@ -442,6 +446,7 @@ const pt: UI = {
 		english: 'EN',
 		topicText: {
 			rates: ['Preços de criadores', 'Quanto os criadores cobram, por plataforma e seguidores'],
+			reviews: ['Análises de ferramentas', 'Stan, Beacons, Linktree e mais, com as taxas reais'],
 			tools: ['Ferramentas grátis', 'Mídia kit, fatura e calculadoras de preço, engajamento e impostos'],
 			algorithms: ['Como os algoritmos funcionam', 'O que os feeds premiam, segundo as pesquisas das próprias plataformas'],
 			grow: ['Crescer', 'Nicho, hooks, formatos, frequência e métricas'],
