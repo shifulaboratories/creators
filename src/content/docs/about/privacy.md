@@ -7,7 +7,7 @@ sidebar:
   order: 7
 ---
 
-**The short version:** no accounts, no ads, no tracking pixels, no analytics scripts, and we don't sell or share data about you. The only things that touch your data are the company that hosts the site, YouTube when a page shows videos, and services you choose to click through to. Here's the full list.
+**The short version:** no accounts, no ads, no tracking pixels, no analytics scripts, and we don't sell or share data about you. The only things that touch your data are the company that hosts the site, YouTube when a page shows videos, the anonymous rate you share on Rate Check if you choose to, and services you choose to click through to. Here's the full list.
 
 <figure class="sc-figure">
 <div class="sc-compare">
@@ -27,6 +27,7 @@ sidebar:
 <li>Our host processes basic request data to serve the site</li>
 <li>Video thumbnails load from YouTube</li>
 <li>Videos play from YouTube when you tap them</li>
+<li>Rate Check stores a rate only if you choose to share one, with no name, handle or IP</li>
 <li>Ask AI buttons open the AI site you pick</li>
 <li>Saved guides and checkmarks stay in your own browser</li>
 </ul>
@@ -60,6 +61,18 @@ When you tap **Save** on a guide or **Mark as done** at the end of one, the site
 The [free tools](/tools/) run entirely in your browser. What you type into them, including an invoice's payment details or a photo you add to a media kit, is never uploaded. The media kit builder and invoice generator keep your latest draft in your browser's storage on that device so you don't lose it; **Start over** or **Clear** deletes it, as does clearing this site's data. **Save as PDF** uses your browser's own print dialog.
 
 A media kit **share link** carries the kit itself, compressed, after the `#` in the address. Browsers don't send that part of a link to any server, so we never receive it, but anyone you give the link to can read the kit. Your photo is never included in a link.
+
+## Rate Check: sharing a rate
+
+[Rate Check](/rate-check/) lets you share what a brand paid you, anonymously, so other creators can see real ranges. It's the one place on this site where something you type is sent to us, and only when you tap **Share my rate**.
+
+- **What we store:** the platform, format, your follower count, the rate, whether usage rights were included, and, if you pick them, your niche and region. We also record the month you shared it, not the exact date or time.
+- **What we don't store:** your name, handle, email, brand name or IP address. There's no account and no cookie of ours.
+- **Bot check:** the form uses [Cloudflare Turnstile](https://www.cloudflare.com/privacypolicy/), which checks your browser for signs of automation and doesn't use cookies to track you. To stop spam, Cloudflare also counts recent submissions from your connection for about a minute; that count isn't saved.
+- **What others see:** only the 25th percentile, median and 75th percentile for a group, rounded, and only once that group has at least 5 rates, so no single deal can be picked out.
+- **Deleting a rate:** because we don't know who shared what, we can't find your rate later. Email [support@creators.select](mailto:support@creators.select) with the details and the month, and we'll remove matching rows.
+
+The data is stored in Cloudflare D1, Cloudflare's database, under our account.
 
 ## Ask AI buttons
 
