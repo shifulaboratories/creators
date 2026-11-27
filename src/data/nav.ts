@@ -43,6 +43,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'Paywall', href: '/paywall/', text: 'Fanfix, OnlyFans, Patreon, Fanvue' },
 			{ label: 'Every income stream', href: '/earn/', text: 'Affiliate, payouts, products' },
 			{ label: 'Price your rates', href: '/deals/pricing/', text: 'Check a quote against benchmarks' },
+			{ label: 'Free media kit builder', href: '/tools/media-kit-builder/', text: 'One page, PDF or link, no signup' },
 		],
 	},
 	{

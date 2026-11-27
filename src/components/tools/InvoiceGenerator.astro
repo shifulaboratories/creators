@@ -1,0 +1,482 @@
+---
+/**
+ * Invoice generator for brand deals. Everything stays in the browser: the draft
+ * is saved on this device, and "Save as PDF" uses the browser's own print dialog.
+ */
+import './tools.css';
+---
+
+<div class="iv not-content" data-section="earn" data-iv>
+	<div class="mk-tabs iv-tabs" role="tablist" aria-label="Invoice" data-tabs>
+		<button type="button" role="tab" aria-selected="true" data-tab="edit">Edit</button>
+		<button type="button" role="tab" aria-selected="false" data-tab="preview">Preview</button>
+	</div>
+	<div class="iv-layout">
+		<form class="iv-form" data-form autocomplete="off" onsubmit="return false">
+			<fieldset>
+				<legend>Invoice</legend>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Invoice number</span><input data-k="number" maxlength="24" /></label>
+					<label class="tw-field"><span>Date</span><input data-k="date" type="date" /></label>
+					<label class="tw-field"><span>Payment terms</span>
+						<select data-k="terms">
+							<option value="0">Due on receipt</option>
+							<option value="15">Net 15</option>
+							<option value="30">Net 30</option>
+							<option value="45">Net 45</option>
+							<option value="60">Net 60</option>
+						</select>
+					</label>
+					<label class="tw-field"><span>Currency</span>
+						<select data-k="currency"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option><option>AUD</option></select>
+					</label>
+				</div>
+				<label class="tw-field"><span>Campaign or PO number</span><input data-k="po" maxlength="60" placeholder="Brands’ finance teams often need this to pay you" /></label>
+			</fieldset>
+			<fieldset>
+				<legend>From</legend>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Your name or business</span><input data-k="fromName" maxlength="80" /></label>
+					<label class="tw-field"><span>Email</span><input data-k="fromEmail" type="email" maxlength="80" /></label>
+				</div>
+				<label class="tw-field"><span>Address</span><textarea data-k="fromAddr" rows="2" maxlength="200"></textarea></label>
+			</fieldset>
+			<fieldset>
+				<legend>Bill to</legend>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Brand or agency</span><input data-k="toName" maxlength="80" /></label>
+					<label class="tw-field"><span>Contact</span><input data-k="toContact" maxlength="80" /></label>
+					<label class="tw-field"><span>Billing email</span><input data-k="toEmail" type="email" maxlength="80" /></label>
+				</div>
+				<label class="tw-field"><span>Address</span><textarea data-k="toAddr" rows="2" maxlength="200"></textarea></label>
+			</fieldset>
+			<fieldset>
+				<legend>What you delivered</legend>
+				<div class="iv-items" data-items></div>
+				<button type="button" class="tw-btn" data-add>Add a line</button>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Tax (%)</span><input data-k="tax" inputmode="decimal" maxlength="6" placeholder="0" /><small>Most US creators don’t charge sales tax on content. Ask your accountant.</small></label>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend>Getting paid</legend>
+				<label class="tw-field"><span>How to pay you</span><textarea data-k="pay" rows="3" maxlength="300" placeholder="Bank transfer (ACH): account and routing number&#10;PayPal: you@example.com"></textarea><small>Only goes on the PDF you save. It never leaves this device.</small></label>
+				<label class="tw-field"><span>Notes</span><textarea data-k="notes" rows="2" maxlength="300"></textarea></label>
+			</fieldset>
+		</form>
+		<div class="iv-side">
+			<div class="mk-sticky iv-sticky">
+				<div class="iv-sheet" data-sheet></div>
+				<div class="tw-actions iv-actions">
+					<button type="button" class="tw-btn is-primary" data-print>Save as PDF</button>
+					<button type="button" class="tw-btn" data-next>Start the next invoice</button>
+					<button type="button" class="tw-btn" data-reset>Clear</button>
+				</div>
+				<p class="mk-status" aria-live="polite" data-status></p>
+				<p class="tw-privacy">Saved on this device only, including your payment details. Nothing is uploaded.</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	import { printSheet } from './print';
+	type Item = { d: string; q: string; r: string };
+	type Inv = Record<string, string> & { items?: never };
+	const KEY = 'sc-invoice';
+	const today = () => new Date().toISOString().slice(0, 10);
+	const blank = (): { f: Record<string, string>; items: Item[] } => ({
+		f: { number: 'INV-001', date: today(), terms: '30', currency: 'USD', po: '', fromName: '', fromEmail: '', fromAddr: '', toName: '', toContact: '', toEmail: '', toAddr: '', tax: '', pay: '', notes: 'Thank you! Payment is due within the terms above.' },
+		items: [
+			{ d: '1 Instagram Reel, approved by brand', q: '1', r: '1500' },
+			{ d: '3 Instagram Stories with link sticker', q: '1', r: '450' },
+			{ d: '30 days of organic usage rights', q: '1', r: '525' },
+		],
+	});
+	const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+	const nl = (s: string) => esc(s).replace(/\n/g, '<br>');
+	const num = (s: string) => Number(String(s).replace(/[^0-9.\-]/g, '')) || 0;
+	const store = {
+		get: () => { try { return localStorage.getItem(KEY); } catch { return null; } },
+		set: (v: string) => { try { localStorage.setItem(KEY, v); } catch { /* private mode */ } },
+	};
+	const bump = (n: string) => n.replace(/(\d+)(?!.*\d)/, (m) => String(+m + 1).padStart(m.length, '0')) || n + '-2';
+
+	document.querySelectorAll<HTMLElement>('[data-iv]').forEach((root) => {
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		let st = blank();
+		try {
+			const saved = store.get();
+			if (saved) st = { ...blank(), ...JSON.parse(saved) };
+		} catch { /* ignore */ }
+		const say = (t: string) => {
+			$('[data-status]').textContent = t;
+			setTimeout(() => ($('[data-status]').textContent = ''), 2600);
+		};
+		const fmt = () => {
+			try {
+				return new Intl.NumberFormat('en-US', { style: 'currency', currency: st.f.currency || 'USD' });
+			} catch {
+				return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+			}
+		};
+		const fill = () => {
+			root.querySelectorAll<HTMLInputElement>('[data-k]').forEach((el) => (el.value = st.f[el.dataset.k!] ?? ''));
+			$('[data-items]').innerHTML = st.items
+				.map(
+					(it, i) => `<div class="mk-row iv-row" data-i="${i}">
+					<label class="tw-field iv-desc"><span>Description</span><input data-ik="d" maxlength="120" value="${esc(it.d)}" /></label>
+					<label class="tw-field"><span>Qty</span><input data-ik="q" inputmode="decimal" maxlength="6" value="${esc(it.q)}" /></label>
+					<label class="tw-field"><span>Rate</span><input data-ik="r" inputmode="decimal" maxlength="10" value="${esc(it.r)}" /></label>
+					<button type="button" class="mk-x" data-del="${i}" aria-label="Remove line">×</button>
+				</div>`,
+				)
+				.join('');
+		};
+		const draw = () => {
+			const f = st.f;
+			const money = fmt();
+			const sub = st.items.reduce((a, it) => a + num(it.q) * num(it.r), 0);
+			const tax = (sub * num(f.tax)) / 100;
+			const issued = f.date ? new Date(f.date + 'T12:00:00') : new Date();
+			const due = new Date(issued.getTime() + num(f.terms) * 864e5);
+			const d = (x: Date) => x.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+			const termsLabel = num(f.terms) ? `Net ${num(f.terms)}` : 'Due on receipt';
+			$('[data-sheet]').innerHTML = `
+				<header class="i-head">
+					<div><h2>Invoice</h2><p class="i-num">${esc(f.number)}</p></div>
+					<div class="i-from"><b>${esc(f.fromName || 'Your name')}</b>${f.fromEmail ? `<span>${esc(f.fromEmail)}</span>` : ''}${f.fromAddr ? `<span>${nl(f.fromAddr)}</span>` : ''}</div>
+				</header>
+				<div class="i-meta">
+					<div><span>Bill to</span><b>${esc(f.toName || 'Brand name')}</b>${f.toContact ? `<em>${esc(f.toContact)}</em>` : ''}${f.toEmail ? `<em>${esc(f.toEmail)}</em>` : ''}${f.toAddr ? `<em>${nl(f.toAddr)}</em>` : ''}</div>
+					<div><span>Issued</span><b>${d(issued)}</b><span>Due</span><b>${d(due)}</b><em>${termsLabel}</em></div>
+					${f.po ? `<div><span>Campaign / PO</span><b>${esc(f.po)}</b></div>` : ''}
+				</div>
+				<table class="i-table">
+					<thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+					<tbody>${st.items
+						.filter((it) => it.d || num(it.r))
+						.map((it) => `<tr><td>${esc(it.d)}</td><td>${num(it.q)}</td><td>${money.format(num(it.r))}</td><td>${money.format(num(it.q) * num(it.r))}</td></tr>`)
+						.join('')}</tbody>
+				</table>
+				<div class="i-totals">
+					<div><span>Subtotal</span><b>${money.format(sub)}</b></div>
+					${num(f.tax) ? `<div><span>Tax (${num(f.tax)}%)</span><b>${money.format(tax)}</b></div>` : ''}
+					<div class="i-due"><span>Amount due</span><b>${money.format(sub + tax)}</b></div>
+				</div>
+				${f.pay ? `<section class="i-sec"><h3>How to pay</h3><p>${nl(f.pay)}</p></section>` : ''}
+				${f.notes ? `<section class="i-sec"><h3>Notes</h3><p>${nl(f.notes)}</p></section>` : ''}`;
+			store.set(JSON.stringify(st));
+		};
+		root.querySelector('[data-form]')!.addEventListener('input', (e) => {
+			const el = e.target as HTMLInputElement;
+			if (el.dataset.k) st.f[el.dataset.k] = el.value;
+			const row = el.closest<HTMLElement>('.iv-row');
+			if (row && el.dataset.ik) (st.items[+row.dataset.i!] as any)[el.dataset.ik] = el.value;
+			draw();
+		});
+		root.querySelector('[data-form]')!.addEventListener('change', draw);
+		const setTab = (tab: string) => {
+			root.dataset.tab = tab;
+			root.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String((b as HTMLElement).dataset.tab === tab)));
+		};
+		root.addEventListener('click', (e) => {
+			const t = (e.target as HTMLElement).closest<HTMLElement>('button');
+			if (!t) return;
+			if (t.dataset.del) { st.items.splice(+t.dataset.del, 1); fill(); draw(); }
+			else if (t.matches('[data-add]')) {
+				if (st.items.length >= 15) return say('Fifteen lines is the most one invoice holds here.');
+				st.items.push({ d: '', q: '1', r: '' }); fill(); draw();
+			} else if (t.dataset.tab) setTab(t.dataset.tab);
+			else if (t.matches('[data-print]')) {
+				setTab('preview');
+				printSheet($('[data-sheet]'), 'iv-printing');
+			} else if (t.matches('[data-next]')) {
+				st.f.number = bump(st.f.number || 'INV-001');
+				st.f.date = today();
+				st.f.toName = st.f.toContact = st.f.toEmail = st.f.toAddr = st.f.po = '';
+				st.items = [{ d: '', q: '1', r: '' }];
+				fill(); draw(); setTab('edit');
+				say(`Ready for ${st.f.number}. Your details and payment info are kept.`);
+			} else if (t.matches('[data-reset]')) {
+				st = blank();
+				for (const k of Object.keys(st.f)) if (!['number', 'date', 'terms', 'currency'].includes(k)) st.f[k] = '';
+				st.items = [{ d: '', q: '1', r: '' }];
+				fill(); draw();
+			}
+		});
+		
+		fill();
+		draw();
+		setTab('edit');
+	});
+</script>
+
+<style>
+	.iv {
+		margin-top: 1.5rem;
+	}
+	.iv-tabs {
+		display: none;
+		position: sticky;
+		top: calc(var(--sl-nav-height, 3.5rem) + 0.5rem);
+		z-index: 5;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		margin-bottom: 1rem;
+		border-radius: 99px;
+		background: color-mix(in srgb, var(--sc-obsidian) 85%, transparent);
+		backdrop-filter: blur(12px);
+		border: 1px solid var(--sc-line-strong);
+	}
+	.iv-tabs button {
+		flex: 1;
+		min-height: 2.6rem;
+		border: 0;
+		border-radius: 99px;
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.iv-tabs button[aria-selected='true'] {
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+	}
+	.iv-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+	.iv-form {
+		display: grid;
+		gap: 1rem;
+	}
+	.iv-form fieldset {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 1rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		background: var(--sc-fill-subtle);
+	}
+	.iv-form legend {
+		padding: 0 0.35rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.iv-items {
+		display: grid;
+		gap: 0.6rem;
+	}
+	.iv-items :global(.iv-row) {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 4.5rem 6.5rem;
+		gap: 0.5rem;
+		padding: 0.75rem 2.4rem 0.75rem 0.75rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line);
+	}
+	.iv-items :global(.mk-x) {
+		position: absolute;
+		top: 0.4rem;
+		right: 0.4rem;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-silver);
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+	.iv-sticky {
+		position: sticky;
+		top: calc(var(--sl-nav-height, 3.5rem) + 1rem);
+	}
+	.mk-status {
+		min-height: 1.2em;
+		margin: 0.5rem 0 0;
+		font-size: 0.8rem;
+		color: var(--sc-jade);
+	}
+	/* The invoice: always on white paper, like the PDF. */
+	.iv-sheet {
+		--ink: #141215;
+		--ink-2: #5d5a60;
+		--rule: #e7e3dd;
+		padding: clamp(1.2rem, 4vw, 2.2rem);
+		border-radius: 18px;
+		background: #fcfbf8;
+		color: var(--ink);
+		font-family: var(--sc-font-sans);
+		font-size: 0.88rem;
+		line-height: 1.45;
+		display: grid;
+		gap: 1.3rem;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+	.iv-sheet :global(.i-head) {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		align-items: flex-start;
+		flex-wrap: wrap;
+	}
+	.iv-sheet :global(h2) {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 2rem;
+		letter-spacing: -0.04em;
+		color: var(--ink);
+		line-height: 1;
+	}
+	.iv-sheet :global(.i-num) {
+		margin: 0.3rem 0 0;
+		color: var(--ink-2);
+	}
+	.iv-sheet :global(.i-from) {
+		display: grid;
+		text-align: right;
+		color: var(--ink-2);
+	}
+	.iv-sheet :global(.i-from b) {
+		color: var(--ink);
+	}
+	.iv-sheet :global(.i-meta) {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+		gap: 1rem;
+		padding: 0.9rem 0;
+		border-block: 1px solid var(--rule);
+	}
+	.iv-sheet :global(.i-meta > div) {
+		display: grid;
+		align-content: start;
+	}
+	.iv-sheet :global(.i-meta span),
+	.iv-sheet :global(.i-sec h3) {
+		font-size: 0.68rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		font-weight: 600;
+		margin: 0.35rem 0 0.1rem;
+	}
+	.iv-sheet :global(.i-meta span:first-child) {
+		margin-top: 0;
+	}
+	.iv-sheet :global(.i-meta b) {
+		color: var(--ink);
+	}
+	.iv-sheet :global(.i-meta em) {
+		font-style: normal;
+		color: var(--ink-2);
+	}
+	.iv-sheet :global(.i-table) {
+		width: 100%;
+		border-collapse: collapse;
+		display: table;
+		margin: 0;
+	}
+	.iv-sheet :global(.i-table th),
+	.iv-sheet :global(.i-table td) {
+		padding: 0.55rem 0.4rem;
+		border: 0;
+		border-bottom: 1px solid var(--rule);
+		text-align: right;
+		background: none;
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+	.iv-sheet :global(.i-table th) {
+		font-size: 0.68rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		font-weight: 600;
+	}
+	.iv-sheet :global(.i-table th:first-child),
+	.iv-sheet :global(.i-table td:first-child) {
+		text-align: left;
+		padding-left: 0;
+	}
+	.iv-sheet :global(.i-table td:last-child),
+	.iv-sheet :global(.i-table th:last-child) {
+		padding-right: 0;
+	}
+	.iv-sheet :global(.i-totals) {
+		display: grid;
+		justify-content: end;
+		gap: 0.3rem;
+		min-width: 14rem;
+		margin-left: auto;
+	}
+	.iv-sheet :global(.i-totals div) {
+		display: flex;
+		justify-content: space-between;
+		gap: 2rem;
+		color: var(--ink-2);
+	}
+	.iv-sheet :global(.i-totals b) {
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+	.iv-sheet :global(.i-due) {
+		margin-top: 0.3rem;
+		padding-top: 0.5rem;
+		border-top: 2px solid var(--ink);
+		font-size: 1.05rem;
+	}
+	.iv-sheet :global(.i-due span) {
+		color: var(--ink);
+		font-weight: 600;
+	}
+	.iv-sheet :global(.i-sec p) {
+		margin: 0;
+		color: var(--ink);
+	}
+	@media (max-width: 52rem) {
+		.iv-tabs {
+			display: flex;
+		}
+		.iv-layout {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.iv[data-tab='edit'] .iv-side,
+		.iv[data-tab='preview'] .iv-form {
+			display: none;
+		}
+		.iv-sticky {
+			position: static;
+		}
+		.iv-items :global(.iv-row) {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
+		.iv-items :global(.iv-desc) {
+			grid-column: 1 / -1;
+		}
+	}
+	@media print {
+		@page {
+			size: letter;
+			margin: 0;
+		}
+		:global(#sc-print-root) .iv-sheet {
+			width: 8.5in;
+			min-height: 11in;
+			box-sizing: border-box;
+			border-radius: 0;
+			padding: 0.7in;
+			background: #fff;
+			font-size: 12px;
+			align-content: start;
+		}
+	}
+</style>

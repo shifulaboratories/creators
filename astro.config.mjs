@@ -62,6 +62,7 @@ export default defineConfig({
 				section('Paywall platforms', 'paywall'),
 				section('Brand deals', 'deals'),
 				section('Money basics', 'money'),
+				section('Free tools', 'tools'),
 				section('Team', 'team'),
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),

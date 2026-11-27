@@ -8,6 +8,7 @@ import { SITE_NAME } from './site.mjs';
 import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
 import { personName, CONTRIBUTORS_PATH } from './data/people';
 import { NEWS_PLATFORM_INFO } from './lib/news';
+import { toolBySlug } from './lib/free-tools';
 
 export const onRequest = defineRouteMiddleware((context) => {
 	const route = context.locals.starlightRoute;
@@ -41,6 +42,7 @@ export const onRequest = defineRouteMiddleware((context) => {
 		lastReviewed?: Date;
 		status?: string;
 		news?: { platform: string; announced: Date; published: Date; updated?: Date };
+		faq?: { q: string; a: string }[];
 	};
 	const news = data.news;
 	if (id.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: SECTION_LABELS[section], url: `${SITE_ORIGIN}/${section}/` });
@@ -62,7 +64,7 @@ export const onRequest = defineRouteMiddleware((context) => {
 	// Per-platform news pages (news/instagram) are collections too.
 	const isCollection = id === 'guides' || (!id.includes('/') && id !== 'index') || (section === 'news' && id.split('/').length === 2 && !news);
 	const modified = news ? (news.updated ?? news.published) : (route.lastUpdated ?? data.lastReviewed);
-	const graph = [
+	const graph: Record<string, unknown>[] = [
 		{
 			'@type': news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
 			...(news ? { datePublished: news.published.toISOString(), articleSection: NEWS_PLATFORM_INFO[news.platform]?.name, about: { '@type': 'Organization', name: NEWS_PLATFORM_INFO[news.platform]?.name } } : {}),
@@ -92,6 +94,30 @@ export const onRequest = defineRouteMiddleware((context) => {
 			sameAs: ['https://www.instagram.com/selectcreators/', 'https://github.com/shifulaboratories/creators'],
 		},
 	];
+	// Free tools are web apps: free, no signup, in the browser. Search engines show
+	// these as tools, and the FAQ answers the questions people type.
+	const tool = section === 'tools' ? toolBySlug(id.split('/')[1] ?? '') : undefined;
+	if (tool) {
+		graph.push({
+			'@type': 'WebApplication',
+			name: tool.name,
+			description: entry.data.description,
+			url,
+			image,
+			applicationCategory: 'BusinessApplication',
+			operatingSystem: 'Any (runs in the browser)',
+			browserRequirements: 'Requires JavaScript',
+			isAccessibleForFree: true,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+			publisher: { '@id': `${SITE_ORIGIN}/#org` },
+		});
+	}
+	if (data.faq?.length) {
+		graph.push({
+			'@type': 'FAQPage',
+			mainEntity: data.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+		});
+	}
 	head.push({
 		tag: 'script',
 		attrs: { type: 'application/ld+json' },

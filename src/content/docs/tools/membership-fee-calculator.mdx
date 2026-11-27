@@ -1,0 +1,41 @@
+---
+title: "Membership fee calculator: Patreon, YouTube, Instagram and more"
+description: "Compare what you keep from each paying member on Patreon, YouTube channel memberships, Instagram subscriptions, Substack and Ghost, after platform and payment fees."
+payoff: "See what each paying member is really worth to you on every platform."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+cover:
+  label: "Memberships"
+sidebar:
+  order: 5
+  label: "Membership fee calculator"
+faq:
+  - q: "How much does Patreon take?"
+    a: "Patreon’s plans and payment processing fees are listed on its own pricing page, and the calculator above applies the current figures. Payment processing is charged on top of the platform fee."
+  - q: "Which membership platform has the lowest fees?"
+    a: "It depends on your price and audience. Self-hosted options such as Ghost charge little or nothing per member but you pay for hosting. Built-in options on YouTube or Instagram take a bigger cut but your fans are already there."
+---
+
+import KeepCalculator from '../../../components/money/KeepCalculator.astro';
+import Sources from '../../../components/money/Sources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** set your price and number of members. Every platform’s published fee is applied, including payment processing where it’s charged on top, so you can compare like for like.
+
+<KeepCalculator />
+
+## Before you pick a platform
+
+- **Fees aren’t the whole story.** A platform with a bigger cut but your audience already on it can earn more than a cheaper one nobody visits.
+- **Check who owns the list.** On some platforms you can export your members’ emails. On others, they belong to the app.
+- **App store prices are different.** When fans pay inside an iPhone or Android app, Apple or Google can take a cut before the platform does.
+
+The full comparison is in [Paywalls and memberships](/earn/paywalls-and-memberships/).
+
+<Sources ids={['youtube', 'patreon', 'substack', 'ghost']} />
+
+<Faq />
+
+<MoreTools />

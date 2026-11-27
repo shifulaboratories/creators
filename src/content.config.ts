@@ -35,6 +35,9 @@ const guideFields = z.object({
 	// Action-first guides (docs/guide-format.md): what the reader walks away with,
 	// shown as the lead, and up to three "Do this today" moves that replace the short version.
 	payoff: z.string().max(140).optional(),
+	// Free tool pages (src/content/docs/tools/): questions people search for, shown by
+	// <Faq /> and published as FAQPage structured data (src/route-data.ts).
+	faq: z.array(z.object({ q: z.string().max(120), a: z.string().max(600) })).max(8).optional(),
 	moves: z
 		.array(z.object({ do: z.string().max(140), why: z.string().max(200), source: z.string().max(60).optional() }))
 		.max(3)

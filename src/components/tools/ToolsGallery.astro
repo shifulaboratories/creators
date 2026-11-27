@@ -1,0 +1,152 @@
+---
+/** The /tools/ gallery: every free tool, grouped, each a big tap target. List in src/lib/free-tools.ts. */
+import { FREE_TOOLS, TOOL_GROUPS } from '../../lib/free-tools';
+---
+
+<div class="tg not-content">
+	<ul class="tg-promise" aria-label="Every tool is">
+		<li>Free forever</li>
+		<li>No signup</li>
+		<li>No email asked</li>
+		<li>Runs on your phone</li>
+	</ul>
+	{TOOL_GROUPS.map((g) => (
+		<section class="tg-group" aria-labelledby={`tg-${g.id}`}>
+			<div class="tg-head">
+				<h2 id={`tg-${g.id}`}>{g.label}</h2>
+				<p>{g.text}</p>
+			</div>
+			<ul class="tg-grid">
+				{FREE_TOOLS.filter((t) => t.group === g.id).map((t) => (
+					<li>
+						<a class="tg-card" href={`/tools/${t.slug}/`} data-section={t.tint}>
+							<span class="tg-glyph" aria-hidden="true">{t.glyph}</span>
+							<span class="tg-text">
+								<span class="tg-name">{t.name}{t.isNew && <em>New</em>}</span>
+								<span class="tg-blurb">{t.blurb}</span>
+							</span>
+							<span class="tg-go" aria-hidden="true">→</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</section>
+	))}
+</div>
+
+<style>
+	.tg {
+		display: grid;
+		gap: 2.2rem;
+		margin-top: 1.5rem;
+	}
+	.tg-promise {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.tg-promise li {
+		margin: 0;
+		padding: 0.35rem 0.8rem;
+		border-radius: 99px;
+		font-size: 0.8rem;
+		color: var(--sc-platinum);
+		background: var(--sc-fill-muted);
+		border: 1px solid var(--sc-line);
+	}
+	.tg-head h2 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.5rem;
+		letter-spacing: -0.03em;
+		color: var(--sc-ivory);
+	}
+	.tg-head p {
+		margin: 0.2rem 0 0.9rem;
+		color: var(--sc-silver);
+		font-size: 0.9rem;
+	}
+	.tg-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+		gap: 0.7rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.tg-grid li {
+		margin: 0;
+	}
+	.tg-card {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		height: 100%;
+		box-sizing: border-box;
+		padding: 1rem 1.05rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(90% 120% at 0% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+			var(--sc-fill-subtle);
+		text-decoration: none;
+		color: inherit;
+		transition: border-color 0.15s ease, transform 0.15s ease;
+	}
+	.tg-card:hover {
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+	}
+	.tg-card:active {
+		transform: scale(0.985);
+	}
+	.tg-glyph {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.8rem;
+		height: 2.8rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--accent) 18%, transparent);
+		color: var(--accent);
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: 1.15rem;
+	}
+	.tg-text {
+		display: grid;
+		gap: 0.15rem;
+		min-width: 0;
+	}
+	.tg-name {
+		font-weight: 650;
+		color: var(--sc-ivory);
+		line-height: 1.25;
+	}
+	.tg-name em {
+		margin-left: 0.45rem;
+		padding: 0.05rem 0.45rem;
+		border-radius: 99px;
+		font-style: normal;
+		font-size: 0.66rem;
+		font-weight: 700;
+		vertical-align: 0.12em;
+		color: #0a0a0a;
+		background: var(--sc-lime);
+	}
+	.tg-blurb {
+		font-size: 0.82rem;
+		color: var(--sc-silver);
+		line-height: 1.4;
+	}
+	.tg-go {
+		margin-left: auto;
+		color: var(--sc-steel);
+		transition: color 0.15s ease;
+	}
+	.tg-card:hover .tg-go {
+		color: var(--accent);
+	}
+</style>
