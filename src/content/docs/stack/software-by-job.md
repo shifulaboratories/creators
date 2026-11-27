@@ -1,6 +1,6 @@
 ---
 title: "Software by job"
-description: "Editing, design, scheduling, email, analytics and more."
+description: "The best creator software by job: editing, design, scheduling, email, link-in-bio and analytics, with a free alternative to every paid pick."
 status: outline
 sidebar:
   order: 1

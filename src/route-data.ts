@@ -6,6 +6,7 @@
 import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
 import { SITE_NAME } from './site.mjs';
 import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
+import { personName, CONTRIBUTORS_PATH } from './data/people';
 
 export const onRequest = defineRouteMiddleware((context) => {
 	const route = context.locals.starlightRoute;
@@ -29,11 +30,20 @@ export const onRequest = defineRouteMiddleware((context) => {
 	if (id.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: SECTION_LABELS[section], url: `${SITE_ORIGIN}/${section}/` });
 	crumbs.push({ name: title, url });
 
-	const data = entry.data as typeof entry.data & { authors?: string[]; lastReviewed?: Date };
+	const data = entry.data as typeof entry.data & { authors?: string[]; lastReviewed?: Date; status?: string };
+
+	// Outline pages are placeholders: keep them out of search results until written.
+	head.push({
+		tag: 'meta',
+		attrs: { name: 'robots', content: data.status === 'outline' && id !== 'guides' ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1' },
+	});
+
+	// Section front pages and the Guides index are collections, not articles.
+	const isCollection = id === 'guides' || (!id.includes('/') && id !== 'index');
 	const modified = route.lastUpdated ?? data.lastReviewed;
 	const graph = [
 		{
-			'@type': 'Article',
+			'@type': isCollection ? 'CollectionPage' : 'Article',
 			headline: title,
 			description: entry.data.description,
 			image,
@@ -42,7 +52,7 @@ export const onRequest = defineRouteMiddleware((context) => {
 			inLanguage: 'en',
 			...(modified ? { dateModified: modified.toISOString() } : {}),
 			author: data.authors?.length
-				? data.authors.map((name) => ({ '@type': 'Person', name }))
+				? data.authors.map((a) => ({ '@type': 'Person', name: personName(a), url: `${SITE_ORIGIN}${CONTRIBUTORS_PATH}#${a}` }))
 				: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_ORIGIN}/` },
 			publisher: { '@id': `${SITE_ORIGIN}/#org` },
 			isAccessibleForFree: true,

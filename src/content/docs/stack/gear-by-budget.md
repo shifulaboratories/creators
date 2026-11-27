@@ -1,6 +1,6 @@
 ---
 title: "Gear by budget"
-description: "Cameras, microphones and lighting at three budgets."
+description: "Creator gear at three budgets: cameras, microphones and lighting that upgrade your videos, picked for each budget."
 status: outline
 sidebar:
   order: 2
