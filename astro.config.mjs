@@ -47,6 +47,8 @@ const inSitemap = (url) => {
 
 export default defineConfig({
 	site: 'https://creators.select',
+	// Render pages in parallel; the animated previews (src/lib/og-video.ts) dominate build time.
+	build: { concurrency: 4 },
 	// Start loading a page as soon as a finger touches its link, and the next
 	// guide as soon as its link scrolls into view (src/components/Pagination.astro).
 	prefetch: { prefetchAll: true, defaultStrategy: 'tap' },

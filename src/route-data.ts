@@ -5,7 +5,8 @@
  */
 import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
 import { SITE_NAME } from './site.mjs';
-import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
+import { SITE_ORIGIN, SECTION_LABELS, ogPath, ogVideoPath, ogVideoTags } from './lib/share';
+import { HAS_VIDEO } from './lib/og-video';
 import { personName, CONTRIBUTORS_PATH } from './data/people';
 import { getTerm, sortedTerms, termPath } from './lib/glossary';
 import { SEO } from './data/seo';
@@ -62,7 +63,8 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 	if (current.length) {
 		route.sidebar = current.map((g) => (g.type === 'group' ? { ...g, collapsed: false } : g));
 	}
-	const image = `${SITE_ORIGIN}${ogPath(base === 'guides' ? base : id)}`;
+	const ogId = base === 'guides' ? base : id;
+	const image = `${SITE_ORIGIN}${ogPath(ogId)}`;
 	const url = new URL(context.url.pathname, SITE_ORIGIN).href;
 	const title = entry.data.title;
 
@@ -73,6 +75,11 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 		{ tag: 'meta', attrs: { property: 'og:image:alt', content: `${title} · ${SITE_NAME}` } },
 		{ tag: 'meta', attrs: { name: 'twitter:image', content: image } },
 	);
+	if (HAS_VIDEO) {
+		const ogType = head.find((t) => t.tag === 'meta' && t.attrs?.property === 'og:type');
+		if (ogType?.attrs) ogType.attrs.content = 'video.other';
+		for (const attrs of ogVideoTags(`${SITE_ORIGIN}${ogVideoPath(ogId)}`)) head.push({ tag: 'meta', attrs });
+	}
 
 	// Search titles: apply overrides (src/data/seo.ts), and drop the site name
 	// when it would push the title past what Google shows (~60 characters).

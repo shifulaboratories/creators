@@ -14,6 +14,8 @@ import { SITE_NAME, REPO_URL } from '../site.mjs';
 import { home } from '../i18n/home';
 import { localeOfPath, localize, HTML_LANG, OG_LOCALE, LOCALES, t, withFallback, sectionLabel } from '../i18n';
 import { getCollection } from 'astro:content';
+import { HAS_VIDEO } from '../lib/og-video';
+import { ogVideoTags } from '../lib/share';
 import { topicIcons } from '../data/topic-icons';
 
 // One home page per language: /, /es/, /pt-br/ (copy in src/i18n/home.ts).
@@ -88,7 +90,7 @@ const homeJsonLd = {
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta property="og:title" content={SITE_NAME} />
 		<meta property="og:description" content={SITE_DESCRIPTION} />
-		<meta property="og:type" content="website" />
+		<meta property="og:type" content={HAS_VIDEO ? 'video.other' : 'website'} />
 		<meta property="og:url" content={pageUrl} />
 		<meta property="og:locale" content={OG_LOCALE[locale]} />
 		{otherLocales.map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
@@ -96,6 +98,7 @@ const homeJsonLd = {
 		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
+		{HAS_VIDEO && ogVideoTags(ogImage.replace(/\.png$/, '.mp4')).map((a) => <meta {...a} />)}
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:image" content={ogImage} />
 		<link rel="canonical" href={pageUrl} />

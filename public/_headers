@@ -2,6 +2,10 @@
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Link-preview images and videos: rebuilt each deploy, cached a day.
+/og/*
+  Cache-Control: public, max-age=86400
+
 /pagefind/*
   Cache-Control: public, max-age=3600
 
