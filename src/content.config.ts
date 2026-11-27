@@ -192,6 +192,16 @@ const creators = defineCollection({
 		advice: z.array(z.object({ text: z.string(), quote: z.boolean().default(true), ...sourced })).default([]),
 		// A docs id like case-studies/mrbeast
 		caseStudy: z.string().optional(),
+		// Videos by or about them. Only from their own channel or a credible outlet's
+		// official channel, never reuploads. Check the id against the uploader first.
+		videos: z
+			.array(
+				z.discriminatedUnion('platform', [
+					z.object({ platform: z.literal('youtube'), id: z.string().regex(/^[A-Za-z0-9_-]{11}$/), title: z.string(), channel: z.string(), date: z.string(), why: z.string().min(20) }),
+					z.object({ platform: z.literal('tiktok'), id: z.string().regex(/^\d{15,20}$/), handle: z.string(), title: z.string(), date: z.string(), stat: z.string().optional(), why: z.string().min(20) }),
+				]),
+			)
+			.default([]),
 	}),
 });
 

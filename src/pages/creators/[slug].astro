@@ -6,6 +6,8 @@
 import type { GetStaticPaths } from 'astro';
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import CreatorCard from '../../components/CreatorCard.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import TikTokEmbed from '../../components/TikTokEmbed.astro';
 import { loadDirectory, NICHES, NICHE_TINT, PLATFORMS, initials, creatorPath, type DirectoryEntry } from '../../lib/creators';
 import { SITE_NAME } from '../../site.mjs';
 
@@ -38,6 +40,9 @@ const sources = new Map<string, string>();
 for (const a of c.advice) sources.set(a.source, a.sourceTitle);
 for (const t of c.tools) sources.set(t.source, t.sourceTitle);
 for (const s of c.setups) sources.set(s.source, s.sourceTitle);
+
+const yt = c.videos.filter((v) => v.platform === 'youtube');
+const tt = c.videos.filter((v) => v.platform === 'tiktok');
 
 const what = [c.advice.length && 'advice', c.tools.length && 'software', c.gearCount && 'gear'].filter(Boolean) as string[];
 const whatText = what.length > 1 ? `${what.slice(0, -1).join(', ')} and ${what.at(-1)}` : (what[0] ?? 'profile');
@@ -92,12 +97,32 @@ const ld = {
 		</header>
 
 		<nav class="cp-jump" aria-label="On this page">
+			{c.videos.length > 0 && <a href="#watch">Watch <span>{c.videos.length}</span></a>}
 			{c.advice.length > 0 && <a href="#advice">Advice <span>{c.advice.length}</span></a>}
 			{c.tools.length > 0 && <a href="#software">Software <span>{c.tools.length}</span></a>}
 			{c.gearCount > 0 && <a href="#gear">Gear <span>{c.gearCount}</span></a>}
 			{c.caseStudy && <a href="#story">Case study</a>}
 			{c.resources.length > 0 && <a href="#learn">Learn more <span>{c.resources.length}</span></a>}
 		</nav>
+
+		{
+			c.videos.length > 0 && (
+				<section id="watch" aria-labelledby="h-watch">
+					<h2 id="h-watch">Watch</h2>
+					{tt.length > 0 && (
+						<div class="tt-row">
+							{tt.map((v) => (
+								<TikTokEmbed id={v.id} handle={v.handle} title={v.title} date={v.date} stat={v.stat} caption={v.why} />
+							))}
+						</div>
+					)}
+					{yt.map((v) => (
+						<YouTubeEmbed id={v.id} title={v.title} caption={`${v.why} ${v.channel}, ${v.date}.`} />
+					))}
+					<p class="cp-more">Videos load only when you tap play.</p>
+				</section>
+			)
+		}
 
 		{
 			c.advice.length > 0 && (

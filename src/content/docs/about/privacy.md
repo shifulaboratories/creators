@@ -7,7 +7,7 @@ sidebar:
   order: 7
 ---
 
-**The short version:** no accounts, no ads, no tracking pixels, no analytics scripts, and we don't sell or share data about you. The only things that touch your data are the company that hosts the site, YouTube when a page shows videos, the anonymous rate you share on Rate Check if you choose to, and services you choose to click through to. Here's the full list.
+**The short version:** no accounts, no ads, no tracking pixels, no analytics scripts, and we don't sell or share data about you. The only things that touch your data are the company that hosts the site, YouTube or TikTok when you play a video, the anonymous rate you share on Rate Check if you choose to, and services you choose to click through to. Here's the full list.
 
 <figure class="sc-figure">
 <div class="sc-compare">
@@ -27,6 +27,7 @@ sidebar:
 <li>Our host processes basic request data to serve the site</li>
 <li>Video thumbnails load from YouTube</li>
 <li>Videos play from YouTube when you tap them</li>
+<li>TikToks load from TikTok only when you tap them</li>
 <li>Rate Check stores a rate only if you choose to share one, with no name, handle or IP</li>
 <li>Ask AI buttons open the AI site you pick</li>
 <li>Saved guides and checkmarks stay in your own browser</li>
@@ -47,6 +48,10 @@ Some pages include videos from YouTube.
 
 - **Before you tap play:** the preview image loads from YouTube's image server (`i.ytimg.com`), which means YouTube receives your IP address and browser details, as with any image request.
 - **When you tap play:** the video loads from `youtube-nocookie.com`, YouTube's privacy-enhanced mode. From then on, [Google's privacy policy](https://policies.google.com/privacy) applies to that video.
+
+## Videos: TikTok
+
+A few pages include TikToks. These cards are drawn by us, so nothing loads from TikTok until you tap one. When you tap, TikTok's official player loads from `tiktok.com`, and from then on [TikTok's privacy policy](https://www.tiktok.com/legal/privacy-policy) applies to that video.
 
 ## Search
 
@@ -100,7 +105,7 @@ This site is meant for a general audience and isn't directed at children under 1
 
 ## Your rights
 
-Because we don't run accounts, analytics or mailing lists, we don't hold a profile about you. If you've contacted us and want what you sent deleted, or you have a question about your data, email [support@creators.select](mailto:support@creators.select). Requests about data Cloudflare, YouTube or GitHub hold are best sent to them directly, through the links above.
+Because we don't run accounts, analytics or mailing lists, we don't hold a profile about you. If you've contacted us and want what you sent deleted, or you have a question about your data, email [support@creators.select](mailto:support@creators.select). Requests about data Cloudflare, YouTube, TikTok or GitHub hold are best sent to them directly, through the links above.
 
 ## If this changes
 

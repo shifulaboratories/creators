@@ -1,7 +1,7 @@
 name: Alix Earle
 known: Get Ready With Me storytelling on TikTok
 niche: beauty
-platforms: [tiktok, instagram, podcast]
+platforms: [tiktok, instagram, youtube, podcast]
 about: Took the most familiar beauty format on TikTok and made it a vehicle for unfiltered stories about her life. Her following nearly tripled in about a month in late 2022.
 caseStudy: case-studies/alix-earle
 advice:
@@ -13,3 +13,23 @@ advice:
     source: https://money.yahoo.com/alix-earle-gained-over-2-173318497.html
     sourceTitle: TODAY
     date: "Jan 2023"
+videos:
+  - platform: tiktok
+    id: "7193503655063244078"
+    handle: alixearle
+    title: "A Get Ready With Me from January 2023"
+    date: Jan 2023
+    stat: 20.9M views by Nov 2026
+    why: "Posted the month her following roughly tripled, tagged #grwm."
+  - platform: youtube
+    id: 5YJKNOpBI8w
+    title: "Get Real With Me | Maura Higgins"
+    channel: Alix Earle
+    date: Oct 2026
+    why: "The format grown into a show: her YouTube series where she gets ready with a guest and talks."
+  - platform: youtube
+    id: PG4UPm6CSB0
+    title: "Alix Earle: Secrets, Sex & Scandals (Full Episode)"
+    channel: Call Her Daddy
+    date: Jan 2025
+    why: "Her long-form interview on Alex Cooper's show."
