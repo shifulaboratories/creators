@@ -1,6 +1,17 @@
 ---
 title: "OnlyFans"
 description: "The biggest fan platform, as a business: what creators keep, the real earnings picture, the rules on agencies and AI, and the brand trade-off."
+payoff: "What OnlyFans really pays, who it works for, and the trade-offs before you start."
+moves:
+  - do: "Decide how your name will be tied to the account before you start."
+    why: "The brand comes with baggage, and that's hard to undo."
+    source: "Reporting"
+  - do: "Do the math at 80%, with realistic numbers."
+    why: "Money on OnlyFans is very concentrated at the top."
+    source: "OnlyFans, reporting"
+  - do: "Compare it with a SFW platform first if you don't post adult content."
+    why: "Fitness coaches, musicians and chefs use it, but alternatives may fit better."
+    source: "Select Creators"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-27
@@ -16,10 +27,27 @@ tldr:
 ---
 
 import Sources from '../../../components/paywall/Sources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** OnlyFans is the largest fan platform by far, and it allows adult content, which is what most people know it for. It’s also used by fitness coaches, musicians and chefs. You keep 80%. The money is very concentrated, and the brand comes with baggage, so go in with a plan.
 
-## The business in numbers
+## Before you launch
+
+<QuickCheck
+  title="Launch check"
+  id="pw-of"
+  items={[
+    { text: "Decide if you'll show your face and real name", hint: "Use a separate email and phone number. See [Account security](/protect/account-security/)." },
+    { text: "Location data off in your photos" },
+    { text: "Know how to get leaks taken down", hint: "Paid content gets reposted. See [Content removal](/protect/content-removal/)." },
+    { text: "A plan for taxes", hint: "Fan income is self-employment income. See [Money basics](/money/)." },
+    { text: "Read up on agencies before anyone offers to “manage” your page", hint: "See [Chatting agencies](/paywall/chatting-agencies/)." },
+  ]}
+  done="Ready to launch."
+/>
+
+## What creators really earn
 
 <figure class="sc-figure">
 <div class="sc-stats">
@@ -39,25 +67,18 @@ import Sources from '../../../components/paywall/Sources.astro';
 <figcaption>Every fan payment, split. An agency’s cut, if you have one, comes out of your 80%.</figcaption>
 </figure>
 
-Divide $5.8B by 4.6M accounts and you get about **$1,260 per creator account for the whole year**. That’s our math, and it includes many inactive accounts, but it’s a useful reality check against “everyone on OnlyFans is rich” headlines. The creators who earn a living almost always arrived with a large, engaged audience elsewhere. <span class="sc-tag is-practitioner">Creator-tested</span>
+Divide $5.8B by 4.6M accounts and you get about **$1,260 per creator account for the whole year**. That’s our math, and it includes many inactive accounts, but it’s a useful reality check against “everyone on OnlyFans is rich” headlines. The creators who earn a living almost always arrived with a large, engaged audience elsewhere. 
 
-## Rules worth knowing
+## Think about brand deals first
+
+Many brand and agency teams treat an OnlyFans link as adult, even if your page isn’t. If brand deals are a big part of your plan, think about whether a safe-for-work platform ([Fanfix](/paywall/fanfix/), [Patreon](/paywall/patreon/)) fits better, or keep the link off the accounts you pitch to brands. 
+
+## Rules that can cost you
 
 - **AI.** OnlyFans’ terms prohibit using an AI chatbot to write chats or DMs, per Reuters’ 2024 reporting. A vendor summary of its late-2026 terms says AI-generated content must feature the verified creator and be labeled, such as with #ai. Read the terms on OnlyFans itself before relying on that.
-- **Third parties.** OnlyFans says creators are legally responsible for their accounts, even when someone else runs them, and that it doesn’t endorse any agency. <span class="sc-tag is-platform">Reported</span>
+- **Third parties.** OnlyFans says creators are legally responsible for their accounts, even when someone else runs them, and that it doesn’t endorse any agency. 
 - **Ads.** Paid and affiliate posts need labels such as #ad, the same principle as the FTC rules in [Disclosure](/deals/disclosure/).
 
-## The brand trade-off
-
-Many brand and agency teams treat an OnlyFans link as adult, even if your page isn’t. If brand deals are a big part of your plan, think about whether a safe-for-work platform ([Fanfix](/paywall/fanfix/), [Patreon](/paywall/patreon/)) fits better, or keep the link off the accounts you pitch to brands. <span class="sc-tag is-practitioner">Creator-tested</span>
-
-## Before you start
-
-- **Privacy:** decide whether you’ll show your face and real name, turn off location data in photos, and use a separate email and phone number. See [Account security](/protect/account-security/).
-- **Leaks:** paid content gets reposted. Know your takedown options in [Content removal](/protect/content-removal/).
-- **Taxes:** fan income is self-employment income. See [Money basics](/money/).
-- **Agencies:** read [Chatting agencies](/paywall/chatting-agencies/) before anyone offers to “manage” your page.
-
-<Sources ids={['ofRte', 'ofEuronews', 'reuters', 'reutersAi']} />
-
-*Educational, not legal or financial advice.*
+<DeepDive title="Sources" hint="4 sources">
+<Sources bare ids={['ofRte', 'ofEuronews', 'reuters', 'reutersAi']} />
+</DeepDive>

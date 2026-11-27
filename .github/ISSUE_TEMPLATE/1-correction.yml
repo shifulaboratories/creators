@@ -1,0 +1,43 @@
+name: Correction
+description: Something on the site is wrong, outdated or missing a source.
+title: "Correction: "
+labels: [correction]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks. Corrections are the most useful thing you can send us.
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      description: Link to the page on creators.select.
+      placeholder: https://creators.select/...
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong
+      description: Quote the sentence or number if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: right
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: A link to the platform, a paper, a court record or published reporting. If it's your own experience, say so.
+    validations:
+      required: true
+  - type: checkboxes
+    id: conflict
+    attributes:
+      label: Conflicts
+      options:
+        - label: I have no paid relationship with anything this correction affects, or I've described it above.
+          required: true

@@ -1,0 +1,402 @@
+---
+/**
+ * One glossary term per page. The first sentence answers the search; then the
+ * idea in plain words, a worked example with real numbers, what to do, guides
+ * to read next, related terms and sources. Structured data: src/route-data.ts.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { terms, getTerm, termPath, seoTitle, inline, CATEGORIES, validateGlossary, sortedTerms, GLOSSARY_PATH, type Term } from '../../lib/glossary';
+import { SECTION_LABELS } from '../../lib/share';
+import { SITE_NAME } from '../../site.mjs';
+
+export const getStaticPaths = (async () => {
+	const docs = await getCollection('docs');
+	validateGlossary(new Set(docs.map((d) => d.id)));
+	return terms.map((t) => ({ params: { slug: t.slug }, props: { t } }));
+}) satisfies GetStaticPaths;
+
+const { t } = Astro.props as { t: Term };
+const docs = await getCollection('docs');
+const doc = new Map(docs.map((d) => [d.id, d]));
+const guides = t.guides.map((id) => ({ id, href: `/${id}/`, title: doc.get(id)!.data.title, section: id.split('/')[0], label: SECTION_LABELS[id.split('/')[0]] }));
+const related = t.related.map((s) => getTerm(s)!);
+const cat = CATEGORIES[t.category];
+const title = seoTitle(t);
+
+// Neighbours in A to Z order, for the "next term" link at the end.
+const i = sortedTerms.findIndex((x) => x.slug === t.slug);
+const next = sortedTerms[(i + 1) % sortedTerms.length];
+---
+
+<StarlightPage
+	frontmatter={{
+		title: t.term,
+		description: t.short,
+		head: [{ tag: 'title', content: `${title} | ${SITE_NAME}` }],
+		tableOfContents: false,
+		prev: false,
+		next: false,
+		editUrl: false,
+		status: 'draft',
+		confidence: 'verified',
+	}}
+>
+	<article class="gt not-content" data-category={t.category}>
+		<p class="gt-meta">
+			<a href={GLOSSARY_PATH}>Glossary</a>
+			<span aria-hidden="true">/</span>
+			<a href={`${GLOSSARY_PATH}#${t.category}`}>{cat.label}</a>
+		</p>
+		{
+			t.full && (
+				<p class="gt-full">
+					{/^[A-Z0-9]+$/.test(t.full) ? <>Often shortened to <strong>{t.full}</strong>.</> : /[A-Z]{2,}/.test(t.term) ? <>{t.term.split(' ')[0]} stands for <strong>{t.full}</strong>.</> : <>Also known as <strong>{t.full}</strong>.</>}
+				</p>
+			)
+		}
+
+		{
+			t.formula && (
+				<p class="gt-formula">
+					<span>Formula</span>
+					<code>{t.formula}</code>
+				</p>
+			)
+		}
+
+		<div class="gt-body">
+			{t.body.map((p) => <p set:html={inline(p)} />)}
+		</div>
+
+		{
+			t.example && (
+				<section class="gt-example" aria-labelledby="ex">
+					<h2 id="ex">Example</h2>
+					<p class="gt-setup">{t.example.setup}</p>
+					<dl class="gt-rows">
+						{t.example.rows.map(([k, v], n) => (
+							<div class={n === t.example!.rows.length - 1 ? 'last' : ''}>
+								<dt>{k}</dt>
+								<dd>{v}</dd>
+							</div>
+						))}
+					</dl>
+					<p class="gt-takeaway">{t.example.takeaway}</p>
+				</section>
+			)
+		}
+
+		{
+			t.tips && t.tips.length > 0 && (
+				<section class="gt-tips" aria-labelledby="todo">
+					<h2 id="todo">What to do</h2>
+					<ul>
+						{t.tips.map((tip) => (
+							<li set:html={inline(tip)} />
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		{
+			guides.length > 0 && (
+				<section aria-labelledby="read">
+					<h2 id="read">Go deeper</h2>
+					<ul class="gt-guides">
+						{guides.map((g) => (
+							<li>
+								<a href={g.href} data-section={g.section}>
+									<span class="dot" aria-hidden="true" />
+									<span class="txt">
+										<strong>{g.title}</strong>
+										{g.label && <span>{g.label}</span>}
+									</span>
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		{
+			related.length > 0 && (
+				<section aria-labelledby="rel">
+					<h2 id="rel">Related terms</h2>
+					<ul class="gt-related">
+						{related.map((r) => (
+							<li>
+								<a href={termPath(r.slug)}>{r.term}</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		{t.aka && t.aka.length > 0 && <p class="gt-aka">Also called {t.aka.join(', ')}.</p>}
+
+		<section class="gt-sources" aria-labelledby="src">
+			<h2 id="src">Sources</h2>
+			<ol>
+				{t.sources.map((s) => (
+					<li>
+						{s.publisher}, <a href={s.url} rel="noopener" target="_blank">{s.name}</a>
+					</li>
+				))}
+			</ol>
+			<p class="gt-note">
+				Examples are worked math to show the idea, not quotes from a real deal. Not legal, tax or financial advice. Spotted something wrong?{' '}
+				<a href="/about/corrections/">Tell us</a>.
+			</p>
+		</section>
+
+		<nav class="gt-next" aria-label="Next term">
+			<a href={GLOSSARY_PATH}>All {terms.length} terms</a>
+			<a class="go" href={termPath(next.slug)} rel="next">Next: {next.term} <span aria-hidden="true">→</span></a>
+		</nav>
+	</article>
+</StarlightPage>
+
+<style>
+	.gt {
+		max-width: 42rem;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-base);
+		line-height: 1.65;
+	}
+	.gt h2 {
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+		margin: 2.25rem 0 0.75rem;
+		letter-spacing: -0.01em;
+	}
+	.gt a {
+		color: var(--sc-ivory);
+		text-decoration-color: color-mix(in srgb, var(--accent, var(--sc-ion)) 60%, transparent);
+		text-underline-offset: 3px;
+	}
+	.gt a:hover {
+		color: var(--accent, var(--sc-ion));
+	}
+	.gt-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		align-items: center;
+		color: var(--sc-steel);
+		font-size: var(--sc-text-sm);
+		margin: 0 0 1.25rem;
+	}
+	.gt-full {
+		margin: -0.5rem 0 1.25rem;
+		color: var(--sc-silver);
+	}
+	.gt-full strong {
+		color: var(--sc-ivory);
+		font-weight: 500;
+	}
+	.gt-meta a {
+		color: var(--sc-silver);
+		text-decoration: none;
+	}
+	.gt-formula {
+		margin: 0 0 0.5rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: baseline;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-steel);
+	}
+	.gt-formula code {
+		font-family: var(--sc-font-code);
+		color: var(--sc-ivory);
+		background: var(--sc-fill-muted);
+		border-radius: 0.5rem;
+		padding: 0.2rem 0.55rem;
+		font-size: 0.85rem;
+	}
+	.gt-body {
+		margin-top: 1rem;
+	}
+	.gt-body p {
+		margin: 0 0 1rem;
+	}
+	.gt-example {
+		margin-top: 2rem;
+	}
+	.gt-example h2 {
+		margin-top: 0;
+	}
+	.gt-setup {
+		margin: 0 0 0.75rem;
+		color: var(--sc-silver);
+	}
+	.gt-rows {
+		margin: 0;
+		border: 1px solid var(--sc-line);
+		border-radius: 1rem;
+		overflow: hidden;
+	}
+	.gt-rows div {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.7rem 1rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.gt-rows div:first-child {
+		border-top: 0;
+	}
+	.gt-rows dt {
+		color: var(--sc-silver);
+	}
+	.gt-rows dd {
+		margin: 0;
+		text-align: right;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+		font-weight: 500;
+	}
+	.gt-rows .last {
+		background: color-mix(in srgb, var(--accent, var(--sc-ion)) 10%, transparent);
+	}
+	.gt-rows .last dd {
+		color: var(--accent, var(--sc-ion));
+		font-weight: 650;
+	}
+	.gt-takeaway {
+		margin: 0.85rem 0 0;
+		padding-left: 0.9rem;
+		border-left: 2px solid var(--accent, var(--sc-ion));
+		color: var(--sc-platinum);
+	}
+	.gt-tips ul {
+		margin: 0;
+		padding-left: 1.1rem;
+	}
+	.gt-tips li {
+		margin: 0.4rem 0;
+	}
+	.gt-guides,
+	.gt-related,
+	.gt-sources ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.gt-guides a {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+		padding: 0.8rem 0.25rem;
+		border-top: 1px solid var(--sc-line);
+		text-decoration: none;
+	}
+	.gt-guides li:last-child a {
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.gt-guides .dot {
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		background: var(--accent, var(--sc-ion));
+		flex: none;
+	}
+	.gt-guides .txt {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+	}
+	.gt-guides .txt span {
+		color: var(--sc-steel);
+		font-size: var(--sc-text-sm);
+	}
+	.gt-guides svg {
+		width: 1.1rem;
+		height: 1.1rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		color: var(--sc-steel);
+		flex: none;
+	}
+	.gt-related {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.gt-related a {
+		display: inline-block;
+		padding: 0.4rem 0.85rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		text-decoration: none;
+		font-size: var(--sc-text-sm);
+	}
+	.gt-related a:hover {
+		border-color: var(--accent, var(--sc-ion));
+	}
+	.gt-aka {
+		margin: 1.5rem 0 0;
+		color: var(--sc-steel);
+		font-size: var(--sc-text-sm);
+	}
+	.gt-sources ol {
+		counter-reset: s;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.gt-sources li {
+		counter-increment: s;
+		padding-left: 1.6rem;
+		position: relative;
+		margin: 0.45rem 0;
+	}
+	.gt-sources li::before {
+		content: counter(s);
+		position: absolute;
+		left: 0;
+		color: var(--sc-steel);
+		font-variant-numeric: tabular-nums;
+	}
+	.gt-note {
+		margin: 1rem 0 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-steel);
+	}
+	.gt-next {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-top: 2.5rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--sc-line);
+		font-size: var(--sc-text-sm);
+	}
+	.gt-next a {
+		text-decoration: none;
+		color: var(--sc-silver);
+	}
+	.gt-next .go {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	@media (max-width: 30rem) {
+		.gt-rows div {
+			flex-direction: column;
+			gap: 0.15rem;
+		}
+		.gt-rows dd {
+			text-align: left;
+		}
+	}
+</style>

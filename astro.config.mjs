@@ -1,7 +1,28 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from './src/site.mjs';
+
+// Pages we tell search engines not to index (src/route-data.ts) stay out of the
+// sitemap too: unwritten outlines (status: outline, the default) and 404.
+const DOCS = 'src/content/docs';
+const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]));
+const noindex = new Set(
+	walk(DOCS)
+		.filter((f) => /\.mdx?$/.test(f))
+		.filter((f) => {
+			const fm = readFileSync(f, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+			const status = fm.match(/^status:\s*["']?(\w+)/m)?.[1] ?? 'outline';
+			return status === 'outline';
+		})
+		.map((f) => '/' + relative(DOCS, f).replace(/\.mdx?$/, '').replace(/(^|\/)index$/, '') + '/')
+		.map((p) => p.replace(/\/+/g, '/'))
+		.filter((p) => p !== '/guides/'),
+);
+noindex.add('/404/');
 
 const section = (label, directory) => ({ label, items: [{ autogenerate: { directory } }] });
 
@@ -23,6 +44,7 @@ export default defineConfig({
 		'/news/weekly': '/news/',
 	},
 	integrations: [
+		sitemap({ filter: (page) => !noindex.has(new URL(page).pathname) }),
 		starlight({
 			title: SITE_NAME,
 			description: SITE_DESCRIPTION,

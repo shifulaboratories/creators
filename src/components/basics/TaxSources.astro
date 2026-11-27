@@ -3,13 +3,15 @@
 import { sources, CHECKED } from '../../lib/tax-data';
 interface Props {
 	ids: string[];
+	/** Inside a folded <DeepDive>: no heading or top rule of its own. */
+	bare?: boolean;
 }
-const { ids } = Astro.props;
+const { ids, bare = false } = Astro.props;
 const list = ids.map((id) => sources[id]).filter(Boolean);
 ---
 
-<section class="ts not-content" aria-label="Sources">
-	<h2 class="ts-title">Sources</h2>
+<section class:list={['ts not-content', { bare }]} aria-label="Sources">
+	{!bare && <h2 class="ts-title">Sources</h2>}
 	<p class="ts-checked">Every link opened and checked {CHECKED}.</p>
 	<ol>
 		{
@@ -32,6 +34,11 @@ const list = ids.map((id) => sources[id]).filter(Boolean);
 		margin-top: 2.5rem;
 		padding-top: 1.25rem;
 		border-top: 1px solid var(--sc-line);
+	}
+	.ts.bare {
+		margin-top: 1rem;
+		padding-top: 0;
+		border-top: 0;
 	}
 	.ts-title {
 		font-family: var(--sc-font-display);

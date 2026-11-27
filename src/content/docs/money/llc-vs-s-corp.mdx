@@ -1,6 +1,17 @@
 ---
 title: "LLC or S corp?"
 description: "What a sole proprietorship, an LLC and an S corp election each change for a creator, what they don't, and a calculator to see if an S corp would save you anything."
+payoff: "Whether you need an LLC or an S corp yet, in plain English, with a quick check."
+moves:
+  - do: "Don't form an LLC for tax savings alone."
+    why: "By itself, an LLC doesn't change your federal taxes at all."
+    source: "IRS"
+  - do: "Run the S corp check below with last year's profit."
+    why: "An S corp only lowers self-employment tax once profit is high enough to cover a reasonable salary."
+    source: "IRS"
+  - do: "Talk to a CPA before you elect S corp status."
+    why: "It adds payroll, filings and costs every year."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -12,6 +23,7 @@ sidebar:
 
 import ScorpCheck from '../../../components/basics/ScorpCheck.astro';
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** an **LLC** is a legal wrapper. It can help separate your business from your personal stuff, but by itself it **doesn't change your federal taxes at all**. An **S corp** is a tax election. It can lower self-employment tax once your profit is high enough, but it adds payroll, a second tax return and real costs. A common path: start as a sole proprietor, add an LLC when deals and contracts get serious, and look at an S corp only once profit is steady. <span class="sc-tag is-practitioner">Practitioner view</span>
 
@@ -63,4 +75,6 @@ To have an S corp election start on January 1, a calendar-year business generall
 - "How does this change my QBI deduction and retirement contributions?"
 - "If my income drops next year, how hard is it to undo?"
 
-<TaxSources ids={['soleprop', 'smllc', 'scorp', 'f2553', 'ein', 'caftb', 'se']} />
+<DeepDive title="Sources" hint="7 sources">
+<TaxSources bare ids={['soleprop', 'smllc', 'scorp', 'f2553', 'ein', 'caftb', 'se']} />
+</DeepDive>

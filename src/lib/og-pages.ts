@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content';
 import { SECTION_LABELS, accentFor } from './share';
 import { getNews, newsId, NEWS_PLATFORM_INFO } from './news';
+import { terms, seoTitle } from './glossary';
 
 // Every page that gets a preview image (and animated preview): guides, news, home, gallery.
 export async function ogPages() {
@@ -18,6 +19,14 @@ export async function ogPages() {
 			params: { slug: 'guides' },
 			props: { title: 'Every guide, searchable', description: 'Algorithms, deals, pricing, teams and tools. Free, sourced and open source.', kicker: 'All guides', accent: accentFor('guides') },
 		},
+		{
+			params: { slug: 'glossary' },
+			props: { title: 'The creator glossary', description: 'CPM, RPM, usage rights, exclusivity and more, in plain English with real numbers.', kicker: 'Glossary', accent: accentFor('glossary') },
+		},
+		...terms.map((t) => ({
+			params: { slug: `glossary/${t.slug}` },
+			props: { title: seoTitle(t).includes('?') ? seoTitle(t).split('?')[0] + '?' : t.term, description: t.short, kicker: 'Glossary', accent: accentFor('glossary') },
+		})),
 		...docs
 			.filter((d) => d.id !== 'guides')
 			.map((d) => {

@@ -37,7 +37,14 @@ export const FFMPEG = findFfmpeg();
 export const HAS_VIDEO = Boolean(FFMPEG) && process.env.OG_VIDEO !== '0';
 
 const SECONDS = 4;
-const FPS = 24;
+const FPS = 20;
+
+// Glow layers depend only on the section color, so render each once per build.
+const glowCache = new Map<string, Promise<Buffer>>();
+const glowFor = (accent: string) => {
+	if (!glowCache.has(accent)) glowCache.set(accent, renderGlowLayer(accent));
+	return glowCache.get(accent)!;
+};
 
 let sweep: Promise<Buffer> | undefined;
 const sweepLayer = () =>
@@ -58,7 +65,7 @@ const sweepLayer = () =>
 	).then((svg) => new Resvg(svg).render().asPng()));
 
 // Bump when the animation changes, so cached videos are rebuilt.
-const VERSION = 2;
+const VERSION = 5;
 const CACHE = join(process.cwd(), 'node_modules/.cache/og-video');
 
 /** Cached by content: unchanged pages reuse last build's video when the cache survives. */
@@ -76,13 +83,15 @@ async function encode(input: OgInput): Promise<Buffer> {
 	if (!FFMPEG) throw new Error('ffmpeg not found');
 	const dir = await mkdtemp(join(tmpdir(), 'og-'));
 	try {
-		const [glow, fg, light] = await Promise.all([renderGlowLayer(input.accent), renderOg(input, 'fg'), sweepLayer()]);
+		const [glow, fg, light] = await Promise.all([glowFor(input.accent), renderOg(input, 'fg'), sweepLayer()]);
 		await Promise.all([
 			writeFile(join(dir, 'glow.png'), glow),
 			writeFile(join(dir, 'fg.png'), fg),
 			writeFile(join(dir, 'sweep.png'), light),
 		]);
-		const still = (f: string) => ['-loop', '1', '-framerate', String(FPS), '-t', String(SECONDS), '-i', join(dir, f)];
+		// Each still is decoded once and repeated in the filter graph (cheaper than -loop 1).
+		const still = (f: string) => ['-i', join(dir, f)];
+		const hold = (i: number, label: string) => `[${i}]loop=loop=-1:size=1:start=0,setpts=N/(${FPS}*TB)[${label}];`
 		// Glows orbit within the oversized layer so no edge ever shows; one full orbit per loop.
 		const dx = (GLOW_W - 1200) / 2;
 		const dy = (GLOW_H - 630) / 2;
@@ -106,10 +115,13 @@ async function encode(input: OgInput): Promise<Buffer> {
 				...still('sweep.png'),
 				...still('fg.png'),
 				'-filter_complex',
-				`[0][1]overlay=x='${glowX}':y='${glowY}':eval=frame[a];` +
-					`[a][2]overlay=x='${sweepX}':y=0:eval=frame[b];` +
-					`[3]format=rgba,fade=t=in:st=0:d=0.6:alpha=1[t];` +
-					`[b][t]overlay=x=0:y='${fgY}':eval=frame,noise=alls=2:allf=t,format=yuv420p`,
+				hold(1, 'g') +
+					hold(2, 's') +
+					hold(3, 'f') +
+					`[0][g]overlay=x='${glowX}':y='${glowY}':eval=frame:shortest=1[a];` +
+					`[a][s]overlay=x='${sweepX}':y=0:eval=frame:shortest=1[b];` +
+					`[f]format=rgba,fade=t=in:st=0:d=0.6:alpha=1[t];` +
+					`[b][t]overlay=x=0:y='${fgY}':eval=frame:shortest=1,noise=alls=2:allf=t,format=yuv420p`,
 				'-t',
 				String(SECONDS),
 				'-c:v',
@@ -119,7 +131,7 @@ async function encode(input: OgInput): Promise<Buffer> {
 				'-crf',
 				'27',
 				'-preset',
-				'faster',
+				'veryfast',
 				'-movflags',
 				'+faststart',
 				'-an',
