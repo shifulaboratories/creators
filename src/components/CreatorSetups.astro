@@ -28,6 +28,20 @@ for (const s of setups)
 		}
 const shared = [...seen.values()].filter((v) => v.who.size > 1);
 const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+
+const nicheText: Record<string, string> = {
+	education: 'Education',
+	lifestyle: 'Lifestyle',
+	beauty: 'Beauty',
+	business: 'Business',
+	film: 'Film and photo',
+	music: 'Music',
+	podcast: 'Podcast',
+	tech: 'Tech',
+	gaming: 'Gaming',
+	'short-form': 'Short-form',
+};
+const niches = [...new Set(setups.map((s) => s.niche))].sort((a, b) => nicheText[a].localeCompare(nicheText[b]));
 ---
 
 {
@@ -45,10 +59,21 @@ const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 	)
 }
 
-<div class="cs sc-rail not-content" data-rail>
+<div class="cs-filter sc-chip-row not-content" role="group" aria-label="Filter setups by niche" data-cs-filter>
+	<button type="button" class="sc-chip" aria-pressed="true" data-niche="all">All {setups.length}</button>
+	{
+		niches.map((n) => (
+			<button type="button" class="sc-chip" aria-pressed="false" data-niche={n}>
+				{nicheText[n]}
+			</button>
+		))
+	}
+</div>
+
+<div class="cs sc-rail not-content" data-rail data-cs-list>
 	{
 		setups.map((s) => (
-			<article class="cs-card">
+			<article class="cs-card" data-niche={s.niche}>
 				<header class="cs-head">
 					<img src={`https://twenty-icons.com/${host(s.site)}/64`} onerror="this.style.visibility='hidden'" alt="" width="40" height="40" loading="lazy" decoding="async" />
 					<div>
@@ -57,6 +82,18 @@ const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 					</div>
 					<span class="cs-date">{s.asOf}</span>
 				</header>
+				<div class="cs-meta">
+					<span class="cs-niche">{nicheText[s.niche]}</span>
+					{s.cost && <span class="cs-cost">{s.cost} setup, their figure</span>}
+				</div>
+				{s.youtubeId && (
+					<button type="button" class="cs-video" data-yt={s.youtubeId} aria-label={`Play: ${s.sourceTitle}`}>
+						<img src={`https://i.ytimg.com/vi/${s.youtubeId}/mqdefault.jpg`} alt="" loading="lazy" decoding="async" width="320" height="180" />
+						<span class="cs-play" aria-hidden="true">
+							<svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+						</span>
+					</button>
+				)}
 				<dl class="cs-gear">
 					{cats
 						.filter((c) => s.gear[c.key].length)
@@ -78,7 +115,7 @@ const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 				</dl>
 				{s.note && <p class="cs-note">{s.note}</p>}
 				<a class="cs-src" href={s.source} target="_blank" rel="noopener">
-					From “{s.sourceTitle}” on {host(s.source)} ↗
+					{s.from === 'video' ? <>From their video “{s.sourceTitle}” ↗</> : <>From “{s.sourceTitle}” on {host(s.source)} ↗</>}
 				</a>
 			</article>
 		))
@@ -87,6 +124,37 @@ const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 
 <script>
 	import '../scripts/rail';
+
+	// Niche filter: show only matching cards.
+	document.querySelectorAll<HTMLElement>('[data-cs-filter]').forEach((bar) => {
+		const list = bar.nextElementSibling as HTMLElement | null;
+		if (!list) return;
+		bar.addEventListener('click', (e) => {
+			const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-niche]');
+			if (!btn) return;
+			const n = btn.dataset.niche;
+			bar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+			list.querySelectorAll<HTMLElement>('.cs-card').forEach((c) => (c.hidden = n !== 'all' && c.dataset.niche !== n));
+			list.scrollTo({ left: 0 });
+		});
+	});
+
+	// Setup videos load only when tapped (privacy-enhanced player).
+	document.querySelectorAll<HTMLButtonElement>('.cs-video[data-yt]').forEach((b) =>
+		b.addEventListener(
+			'click',
+			() => {
+				const f = document.createElement('iframe');
+				f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0`;
+				f.title = b.getAttribute('aria-label')?.replace(/^Play: /, '') ?? 'Video';
+				f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+				f.allowFullscreen = true;
+				f.className = 'cs-iframe';
+				b.replaceWith(f);
+			},
+			{ once: true },
+		),
+	);
 </script>
 
 <style>
@@ -121,6 +189,73 @@ const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 		font-size: 0.7rem;
 		color: var(--accent);
 		margin-left: 0.2rem;
+	}
+	.cs-filter {
+		margin: 0.25rem 0 0;
+	}
+	.cs-card[hidden] {
+		display: none;
+	}
+	.cs-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-top: -0.3rem;
+	}
+	.cs-niche,
+	.cs-cost {
+		font-size: 0.74rem;
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+	}
+	.cs-niche {
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
+		color: var(--sc-ivory);
+	}
+	.cs-cost {
+		border: 1px dashed var(--sc-line-strong);
+		color: var(--sc-silver);
+	}
+	.cs-video {
+		position: relative;
+		display: block;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		padding: 0;
+		border: 0;
+		border-radius: 12px;
+		overflow: hidden;
+		background: #111;
+		cursor: pointer;
+	}
+	.cs-video img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		transition: transform 0.4s;
+	}
+	.cs-video:hover img {
+		transform: scale(1.03);
+	}
+	.cs-play {
+		position: absolute;
+		inset: 50% auto auto 50%;
+		translate: -50% -50%;
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border-radius: 999px;
+		background: var(--accent);
+		color: #0a0a0a;
+		box-shadow: 0 6px 24px -6px var(--accent);
+	}
+	:global(.cs-iframe) {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+		border-radius: 12px;
 	}
 	.cs {
 		display: grid;
