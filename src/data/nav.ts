@@ -55,6 +55,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'Money basics', href: '/money/', text: 'Taxes, set-asides, LLC vs S corp' },
 			{ label: 'Team', href: '/team/', text: 'Managers, agents, first hires' },
 			{ label: 'Stack', href: '/stack/', text: 'Gear and software by budget' },
+			{ label: 'Tool reviews', href: '/reviews/', text: 'Stan, Beacons, Linktree: real fees' },
 			{ label: 'Protect', href: '/protect/', text: 'Hacked, banned, impersonated' },
 			{ label: 'Underground', href: '/underground/', text: 'Gray markets, reported' },
 			{ label: 'Glossary', href: '/glossary/', text: 'CPM, usage rights and every term' },
@@ -68,7 +69,7 @@ export const groupFor = (path: string): string | undefined => {
 	if (p.startsWith('/platforms/')) return 'platforms';
 	if (/^\/(grow|algorithms|case-studies|shortlist)\//.test(p)) return 'grow';
 	if (/^\/(deals|paywall|earn|rates)\//.test(p)) return 'paid';
-	if (/^\/(money|team|stack|protect|underground)\//.test(p)) return 'business';
+	if (/^\/(money|team|stack|reviews|protect|underground)\//.test(p)) return 'business';
 	return undefined;
 };
 
@@ -97,6 +98,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/money/': { label: 'Finanzas básicas', text: 'Impuestos, apartados, LLC vs S corp (EE. UU.)' },
 			'/team/': { label: 'Equipo', text: 'Managers, agentes, primeras contrataciones' },
 			'/stack/': { label: 'Herramientas', text: 'Equipo y software según tu presupuesto' },
+			'/reviews/': { label: 'Reseñas de herramientas', text: 'Stan, Beacons, Linktree: comisiones reales' },
 			'/protect/': { label: 'Protégete', text: 'Hackeos, baneos, suplantación' },
 			'/underground/': { label: 'Underground', text: 'Mercados grises, contados como periodismo' },
 			'/glossary/': { label: 'Glosario', text: 'CPM, derechos de uso y cada término (en inglés)' },
@@ -119,6 +121,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/money/': { label: 'Finanças básicas', text: 'Impostos, reservas, LLC vs S corp (EUA)' },
 			'/team/': { label: 'Equipe', text: 'Empresários, agentes, primeiras contratações' },
 			'/stack/': { label: 'Ferramentas', text: 'Equipamento e software por orçamento' },
+			'/reviews/': { label: 'Análises de ferramentas', text: 'Stan, Beacons, Linktree: taxas reais' },
 			'/protect/': { label: 'Proteção', text: 'Conta hackeada, banida, perfil falso' },
 			'/underground/': { label: 'Underground', text: 'Mercados cinzentos, como jornalismo' },
 			'/glossary/': { label: 'Glossário', text: 'CPM, direitos de uso e cada termo (em inglês)' },

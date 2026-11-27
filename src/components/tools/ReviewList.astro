@@ -1,0 +1,114 @@
+---
+/** Cards for every review and every head-to-head page on /reviews/. */
+import { REVIEWS, VERSUS, reviewBySlug, versusSlug } from '../../lib/reviews-data';
+interface Props {
+	only?: string;
+}
+const { only } = Astro.props;
+const reviews = REVIEWS.filter((r) => !only || r.slug !== only);
+const pairs = VERSUS.filter(([a, b]) => !only || a === only || b === only);
+const kindLabel = { storefront: 'Store and link in bio', 'brand-deals': 'Brand deals' };
+---
+
+<div class="rl not-content" data-section="reviews">
+	{!only && (
+		<>
+			<h2 id="reviews">Reviews</h2>
+			<ul class="rl-grid">
+				{reviews.map((r) => (
+					<li>
+						<a href={`/reviews/${r.slug}/`}>
+							<small>{kindLabel[r.kind]}</small>
+							<b>{r.name}</b>
+							<span>{r.verdict}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</>
+	)}
+	{pairs.length > 0 && (
+		<>
+			<h2 id="compare">{only ? 'Compare it' : 'Side by side'}</h2>
+			<ul class="rl-pairs">
+				{pairs.map(([a, b]) => (
+					<li>
+						<a href={`/reviews/${versusSlug(a, b)}/`}>
+							{reviewBySlug(a).name} <i>vs</i> {reviewBySlug(b).name}
+						</a>
+					</li>
+				))}
+			</ul>
+		</>
+	)}
+</div>
+
+<style>
+	.rl h2 {
+		font-size: 1.15rem;
+		margin: 2rem 0 0.7rem;
+	}
+	.rl ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.7rem;
+	}
+	.rl-grid {
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+	}
+	.rl li {
+		margin: 0;
+	}
+	.rl a {
+		display: block;
+		height: 100%;
+		text-decoration: none;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		background: var(--sc-fill-subtle);
+		transition: border-color 0.2s ease;
+	}
+	.rl a:hover,
+	.rl a:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+	}
+	.rl-grid a {
+		padding: 0.9rem 1rem;
+	}
+	.rl-grid small {
+		display: block;
+		font-size: 0.7rem;
+		color: var(--accent);
+		font-weight: 600;
+	}
+	.rl-grid b {
+		display: block;
+		font-family: var(--sc-font-display);
+		font-size: 1.3rem;
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+		margin: 0.15rem 0 0.35rem;
+	}
+	.rl-grid span {
+		display: block;
+		font-size: 0.85rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+	}
+	.rl-pairs {
+		grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+	}
+	.rl-pairs a {
+		padding: 0.75rem 1rem;
+		font-weight: 650;
+		color: var(--sc-ivory);
+	}
+	.rl-pairs i {
+		font-style: normal;
+		font-weight: 400;
+		color: var(--sc-steel);
+		padding: 0 0.2rem;
+	}
+</style>
