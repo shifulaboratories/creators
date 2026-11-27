@@ -10,6 +10,7 @@ import { getCollection } from 'astro:content';
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import { SECTION_LABELS } from '../lib/share';
 import { currentLocale, t, withFallback, localize, sectionLabel } from '../i18n';
+import { sortedTerms, termPath } from '../lib/glossary';
 import { topicIcons } from '../data/topic-icons';
 
 const locale = currentLocale(Astro);
@@ -85,6 +86,15 @@ const rows = guides
 	})
 	.sort((a, b) => a.rank - b.rank);
 
+// Glossary terms join instant search results, after the guides.
+const termRows = sortedTerms.map((t, i) => ({
+	id: `glossary/${t.slug}`,
+	href: termPath(t.slug),
+	title: t.term,
+	text: [t.term, t.full, ...(t.aka ?? []), t.short].join(' '),
+	description: t.short,
+	rank: 9000 + i,
+}));
 const lookup = Object.fromEntries(rows.map((r) => [r.id, [r.title, r.label, r.section, r.minutes]]));
 const totals = Object.fromEntries(liveTopics.map((t) => [t.id, t.n]));
 
@@ -200,6 +210,20 @@ const suggestions = L.suggestions;
 						</li>
 					))
 				}
+				<li>
+					<a href="/glossary/" data-section="glossary">
+						<span class="ti" aria-hidden="true">
+							<svg viewBox="0 0 24 24">
+								<path d={topicIcons.glossary} />
+							</svg>
+						</span>
+						<span class="txt">
+							<strong>Glossary</strong>
+							<span>CPM, RPM, usage rights and every term in plain English</span>
+						</span>
+						<span class="n">{sortedTerms.length}</span>
+					</a>
+				</li>
 			</ul>
 		</section>
 
@@ -243,6 +267,21 @@ const suggestions = L.suggestions;
 							<span class="meta">
 								<span class="dot" aria-hidden="true" />
 								{r.label} · {r.minutes} {L.min}{!r.translated && <> · <abbr title={t(locale).grid.english}>{L.english}</abbr></>}
+							</span>
+						</a>
+					</li>
+				))
+			}
+			{
+				termRows.map((r) => (
+					<li data-id={r.id} data-title={r.title.toLowerCase()} data-text={`${r.text} glossary`.toLowerCase()} data-rank={r.rank} hidden>
+						<a href={r.href} data-section="glossary" hreflang={locale === 'en' ? undefined : 'en'}>
+							<strong>{r.title}</strong>
+							<span class="desc">{r.description}</span>
+							<span class="hit" data-hit hidden />
+							<span class="meta">
+								<span class="dot" aria-hidden="true" />
+								{sectionLabel('glossary', locale)}{locale !== 'en' && ' · EN'}
 							</span>
 						</a>
 					</li>

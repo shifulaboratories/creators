@@ -2,9 +2,29 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from './src/site.mjs';
 import { STARLIGHT_LOCALES, PREFIXES, translatedIds } from './src/i18n/locales.mjs';
 import { ui } from './src/i18n/ui-sidebar.mjs';
+
+// Pages we tell search engines not to index (src/route-data.ts) stay out of the
+// sitemap too: unwritten outlines (status: outline, the default) and 404.
+const DOCS = 'src/content/docs';
+const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]));
+const noindex = new Set(
+	walk(DOCS)
+		.filter((f) => /\.mdx?$/.test(f))
+		.filter((f) => {
+			const fm = readFileSync(f, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+			const status = fm.match(/^status:\s*["']?(\w+)/m)?.[1] ?? 'outline';
+			return status === 'outline';
+		})
+		.map((f) => '/' + relative(DOCS, f).replace(/\.mdx?$/, '').replace(/(^|\/)index$/, '') + '/')
+		.map((p) => p.replace(/\/+/g, '/'))
+		.filter((p) => p !== '/guides/'),
+);
+noindex.add('/404/');
 
 // Sidebar groups, labeled in every language (src/i18n/ui-sidebar.mjs).
 const section = (key, directory = key) => ({
@@ -42,7 +62,7 @@ export default defineConfig({
 	},
 	integrations: [
 		sitemap({
-			filter: inSitemap,
+			filter: (url) => inSitemap(url) && !noindex.has(new URL(url).pathname.replace(/^\/(es|pt-br)\//, '/')),
 			i18n: {
 				defaultLocale: 'en',
 				locales: { en: 'en', ...Object.fromEntries(PREFIXES.map((p) => [p, STARLIGHT_LOCALES[p].lang])) },

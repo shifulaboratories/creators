@@ -7,6 +7,8 @@ import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
 import { SITE_NAME } from './site.mjs';
 import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
 import { personName, CONTRIBUTORS_PATH } from './data/people';
+import { getTerm, sortedTerms, termPath } from './lib/glossary';
+import { SEO } from './data/seo';
 import { NEWS_PLATFORM_INFO } from './lib/news';
 import { getCollection } from 'astro:content';
 import { splitId, localize, sectionLabel, HTML_LANG, OG_LOCALE, LOCALES, type Locale } from './i18n';
@@ -71,6 +73,24 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 		{ tag: 'meta', attrs: { name: 'twitter:image', content: image } },
 	);
 
+	// Search titles: apply overrides (src/data/seo.ts), and drop the site name
+	// when it would push the title past what Google shows (~60 characters).
+	// Overrides are written in English, so they apply to English pages only.
+	const seo = locale === 'en' ? SEO[id] : undefined;
+	const set = (match: (h: (typeof head)[number]) => boolean, value: string, attr = 'content') => {
+		for (const h of head) if (match(h)) (attr === 'text' ? (h.content = value) : ((h.attrs ??= {})[attr] = value));
+	};
+	const titleTag = head.find((h) => h.tag === 'title');
+	if (seo?.title && titleTag) titleTag.content = `${seo.title} | ${SITE_NAME}`;
+	if (titleTag?.content && titleTag.content.length > 65 && titleTag.content.endsWith(` | ${SITE_NAME}`)) {
+		titleTag.content = titleTag.content.slice(0, -` | ${SITE_NAME}`.length);
+	}
+	if (seo?.title) set((h) => h.attrs?.property === 'og:title', seo.title);
+	if (seo?.description) {
+		set((h) => h.attrs?.name === 'description', seo.description);
+		set((h) => h.attrs?.property === 'og:description', seo.description);
+	}
+
 	const section = base.split('/')[0];
 	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}${localize(locale, '/')}` }];
 	const data = entry.data as typeof entry.data & {
@@ -102,12 +122,40 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 	// Per-platform news pages (news/instagram) are collections too.
 	const isCollection = base === 'guides' || (!base.includes('/') && base !== 'index') || (section === 'news' && base.split('/').length === 2 && !news);
 	const modified = news ? (news.updated ?? news.published) : (route.lastUpdated ?? data.lastReviewed);
+	// Glossary: each term page is about one DefinedTerm in the site's DefinedTermSet.
+	const termSet = { '@type': 'DefinedTermSet', '@id': `${SITE_ORIGIN}/glossary/#set`, name: `${SITE_NAME} creator glossary`, url: `${SITE_ORIGIN}/glossary/` };
+	const term = id.startsWith('glossary/') ? getTerm(id.slice(9)) : undefined;
+	const glossaryNodes = term
+		? [
+				{
+					'@type': 'DefinedTerm',
+					'@id': `${url}#term`,
+					name: term.term,
+					...(term.full ? { alternateName: [term.full, ...(term.aka ?? [])] } : term.aka?.length ? { alternateName: term.aka } : {}),
+					description: term.short,
+					url,
+					termCode: term.slug,
+					inDefinedTermSet: termSet,
+				},
+			]
+		: id === 'glossary'
+			? [
+					{
+						...termSet,
+						description: entry.data.description,
+						hasDefinedTerm: sortedTerms.map((t) => ({ '@type': 'DefinedTerm', name: t.term, description: t.short, url: `${SITE_ORIGIN}${termPath(t.slug)}` })),
+					},
+				]
+			: [];
+
 	const graph = [
+		...glossaryNodes,
 		{
-			'@type': news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
+			'@type': term ? 'WebPage' : news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
+			...(term ? { about: { '@id': `${url}#term` }, mainEntity: { '@id': `${url}#term` } } : {}),
 			...(news ? { datePublished: news.published.toISOString(), articleSection: NEWS_PLATFORM_INFO[news.platform]?.name, about: { '@type': 'Organization', name: NEWS_PLATFORM_INFO[news.platform]?.name } } : {}),
 			headline: title,
-			description: entry.data.description,
+			description: seo?.description ?? entry.data.description,
 			image,
 			url,
 			mainEntityOfPage: url,

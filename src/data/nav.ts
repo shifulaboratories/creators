@@ -55,6 +55,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'Stack', href: '/stack/', text: 'Gear and software by budget' },
 			{ label: 'Protect', href: '/protect/', text: 'Hacked, banned, impersonated' },
 			{ label: 'Underground', href: '/underground/', text: 'Gray markets, reported' },
+			{ label: 'Glossary', href: '/glossary/', text: 'CPM, usage rights and every term' },
 		],
 	},
 ];
@@ -74,6 +75,8 @@ export const groupFor = (path: string): string | undefined => {
  * Brand and platform names stay as they are. Machine-assisted: see docs/translating.md.
  */
 type Words = { label: string; text?: string };
+const ENGLISH_ONLY = ['/glossary/'];
+
 const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links: Record<string, Words> }> = {
 	es: {
 		groups: { platforms: 'Plataformas', grow: 'Crecer', paid: 'Cobrar', business: 'Negocio' },
@@ -94,6 +97,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/stack/': { label: 'Herramientas', text: 'Equipo y software según tu presupuesto' },
 			'/protect/': { label: 'Protégete', text: 'Hackeos, baneos, suplantación' },
 			'/underground/': { label: 'Underground', text: 'Mercados grises, contados como periodismo' },
+			'/glossary/': { label: 'Glosario', text: 'CPM, derechos de uso y cada término (en inglés)' },
 		},
 	},
 	'pt-br': {
@@ -115,6 +119,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/stack/': { label: 'Ferramentas', text: 'Equipamento e software por orçamento' },
 			'/protect/': { label: 'Proteção', text: 'Conta hackeada, banida, perfil falso' },
 			'/underground/': { label: 'Underground', text: 'Mercados cinzentos, como jornalismo' },
+			'/glossary/': { label: 'Glossário', text: 'CPM, direitos de uso e cada termo (em inglês)' },
 		},
 	},
 };
@@ -131,7 +136,9 @@ export function navFor(locale: 'en' | 'es' | 'pt-br'): NavGroup[] {
 			// "How algorithms work" shares /algorithms/ with "General", so it has its own key.
 			const key = g.id === 'grow' && l.href === '/algorithms/' ? '/algorithms/#grow' : l.href;
 			const tr = w.links[key];
-			return { ...l, label: tr?.label ?? l.label, text: tr?.text ?? l.text, href: `/${locale}${l.href}` };
+			// The glossary is English only for now, so it keeps its English address.
+			const href = ENGLISH_ONLY.some((p) => l.href.startsWith(p)) ? l.href : `/${locale}${l.href}`;
+			return { ...l, label: tr?.label ?? l.label, text: tr?.text ?? l.text, href };
 		}),
 	}));
 }

@@ -5,6 +5,7 @@
  * guide: left for the next one, right for the previous one.
  */
 import { getCollection } from 'astro:content';
+import { termsForGuide, termPath } from '../lib/glossary';
 import LibraryButton from './LibraryButton.astro';
 import { isGuideId } from '../lib/library';
 import { currentLocale, t, basePath, sectionLabel, splitId } from '../i18n';
@@ -13,6 +14,9 @@ const { pagination, entry } = Astro.locals.starlightRoute;
 // Progress is keyed by the English id, so it carries across languages.
 const baseId = splitId(entry.id).base;
 const isGuide = isGuideId(baseId);
+// Glossary terms this guide uses, linked both ways for readers (and search engines).
+// The glossary is English only for now.
+const words = termsForGuide(baseId);
 const { prev, next } = pagination;
 const locale = currentLocale(Astro);
 const L = t(locale).pager;
@@ -35,6 +39,24 @@ const n = describe(next);
 ---
 
 {isGuide && <LibraryButton kind="done" id={baseId} title={entry.data.title} section={baseId.split('/')[0]} />}
+{
+	words.length > 0 && (
+		<aside class="words print:hidden" aria-labelledby="words-h">
+			<h2 id="words-h">{L.words}</h2>
+			<ul>
+				{words.map((t) => (
+					<li>
+						<a href={termPath(t.slug)} title={t.short} hreflang={locale === 'en' ? undefined : 'en'}>{t.term}</a>
+					</li>
+				))}
+				<li>
+					<a class="all" href="/glossary/" hreflang={locale === 'en' ? undefined : 'en'}>{L.glossary}</a>
+				</li>
+			</ul>
+		</aside>
+	)
+}
+
 {
 	(p || n) && (
 		<nav class="pager print:hidden" aria-label={L.more} data-lib-mark data-pager data-prev={p?.href} data-next={n?.href}>
@@ -166,6 +188,42 @@ const n = describe(next);
 </script>
 
 <style>
+	.words {
+		margin: 2.5rem 0 1rem;
+	}
+	.words h2 {
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+		color: var(--sc-steel);
+		margin: 0 0 0.6rem;
+	}
+	.words ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+	.words li {
+		margin: 0;
+	}
+	.words a {
+		display: inline-block;
+		padding: 0.35rem 0.8rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+	}
+	.words a:hover {
+		border-color: var(--accent, var(--sc-ion));
+		color: var(--sc-ivory);
+	}
+	.words .all {
+		border-style: dashed;
+		color: var(--sc-silver);
+	}
 	.pager {
 		display: grid;
 		gap: 0.6rem;

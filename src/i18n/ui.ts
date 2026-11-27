@@ -25,6 +25,7 @@ const en = {
 		platforms: 'Platforms',
 		shortlist: 'The Shortlist',
 		about: 'About',
+		glossary: 'Glossary',
 		guides: 'All guides',
 	} as Record<string, string>,
 	page: {
@@ -40,7 +41,7 @@ const en = {
 		minRead: (n: number) => `${n} min read`,
 		latest: 'Latest change',
 	},
-	pager: { upNext: 'Up next', back: 'Back', more: 'More guides', hint: 'Tip: swipe sideways anywhere to flip between guides.' },
+	pager: { upNext: 'Up next', back: 'Back', more: 'More guides', hint: 'Tip: swipe sideways anywhere to flip between guides.', words: 'Words in this guide', glossary: 'Full glossary' },
 	grid: { status: { outline: 'Outline', draft: 'Draft', published: 'Reviewed' } as Record<string, string>, english: 'In English' },
 	tabs: { home: 'Home', guides: 'Guides', menu: 'Menu', learn: 'Learn', platforms: 'Platforms', shortlist: 'Shortlist', search: 'Search', nav: 'Quick navigation' },
 	ai: {
@@ -169,7 +170,7 @@ const en = {
 		remove: 'Remove',
 		nOfDone: '{n} of {t} done',
 	},
-	nav: { home: 'home', main: 'Main', guides: 'Guides', openMenu: 'Open menu', menu: 'Menu', closeMenu: 'Close menu', searchAll: 'Search every guide', searchGuides: 'Search guides', inSection: (l: string) => `In ${l}`, allGuides: 'All guides', about: 'About', contribute: 'Contribute', language: 'Language' },
+	nav: { home: 'home', main: 'Main', guides: 'Guides', openMenu: 'Open menu', menu: 'Menu', closeMenu: 'Close menu', searchAll: 'Search every guide', searchGuides: 'Search guides', inSection: (l: string) => `In ${l}`, allGuides: 'All guides', about: 'About', contribute: 'Contribute', language: 'Language', glossary: 'Glossary' },
 	guide: { doThis: 'Do this today', details: 'The details', before: 'Before', after: 'After', example: 'Example', copy: 'Copy', copied: 'Copied', selectCopy: 'Select and copy', allSet: 'All set.', of: 'of' },
 	fallback: {
 		home: 'Home',
@@ -197,6 +198,7 @@ const es: UI = {
 		platforms: 'Plataformas',
 		shortlist: 'La Selección',
 		about: 'Acerca de',
+		glossary: 'Glosario',
 		guides: 'Todas las guías',
 	},
 	page: {
@@ -212,7 +214,7 @@ const es: UI = {
 		minRead: (n) => `${n} min de lectura`,
 		latest: 'Último cambio',
 	},
-	pager: { upNext: 'Sigue', back: 'Atrás', more: 'Más guías', hint: 'Tip: desliza hacia los lados en cualquier parte para pasar de guía.' },
+	pager: { upNext: 'Sigue', back: 'Atrás', more: 'Más guías', hint: 'Tip: desliza hacia los lados en cualquier parte para pasar de guía.', words: 'Términos de esta guía (en inglés)', glossary: 'Glosario completo' },
 	grid: { status: { outline: 'Esquema', draft: 'Borrador', published: 'Revisado' }, english: 'En inglés' },
 	tabs: { home: 'Inicio', guides: 'Guías', menu: 'Menú', learn: 'Aprende', platforms: 'Plataformas', shortlist: 'Selección', search: 'Buscar', nav: 'Navegación rápida' },
 	ai: {
@@ -341,7 +343,7 @@ const es: UI = {
 		remove: 'Quitar',
 		nOfDone: '{n} de {t} leídas',
 	},
-	nav: { home: 'inicio', main: 'Principal', guides: 'Guías', openMenu: 'Abrir menú', menu: 'Menú', closeMenu: 'Cerrar menú', searchAll: 'Buscar en todas las guías', searchGuides: 'Buscar guías', inSection: (l) => `En ${l}`, allGuides: 'Todas las guías', about: 'Acerca de', contribute: 'Colabora', language: 'Idioma' },
+	nav: { home: 'inicio', main: 'Principal', guides: 'Guías', openMenu: 'Abrir menú', menu: 'Menú', closeMenu: 'Cerrar menú', searchAll: 'Buscar en todas las guías', searchGuides: 'Buscar guías', inSection: (l) => `En ${l}`, allGuides: 'Todas las guías', about: 'Acerca de', contribute: 'Colabora', language: 'Idioma', glossary: 'Glosario (en inglés)' },
 	guide: { doThis: 'Haz esto hoy', details: 'Los detalles', before: 'Antes', after: 'Después', example: 'Ejemplo', copy: 'Copiar', copied: 'Copiado', selectCopy: 'Selecciona y copia', allSet: '¡Listo!', of: 'de' },
 	fallback: { home: 'Inicio', language: 'Idioma' },
 };
@@ -364,6 +366,7 @@ const pt: UI = {
 		platforms: 'Plataformas',
 		shortlist: 'A Seleção',
 		about: 'Sobre',
+		glossary: 'Glossário',
 		guides: 'Todos os guias',
 	},
 	page: {
@@ -379,7 +382,7 @@ const pt: UI = {
 		minRead: (n) => `${n} min de leitura`,
 		latest: 'Última mudança',
 	},
-	pager: { upNext: 'A seguir', back: 'Voltar', more: 'Mais guias', hint: 'Dica: deslize para os lados em qualquer lugar para trocar de guia.' },
+	pager: { upNext: 'A seguir', back: 'Voltar', more: 'Mais guias', hint: 'Dica: deslize para os lados em qualquer lugar para trocar de guia.', words: 'Termos deste guia (em inglês)', glossary: 'Glossário completo' },
 	grid: { status: { outline: 'Esboço', draft: 'Rascunho', published: 'Revisado' }, english: 'Em inglês' },
 	tabs: { home: 'Início', guides: 'Guias', menu: 'Menu', learn: 'Aprenda', platforms: 'Plataformas', shortlist: 'Seleção', search: 'Buscar', nav: 'Navegação rápida' },
 	ai: {
@@ -508,7 +511,7 @@ const pt: UI = {
 		remove: 'Remover',
 		nOfDone: '{n} de {t} lidos',
 	},
-	nav: { home: 'início', main: 'Principal', guides: 'Guias', openMenu: 'Abrir menu', menu: 'Menu', closeMenu: 'Fechar menu', searchAll: 'Buscar em todos os guias', searchGuides: 'Buscar guias', inSection: (l) => `Em ${l}`, allGuides: 'Todos os guias', about: 'Sobre', contribute: 'Contribua', language: 'Idioma' },
+	nav: { home: 'início', main: 'Principal', guides: 'Guias', openMenu: 'Abrir menu', menu: 'Menu', closeMenu: 'Fechar menu', searchAll: 'Buscar em todos os guias', searchGuides: 'Buscar guias', inSection: (l) => `Em ${l}`, allGuides: 'Todos os guias', about: 'Sobre', contribute: 'Contribua', language: 'Idioma', glossary: 'Glossário (em inglês)' },
 	guide: { doThis: 'Faça isto hoje', details: 'Os detalhes', before: 'Antes', after: 'Depois', example: 'Exemplo', copy: 'Copiar', copied: 'Copiado', selectCopy: 'Selecione e copie', allSet: 'Tudo certo!', of: 'de' },
 	fallback: { home: 'Início', language: 'Idioma' },
 };

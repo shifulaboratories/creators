@@ -1,7 +1,8 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import { renderOg } from '../../lib/og';
-import { accentFor } from '../../lib/share';
+import { SECTION_LABELS, accentFor } from '../../lib/share';
+import { terms, seoTitle } from '../../lib/glossary';
 import { splitId, sectionLabel } from '../../i18n';
 import { getNews, newsId, NEWS_PLATFORM_INFO } from '../../lib/news';
 
@@ -30,6 +31,14 @@ export const getStaticPaths = (async () => {
 			params: { slug: 'guides' },
 			props: { title: 'Every guide, searchable', description: 'Algorithms, deals, pricing, teams and tools. Free, sourced and open source.', kicker: 'All guides', accent: accentFor('guides') },
 		},
+		{
+			params: { slug: 'glossary' },
+			props: { title: 'The creator glossary', description: 'CPM, RPM, usage rights, exclusivity and more, in plain English with real numbers.', kicker: 'Glossary', accent: accentFor('glossary') },
+		},
+		...terms.map((t) => ({
+			params: { slug: `glossary/${t.slug}` },
+			props: { title: seoTitle(t).includes('?') ? seoTitle(t).split('?')[0] + '?' : t.term, description: t.short, kicker: 'Glossary', accent: accentFor('glossary') },
+		})),
 		...docs
 			.filter((d) => d.id !== 'guides')
 			.map((d) => {

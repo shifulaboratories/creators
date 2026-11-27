@@ -21,6 +21,7 @@ export const SECTION_LABELS: Record<string, string> = {
 	paywall: 'Paywall',
 	about: 'About',
 	guides: 'All guides',
+	glossary: 'Glossary',
 };
 
 const C = {
@@ -52,6 +53,7 @@ export const ACCENTS: Record<string, string> = {
 	paywall: C.rose,
 	about: C.champagne,
 	guides: C.rose,
+	glossary: C.ion,
 	youtube: C.ember,
 	tiktok: C.cyan,
 	instagram: C.rose,
