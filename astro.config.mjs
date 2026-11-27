@@ -16,6 +16,8 @@ export default defineConfig({
 		'/goldmines': '/shortlist/',
 		'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
 		'/grow/strategy': '/grow/niche/',
+		'/earn/brand-deals': '/deals/brand-deals/',
+		'/earn/pricing': '/deals/pricing/',
 	},
 	integrations: [
 		starlight({
@@ -56,7 +58,7 @@ export default defineConfig({
 				section('The Shortlist', 'shortlist'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
-				section('Deals and contracts', 'deals'),
+				section('Brand deals', 'deals'),
 				section('Money basics', 'money'),
 				section('Team', 'team'),
 				section('Stack', 'stack'),

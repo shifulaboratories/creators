@@ -135,6 +135,70 @@ export const sources: Record<string, Source> = {
 		url: 'https://support.google.com/youtube/answer/72851',
 		method: 'Official eligibility rules.',
 	},
+	ana: {
+		id: 'ana',
+		name: 'Influencer Marketing Agency Compensation report',
+		publisher: 'ANA (Association of National Advertisers) with JLB + Partners',
+		date: 'Feb 2026 (marked draft)',
+		url: 'https://s3.amazonaws.com/media.mediapost.com/uploads/ANAinfluencerMarketingCompensationReport.pdf',
+		method: 'Survey of 84 brand-side marketers plus 20 interviews. Brands, not creators.',
+	},
+	sagComm: {
+		id: 'sagComm',
+		name: 'Contract Bulletin: Commission Limitations',
+		publisher: 'SAG-AFTRA',
+		date: 'Nov 2024',
+		url: 'https://www.sagaftra.org/sites/default/files/2024-11/Contract%20Bulletin%20-%20Commission%20Limitations.pdf',
+		method: 'Union rules for franchised agents (Los Angeles).',
+	},
+	caLaw: {
+		id: 'caLaw',
+		name: 'Laws Relating to Talent Agencies (Labor Code 1700 et seq.)',
+		publisher: 'California Labor Commissioner',
+		date: 'Rev. Jan 2025',
+		url: 'https://www.dir.ca.gov/dlse/Talent/Talent_Laws_Relating_to_Talent_Agencies.pdf',
+		method: 'The statute and regulations.',
+	},
+	makeinf: {
+		id: 'makeinf',
+		name: 'How talent managers and agents take a cut of an influencer’s brand deals',
+		publisher: 'Make Influence Academy',
+		date: '2026',
+		url: 'https://www.makeinfluence.com/en/academy/how-talent-managers-and-agents-take-a-cut-of-an-influencers-brand-deals',
+		method: 'Industry explainer quoting managers and agencies.',
+	},
+	pfeiffer: {
+		id: 'pfeiffer',
+		name: 'Influencer Management Agreements: Fee (Manager’s Compensation)',
+		publisher: 'Pfeiffer Law (attorney Jon Pfeiffer)',
+		date: 'Aug 16, 2023',
+		url: 'https://www.pfeifferlaw.com/entertainment-law-blog/influencer-management-agreements-fee-managers-compensation',
+		method: 'Entertainment attorney’s article on manager contracts.',
+	},
+	lexis: {
+		id: 'lexis',
+		name: 'Managers, Agents & Attorneys',
+		publisher: 'LexisNexis Practice Advisor (Christiane Cargill Kinney)',
+		date: 'Nov 26, 2015',
+		url: 'https://www.lexisnexis.com/community/amp-insights/119/managers-agents-attorneys',
+		method: 'Attorney’s practice guide.',
+	},
+	armanino: {
+		id: 'armanino',
+		name: 'How a Business Manager Helps You Thrive',
+		publisher: 'Armanino (accounting firm)',
+		date: 'Sep 5, 2024',
+		url: 'https://www.armanino.com/articles/how-business-manager-helps-influencers-thrive/',
+		method: 'Firm that offers business management; states the typical fee.',
+	},
+	caTalent: {
+		id: 'caTalent',
+		name: 'Talent Agency License and Fee-Related Talent Services',
+		publisher: 'California Labor Commissioner',
+		date: 'Checked Nov 27, 2026',
+		url: 'https://dir.ca.gov/dlse/Talent%20Agency_License_and_Fee-Related_Talent_Services.htm',
+		method: 'Official guidance on who needs a talent agency license.',
+	},
 };
 
 /* ───────────── Rate benchmarks ───────────── */
@@ -295,7 +359,7 @@ export const paths: Path[] = [
 		ceiling: 3,
 		bestFor: 'Anyone with a clear niche that brands sell to.',
 		watch: 'Lumpy income, long payment terms, and contracts that grab rights. Read the clause library first.',
-		href: '/earn/brand-deals/',
+		href: '/deals/brand-deals/',
 	},
 	{
 		key: 'subs',
@@ -673,6 +737,26 @@ export type Script = { key: string; when: string; title: string; body: string };
 
 export const scripts: Script[] = [
 	{
+		key: 'pitch',
+		when: 'You want to pitch a brand',
+		title: 'The five-line pitch',
+		body: `Subject: [Your name] x [Brand]: [one-line idea]
+
+Hi [Name],
+
+I’m [name], I make [what you make] for [who watches] ([X] median views per [Reel/video]).
+
+I’ve used [product] for [how long] and my audience keeps asking about it: [one proof, like a comment or a past mention].
+
+Idea: [one concrete concept, e.g. “a 60-second ‘what I actually use’ Reel showing [product] in my morning routine”].
+
+Recent results: [one past partnership or post with numbers].
+
+Media kit: [link]. Would you be open to a quick chat about [season/launch]?
+
+[Your name]`,
+	},
+	{
 		key: 'rate',
 		when: 'They ask for your rates',
 		title: 'Send a range, not a menu',
@@ -760,4 +844,29 @@ I’ve attached the invoice again. If it’s with a different team, please point
 Thanks,
 [Your name]`,
 	},
+];
+
+/* ───────────── Who takes a cut ───────────── */
+
+export type Cut = {
+	key: string;
+	name: string;
+	who: string;
+	/** default, min, max as fractions */
+	def: number;
+	min: number;
+	max: number;
+	/** 'brand' = comes out of the brand's budget before your fee; 'you' = commission on your gross fee */
+	side: 'brand' | 'you';
+	on: boolean;
+	src: string[];
+	note: string;
+};
+
+export const cuts: Cut[] = [
+	{ key: 'agency', name: 'Brand’s agency', who: 'Runs the campaign for the brand', def: 0.2, min: 0, max: 0.4, side: 'brand', on: true, src: ['later26', 'ana'], note: 'Later puts agency fees at 10–20% on top of creator fees. Brands in the ANA’s 2026 survey said 30% of influencer spend went to agency services on average. It comes out of the brand’s budget, before your fee.' },
+	{ key: 'manager', name: 'Your manager', who: 'Finds, negotiates and runs your deals', def: 0.2, min: 0.1, max: 0.25, side: 'you', on: true, src: ['pfeiffer', 'makeinf'], note: 'Pfeiffer Law: “10% to 20% or more with 15% to 20% being the norm,” usually on gross.' },
+	{ key: 'agent', name: 'Talent agent', who: 'Licensed to book work, often at bigger agencies', def: 0.1, min: 0.05, max: 0.2, side: 'you', on: false, src: ['sagComm', 'lexis'], note: 'Agents are typically at 10%. SAG-AFTRA caps its franchised agents at 10% with no extra fees.' },
+	{ key: 'lawyer', name: 'Lawyer on a percentage', who: 'Reviews and papers your deals', def: 0.05, min: 0.05, max: 0.1, side: 'you', on: false, src: ['lexis'], note: 'Some entertainment lawyers charge 5–10% instead of hourly. Many also review a single contract for a flat fee.' },
+	{ key: 'bizmgr', name: 'Business manager', who: 'Bookkeeping, taxes, paying people', def: 0.05, min: 0.03, max: 0.07, side: 'you', on: false, src: ['armanino'], note: 'Armanino: the typical fee is 5% of income.' },
 ];

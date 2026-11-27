@@ -63,7 +63,7 @@ LinkedIn's editors have also described the feed in interviews. Buffer collected 
 LinkedIn has no open ad-revenue program for creators. The money is indirect, and often bigger than on consumer apps, because the audience has budgets.
 
 - **BrandLink.** Since April 2025, brands can sponsor video series from selected creators and publishers (LinkedIn named Steven Bartlett, Gary Vaynerchuk, Guy Raz and Allie K. Miller). It's invite-only and LinkedIn hasn't published how creators are paid. *(From the platform.)*
-- **B2B brand deals.** Software, finance and recruiting brands pay creators to reach professionals. See [Brand deals](/earn/brand-deals/). *(Creator-tested.)*
+- **B2B brand deals.** Software, finance and recruiting brands pay creators to reach professionals. See [Brand deals](/deals/brand-deals/). *(Creator-tested.)*
 - **Your own business.** Consulting, courses, a newsletter, speaking and hiring all come in through DMs. *(Creator-tested.)*
 
 ## Sources

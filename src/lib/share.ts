@@ -7,7 +7,7 @@ export const SITE_ORIGIN = 'https://creators.select';
 export const SECTION_LABELS: Record<string, string> = {
 	grow: 'Grow',
 	earn: 'Earn',
-	deals: 'Deals and contracts',
+	deals: 'Brand deals',
 	team: 'Team',
 	stack: 'Stack',
 	protect: 'Protect',

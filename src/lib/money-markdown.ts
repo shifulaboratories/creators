@@ -1,5 +1,5 @@
 /** Plain-text versions of the Earn and Deals widgets, for "Copy as Markdown" and llms.txt. */
-import { bands, marketAverage, fees, paths, clauses, redlines, scripts, sources } from './money-data';
+import { bands, marketAverage, fees, paths, clauses, redlines, scripts, sources, cuts } from './money-data';
 
 const usd = (n: number | null) => (n === null ? 'and up' : '$' + n.toLocaleString('en-US'));
 const fmtFollowers = (n: number | null) => (n === null ? '+' : n >= 1e6 ? n / 1e6 + 'M' : n / 1e3 + 'K');
@@ -21,5 +21,11 @@ export const moneyWidgetText: Record<string, string> = {
 		.map((c) => `### ${c.name}\n${c.plain}\n- Normal: ${c.normal}\n- Red flag: ${c.flag}\n- Watch for: "${c.bad}"\n- Ask for: "${c.fix}"\n- Ask the brand: "${c.ask}"`)
 		.join('\n\n'),
 	RedlineWalkthrough: redlines.map((r) => `- **${r.title}** (${r.pass}): change "${r.cut}" to "${r.add}". Why: ${r.why}`).join('\n'),
+	CutCalculator:
+		'Who takes a cut of a brand deal:\n\n' +
+		cuts.map((c) => `- **${c.name}** (${Math.round(c.min * 100)}–${Math.round(c.max * 100)}%, taken from ${c.side === 'brand' ? 'the brand’s budget' : 'your gross fee'}): ${c.note}`).join('\n') +
+		'\n\nExample: on a $10,000 fee, a 20% manager and a 10% agent leave $7,000 before taxes and costs.',
+	DealsMap:
+		'The six steps of a brand deal: 1. Get found (/deals/pitching-brands/) 2. Price it (/deals/pricing/) 3. Negotiate (/deals/negotiation/) 4. Fix the contract (/deals/redline-a-contract/, /deals/clause-library/) 5. Post it right (/deals/disclosure/) 6. Get paid (/deals/getting-paid/). Team and commissions: /deals/agencies-and-commissions/',
 	ScriptCards: scripts.map((s) => `### ${s.when}: ${s.title}\n\n\`\`\`\n${s.body}\n\`\`\``).join('\n\n'),
 };
