@@ -55,6 +55,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'Stack', href: '/stack/', text: 'Gear and software by budget' },
 			{ label: 'Protect', href: '/protect/', text: 'Hacked, banned, impersonated' },
 			{ label: 'Underground', href: '/underground/', text: 'Gray markets, reported' },
+			{ label: 'Glossary', href: '/glossary/', text: 'CPM, usage rights and every term' },
 		],
 	},
 ];
