@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from './src/site.mjs';
 import { STARLIGHT_LOCALES, PREFIXES, translatedIds } from './src/i18n/locales.mjs';
@@ -47,6 +47,41 @@ const inSitemap = (url) => {
 	return CUSTOM_PAGES.has(base) || translated[prefix].has(base);
 };
 
+// Old and short addresses. Astro writes a small HTML page for each; the
+// _redirects file written after the build (below) makes Cloudflare answer with
+// a real 301 first, which search engines and link previews follow.
+const REDIRECTS = {
+	'/grow/algorithms': '/algorithms/how-recommenders-work/',
+	'/grow/case-studies': '/case-studies/',
+	'/goldmines': '/shortlist/',
+	'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
+	'/grow/strategy': '/grow/niche/',
+	'/earn/brand-deals': '/deals/brand-deals/',
+	'/earn/pricing': '/deals/pricing/',
+	'/news/weekly': '/news/',
+	// Short addresses for the five top-nav items (src/data/nav.ts).
+	'/resources': '/guides/',
+	'/directories': '/creators/',
+	'/companies': '/team/agency-directory/',
+	'/contributors': '/about/contributors/',
+	'/careers': '/jobs/',
+};
+// Guide pages also existed under /es/ and /pt-br/; their old addresses move too.
+const TRANSLATED_REDIRECTS = ['/grow/algorithms', '/grow/case-studies', '/goldmines', '/goldmines/mrbeast-production-handbook', '/grow/strategy', '/earn/brand-deals', '/earn/pricing', '/news/weekly'];
+const writeRedirects = {
+	name: 'cloudflare-redirects',
+	hooks: {
+		'astro:build:done': ({ dir }) => {
+			const lines = Object.entries(REDIRECTS).flatMap(([from, to]) => [
+				`${from} ${to} 301`,
+				`${from}/ ${to} 301`,
+				...(TRANSLATED_REDIRECTS.includes(from) ? PREFIXES.flatMap((p) => [`/${p}${from} /${p}${to} 301`, `/${p}${from}/ /${p}${to} 301`]) : []),
+			]);
+			writeFileSync(new URL('_redirects', dir), lines.join('\n') + '\n');
+		},
+	},
+};
+
 export default defineConfig({
 	site: 'https://creators.select',
 	// Render pages in parallel; the animated previews (src/lib/og-video.ts) dominate build time.
@@ -62,23 +97,9 @@ export default defineConfig({
 	// Start loading a page as soon as a finger touches its link, and the next
 	// guide as soon as its link scrolls into view (src/components/Pagination.astro).
 	prefetch: { prefetchAll: true, defaultStrategy: 'tap' },
-	redirects: {
-		'/grow/algorithms': '/algorithms/how-recommenders-work/',
-		'/grow/case-studies': '/case-studies/',
-		'/goldmines': '/shortlist/',
-		'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
-		'/grow/strategy': '/grow/niche/',
-		'/earn/brand-deals': '/deals/brand-deals/',
-		'/earn/pricing': '/deals/pricing/',
-		'/news/weekly': '/news/',
-		// Short addresses for the five top-nav items (src/data/nav.ts).
-		'/resources': '/guides/',
-		'/directories': '/creators/',
-		'/companies': '/team/agency-directory/',
-		'/contributors': '/about/contributors/',
-		'/careers': '/jobs/',
-	},
+	redirects: REDIRECTS,
 	integrations: [
+		writeRedirects,
 		sitemap({
 			filter: (url) => inSitemap(url) && !noindex.has(new URL(url).pathname.replace(/^\/(es|pt-br)\//, '/')),
 			i18n: {

@@ -53,6 +53,10 @@ Some pages include videos from YouTube.
 
 A few pages include TikToks. These cards are drawn by us, so nothing loads from TikTok until you tap one. When you tap, TikTok's official player loads from `tiktok.com`, and from then on [TikTok's privacy policy](https://www.tiktok.com/legal/privacy-policy) applies to that video.
 
+## App icons
+
+The small app and website icons in tool lists and creator setups are served from creators.select. When an icon isn't cached yet, our server fetches it once from an icon service and keeps a copy. Your browser never contacts that service, so it doesn't see your visit.
+
 ## Search
 
 The site's search runs entirely in your browser. What you type isn't sent to us or anyone else, unless you tap a button to ask an AI, below.

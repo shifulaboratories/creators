@@ -1,6 +1,9 @@
 /**
- * The site is static. This Worker only runs for /api/* (see run_worker_first in
+ * The site is static. This Worker only runs for /api/* and /icons/* (see run_worker_first in
  * wrangler.jsonc); everything else is served straight from the built assets.
+ *
+ * /icons/<domain>  GET  → that site's app icon, fetched by us and cached, so visitors'
+ *                  browsers never contact an icon service (ToolList.astro, CreatorSetups.astro)
  *
  * /api/rate-check  GET  ?platform=&format=  → per-tier quartiles, only for tiers with RC_MIN_BUCKET+ rates
  *                  POST {platform, format, followers, rate, usage, niche, region, token} → stores one anonymous rate
@@ -77,9 +80,36 @@ async function submit(req: Request, env: Env) {
 	return json({ ok: true, counted: status === 'ok' });
 }
 
+// Only real domain names, so this can't be pointed at anything else.
+const DOMAIN = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+const ICON_SOURCE = (domain: string) => `https://twenty-icons.com/${domain}/64`;
+
+async function icon(req: Request, domain: string) {
+	if (!DOMAIN.test(domain) || domain.length > 100) return new Response('Not found', { status: 404 });
+	const cache = (caches as unknown as { default: Cache }).default;
+	const key = new Request(new URL(`/icons/${domain}`, req.url).toString());
+	const hit = await cache.match(key);
+	if (hit) return hit;
+	let upstream: Response;
+	try {
+		upstream = await fetch(ICON_SOURCE(domain), { headers: { accept: 'image/*' } });
+	} catch {
+		return new Response('Not found', { status: 404, headers: { 'cache-control': 'public, max-age=3600' } });
+	}
+	const type = upstream.headers.get('content-type') ?? '';
+	if (!upstream.ok || !type.startsWith('image/')) return new Response('Not found', { status: 404, headers: { 'cache-control': 'public, max-age=3600' } });
+	const res = new Response(upstream.body, {
+		headers: { 'content-type': type, 'cache-control': 'public, max-age=2592000', 'x-content-type-options': 'nosniff' },
+	});
+	await cache.put(key, res.clone());
+	return res;
+}
+
 export default {
 	async fetch(req: Request, env: Env): Promise<Response> {
 		const url = new URL(req.url);
+		const iconPath = url.pathname.match(/^\/icons\/([^/]+)\/?$/);
+		if (iconPath && req.method === 'GET') return icon(req, iconPath[1].toLowerCase());
 		if (url.pathname === '/api/rate-check' || url.pathname === '/api/rate-check/') {
 			if (!env.DB) return json({ error: 'Rate Check isn’t connected here.' }, 503);
 			if (req.method === 'GET') return summary(url, env);

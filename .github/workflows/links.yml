@@ -1,0 +1,42 @@
+# Checks every link to another website once a week, so sources that move or
+# disappear get fixed. Results land in the run's summary; a run with dead links
+# fails so it shows up red on the Actions tab. Links to this site are checked on
+# every pull request instead (scripts/check-links.mjs in ci.yml).
+name: External links
+
+on:
+  schedule:
+    - cron: '17 14 * * 1' # Mondays
+  workflow_dispatch:
+  pull_request:
+    paths: ['.github/workflows/links.yml']
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Check links to other sites
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Only links to other sites (--scheme); English pages only, since translated pages carry the same links.
+          args: >-
+            --root-dir ${{ github.workspace }}/dist --scheme https --scheme http --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
+            --accept '200..=299,401,403,429,999'
+            --exclude-path 'dist/es' --exclude-path 'dist/pt-br' --exclude-path 'dist/og'
+            --exclude '^https://creators\.select' --exclude '^https?://localhost'
+            --exclude '^https://(claude\.ai|chatgpt\.com|www\.perplexity\.ai)/'
+            --exclude '^https://(x\.com|twitter\.com)/intent' --exclude '^https://www\.linkedin\.com/sharing'
+            --exclude '^https://www\.threads\.net/intent' --exclude '^https://wa\.me/'
+            --exclude '^https://(www\.)?(instagram|tiktok|facebook|linkedin)\.com/'
+            --exclude '^https://i\.ytimg\.com/'
+            'dist/**/*.html'
+          format: markdown
+          jobSummary: true
+          fail: true

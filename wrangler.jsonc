@@ -4,12 +4,12 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "creators",
 	"compatibility_date": "2026-11-01",
-	// Only /api/* runs this Worker (Rate Check); every other request is a static file.
+	// Only /api/* (Rate Check) and /icons/* (app icons) run this Worker; every other request is a static file.
 	"main": "./worker/index.ts",
 	"assets": {
 		"directory": "./dist",
 		"binding": "ASSETS",
-		"run_worker_first": ["/api/*"],
+		"run_worker_first": ["/api/*", "/icons/*"],
 		"not_found_handling": "404-page",
 		"html_handling": "auto-trailing-slash"
 	},
