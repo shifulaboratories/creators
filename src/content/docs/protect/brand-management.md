@@ -1,6 +1,17 @@
 ---
 title: "Handling a public crisis"
 description: "A calm playbook for the first 48 hours when something you said, posted or did blows up, plus how to keep an eye on your name before it does."
+payoff: "What to do in the first hours when something you posted blows up the wrong way."
+moves:
+  - do: "Pause everything scheduled."
+    why: "A cheerful post in the middle of a crisis makes it worse."
+    source: "Creator-tested"
+  - do: "Tell your brand partners before they read it online."
+    why: "They'd rather hear it from you."
+    source: "Creator-tested"
+  - do: "Say one clear thing, in your own voice, once you have the facts."
+    why: "Most crises get worse through rushed replies, not the original mistake."
+    source: "Creator-tested"
 status: draft
 confidence: practitioner-view
 lastReviewed: 2026-11-26

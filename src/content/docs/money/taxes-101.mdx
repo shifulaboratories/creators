@@ -1,6 +1,17 @@
 ---
 title: "How creators get taxed"
 description: "Self-employment tax, income tax, 1099s, payment apps and gifted products, explained with a worked example. US rules for 2026."
+payoff: "How US creator income is taxed, what you owe, and when to pay it."
+moves:
+  - do: "Set aside a share of every payment for taxes."
+    why: "You owe income tax and self-employment tax on your profit."
+    source: "IRS"
+  - do: "Pay estimated taxes four times a year, not once in April."
+    why: "No employer is withholding tax for you, so you pay as you go."
+    source: "IRS"
+  - do: "Keep every receipt for business expenses."
+    why: "You're taxed on profit, so expenses lower your bill."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,6 +22,7 @@ sidebar:
 ---
 
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** in the US, creator income is business income. You pay two federal taxes on your profit: **income tax**, like everyone, and **self-employment tax**, which covers your Social Security and Medicare because no employer is paying half. Most states add their own income tax. Nothing is taken out of a brand payment or a platform payout, so you're the one who has to put it aside.
 
@@ -99,4 +111,6 @@ Your creator profit stacks on top of your salary, so it gets taxed at your **top
 - "Do I need to file in more than one state?"
 - "At what profit would an S corp start to make sense for me?"
 
-<TaxSources ids={['se', 'schse', 'ssa', 'rp2532', 'gig', 'p1099', 'k1099', 'barter']} />
+<DeepDive title="Sources" hint="8 sources">
+<TaxSources bare ids={['se', 'schse', 'ssa', 'rp2532', 'gig', 'p1099', 'k1099', 'barter']} />
+</DeepDive>

@@ -10,7 +10,9 @@ const en = {
 	h1b: 'minus the gurus.',
 	lead: 'How the algorithm really picks what gets seen, what a brand deal should pay, and how to run the business side. Every claim sourced, every affiliate link labeled, free forever.',
 	langNote: '',
+	facts: { label: 'At a glance', guides: 'guides', platforms: 'platforms', sourced: 'Every claim sourced' },
 	find: 'Find a guide',
+	popular: 'Popular guides',
 	trustTitle: 'Free, and honest about it.',
 	trust: [
 		['Affiliate links are labeled', 'Right where they appear, never hidden in a footer.'],
@@ -32,7 +34,9 @@ const es: HomeCopy = {
 	h1b: 'sin gurús.',
 	lead: 'Cómo elige de verdad el algoritmo lo que se ve, cuánto debería pagar una colaboración con una marca y cómo manejar el lado del negocio. Cada dato con su fuente, cada enlace de afiliado señalado, gratis para siempre.',
 	langNote: 'Estamos traduciendo el sitio. Las guías que aún no están en español se muestran en inglés, marcadas con EN.',
+	facts: { label: 'De un vistazo', guides: 'guías', platforms: 'plataformas', sourced: 'Cada dato con su fuente' },
 	find: 'Encuentra una guía',
+	popular: 'Guías populares',
 	trustTitle: 'Gratis, y con total transparencia.',
 	trust: [
 		['Los enlaces de afiliado van señalados', 'Justo donde aparecen, nunca escondidos en el pie de página.'],
@@ -52,7 +56,9 @@ const pt: HomeCopy = {
 	h1b: 'sem gurus.',
 	lead: 'Como o algoritmo escolhe de verdade o que aparece, quanto uma publi deveria pagar e como cuidar do lado do negócio. Toda afirmação com fonte, todo link de afiliado sinalizado, grátis para sempre.',
 	langNote: 'Estamos traduzindo o site. Os guias que ainda não estão em português aparecem em inglês, marcados com EN.',
+	facts: { label: 'Em resumo', guides: 'guias', platforms: 'plataformas', sourced: 'Toda afirmação com fonte' },
 	find: 'Encontre um guia',
+	popular: 'Guias populares',
 	trustTitle: 'Grátis, e transparente sobre isso.',
 	trust: [
 		['Links de afiliado são sinalizados', 'Bem onde aparecem, nunca escondidos no rodapé.'],
