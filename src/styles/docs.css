@@ -191,3 +191,8 @@ html:active-view-transition-type(back)::view-transition-new(root) {
 		background: rgb(8 7 10 / 0.97);
 	}
 }
+
+/* The site header replaces Starlight's menu toggle, so drop the room it reserved. */
+:root[data-has-sidebar] header.header {
+	padding-inline-end: var(--sl-nav-pad-x);
+}

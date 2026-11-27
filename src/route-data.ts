@@ -14,6 +14,14 @@ export const onRequest = defineRouteMiddleware((context) => {
 	const { entry, head } = route;
 	const id = entry.id;
 	if (id === '404') return;
+
+	// The sidebar shows only the section you're in. The top nav covers the rest.
+	type SB = (typeof route.sidebar)[number];
+	const hasCurrent = (e: SB): boolean => (e.type === 'group' ? e.entries.some(hasCurrent) : e.isCurrent);
+	const current = route.sidebar.filter((e) => e.type === 'group' && hasCurrent(e));
+	if (current.length) {
+		route.sidebar = current.map((g) => (g.type === 'group' ? { ...g, collapsed: false } : g));
+	}
 	const image = `${SITE_ORIGIN}${ogPath(id)}`;
 	const url = new URL(context.url.pathname, SITE_ORIGIN).href;
 	const title = entry.data.title;

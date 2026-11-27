@@ -42,6 +42,8 @@ export default defineConfig({
 				PageTitle: './src/components/PageTitle.astro',
 				SkipLink: './src/components/SkipLink.astro',
 				Pagination: './src/components/Pagination.astro',
+				Header: './src/components/Header.astro',
+				MobileMenuToggle: './src/components/MobileMenuToggle.astro',
 			},
 			social: [
 				{ icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/selectcreators/' },
@@ -51,8 +53,6 @@ export default defineConfig({
 			lastUpdated: true,
 			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css'],
 			sidebar: [
-				{ label: 'Start here', link: '/' },
-				{ label: 'All guides: search and browse', link: '/guides/' },
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
 				section('Case studies', 'case-studies'),
