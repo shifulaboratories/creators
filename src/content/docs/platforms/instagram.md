@@ -40,6 +40,27 @@ From the platform:
 - **Check Account Status before assuming a "shadowban."** It shows recommendation eligibility directly. *(From the platform.)*
 - **Saves and shares beat likes** for content meant to be useful. *(Creator-tested.)*
 
+## In Mosseri's words
+
+Adam Mosseri, head of Instagram, answers ranking questions in his own videos and interviews. What he's said on the record:
+
+- **May 2024:** "More important than watch time or like and comment counts is send rates." And: "sends per reach correlate more, in my experience, with overall reach than anything else." *(From the platform.)*
+- **June 2024**, in a long interview with Colin and Samir, his advice for creators was to look at "sends per reach." *(From the platform.)*
+- **January 2025:** "The top three signals that matter most for ranking are watch time, likes and sends," with sends "slightly more important" for reaching people who don't follow you. *(From the platform.)*
+
+His emphasis shifts between interviews, so read these by date. Sends show up in all three.
+
+## Who to follow for Instagram changes
+
+- **Adam Mosseri ([@mosseri](https://www.instagram.com/mosseri/))** posts regular Q&As about how ranking works and what's changing. It's the closest thing to an official changelog, and many creators never watch it.
+- **[Instagram for Creators](https://creators.instagram.com/)**: Instagram's own blog for new creator tools like Trial Reels.
+
+See also: [Why the algorithm exists](/algorithms/why-feeds-exist/) and [What to optimize for](/algorithms/what-to-optimize/).
+
 ## Sources
 
 - Adam Mosseri, [Instagram Ranking Explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained), Instagram, May 31, 2023.
+- Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
+- Andrew Hutchinson, [Instagram chief shares insights into its algorithms and creator monetization](https://www.socialmediatoday.com/news/instagram-chief-shares-insights-into-its-algorithms-creator-monetization/718540/), Social Media Today, June 10, 2024.
+- Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025.
+- Instagram, [Trial reels: try content with non-followers first](https://creators.instagram.com/blog/instagram-trial-reels), Dec 10, 2024.

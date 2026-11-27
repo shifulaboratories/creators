@@ -41,6 +41,12 @@ export function toMarkdown(e: CollectionEntry<'docs'>): string {
 }
 
 const widgetText: Record<string, string> = {
+	MoneyLoop:
+		'The business loop behind ad-funded feeds (Meta figures):\n\n1. You post: the feed needs a steady supply of watchable content.\n2. The feed matches it: AI recommendations drove a 24%+ increase in time spent on Instagram since Reels launched (Zuckerberg, Q1 2023 call).\n3. People stay and come back: video time spent on Instagram up more than 30% year over year (Zuckerberg, Q3 2025 call).\n4. More ads get seen: ad impressions up 14%, "driven by engagement and user growth, particularly on video surfaces" (Susan Li, Q3 2025 call).\n5. Money funds better matching: Meta 2024 revenue $164.5B, up 22%; ad impressions up 11% in 2024 (Q4 2024 results).',
+	SnowballFlow:
+		'How a post snowballs (illustrative model, not platform data): a new post is shown to a small test group; if their reactions (watching through, sending, following, not swiping away) beat what the feed expects, it is shown to lookalike viewers, then adjacent interests, then broadly. Documented example: Instagram Trial Reels are shown to non-followers first, with views, likes, comments and shares visible after about 24 hours.',
+	SignalBoard:
+		'| Signal | Instagram | TikTok | YouTube | X |\n| --- | --- | --- | --- | --- |\n| Watching it through | Top | Top | Top | Counts |\n| Sending or sharing | Top | Counts | Counts | Top |\n| Talking (comments, replies) | Counts | Counts | Not stated | Top |\n| Following after | Not stated | Counts | Not stated | Counts |\n| Liking | Top | Counts | Counts | Counts (0.708) |\n| Saying no (not interested, report) | Not stated | Not stated | Penalty | Penalty |\n\nInstagram: Mosseri, Jan 2025, "The top three signals that matter most for ranking are watch time, likes and sends." TikTok: finishing a longer video is a strong signal (Newsroom, 2020). YouTube: clicks, watch time, surveys, shares, likes, dislikes. X: copy-link share 20, reply/quote/DM share 5, follow 4, like 0.708, report -234 (2026 code).',
 	XWeights:
 		'X ranking weights (multiply predicted probabilities, not counts):\n\n| Action | 2026 weight |\n| --- | --- |\n' +
 		sets['2026'].map(([a, w]) => `| ${a} | ${w} |`).join('\n') +

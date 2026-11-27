@@ -1,0 +1,51 @@
+---
+title: "What to optimize for"
+description: "Watch time, sends, replies, follows: what Instagram, TikTok, YouTube and X each say they reward, side by side, with the receipts."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: What to optimize
+sidebar:
+  order: 2
+---
+
+import SignalBoard from '../../../components/SignalBoard.astro';
+
+**The short version:** every platform rewards the same three things in slightly different proportions: people **watching**, people **sending**, and people **coming back**. Likes are the cheapest signal everywhere. Negative feedback is expensive everywhere it's published.
+
+<SignalBoard />
+
+## The pattern, platform by platform
+
+<figure class="sc-figure">
+<ul class="sc-bars">
+<li class="sc-bar is-rose" style="--v:92;--i:0"><div class="sc-bar__head">Instagram<b>Watch time, likes, sends</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-cyan" style="--v:86;--i:1"><div class="sc-bar__head">TikTok<b>Finishing the video</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-ion" style="--v:80;--i:2"><div class="sc-bar__head">YouTube<b>Watch time people don't regret</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-amethyst" style="--v:74;--i:3"><div class="sc-bar__head">X<b>Shares and replies</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+</ul>
+<figcaption>The headline signal each platform names. Bar lengths are decorative, not measured.</figcaption>
+</figure>
+
+- **Instagram:** Mosseri's January 2025 answer: "The top three signals that matter most for ranking are watch time, likes and sends," with sends "slightly more important" for reaching people who don't follow you. <span class="sc-tag is-platform">From the platform</span>
+- **TikTok:** its strongest example signal is whether someone finishes a longer video. Follower count and past hits aren't direct factors. <span class="sc-tag is-platform">From the platform</span>
+- **YouTube:** watch time, weighted by whether viewers say they were glad they watched. <span class="sc-tag is-platform">From the platform</span>
+- **X:** a copy-link share is weighted 20, a reply or DM share 5, a like 0.708. <span class="sc-tag is-code">From the code</span>
+
+## A checklist before you post
+
+1. **What will make someone stay to the end?** If you can't answer, tighten it.
+2. **Who would someone send this to?** Name the friend. If there isn't one, rethink the angle.
+3. **Is there a reason to reply?** A question, a take, a choice. Not engagement bait.
+4. **Why would a stranger follow after this?** Make it obvious what else you make.
+5. **Could this make someone hit "not interested"?** Misleading hooks win a click and lose the viewer.
+
+## Sources
+
+- Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025 (Mosseri video).
+- Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
+- Adam Mosseri, [Instagram Ranking Explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained), Instagram, May 31, 2023.
+- TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
+- YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
+- X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026.
