@@ -1,9 +1,29 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from './src/site.mjs';
+import { STARLIGHT_LOCALES, PREFIXES, translatedIds } from './src/i18n/locales.mjs';
+import { ui } from './src/i18n/ui-sidebar.mjs';
 
-const section = (label, directory) => ({ label, items: [{ autogenerate: { directory } }] });
+// Sidebar groups, labeled in every language (src/i18n/ui-sidebar.mjs).
+const section = (key, directory = key) => ({
+	label: ui.en[key],
+	translations: Object.fromEntries(PREFIXES.map((p) => [STARLIGHT_LOCALES[p].lang, ui[p][key]])),
+	items: [{ autogenerate: { directory } }],
+});
+
+// Untranslated pages still exist under /es/ and /pt-br/ (English text with a
+// notice), but only real translations go in the sitemap and hreflang links.
+const translated = translatedIds();
+const CUSTOM_PAGES = new Set(['', 'guides']); // src/pages/ routes that are translated in code
+const inSitemap = (url) => {
+	const path = new URL(url).pathname.replace(/^\/|\/$/g, '');
+	const prefix = PREFIXES.find((p) => path === p || path.startsWith(p + '/'));
+	if (!prefix) return true;
+	const base = path.slice(prefix.length + 1);
+	return CUSTOM_PAGES.has(base) || translated[prefix].has(base);
+};
 
 export default defineConfig({
 	site: 'https://creators.select',
@@ -20,11 +40,21 @@ export default defineConfig({
 		'/earn/pricing': '/deals/pricing/',
 	},
 	integrations: [
+		sitemap({
+			filter: inSitemap,
+			i18n: {
+				defaultLocale: 'en',
+				locales: { en: 'en', ...Object.fromEntries(PREFIXES.map((p) => [p, STARLIGHT_LOCALES[p].lang])) },
+			},
+		}),
 		starlight({
 			title: SITE_NAME,
 			description: SITE_DESCRIPTION,
 			logo: { src: './src/assets/logo-lockup.svg', alt: SITE_NAME, replacesTitle: true },
 			favicon: '/favicon.svg',
+			// English at the root, Spanish at /es/, Brazilian Portuguese at /pt-br/ (docs/translating.md).
+			defaultLocale: 'root',
+			locales: STARLIGHT_LOCALES,
 			// Per-page link previews and structured data (src/route-data.ts).
 			routeMiddleware: './src/route-data.ts',
 			head: [
@@ -50,23 +80,23 @@ export default defineConfig({
 			lastUpdated: true,
 			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
 			sidebar: [
-				{ label: 'Start here', link: '/' },
-				{ label: 'All guides: search and browse', link: '/guides/' },
-				section('How algorithms work', 'algorithms'),
-				section('Platforms', 'platforms'),
-				section('Case studies', 'case-studies'),
-				section('The Shortlist', 'shortlist'),
-				section('Grow', 'grow'),
-				section('Earn', 'earn'),
-				section('Paywall platforms', 'paywall'),
-				section('Brand deals', 'deals'),
-				section('Money basics', 'money'),
-				section('Team', 'team'),
-				section('Stack', 'stack'),
-				section('Protect', 'protect'),
-				section('Underground', 'underground'),
-				section('News', 'news'),
-				section('About', 'about'),
+				{ label: ui.en.start, translations: { es: ui.es.start, 'pt-BR': ui['pt-br'].start }, link: '/' },
+				{ label: ui.en.all, translations: { es: ui.es.all, 'pt-BR': ui['pt-br'].all }, link: '/guides/' },
+				section('algorithms'),
+				section('platforms'),
+				section('case-studies'),
+				section('shortlist'),
+				section('grow'),
+				section('earn'),
+				section('paywall'),
+				section('deals'),
+				section('money'),
+				section('team'),
+				section('stack'),
+				section('protect'),
+				section('underground'),
+				section('news'),
+				section('about'),
 			],
 		}),
 	],

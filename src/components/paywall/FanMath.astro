@@ -5,14 +5,16 @@
  * plus how much an agency has to grow sales to break even. Fees: src/lib/paywall-data.ts.
  */
 import { platforms } from '../../lib/paywall-data';
+import { currentLocale, t } from '../../i18n';
+const L = t(currentLocale(Astro)).paywall.fm;
 const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key, name, pct, procPct, procFixed }));
 ---
 
-<section class="fm sc-widget not-content" data-fm data-p={JSON.stringify(payload)} aria-labelledby="fm-title" data-no-swipe>
-	<p class="fm-kick">Try it</p>
-	<h3 id="fm-title" class="fm-title">Where a fan’s money goes</h3>
+<section class="fm sc-widget not-content" data-fm data-p={JSON.stringify(payload)} data-v0={L.verdictNone} data-v1={L.verdictAgency} aria-labelledby="fm-title" data-no-swipe>
+	<p class="fm-kick">{L.kick}</p>
+	<h3 id="fm-title" class="fm-title">{L.title}</h3>
 
-	<div class="fm-plats" role="radiogroup" aria-label="Platform">
+	<div class="fm-plats" role="radiogroup" aria-label={L.platform}>
 		{
 			platforms.map((p, i) => (
 				<button type="button" class="sc-chip" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-k={p.key}>
@@ -24,17 +26,17 @@ const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key
 
 	<div class="fm-controls">
 		<label class="fm-field">
-			<span>Subscription price per month</span>
+			<span>{L.price}</span>
 			<output data-out="price">$10</output>
 			<input type="range" min="3" max="50" step="1" value="10" data-in="price" />
 		</label>
 		<label class="fm-field">
-			<span>Paying fans</span>
+			<span>{L.fans}</span>
 			<output data-out="fans">500</output>
 			<input type="range" min="10" max="5000" step="10" value="500" data-in="fans" />
 		</label>
 		<label class="fm-field">
-			<span>Agency or manager commission</span>
+			<span>{L.agency}</span>
 			<output data-out="agency">0%</output>
 			<input type="range" min="0" max="70" step="5" value="0" data-in="agency" />
 		</label>
@@ -46,21 +48,18 @@ const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key
 		<i class="s-you" data-seg="you"></i>
 	</div>
 	<ul class="fm-legend">
-		<li class="s-plat">Platform and card fees <b data-val="plat"></b></li>
-		<li class="s-agency">Agency <b data-val="agency"></b></li>
-		<li class="s-you">You keep <b data-val="you"></b></li>
+		<li class="s-plat">{L.platCut} <b data-val="plat"></b></li>
+		<li class="s-agency">{L.agencyCut} <b data-val="agency"></b></li>
+		<li class="s-you">{L.you} <b data-val="you"></b></li>
 	</ul>
 	<p class="fm-verdict" data-verdict aria-live="polite"></p>
-	<p class="fm-note">
-		Subscriptions only, before tax. Tips, paid messages and locked posts usually carry the same platform cut. Agencies
-		normally take their commission from what the platform pays you, which is how it’s shown here. Commission ranges in
-		reporting run from 20% to 80%; check the contract.
-	</p>
+	<p class="fm-note">{L.note}</p>
 </section>
 
 <script>
 	type P = { key: string; name: string; pct: number; procPct: number; procFixed: number };
 	const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+	const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
 	document.querySelectorAll<HTMLElement>('[data-fm]').forEach((root) => {
 		const plats: P[] = JSON.parse(root.dataset.p!);
 		let cur = plats[0];
@@ -87,10 +86,10 @@ const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key
 			root.querySelector<HTMLElement>('[data-seg="you"]')!.style.width = w(you);
 			const v = root.querySelector<HTMLElement>('[data-verdict]')!;
 			if (c === 0) {
-				v.textContent = `Fans pay ${usd(gross)} a month on ${cur.name}. You keep ${usd(you)}, or ${Math.round((you / gross) * 100)}%.`;
+				v.textContent = fill(root.dataset.v0!, { gross: usd(gross), name: cur.name, you: usd(you), pct: Math.round((you / gross) * 100) });
 			} else {
 				const be = Math.round((c / (1 - c)) * 100);
-				v.textContent = `You keep ${usd(you)} of ${usd(gross)}. At ${Math.round(c * 100)}%, an agency has to grow your sales by ${be}% just for you to break even.`;
+				v.textContent = fill(root.dataset.v1!, { you: usd(you), gross: usd(gross), c: Math.round(c * 100), be });
 			}
 		};
 		root.querySelectorAll<HTMLButtonElement>('[data-k]').forEach((b) =>

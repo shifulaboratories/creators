@@ -3,14 +3,19 @@
  * Swipeable cards, one per fan platform: what you keep, content rules, payouts,
  * who it suits and the catch. Filter to safe-for-work only. Data: src/lib/paywall-data.ts.
  */
-import { platforms, CHECKED } from '../../lib/paywall-data';
-const badge: Record<string, string> = { sfw: 'Safe for work', adult: 'Adult', mixed: 'Adult allowed' };
+import { platforms as enPlatforms, CHECKED } from '../../lib/paywall-data';
+import { currentLocale, t, localize } from '../../i18n';
+import { platformText, localDate } from '../../i18n/paywall';
+const locale = currentLocale(Astro);
+const L = t(locale).paywall;
+const badge = L.badge;
+const platforms = enPlatforms.map((p) => ({ ...p, ...(locale === 'en' ? {} : platformText[locale][p.key]), href: localize(locale, p.href) }));
 ---
 
 <div class="pd not-content" data-pd data-section="paywall">
-	<div class="pd-bar" role="group" aria-label="Filter platforms">
-		<button type="button" class="sc-chip" aria-pressed="true" data-f="all">All platforms</button>
-		<button type="button" class="sc-chip" aria-pressed="false" data-f="sfw">Safe for work only</button>
+	<div class="pd-bar" role="group" aria-label={L.filter}>
+		<button type="button" class="sc-chip" aria-pressed="true" data-f="all">{L.all}</button>
+		<button type="button" class="sc-chip" aria-pressed="false" data-f="sfw">{L.sfwOnly}</button>
 	</div>
 	<div class="pd-rail sc-rail" data-rail data-no-swipe>
 		{
@@ -27,30 +32,30 @@ const badge: Record<string, string> = { sfw: 'Safe for work', adult: 'Adult', mi
 					</div>
 					<dl>
 						<div>
-							<dt>Content</dt>
+							<dt>{L.content}</dt>
 							<dd>{p.contentLabel}</dd>
 						</div>
 						<div>
-							<dt>Payouts</dt>
+							<dt>{L.payouts}</dt>
 							<dd>{p.payout}</dd>
 						</div>
 						<div>
-							<dt>Best for</dt>
+							<dt>{L.bestFor}</dt>
 							<dd>{p.bestFor}</dd>
 						</div>
 						<div class="pd-watch">
-							<dt>Watch out</dt>
+							<dt>{L.watch}</dt>
 							<dd>{p.watch}</dd>
 						</div>
 					</dl>
 					<a class="pd-link" href={p.href}>
-						Read the {p.name} guide →
+						{L.readGuide(p.name)}
 					</a>
 				</article>
 			))
 		}
 	</div>
-	<p class="pd-note">Platform cut before card fees, from each company’s published terms. Checked {CHECKED}. Swipe for more.</p>
+	<p class="pd-note">{L.note(localDate(CHECKED, locale))}</p>
 </div>
 
 <script>

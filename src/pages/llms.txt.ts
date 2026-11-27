@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { splitId } from '../i18n';
 import { SITE, isPublic } from '../lib/markdown';
 import { SITE_NAME, SITE_DESCRIPTION } from '../site.mjs';
 
 // https://llmstxt.org: a map of the site for AI assistants.
 export const GET: APIRoute = async () => {
-	const docs = (await getCollection('docs')).filter(isPublic).sort((a, b) => a.id.localeCompare(b.id));
+	const docs = (await getCollection('docs')).filter((e) => isPublic(e) && splitId(e.id).locale === 'en').sort((a, b) => a.id.localeCompare(b.id));
 	const groups = new Map<string, typeof docs>();
 	for (const d of docs) {
 		const k = d.id.split('/')[0];
@@ -15,6 +16,11 @@ export const GET: APIRoute = async () => {
 	for (const [k, list] of groups) {
 		out += `\n## ${k.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase())}\n\n`;
 		for (const d of list) out += `- [${d.data.title}](${SITE}/${d.id}.md): ${d.data.description ?? ''}\n`;
+	}
+	const translated = (await getCollection('docs')).filter((e) => isPublic(e) && splitId(e.id).locale !== 'en');
+	if (translated.length) {
+		out += `\n## Translations (Spanish, Brazilian Portuguese)\n\n`;
+		for (const d of translated) out += `- [${d.data.title}](${SITE}/${d.id}.md) (${splitId(d.id).locale}): ${d.data.description ?? ''}\n`;
 	}
 	return new Response(out, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

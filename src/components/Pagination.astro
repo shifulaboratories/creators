@@ -5,22 +5,24 @@
  * guide: left for the next one, right for the previous one.
  */
 import { getCollection } from 'astro:content';
-import { SECTION_LABELS } from '../lib/share';
+import { currentLocale, t, basePath, sectionLabel } from '../i18n';
 
 const { pagination } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
+const locale = currentLocale(Astro);
+const L = t(locale).pager;
 
 const docs = await getCollection('docs');
 const titles = new Map(docs.map((d) => [`/${d.id}/`.replace('//', '/'), d.data.title]));
 const describe = (link: typeof prev) => {
 	if (!link) return undefined;
 	const path = new URL(link.href, 'https://x.test').pathname;
-	const section = path.split('/')[1] || '';
+	const section = basePath(path).split('/')[1] || '';
 	return {
 		href: link.href,
-		title: titles.get(path) ?? link.label,
+		title: titles.get(path) ?? titles.get(basePath(path)) ?? link.label,
 		section,
-		kicker: SECTION_LABELS[section],
+		kicker: sectionLabel(section, locale),
 	};
 };
 const p = describe(prev);
@@ -29,10 +31,10 @@ const n = describe(next);
 
 {
 	(p || n) && (
-		<nav class="pager print:hidden" aria-label="More guides" data-pager data-prev={p?.href} data-next={n?.href}>
+		<nav class="pager print:hidden" aria-label={L.more} data-pager data-prev={p?.href} data-next={n?.href}>
 			{n && (
 				<a class="next" href={n.href} rel="next" data-section={n.section} data-astro-prefetch="viewport">
-					<span class="eyebrow">Up next{n.kicker && <> · {n.kicker}</>}</span>
+					<span class="eyebrow">{L.upNext}{n.kicker && <> · {n.kicker}</>}</span>
 					<span class="title">{n.title}</span>
 					<span class="go" aria-hidden="true">
 						<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
@@ -43,12 +45,12 @@ const n = describe(next);
 				<a class="prev" href={p.href} rel="prev" data-astro-prefetch="viewport">
 					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
 					<span>
-						<span class="eyebrow">Back</span>
+						<span class="eyebrow">{L.back}</span>
 						<span class="ptitle">{p.title}</span>
 					</span>
 				</a>
 			)}
-			<p class="hint" data-swipe-hint hidden>Tip: swipe sideways anywhere to flip between guides.</p>
+			<p class="hint" data-swipe-hint hidden>{L.hint}</p>
 		</nav>
 	)
 }

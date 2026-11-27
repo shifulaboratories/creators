@@ -9,12 +9,19 @@
 import { getCollection } from 'astro:content';
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import { SECTION_LABELS } from '../lib/share';
+import { currentLocale, t, withFallback, localize, sectionLabel } from '../i18n';
 
-const docs = await getCollection('docs');
-const has = (id: string) => docs.some((e) => e.id === id);
+const locale = currentLocale(Astro);
+const L = t(locale).gallery;
+// Spanish and Portuguese show the translation where there is one, else the English guide.
+const all = withFallback(await getCollection('docs'), locale);
+const docs = all.map((d) => d.entry);
+const baseOf = new Map(all.map((d) => [d.entry, d]));
+const idOf = (e: (typeof docs)[number]) => baseOf.get(e)!.base;
+const has = (id: string) => all.some((e) => e.base === id);
 
 type Topic = { id: string; title: string; text: string };
-const topics: Topic[] = [
+const topicsEn: Topic[] = [
 	{ id: 'algorithms', title: 'How algorithms work', text: 'What feeds reward, from the platforms’ own research' },
 	{ id: 'grow', title: 'Grow', text: 'Niche, hooks, formats, cadence and analytics' },
 	{ id: 'paywall', title: 'Paywall', text: 'Fanfix, OnlyFans, Patreon, Fanvue and chatting agencies' },
@@ -28,32 +35,45 @@ const topics: Topic[] = [
 	{ id: 'underground', title: 'Underground', text: 'Gray markets, reported as journalism' },
 	{ id: 'shortlist', title: 'The Shortlist', text: 'The few resources worth your time' },
 ];
+const topics = topicsEn.map((tp) => {
+	const tr = L.topicText[tp.id];
+	return tr ? { ...tp, title: tr[0], text: tr[1] } : tp;
+});
 
-const guides = docs.filter((e) => e.id.includes('/') && !e.id.endsWith('/index') && SECTION_LABELS[e.id.split('/')[0]] && !e.id.startsWith('about/'));
-const count = (s: string) => guides.filter((e) => e.id.startsWith(s + '/')).length;
+const guides = docs.filter((e) => {
+	const id = idOf(e);
+	return id.includes('/') && !id.endsWith('/index') && SECTION_LABELS[id.split('/')[0]] && !id.startsWith('about/');
+});
+const count = (s: string) => guides.filter((e) => idOf(e).startsWith(s + '/')).length;
 const liveTopics = topics.filter((t) => has(t.id) || count(t.id) > 0).map((t) => ({ ...t, n: count(t.id) }));
 
 type Plat = { key: string; name: string; path?: string; href: string };
 const platforms: Plat[] = [
-	{ key: 'general', name: 'General', href: '/algorithms/' },
+	{ key: 'general', name: L.general, href: '/algorithms/' },
 	{ key: 'instagram', name: 'Instagram', path: siInstagram.path, href: '/platforms/instagram/' },
 	{ key: 'tiktok', name: 'TikTok', path: siTiktok.path, href: '/platforms/tiktok/' },
 	{ key: 'youtube', name: 'YouTube', path: siYoutube.path, href: '/platforms/youtube/' },
 	{ key: 'facebook', name: 'Facebook', path: siFacebook.path, href: '/platforms/facebook/' },
 	{ key: 'linkedin', name: 'LinkedIn', href: '/platforms/linkedin/' },
 	{ key: 'x', name: 'X', path: siX.path, href: '/platforms/x/' },
-].filter((p) => p.key === 'general' || has(p.href.slice(1, -1)));
+]
+	.filter((p) => p.key === 'general' || has(p.href.slice(1, -1)))
+	.map((p) => ({ ...p, href: localize(locale, p.href) }));
 
 const order = ['algorithms', 'platforms', 'grow', 'paywall', 'deals', 'earn', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
 const rows = guides
 	.map((e) => {
-		const section = e.id.split('/')[0];
+		const base = idOf(e);
+		const translated = baseOf.get(e)!.translated;
+		const section = base.split('/')[0];
+		const href = localize(locale, `/${base}/`);
 		const words = (e.body ?? '').replace(/<[^>]+>|import .*|[#*_`>|-]/g, ' ').split(/\s+/).filter(Boolean).length;
 		return {
-			id: e.id,
-			href: `/${e.id}/`,
+			id: href.replace(/^\/|\/$/g, ''),
+			href,
+			translated,
 			section,
-			label: SECTION_LABELS[section],
+			label: sectionLabel(section, locale),
 			title: e.data.title,
 			description: e.data.description ?? '',
 			minutes: Math.max(1, Math.round(words / 220)),
@@ -62,17 +82,17 @@ const rows = guides
 	})
 	.sort((a, b) => a.rank - b.rank);
 
-const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 'hooks'];
+const suggestions = L.suggestions;
 ---
 
-<div class="gi not-content" data-gi>
-	<form class="gi-search" role="search" action="/guides/" data-form>
+<div class="gi not-content" data-gi data-count-one={L.count(1, '{q}')} data-count-many={L.count(2, '{q}').replace('2', '{n}')} data-ask-prompt={L.askPrompt('{origin}', '{q}')}>
+	<form class="gi-search" role="search" action={localize(locale, '/guides/')} data-form>
 		<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
 		<input
 			type="search"
 			name="q"
-			placeholder={`Search ${rows.length} guides`}
-			aria-label="Search guides"
+			placeholder={L.search(rows.length)}
+			aria-label={L.searchLabel}
 			autocomplete="off"
 			spellcheck="false"
 			enterkeyhint="search"
@@ -81,7 +101,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 		<kbd aria-hidden="true">/</kbd>
 	</form>
 	<p class="gi-try" data-try>
-		Try
+		{L.try}
 		{
 			suggestions.map((s) => (
 				<button type="button" data-suggest={s}>
@@ -94,7 +114,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	<!-- Browse (hidden while searching) -->
 	<div data-browse>
 		<section class="gi-block" aria-labelledby="gi-plat">
-			<h2 id="gi-plat">Platforms</h2>
+			<h2 id="gi-plat">{L.platforms}</h2>
 			<ul class="gi-plats">
 				{
 					platforms.map((p) => (
@@ -119,16 +139,16 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 					))
 				}
 			</ul>
-			<a class="gi-more" href="/platforms/">Threads, Pinterest, Twitch and more</a>
+			<a class="gi-more" href={localize(locale, '/platforms/')}>{L.morePlatforms}</a>
 		</section>
 
 		<section class="gi-block" aria-labelledby="gi-topics">
-			<h2 id="gi-topics">Topics</h2>
+			<h2 id="gi-topics">{L.topics}</h2>
 			<ul class="gi-topics">
 				{
 					liveTopics.map((t) => (
 						<li>
-							<a href={`/${t.id}/`} data-section={t.id}>
+							<a href={localize(locale, `/${t.id}/`)} data-section={t.id}>
 								<span class="dot" aria-hidden="true" />
 								<span class="txt">
 									<strong>{t.title}</strong>
@@ -143,7 +163,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 		</section>
 
 		<details class="gi-all">
-			<summary>Browse all {rows.length} guides</summary>
+			<summary>{L.browseAll(rows.length)}</summary>
 			<ol class="gi-list">
 				{
 					rows.map((r) => (
@@ -152,7 +172,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 								<strong>{r.title}</strong>
 								<span class="meta">
 									<span class="dot" aria-hidden="true" />
-									{r.label} · {r.minutes} min
+									{r.label} · {r.minutes} {L.min}{!r.translated && <> · <abbr title={t(locale).grid.english}>{L.english}</abbr></>}
 								</span>
 							</a>
 						</li>
@@ -181,7 +201,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 							<span class="hit" data-hit hidden />
 							<span class="meta">
 								<span class="dot" aria-hidden="true" />
-								{r.label} · {r.minutes} min
+								{r.label} · {r.minutes} {L.min}{!r.translated && <> · <abbr title={t(locale).grid.english}>{L.english}</abbr></>}
 							</span>
 						</a>
 					</li>
@@ -189,8 +209,8 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			}
 		</ol>
 		<div class="gi-empty" data-empty hidden>
-			<p>No guide matches that yet.</p>
-			<a data-ask href="https://claude.ai/new" target="_blank" rel="noopener">Ask Claude, using this site as the source</a>
+			<p>{L.none}</p>
+			<a data-ask href="https://claude.ai/new" target="_blank" rel="noopener">{L.askClaude}</a>
 		</div>
 	</div>
 </div>
@@ -265,9 +285,9 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 				if (ex) hit.innerHTML = `…${ex}…`;
 			}
 			scored.forEach(({ el }) => list.appendChild(el));
-			count.textContent = `${scored.length} guide${scored.length === 1 ? '' : 's'} for “${raw}”`;
+			count.textContent = (scored.length === 1 ? root.dataset.countOne! : root.dataset.countMany!).replace('{n}', String(scored.length)).replace('{q}', raw);
 			empty.hidden = scored.length > 0;
-			ask.href = 'https://claude.ai/new?q=' + encodeURIComponent(`Using ${location.origin}/llms-full.txt as your source, answer: ${raw}`);
+			ask.href = 'https://claude.ai/new?q=' + encodeURIComponent(root.dataset.askPrompt!.replace('{origin}', location.origin).replace('{q}', raw));
 		};
 
 		const fullText = async () => {

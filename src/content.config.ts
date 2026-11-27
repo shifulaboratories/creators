@@ -1,8 +1,8 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 import { people } from './data/people';
 
 /**
@@ -22,6 +22,16 @@ const guideFields = z.object({
 	cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
 	// "The short version": up to three points shown above the guide (or see src/data/tldr.ts).
 	tldr: z.array(z.string().max(160)).max(3).optional(),
+	// Translated pages only (src/content/docs/es/, pt-br/). `source` is the short git
+	// commit of the English file this was translated from; `npm run i18n:status`
+	// flags translations whose English original changed since. See docs/translating.md.
+	translation: z
+		.object({
+			source: z.string().min(7),
+			review: z.enum(['machine', 'native']).default('machine'),
+			reviewer: z.string().optional(),
+		})
+		.optional(),
 });
 
 const docs = defineCollection({
@@ -159,4 +169,7 @@ const setups = defineCollection({
 	}).refine((s) => s.from !== 'video' || s.youtubeId, { message: 'from: video needs a youtubeId' }),
 });
 
-export const collections = { docs, tools, resources, videos, setups };
+// Overrides for Starlight's own UI strings per language (src/content/i18n/*.json). Optional.
+const i18n = defineCollection({ loader: i18nLoader(), schema: i18nSchema() });
+
+export const collections = { docs, i18n, tools, resources, videos, setups };

@@ -1,17 +1,19 @@
 ---
 /** Numbered source list for Paywall pages. Pass ids from src/lib/money-data.ts. */
 import { sources } from '../../lib/paywall-data';
+import { currentLocale, t } from '../../i18n';
+const locale = currentLocale(Astro);
 interface Props {
 	ids: string[];
 	title?: string;
 }
-const { ids, title = 'Sources' } = Astro.props;
+const { ids, title = t(locale).paywall.sources } = Astro.props;
 const list = ids.map((id) => sources[id]).filter(Boolean);
 ---
 
 <section class="ms not-content" aria-label={title}>
 	<h2 class="ms-title">{title}</h2>
-	<ol>
+	<ol lang={locale === 'en' ? undefined : 'en'}>
 		{
 			list.map((s) => (
 				<li>

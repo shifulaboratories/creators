@@ -6,14 +6,17 @@
 interface Props {
 	variant?: 'docs' | 'landing';
 }
+import { localeOfPath, basePath, localize, t } from '../i18n';
 const { variant = 'docs' } = Astro.props;
-const path = Astro.url.pathname;
+const locale = localeOfPath(Astro.url.pathname);
+const L = t(locale).tabs;
+const path = basePath(Astro.url.pathname);
 const tabs = [
-	{ href: '/', label: 'Home', icon: 'home', match: (p: string) => p === '/' },
-	{ href: '/algorithms/', label: 'Learn', icon: 'learn', match: (p: string) => p.startsWith('/algorithms') || p.startsWith('/grow') },
-	{ href: '/platforms/', label: 'Platforms', icon: 'grid', match: (p: string) => p.startsWith('/platforms') },
-	{ href: '/shortlist/', label: 'Shortlist', icon: 'gem', match: (p: string) => p.startsWith('/shortlist') },
-];
+	{ href: '/', label: L.home, icon: 'home', match: (p: string) => p === '/' },
+	{ href: '/algorithms/', label: L.learn, icon: 'learn', match: (p: string) => p.startsWith('/algorithms') || p.startsWith('/grow') },
+	{ href: '/platforms/', label: L.platforms, icon: 'grid', match: (p: string) => p.startsWith('/platforms') },
+	{ href: '/shortlist/', label: L.shortlist, icon: 'gem', match: (p: string) => p.startsWith('/shortlist') },
+].map((tab) => ({ ...tab, href: localize(locale, tab.href) }));
 const icons: Record<string, string> = {
 	home: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
 	learn: 'M3 7l9-4 9 4-9 4zM7 9.2V14c0 1.7 2.2 3 5 3s5-1.3 5-3V9.2M21 7v6',
@@ -24,7 +27,7 @@ const icons: Record<string, string> = {
 };
 ---
 
-<nav class="tabbar" aria-label="Quick navigation" data-tabbar>
+<nav class="tabbar" aria-label={L.nav} data-tabbar>
 	{
 		tabs.map((t) => {
 			const on = t.match(path);
@@ -38,11 +41,11 @@ const icons: Record<string, string> = {
 			);
 		})
 	}
-	<a href="/guides/?focus=1" class:list={['tab', { on: path.startsWith('/guides') }]} aria-current={path.startsWith('/guides') ? 'page' : undefined}>
+	<a href={localize(locale, '/guides/') + '?focus=1'} class:list={['tab', { on: path.startsWith('/guides') }]} aria-current={path.startsWith('/guides') ? 'page' : undefined}>
 		<svg viewBox="0 0 24 24" aria-hidden="true">
 			<path d={icons.search} />
 		</svg>
-		<span>Search</span>
+		<span>{L.search}</span>
 	</a>
 </nav>
 
