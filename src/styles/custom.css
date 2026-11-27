@@ -87,7 +87,7 @@ h1#_top {
 
 /* Sidebar: mono section labels, subtle active pill. */
 .sidebar-content .group-label .large {
-	font-family: var(--sl-font-mono);
+	font-family: var(--sc-font-sans);
 	font-size: var(--sl-text-xs);
 	letter-spacing: 0;
 	color: var(--sl-color-gray-3);
@@ -147,7 +147,7 @@ h1#_top {
 
 /* Tables: hairlines, mono headers. */
 .sl-markdown-content table th {
-	font-family: var(--sl-font-mono);
+	font-family: var(--sc-font-sans);
 	font-size: var(--sl-text-xs);
 	letter-spacing: 0;
 	color: var(--sl-color-gray-3);
@@ -159,7 +159,7 @@ h1#_top {
 
 /* Inline disclosure label rendered next to every affiliate link. */
 .affiliate-label {
-	font-family: var(--sl-font-mono);
+	font-family: var(--sc-font-sans);
 	font-size: 0.65rem;
 	letter-spacing: 0;
 	color: var(--sc-brass);

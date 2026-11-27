@@ -1,0 +1,206 @@
+---
+/**
+ * Does a manager pay for themselves? Slide your monthly brand-deal income and
+ * the commission, see what the manager has to add before you come out ahead.
+ * Pure arithmetic: break-even growth = c / (1 - c). No data, no claims.
+ */
+---
+
+<section class="cm sc-widget not-content" data-cm aria-labelledby="cm-title">
+	<div class="cm-head">
+		<p class="cm-kick">Try it</p>
+		<h3 id="cm-title" class="cm-title">Does a manager pay for themselves?</h3>
+	</div>
+
+	<div class="cm-controls">
+		<label class="cm-field">
+			<span>Your brand-deal income per month</span>
+			<output data-out="income">$10,000</output>
+			<input type="range" min="1000" max="100000" step="1000" value="10000" data-in="income" />
+		</label>
+		<label class="cm-field">
+			<span>Manager's commission</span>
+			<output data-out="rate">20%</output>
+			<input type="range" min="5" max="30" step="1" value="20" data-in="rate" />
+		</label>
+		<label class="cm-field">
+			<span>How much more they bring in</span>
+			<output data-out="lift">+40%</output>
+			<input type="range" min="0" max="200" step="5" value="40" data-in="lift" />
+		</label>
+	</div>
+
+	<div class="cm-result">
+		<div class="cm-bars" aria-hidden="true">
+			<div class="cm-bar">
+				<span class="cm-bar__label">On your own</span>
+				<span class="cm-bar__track"><i data-bar="solo"></i></span>
+				<b data-val="solo">$10,000</b>
+			</div>
+			<div class="cm-bar is-mgr">
+				<span class="cm-bar__label">With a manager, after their cut</span>
+				<span class="cm-bar__track"><i data-bar="mgr"></i><i class="cut" data-bar="cut"></i></span>
+				<b data-val="mgr">$11,200</b>
+			</div>
+		</div>
+		<p class="cm-verdict" data-verdict aria-live="polite"></p>
+		<p class="cm-note">
+			The rule of thumb: at a <b data-out="rate2">20%</b> commission, a manager has to grow your deal income by
+			<b data-out="be">25%</b> just to break even. Anything past that, plus the hours you get back, is the real win.
+		</p>
+	</div>
+</section>
+
+<style>
+	.cm {
+		margin-block: 1.5rem 2rem;
+		padding: 1.25rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-lg);
+		background:
+			radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--sc-champagne) 10%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.02);
+	}
+	.cm-kick {
+		margin: 0;
+		display: inline-block;
+		padding: 2px 10px;
+		border-radius: var(--sc-radius-pill);
+		background: var(--sc-lime);
+		color: #111;
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.cm-title {
+		margin: 0.5rem 0 1rem;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+		line-height: 1.2;
+	}
+	.cm-controls {
+		display: grid;
+		gap: 1rem;
+	}
+	.cm-field {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.35rem 0.75rem;
+		align-items: baseline;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.cm-field output {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+		font-size: var(--sc-text-lg);
+	}
+	.cm-field input {
+		grid-column: 1 / -1;
+		width: 100%;
+		accent-color: var(--sc-ion);
+		height: 28px;
+	}
+	.cm-result {
+		margin-top: 1.25rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.cm-bars {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.cm-bar {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 4px 0.75rem;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.cm-bar b {
+		color: var(--sc-ivory);
+		font-weight: 700;
+	}
+	.cm-bar__track {
+		grid-column: 1 / -1;
+		display: flex;
+		height: 12px;
+		border-radius: var(--sc-radius-pill);
+		background: rgb(255 255 255 / 0.06);
+		overflow: hidden;
+	}
+	.cm-bar__track i {
+		display: block;
+		height: 100%;
+		background: var(--sc-steel);
+		transition: width var(--sc-dur-base, 0.3s) var(--sc-ease-settle, ease);
+	}
+	.is-mgr .cm-bar__track i {
+		background: linear-gradient(90deg, var(--sc-champagne), var(--sc-rose));
+	}
+	.is-mgr .cm-bar__track i.cut {
+		background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.18) 0 4px, transparent 4px 8px);
+	}
+	.cm-verdict {
+		margin: 1rem 0 0.5rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+		font-size: var(--sc-text-base);
+	}
+	.cm-verdict.is-up {
+		color: var(--sc-jade);
+	}
+	.cm-verdict.is-down {
+		color: var(--sc-rose);
+	}
+	.cm-note {
+		margin: 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+		line-height: 1.55;
+	}
+	.cm-note b {
+		color: var(--sc-ivory);
+	}
+</style>
+
+<script>
+	const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+	document.querySelectorAll<HTMLElement>('[data-cm]').forEach((root) => {
+		const get = (k: string) => Number(root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!.value);
+		const set = (sel: string, v: string) => root.querySelectorAll<HTMLElement>(sel).forEach((el) => (el.textContent = v));
+		const update = () => {
+			const income = get('income');
+			const rate = get('rate') / 100;
+			const lift = get('lift') / 100;
+			const gross = income * (1 + lift);
+			const cut = gross * rate;
+			const net = gross - cut;
+			const be = rate / (1 - rate);
+			const max = Math.max(income, gross);
+			set('[data-out="income"]', fmt.format(income));
+			set('[data-out="rate"]', `${Math.round(rate * 100)}%`);
+			set('[data-out="rate2"]', `${Math.round(rate * 100)}%`);
+			set('[data-out="lift"]', `+${Math.round(lift * 100)}%`);
+			set('[data-out="be"]', `${Math.round(be * 100)}%`);
+			set('[data-val="solo"]', fmt.format(income));
+			set('[data-val="mgr"]', fmt.format(net));
+			root.querySelector<HTMLElement>('[data-bar="solo"]')!.style.width = `${(income / max) * 100}%`;
+			root.querySelector<HTMLElement>('[data-bar="mgr"]')!.style.width = `${(net / max) * 100}%`;
+			root.querySelector<HTMLElement>('[data-bar="cut"]')!.style.width = `${(cut / max) * 100}%`;
+			const diff = net - income;
+			const v = root.querySelector<HTMLElement>('[data-verdict]')!;
+			v.classList.toggle('is-up', diff > 0);
+			v.classList.toggle('is-down', diff < 0);
+			v.textContent =
+				Math.abs(diff) < 1
+					? 'Dead even. You are paying for your time back.'
+					: diff > 0
+						? `You keep ${fmt.format(diff)} more a month, after their ${fmt.format(cut)} cut.`
+						: `You keep ${fmt.format(-diff)} less a month. They need to add more than ${Math.round(be * 100)}% to be worth it on money alone.`;
+		};
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
+		update();
+	});
+</script>

@@ -7,9 +7,15 @@ const section = (label, directory) => ({ label, items: [{ autogenerate: { direct
 
 export default defineConfig({
 	site: 'https://creators.select',
+	// Start loading a page as soon as a finger touches its link, and the next
+	// guide as soon as its link scrolls into view (src/components/Pagination.astro).
+	prefetch: { prefetchAll: true, defaultStrategy: 'tap' },
 	redirects: {
 		'/grow/algorithms': '/algorithms/how-recommenders-work/',
 		'/grow/case-studies': '/case-studies/',
+		'/goldmines': '/shortlist/',
+		'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
+		'/grow/strategy': '/grow/niche/',
 	},
 	integrations: [
 		starlight({
@@ -17,16 +23,22 @@ export default defineConfig({
 			description: SITE_DESCRIPTION,
 			logo: { src: './src/assets/logo-lockup.svg', alt: SITE_NAME, replacesTitle: true },
 			favicon: '/favicon.svg',
+			// Per-page link previews and structured data (src/route-data.ts).
+			routeMiddleware: './src/route-data.ts',
 			head: [
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
 				{ tag: 'meta', attrs: { name: 'theme-color', content: '#050505' } },
-				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://creators.select/og.png' } },
-				{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+				{
+					// Page transitions slide in the direction you swiped or tapped (src/styles/docs.css).
+					tag: 'script',
+					content: `addEventListener('pagereveal',function(e){try{var d=sessionStorage.getItem('sc-nav');sessionStorage.removeItem('sc-nav');if(d&&e.viewTransition)e.viewTransition.types.add(d)}catch(_){}})`,
+				},
 			],
 			components: {
 				ThemeSelect: './src/components/ThemeSelect.astro',
 				PageTitle: './src/components/PageTitle.astro',
 				SkipLink: './src/components/SkipLink.astro',
+				Pagination: './src/components/Pagination.astro',
 			},
 			social: [
 				{ icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/selectcreators/' },
@@ -41,10 +53,11 @@ export default defineConfig({
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
 				section('Case studies', 'case-studies'),
-				section('Goldmines', 'goldmines'),
+				section('The Shortlist', 'shortlist'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
 				section('Deals and contracts', 'deals'),
+				section('Money basics', 'money'),
 				section('Team', 'team'),
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),

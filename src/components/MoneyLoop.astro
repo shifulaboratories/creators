@@ -1,0 +1,230 @@
+---
+/**
+ * The business loop behind every ad-funded feed, as a circle you can step through.
+ * Each step carries one sourced fact from Meta's own earnings materials.
+ */
+const steps = [
+	{ t: 'You post', d: 'Your video is the raw material. The feed needs a constant supply of things people want to watch.', stat: '', src: '' },
+	{ t: 'The feed matches it', d: 'Ranking models predict who will watch, send or come back for it, and show it to them.', stat: 'AI recommendations drove a 24%+ increase in time spent on Instagram since Reels launched.', src: 'Mark Zuckerberg, Q1 2023 earnings call' },
+	{ t: 'People stay and come back', d: 'Better matches mean longer sessions and more return visits. That’s the number the whole system is tuned to grow.', stat: 'Video time spent on Instagram was up more than 30% year over year.', src: 'Mark Zuckerberg, Q3 2025 earnings call' },
+	{ t: 'More ads get seen', d: 'Ads sit between posts. More time in the app means more ad slots shown.', stat: 'Ad impressions up 14%, “driven by engagement and user growth, particularly on video surfaces.”', src: 'Susan Li (CFO), Q3 2025 earnings call' },
+	{ t: 'Money funds better matching', d: 'Advertising pays for the models, which make the matching better, which starts the loop again.', stat: 'Meta’s 2024 revenue: $164.5 billion, up 22%. Ad impressions grew 11% that year.', src: 'Meta Q4 and full-year 2024 results' },
+];
+---
+
+<div class="sc-widget ml not-content" data-ml>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Follow the money</div>
+			<h4 class="sc-widget__title">Why every feed wants the same thing from you</h4>
+		</div>
+	</div>
+	<div class="ml-body">
+		<div class="ml-ring" aria-hidden="true">
+			<svg viewBox="0 0 220 220">
+				<defs>
+					<linearGradient id="ml-g" x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0" stop-color="var(--sc-champagne)" />
+						<stop offset="0.5" stop-color="var(--sc-rose)" />
+						<stop offset="1" stop-color="var(--sc-ion)" />
+					</linearGradient>
+				</defs>
+				<circle cx="110" cy="110" r="86" class="ml-track" />
+				<circle cx="110" cy="110" r="86" class="ml-arc" />
+				{steps.map((_, i) => {
+					const a = (i / steps.length) * Math.PI * 2 - Math.PI / 2;
+					return (
+						<g class="ml-node" data-node={i}>
+							<circle cx={(110 + 86 * Math.cos(a)).toFixed(1)} cy={(110 + 86 * Math.sin(a)).toFixed(1)} r="13" />
+							<text x={(110 + 86 * Math.cos(a)).toFixed(1)} y={(110 + 86 * Math.sin(a) + 4).toFixed(1)} text-anchor="middle">{i + 1}</text>
+						</g>
+					);
+				})}
+				<text x="110" y="104" text-anchor="middle" class="ml-mid">time spent</text>
+				<text x="110" y="122" text-anchor="middle" class="ml-mid2">is the product</text>
+			</svg>
+		</div>
+		<ol class="ml-steps">
+			{steps.map((s, i) => (
+				<li>
+					<button type="button" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+						<span class="ml-n">{i + 1}</span>
+						<strong>{s.t}</strong>
+					</button>
+					<div class="ml-detail" hidden={i !== 0}>
+						<p>{s.d}</p>
+						{s.stat && (
+							<p class="ml-stat">
+								{s.stat} <span class="sc-tag is-platform">From the platform</span>
+								<small>{s.src}</small>
+							</p>
+						)}
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
+	<p class="sc-widget__note">Every figure is Meta’s own, from its earnings calls and results release. Links are in the sources at the end of the page.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-ml]').forEach((root) => {
+		const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-step]')];
+		const nodes = [...root.querySelectorAll<SVGGElement>('[data-node]')];
+		const arc = root.querySelector<SVGCircleElement>('.ml-arc')!;
+		const C = 2 * Math.PI * 86;
+		let auto = 0;
+		const show = (i: number) => {
+			btns.forEach((b, j) => {
+				b.setAttribute('aria-pressed', String(i === j));
+				(b.nextElementSibling as HTMLElement).hidden = i !== j;
+			});
+			nodes.forEach((n, j) => n.classList.toggle('on', j <= i));
+			arc.style.strokeDashoffset = String(C - (C * (i + 1)) / btns.length);
+		};
+		arc.style.strokeDasharray = String(C);
+		btns.forEach((b, i) =>
+			b.addEventListener('click', () => {
+				clearInterval(auto);
+				show(i);
+			}),
+		);
+		show(0);
+		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			const io = new IntersectionObserver((es) => {
+				if (!es.some((e) => e.isIntersecting)) return;
+				io.disconnect();
+				let i = 0;
+				auto = window.setInterval(() => {
+					i = (i + 1) % btns.length;
+					show(i);
+					if (i === btns.length - 1) clearInterval(auto);
+				}, 2600);
+			}, { threshold: 0.4 });
+			io.observe(root);
+		}
+	});
+</script>
+
+<style>
+	.ml {
+		--accent: var(--sc-champagne);
+	}
+	.ml-body {
+		display: grid;
+		gap: 1rem;
+		align-items: center;
+	}
+	@media (min-width: 48rem) {
+		.ml-body {
+			grid-template-columns: 240px 1fr;
+		}
+	}
+	.ml-ring svg {
+		width: min(240px, 70vw);
+		display: block;
+		margin-inline: auto;
+	}
+	.ml-track {
+		fill: none;
+		stroke: rgb(255 255 255 / 0.07);
+		stroke-width: 6;
+	}
+	.ml-arc {
+		fill: none;
+		stroke: url(#ml-g);
+		stroke-width: 6;
+		stroke-linecap: round;
+		transform: rotate(-90deg);
+		transform-origin: 110px 110px;
+		transition: stroke-dashoffset 0.9s var(--sc-ease-settle);
+	}
+	.ml-node circle {
+		fill: var(--sc-carbon);
+		stroke: rgb(255 255 255 / 0.2);
+		transition:
+			fill 0.4s,
+			stroke 0.4s;
+	}
+	.ml-node text {
+		font: 700 11px var(--sc-font-display);
+		fill: var(--sc-silver);
+	}
+	.ml-node.on circle {
+		fill: var(--sc-rose);
+		stroke: transparent;
+	}
+	.ml-node.on text {
+		fill: var(--sc-obsidian);
+	}
+	.ml-mid {
+		font: 700 15px var(--sc-font-display);
+		fill: var(--sc-ivory);
+	}
+	.ml-mid2 {
+		font: 500 11px var(--sc-font-sans);
+		fill: var(--sc-silver);
+	}
+	.ml-steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.4rem;
+	}
+	.ml-steps button {
+		all: unset;
+		box-sizing: border-box;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.5rem 0.7rem;
+		border-radius: 14px;
+		cursor: pointer;
+		color: var(--sc-silver);
+		transition: background 0.3s;
+	}
+	.ml-steps button:focus-visible {
+		outline: 2px solid var(--accent);
+	}
+	.ml-steps button[aria-pressed='true'] {
+		background: rgb(255 255 255 / 0.05);
+		color: var(--sc-ivory);
+	}
+	.ml-n {
+		display: grid;
+		place-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.08);
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+	button[aria-pressed='true'] .ml-n {
+		background: var(--sc-rose);
+		color: var(--sc-obsidian);
+	}
+	.ml-detail {
+		padding: 0.2rem 0.7rem 0.4rem 2.8rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--sc-platinum);
+	}
+	.ml-detail p {
+		margin: 0 0 0.4rem;
+	}
+	.ml-stat {
+		padding: 0.6rem 0.75rem;
+		border-radius: 12px;
+		background: color-mix(in srgb, var(--accent) 9%, transparent);
+		color: var(--sc-ivory);
+	}
+	.ml-stat small {
+		display: block;
+		margin-top: 0.25rem;
+		color: var(--sc-silver);
+		font-size: 0.74rem;
+	}
+</style>

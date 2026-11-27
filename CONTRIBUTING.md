@@ -39,8 +39,32 @@ authors: [your-github-handle]
 reviewers: []
 lastReviewed: 2026-11-26
 confidence: practitioner-view
+tldr:                    # optional: "The short version", three points max
+  - First thing to know, in one sentence.
+  - Second thing.
+  - Third thing.
 ---
 ```
+
+`tldr` shows as a numbered card under the title, so phone readers get the gist before they scroll. Every point must be something the page itself says and sources. Pages that already open with a bold **The short version:** paragraph can skip `tldr:` here and use `src/data/tldr.ts` instead; when a page has a short-version card, that opening paragraph is hidden on the web page (the Markdown copy for AI keeps it).
+
+On phones, readers can swipe sideways to the next or previous guide. Widgets that scroll sideways are left alone automatically; if a widget handles its own drags some other way, put `data-no-swipe` on it.
+
+## Shareable stats and link previews
+
+Every page gets a link-preview image automatically (built from its `title`, `description` and section; see `src/pages/og/`). Keep descriptions under about 120 characters so they fit.
+
+To let readers post a number to their Instagram or TikTok Story, use `ShareStat` in an `.mdx` page. Only share numbers the page cites, and name the source: it prints on the card.
+
+```mdx
+import ShareStat from '../../../components/ShareStat.astro';
+
+<div class="sc-stats">
+  <ShareStat value="4.5x" label="What the number means, in one sentence." source="Who published it, year" />
+</div>
+```
+
+Widgets can opt in too: any element with `data-story-value` (plus optional `data-story-label`, `data-story-source`) opens the Story card when tapped. Update those attributes as the widget's numbers change.
 
 ## Sign-off
 

@@ -1,0 +1,53 @@
+---
+/**
+ * One big number with a "Share" button that turns it into an Instagram Story
+ * card (1080x1920). Use inside an .sc-stats grid or on its own:
+ *
+ *   <ShareStat value="4.5x" label="More reach for..." source="YouTube Creator Insider, 2025" />
+ *
+ * Only share numbers the page cites; the source prints on the card.
+ */
+interface Props {
+	value: string;
+	label: string;
+	source?: string;
+	/** Optional CSS color for the number. */
+	color?: string;
+}
+const { value, label, source, color } = Astro.props;
+---
+
+<div class="sc-stat share-stat not-content" style={color ? `--c: ${color}` : undefined}>
+	<span class="sc-stat__value">{value}</span>
+	<span class="sc-stat__label">{label}</span>
+	{source && <span class="share-stat__src">{source}</span>}
+	<button
+		type="button"
+		class="sc-story-btn"
+		data-story-value={value}
+		data-story-label={label}
+		data-story-source={source}
+		aria-label={`Share “${value}” to your Story`}
+	>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M10 6.5h4"></path></svg>
+		<span>Share</span>
+	</button>
+</div>
+
+<style>
+	.share-stat {
+		padding: 1rem 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(160deg, color-mix(in srgb, var(--accent, var(--sc-rose)) 10%, transparent), transparent 70%);
+	}
+	.share-stat .sc-stat__label {
+		font-family: var(--sc-font-sans);
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.share-stat__src {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+</style>

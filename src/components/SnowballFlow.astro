@@ -1,0 +1,298 @@
+---
+/**
+ * Interactive: how a post "snowballs". It's shown to a small test group first;
+ * if that group's reactions beat what the feed expects, it's pushed to a wider ring.
+ * Pick how the post performs and watch how far it travels.
+ */
+const rings = [
+	{ name: 'Test group', who: 'A small batch: some followers plus people whose history matches the topic', dots: 8 },
+	{ name: 'Lookalikes', who: 'More people who behave like the ones who reacted well', dots: 16 },
+	{ name: 'Nearby interests', who: 'People one step away: adjacent topics, related creators', dots: 26 },
+	{ name: 'Broad reach', who: 'Anyone the model predicts will care. This is what “going viral” looks like from the inside.', dots: 40 },
+];
+const presets = [
+	{ key: 'lands', label: 'It lands', stops: 4, sig: { watch: 88, send: 72, follow: 60, skip: 12 }, verdict: 'Every ring beat the bar, so the feed kept widening. Most of these views come from people who have never heard of you.' },
+	{ key: 'mixed', label: 'It’s fine', stops: 2, sig: { watch: 55, send: 20, follow: 18, skip: 40 }, verdict: 'Good enough for lookalikes, not strong enough to cross into new interests. Usually a packaging or hook problem, not a “shadowban.”' },
+	{ key: 'flops', label: 'It flops', stops: 1, sig: { watch: 22, send: 4, follow: 3, skip: 78 }, verdict: 'The test group swiped past. The post stops here, and the next one starts fresh. One flop doesn’t sink an account.' },
+];
+const size = 320;
+const c = size / 2;
+const radii = [42, 78, 114, 150];
+---
+
+<div class="sc-widget sb not-content" data-sb data-presets={JSON.stringify(presets)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · How a post snowballs</div>
+			<h4 class="sc-widget__title">Pick how your post does with its first viewers</h4>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="How the post performs">
+		{presets.map((p, i) => (
+			<button type="button" class="sc-chip" data-p={p.key} aria-pressed={i === 0 ? 'true' : 'false'}>{p.label}</button>
+		))}
+		<button type="button" class="sc-chip sb-replay" data-replay aria-label="Replay">↻ Replay</button>
+	</div>
+
+	<div class="sb-body">
+		<svg class="sb-viz" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Concentric rings of viewers around your post; rings light up as the post is shown more widely">
+			{radii.map((r, i) => <circle class="sb-ring" data-ring={i} cx={c} cy={c} r={r} />)}
+			{rings.map((ring, i) =>
+				Array.from({ length: ring.dots }, (_, j) => {
+					const a = (j / ring.dots) * Math.PI * 2 + i * 0.4;
+					return <circle class="sb-dot" data-ring={i} cx={(c + radii[i] * Math.cos(a)).toFixed(1)} cy={(c + radii[i] * Math.sin(a)).toFixed(1)} r={i === 0 ? 5 : 4} />;
+				}),
+			)}
+			<circle class="sb-core" cx={c} cy={c} r="18" />
+			<text class="sb-core-t" x={c} y={c + 4} text-anchor="middle">you</text>
+		</svg>
+
+		<div class="sb-side">
+			<ol class="sb-steps">
+				{rings.map((r, i) => (
+					<li data-step={i}>
+						<span class="sb-n">{i + 1}</span>
+						<div>
+							<strong>{r.name}</strong>
+							<span>{r.who}</span>
+						</div>
+						<em class="sb-state" data-state></em>
+					</li>
+				))}
+			</ol>
+			<div class="sb-sig" aria-label="What the first viewers did">
+				{[
+					['watch', 'Watched most of it'],
+					['send', 'Sent it to someone'],
+					['follow', 'Followed you'],
+					['skip', 'Swiped away fast'],
+				].map(([k, l]) => (
+					<div class="sb-bar" data-k={k}>
+						<span>{l}</span>
+						<i><b></b></i>
+					</div>
+				))}
+			</div>
+		</div>
+	</div>
+
+	<p class="sb-verdict" aria-live="polite" data-verdict></p>
+	<p class="sc-widget__note">Illustration of a pattern, not real data: the bars and ring sizes are made up to show the idea. What’s documented: Instagram now lets creators test a Reel on non-followers first and see its views, likes, comments and shares after 24 hours (Trial Reels), and every platform we cover says it measures watch time, shares and negative feedback. Sources are listed below the widget.</p>
+</div>
+
+<script>
+	type P = { key: string; stops: number; sig: Record<string, number>; verdict: string };
+	document.querySelectorAll<HTMLElement>('[data-sb]').forEach((root) => {
+		const presets: P[] = JSON.parse(root.dataset.presets!);
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let cur = presets[0];
+		let timers: number[] = [];
+		const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+		const setRing = (i: number, on: boolean) =>
+			root.querySelectorAll<SVGElement>(`[data-ring="${i}"]`).forEach((el) => el.classList.toggle('on', on));
+		const run = () => {
+			timers.forEach(clearTimeout);
+			timers = [];
+			for (let i = 0; i < 4; i++) {
+				setRing(i, false);
+				steps[i].dataset.s = '';
+				steps[i].querySelector('[data-state]')!.textContent = '';
+			}
+			Object.entries(cur.sig).forEach(([k, v]) => {
+				const b = root.querySelector<HTMLElement>(`[data-k="${k}"] b`)!;
+				b.style.width = v + '%';
+			});
+			const verdict = root.querySelector('[data-verdict]')!;
+			verdict.textContent = '';
+			const at = (i: number) => {
+				setRing(i, true);
+				const passed = i < cur.stops - 1;
+				const last = i === 3 && cur.stops === 4;
+				steps[i].dataset.s = passed || last ? 'pass' : 'stop';
+				steps[i].querySelector('[data-state]')!.textContent = last ? 'Shown widely' : passed ? 'Beat the bar → wider' : 'Stopped here';
+				if (i === cur.stops - 1) verdict.textContent = cur.verdict;
+			};
+			for (let i = 0; i < cur.stops; i++) {
+				if (reduce) at(i);
+				else timers.push(window.setTimeout(() => at(i), 250 + i * 750));
+			}
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-p]').forEach((b) =>
+			b.addEventListener('click', () => {
+				cur = presets.find((p) => p.key === b.dataset.p)!;
+				root.querySelectorAll('[data-p]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				run();
+			}),
+		);
+		root.querySelector('[data-replay]')!.addEventListener('click', run);
+		// Start when scrolled into view.
+		const io = new IntersectionObserver((es) => {
+			if (es.some((e) => e.isIntersecting)) {
+				run();
+				io.disconnect();
+			}
+		}, { threshold: 0.3 });
+		io.observe(root);
+	});
+</script>
+
+<style>
+	.sb {
+		--accent: var(--sc-rose);
+	}
+	.sb-replay {
+		margin-left: auto;
+	}
+	.sb-body {
+		display: grid;
+		gap: 1rem;
+		margin-top: 1rem;
+		align-items: center;
+	}
+	@media (min-width: 48rem) {
+		.sb-body {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+		}
+	}
+	.sb-viz {
+		width: 100%;
+		max-width: 320px;
+		margin-inline: auto;
+		display: block;
+	}
+	.sb-ring {
+		fill: none;
+		stroke: rgb(255 255 255 / 0.07);
+		stroke-dasharray: 2 5;
+		transition: stroke 0.5s;
+	}
+	.sb-ring.on {
+		stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+	}
+	.sb-dot {
+		fill: rgb(255 255 255 / 0.12);
+		transition:
+			fill 0.5s,
+			r 0.5s;
+	}
+	.sb-dot.on {
+		fill: var(--accent);
+		filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 70%, transparent));
+	}
+	.sb-dot.on[data-ring='1'] {
+		fill: var(--sc-champagne);
+	}
+	.sb-dot.on[data-ring='2'] {
+		fill: var(--sc-ion);
+	}
+	.sb-dot.on[data-ring='3'] {
+		fill: var(--sc-lime);
+	}
+	.sb-core {
+		fill: var(--sc-ivory);
+	}
+	.sb-core-t {
+		font: 700 10px var(--sc-font-display);
+		fill: var(--sc-obsidian);
+	}
+	.sb-steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.45rem;
+	}
+	.sb-steps li {
+		display: grid;
+		grid-template-columns: 1.6rem 1fr;
+		gap: 0.1rem 0.6rem;
+		padding: 0.55rem 0.7rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line);
+		opacity: 0.55;
+		transition:
+			opacity 0.4s,
+			border-color 0.4s,
+			background 0.4s;
+	}
+	.sb-steps li[data-s='pass'],
+	.sb-steps li[data-s='stop'] {
+		opacity: 1;
+	}
+	.sb-steps li[data-s='pass'] {
+		border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+		background: color-mix(in srgb, var(--accent) 7%, transparent);
+	}
+	.sb-steps li[data-s='stop'] {
+		border-color: rgb(255 255 255 / 0.25);
+	}
+	.sb-n {
+		grid-row: span 2;
+		display: grid;
+		place-items: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.06);
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+	.sb-steps strong {
+		display: block;
+		font-size: 0.9rem;
+		color: var(--sc-ivory);
+	}
+	.sb-steps span {
+		font-size: 0.78rem;
+		line-height: 1.4;
+		color: var(--sc-silver);
+	}
+	.sb-state {
+		grid-column: 2;
+		font-style: normal;
+		font-size: 0.74rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+	li[data-s='stop'] .sb-state {
+		color: var(--sc-silver);
+	}
+	.sb-sig {
+		display: grid;
+		gap: 0.35rem;
+		margin-top: 0.9rem;
+	}
+	.sb-bar {
+		display: grid;
+		grid-template-columns: 9.5rem 1fr;
+		align-items: center;
+		gap: 0.6rem;
+		font-size: 0.76rem;
+		color: var(--sc-silver);
+	}
+	.sb-bar i {
+		height: 8px;
+		border-radius: 99px;
+		background: rgb(255 255 255 / 0.06);
+		overflow: hidden;
+	}
+	.sb-bar b {
+		display: block;
+		height: 100%;
+		width: 0;
+		border-radius: inherit;
+		background: var(--sc-aurora);
+		transition: width 0.8s var(--sc-ease-settle);
+	}
+	.sb-bar[data-k='skip'] b {
+		background: rgb(255 255 255 / 0.35);
+	}
+	.sb-verdict {
+		min-height: 2.6em;
+		margin: 1rem 0 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--sc-ivory);
+	}
+</style>

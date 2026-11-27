@@ -1,0 +1,82 @@
+---
+/** The growth loop: six steps in a ring, each linking to the page that covers it. */
+import './grow.css';
+const steps = [
+	{ n: 1, short: 'Niche', label: 'Pick an idea a specific person wants', href: '/grow/niche/', tint: 'rose' },
+	{ n: 2, short: 'Hook', label: 'Earn the first seconds', href: '/grow/hooks/', tint: 'champagne' },
+	{ n: 3, short: 'Format', label: 'Deliver in a shape that fits the feed', href: '/grow/formats/', tint: 'jade' },
+	{ n: 4, short: 'Rhythm', label: 'Post at a pace you can keep', href: '/grow/cadence/', tint: 'cyan' },
+	{ n: 5, short: 'Read', label: 'Read the numbers that matter', href: '/grow/analytics/', tint: 'ion' },
+	{ n: 6, short: 'Test', label: 'Change one thing, post again', href: '/grow/experiments/', tint: 'amethyst' },
+];
+const R = 41;
+const pos = steps.map((_, i) => {
+	const a = (i / steps.length) * Math.PI * 2 - Math.PI / 2;
+	return { x: 50 + R * Math.cos(a), y: 50 + R * Math.sin(a) };
+});
+---
+
+<div class="sc-widget gl not-content">
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">The loop</div>
+			<h4 class="sc-widget__title">Growth is a loop, not a lucky post</h4>
+		</div>
+	</div>
+	<div class="gl-wrap">
+		<div class="gl-ring" aria-hidden="true">
+			<svg viewBox="0 0 100 100">
+				<circle cx="50" cy="50" r={R} class="gl-track" />
+				<circle cx="50" cy="50" r={R} class="gl-glow" />
+			</svg>
+			<span class="gl-orbit"><i /></span>
+			<span class="gl-center">Post<br />learn<br />repeat</span>
+			{steps.map((s, i) => (
+				<a href={s.href} tabindex="-1" class={`gl-node gr-tint-${s.tint}`} style={`left:${pos[i].x}%;top:${pos[i].y}%`}>
+					<b>{s.n}</b>
+					<span>{s.short}</span>
+				</a>
+			))}
+		</div>
+		<ol class="gl-list">
+			{steps.map((s) => (
+				<li class={`gr-tint-${s.tint}`}>
+					<a href={s.href}><b>{s.n}</b><span>{s.label}</span><span class="gl-go">→</span></a>
+				</li>
+			))}
+		</ol>
+	</div>
+</div>
+
+<style>
+	.gl-wrap { display: grid; gap: 1.2rem; align-items: center; }
+	@media (min-width: 50rem) { .gl-wrap { grid-template-columns: 1fr 1fr; } }
+	.gl-ring { position: relative; width: min(100%, 20rem); aspect-ratio: 1; margin-inline: auto; }
+	.gl-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+	.gl-track { fill: none; stroke: rgb(255 255 255 / 0.08); stroke-width: 0.6; }
+	.gl-glow { fill: none; stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 30 228; stroke-linecap: round; opacity: 0.8; transform-origin: 50% 50%; transform: rotate(-132deg); animation: gl-arc 9s linear infinite; }
+	@keyframes gl-arc { from { transform: rotate(-132deg); } to { transform: rotate(228deg); } }
+	.gl-orbit { position: absolute; inset: 0; animation: gl-spin 9s linear infinite; }
+	.gl-orbit i { position: absolute; left: 50%; top: 9%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px var(--accent); }
+	@keyframes gl-spin { to { transform: rotate(360deg); } }
+	@media (prefers-reduced-motion: reduce) { .gl-glow, .gl-orbit { animation: none; } }
+	.gl-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; font-family: var(--sc-font-display); font-weight: 800; font-size: 1.05rem; line-height: 1.15; letter-spacing: -0.03em; color: var(--sc-ivory); }
+	.gl-node {
+		position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 2px;
+		width: 4.4rem; padding: 0.45rem 0.2rem; border-radius: 16px; text-decoration: none;
+		background: #0c0c0c; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+		box-shadow: 0 0 20px -8px var(--c);
+	}
+	.gl-node b { font-family: var(--sc-font-display); color: var(--c); font-size: 0.95rem; line-height: 1; }
+	.gl-node span { font-size: 0.7rem; color: var(--sc-ivory); font-weight: 600; }
+	.gl-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+	.gl-list a {
+		display: grid; grid-template-columns: 1.8rem 1fr auto; align-items: center; gap: 0.6rem;
+		padding: 0.65rem 0.8rem; border-radius: 14px; text-decoration: none; color: var(--sc-platinum);
+		border: 1px solid var(--sc-line); background: rgb(255 255 255 / 0.02); font-size: 0.92rem;
+		transition: border-color 0.2s, transform 0.2s;
+	}
+	.gl-list a:hover { border-color: color-mix(in srgb, var(--c) 50%, transparent); transform: translateX(2px); }
+	.gl-list b { font-family: var(--sc-font-display); color: var(--c); }
+	.gl-go { color: var(--sc-steel); }
+</style>

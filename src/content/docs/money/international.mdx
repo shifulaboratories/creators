@@ -1,0 +1,54 @@
+---
+title: "Getting paid across borders"
+description: "For creators outside the US earning from YouTube and US brands (W-8 forms, withholding, treaties), and for US creators paid by brands abroad."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: Global
+sidebar:
+  order: 6
+---
+
+import TaxSources from '../../../components/basics/TaxSources.astro';
+
+**The short version:** if you live outside the US, US platforms may hold back part of your US earnings for the IRS unless you fill in their tax form, and a tax treaty can shrink that. You still owe tax at home, under your own country's rules. If you're in the US and a foreign brand pays you, it's taxed like any other income, and the real cost is usually currency fees.
+
+:::caution[Not tax advice]
+Cross-border tax depends on both countries' rules and any treaty between them. This page covers the US side only. Talk to a tax pro in the country where you live.
+:::
+
+## Outside the US, earning on YouTube
+
+YouTube's own help page spells out what happens to creators outside the US:
+
+<figure class="sc-figure">
+<div class="sc-stats">
+<div class="sc-stat is-jade"><span class="sc-stat__value">0–30%</span><span class="sc-stat__label">Withheld from earnings from US viewers only, once you submit your tax info. Depends on your country's tax treaty</span></div>
+<div class="sc-stat is-rose"><span class="sc-stat__value">24%</span><span class="sc-stat__label">Of your total worldwide earnings that may be withheld if you don't submit tax info</span></div>
+<div class="sc-stat is-champagne"><span class="sc-stat__value">Dec 10</span><span class="sc-stat__label">Get your tax info in by this date to avoid the higher withholding</span></div>
+</div>
+<figcaption>YouTube Help, "U.S. tax requirements for YouTube earnings," checked Nov 26, 2026</figcaption>
+</figure>
+
+- **Submit your tax info in AdSense** (it's a W-8 form for non-US creators). That alone limits withholding to the US-viewer slice instead of everything.
+- **Claim your treaty rate** on that form if your country has a tax treaty with the US. YouTube's own example: a creator in India with $100 of US-viewer revenue has $15 withheld with the treaty claim, and $30 without it.
+- **Forms expire** at the end of the third full calendar year after you sign. Put a reminder in your calendar.
+- **Business accounts** outside the US default to 30% withholding on US earnings if no valid form is on file.
+- Fixing your form by December 10 can trigger a refund of earlier over-withholding for that year, per YouTube.
+
+## Outside the US, paid by a US brand
+
+A US brand will usually ask for a **W-8BEN** (individuals) or **W-8BEN-E** (companies) instead of a W-9. It tells them you're not a US person. Whether they withhold depends on the payment and where you did the work, so ask the brand's finance team what they'll withhold before you sign, and put the answer in the contract. <span class="sc-tag is-practitioner">Practitioner view</span>
+
+## In the US, paid from abroad
+
+- **It's taxable income** like any other, reported on your return in US dollars. The IRS taxes US citizens and residents on income from everywhere.
+- You won't usually get a 1099 from a foreign brand, so your own records are the proof.
+- **Invoice in the currency you want to receive**, or agree up front who pays conversion and transfer fees. Bank wires and card-based platforms can quietly take a few percent through exchange rates. Compare the rate you got with the market rate on the day. <span class="sc-tag is-practitioner">Practitioner view</span>
+
+## Hiring an editor in another country
+
+Paying a contractor who lives and works outside the US is common. Ask them for a W-8BEN for your records instead of a W-9, and confirm with your CPA what (if anything) you need to file. Their local taxes are their own responsibility. See [Hiring your team](/team/hiring/).
+
+<TaxSources ids={['ytTax']} />

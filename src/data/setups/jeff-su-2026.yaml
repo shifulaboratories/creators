@@ -4,6 +4,7 @@ site: https://www.jeffsu.org/
 source: https://www.jeffsu.org/yt-gear/
 sourceTitle: "YouTube Gear: My Filming Equipment"
 asOf: "April 2026"
+niche: education
 gear:
   camera: [Sony A7III, Atomos Ninja V (external recorder)]
   lens: [Sigma 16mm f/1.4, Sony FE 24mm f/1.4 GM]

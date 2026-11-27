@@ -1,0 +1,128 @@
+---
+/**
+ * Newsletter signup card. Settings live in NEWSLETTER (src/site.mjs). The form
+ * posts straight to our Listmonk server (double opt-in), so no script ships here.
+ */
+import { NEWSLETTER } from '../site.mjs';
+interface Props {
+	heading?: string;
+	blurb?: string;
+}
+const {
+	heading = NEWSLETTER.name,
+	blurb = 'One email a week: what changed on each platform, what it means for your reach and your rates, with a source for every claim. Free, no hype.',
+} = Astro.props;
+const live = Boolean(NEWSLETTER.action && NEWSLETTER.listUuid);
+---
+
+<section class="nl not-content" aria-labelledby="nl-h">
+	<div class="nl-glow" aria-hidden="true"></div>
+	<p class="nl-kicker">{live ? 'Free, every week' : 'Launching soon'}</p>
+	<h2 id="nl-h">{heading}</h2>
+	<p class="nl-blurb">{blurb}</p>
+	{
+		live ? (
+			<form class="nl-form" action={NEWSLETTER.action} method="post">
+				<label class="sr-only" for="nl-email">Email</label>
+				<input id="nl-email" type="email" name="email" required autocomplete="email" placeholder="you@email.com" />
+				<input type="hidden" name="l" value={NEWSLETTER.listUuid} />
+				{/* Listmonk's honeypot: bots fill it, people never see it. */}
+				<input class="sr-only" type="text" name="nonce" tabindex="-1" autocomplete="off" aria-hidden="true" />
+				<button type="submit">Subscribe</button>
+			</form>
+		) : (
+			<div class="nl-form">
+				<a class="nl-cta" href="https://www.instagram.com/selectcreators/" target="_blank" rel="noopener">
+					Follow @selectcreators to hear first
+				</a>
+			</div>
+		)
+	}
+	<p class="nl-fine">Unsubscribe anytime. We never sell or share your email.</p>
+</section>
+
+<style>
+	.nl {
+		position: relative;
+		overflow: hidden;
+		margin: 2rem 0;
+		padding: 1.75rem 1.5rem;
+		border-radius: 24px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-onyx);
+		isolation: isolate;
+	}
+	.nl-glow {
+		position: absolute;
+		inset: -40% -20% auto auto;
+		width: 70%;
+		aspect-ratio: 1;
+		background: radial-gradient(circle, rgb(255 134 184 / 0.28), rgb(255 180 126 / 0.12) 40%, transparent 70%);
+		z-index: -1;
+	}
+	.nl-kicker {
+		display: inline-block;
+		margin: 0 0 0.6rem;
+		padding: 0.2rem 0.65rem;
+		border-radius: 999px;
+		background: var(--sc-lime);
+		color: #111;
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.nl h2 {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font: 700 clamp(1.6rem, 5vw, 2.1rem) / 1.1 var(--sc-font-display);
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+	}
+	.nl-blurb {
+		margin: 0.6rem 0 1.1rem;
+		max-width: 34rem;
+		color: var(--sc-silver);
+	}
+	.nl-form {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.nl-form input {
+		flex: 1 1 14rem;
+		min-width: 0;
+		padding: 0.75rem 1rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.04);
+		color: var(--sc-ivory);
+		font: inherit;
+	}
+	.nl-form input:focus {
+		outline: 2px solid var(--sc-rose);
+		outline-offset: 1px;
+	}
+	.nl-form button,
+	.nl-cta {
+		padding: 0.75rem 1.25rem;
+		border: 0;
+		border-radius: 999px;
+		background: var(--sc-aurora);
+		color: #120d12;
+		font: 700 0.95rem / 1 var(--sc-font-sans);
+		text-decoration: none;
+		cursor: pointer;
+	}
+	.nl-fine {
+		margin: 0.75rem 0 0;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+</style>

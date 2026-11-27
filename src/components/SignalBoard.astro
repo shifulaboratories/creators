@@ -1,0 +1,259 @@
+---
+/**
+ * What each platform says it rewards, signal by signal, with the evidence for every cell.
+ * Tap a platform to see its receipts.
+ */
+type Lvl = 'top' | 'yes' | 'pen' | 'na';
+const platforms = [
+	{ key: 'instagram', name: 'Instagram', short: 'IG', tint: 'instagram', src: 'platform', proof: [
+		'“The top three signals that matter most for ranking are watch time, likes and sends.” Adam Mosseri, head of Instagram, Jan 2025.',
+		'“Sends are slightly more important for unconnected content”, meaning people who don’t follow you yet. Mosseri, Jan 2025.',
+		'“Sends per reach correlate more, in my experience, with overall reach than anything else.” Mosseri, May 2024.',
+		'Instagram’s own ranking explainer lists comments, saves and shares as Feed signals, and reshares and watching to the end for Reels (2023).',
+	] },
+	{ key: 'tiktok', name: 'TikTok', short: 'TikTok', tint: 'tiktok', src: 'platform', proof: [
+		'TikTok lists likes, shares, comments, accounts followed and content created as user-interaction signals (2020).',
+		'Its example of a strong signal: whether someone finishes watching a longer video from beginning to end.',
+		'Follower count and past hits are not direct factors.',
+	] },
+	{ key: 'youtube', name: 'YouTube', short: 'YT', tint: 'youtube', src: 'platform', proof: [
+		'YouTube names clicks, watch time, survey responses, shares, likes and dislikes as signals.',
+		'It added watch time in 2012 because clicks alone rewarded misleading videos.',
+		'It surveys viewers and counts time on videos rated 4 or 5 stars as more valuable (“valued watch time”).',
+	] },
+	{ key: 'x', name: 'X', short: 'X', tint: 'x', src: 'code', proof: [
+		'Published weights (2026 code): share via copy link 20, reply 5, quote 5, share via DM 5, follow 4, like 0.708.',
+		'Negative weights: report −234, mute −58.8, “not interested” −53.07, block −31.2.',
+		'Weights multiply each viewer’s predicted probability of the action, not raw counts.',
+	] },
+];
+const rows: { label: string; hint: string; cells: Lvl[] }[] = [
+	{ label: 'Watching it through', hint: 'Watch time, finishing, dwell', cells: ['top', 'top', 'top', 'yes'] },
+	{ label: 'Sending or sharing it', hint: 'DMs, copy link, reshares', cells: ['top', 'yes', 'yes', 'top'] },
+	{ label: 'Talking about it', hint: 'Comments, replies, quotes', cells: ['yes', 'yes', 'na', 'top'] },
+	{ label: 'Following you after', hint: 'Follows from the post', cells: ['na', 'yes', 'na', 'yes'] },
+	{ label: 'Liking it', hint: 'The cheapest signal', cells: ['top', 'yes', 'yes', 'yes'] },
+	{ label: 'Saying no', hint: 'Not interested, dislike, mute, report', cells: ['na', 'na', 'pen', 'pen'] },
+];
+const lvlText: Record<Lvl, string> = { top: 'Top signal', yes: 'Counts', pen: 'Penalty', na: 'Not stated' };
+---
+
+<div class="sc-widget sg not-content" data-sg>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · What to optimize for</div>
+			<h4 class="sc-widget__title">What each platform says it rewards</h4>
+		</div>
+	</div>
+
+	<div class="sg-scroll">
+		<table class="sg-table">
+			<thead>
+				<tr>
+					<th scope="col"><span class="sr">Signal</span></th>
+					{platforms.map((p, i) => (
+						<th scope="col">
+							<button type="button" data-p={i} data-section={p.tint} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={p.name}><span class="sg-full">{p.name}</span><span class="sg-short" aria-hidden="true">{p.short}</span></button>
+						</th>
+					))}
+				</tr>
+			</thead>
+			<tbody>
+				{rows.map((r) => (
+					<tr>
+						<th scope="row">
+							<strong>{r.label}</strong>
+							<small>{r.hint}</small>
+						</th>
+						{r.cells.map((c, i) => (
+							<td data-col={i} data-section={platforms[i].tint}>
+								<span class={`sg-dot is-${c}`} title={lvlText[c]}></span>
+								<span class="sg-l">{lvlText[c]}</span>
+							</td>
+						))}
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="sg-proof" aria-live="polite">
+		{platforms.map((p, i) => (
+			<div data-proof={i} hidden={i !== 0} data-section={p.tint}>
+				<div class="sg-proof-h">
+					<b>The receipts: {p.name}</b>
+					<span class={`sc-tag is-${p.src}`}>{p.src === 'code' ? 'From the code' : 'From the platform'}</span>
+				</div>
+				<ul>{p.proof.map((t) => <li>{t}</li>)}</ul>
+			</div>
+		))}
+	</div>
+	<p class="sc-widget__note">“Top signal” means the platform named it among its most important, or its published code weights it highest. “Not stated” means we found no first-party statement, not that it doesn’t count. Full sources are at the end of the page.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-sg]').forEach((root) => {
+		const pick = (i: number) => {
+			root.querySelectorAll('[data-p]').forEach((b) => b.setAttribute('aria-pressed', String(b.getAttribute('data-p') === String(i))));
+			root.querySelectorAll<HTMLElement>('[data-proof]').forEach((d) => (d.hidden = d.dataset.proof !== String(i)));
+			root.querySelectorAll<HTMLElement>('[data-col]').forEach((d) => d.classList.toggle('is-on', d.dataset.col === String(i)));
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-p]').forEach((b) => b.addEventListener('click', () => pick(Number(b.dataset.p))));
+		pick(0);
+	});
+</script>
+
+<style>
+	.sg {
+		--accent: var(--sc-ion);
+	}
+	.sg-scroll {
+		overflow-x: auto;
+		margin-inline: -0.25rem;
+		scrollbar-width: none;
+	}
+	.sg-table {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: separate;
+		border-spacing: 0 4px;
+		font-size: 0.82rem;
+	}
+	.sg-table th,
+	.sg-table td {
+		padding: 0.45rem 0.4rem;
+		text-align: center;
+		border: 0;
+		vertical-align: middle;
+	}
+	.sg-table tbody th {
+		text-align: left;
+		position: sticky;
+		left: 0;
+		background: var(--sc-onyx);
+		z-index: 1;
+	}
+	.sg-table tbody th strong {
+		display: block;
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.sg-table tbody th small {
+		color: var(--sc-steel);
+		font-size: 0.72rem;
+	}
+	.sg-table thead button {
+		all: unset;
+		cursor: pointer;
+		padding: 0.3rem 0.65rem;
+		border-radius: 999px;
+		font-weight: 600;
+		color: var(--sc-silver);
+		border: 1px solid var(--sc-line-strong);
+	}
+	.sg-table thead button[aria-pressed='true'] {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: var(--sc-obsidian);
+	}
+	.sg-table thead button:focus-visible {
+		outline: 2px solid var(--accent);
+	}
+	.sg-table td {
+		border-radius: 10px;
+		transition: background 0.3s;
+	}
+	.sg-table td.is-on {
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+	.sg-table thead th:first-child {
+		width: 34%;
+	}
+	@media (max-width: 40rem) {
+		.sg-l,
+		.sg-table tbody th small {
+			display: none;
+		}
+		.sg-table {
+			font-size: 0.78rem;
+		}
+		.sg-table thead button {
+			display: inline-block;
+			max-width: 100%;
+			box-sizing: border-box;
+			padding: 0.3rem 0.35rem;
+			font-size: 0.62rem;
+		}
+		.sg-full {
+			display: none;
+		}
+		.sg-short {
+			display: inline !important;
+		}
+		.sg-table th,
+		.sg-table td {
+			padding: 0.5rem 0.15rem;
+		}
+	}
+	.sg-short {
+		display: none;
+	}
+	.sg-dot {
+		display: inline-block;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		vertical-align: middle;
+	}
+	.sg-dot.is-top {
+		background: var(--sc-aurora);
+		box-shadow: 0 0 10px rgb(255 134 184 / 0.5);
+		width: 18px;
+		height: 18px;
+	}
+	.sg-dot.is-yes {
+		background: rgb(255 255 255 / 0.45);
+	}
+	.sg-dot.is-pen {
+		background: transparent;
+		border: 2px solid var(--sc-ember);
+		position: relative;
+	}
+	.sg-dot.is-na {
+		background: transparent;
+		border: 1px dashed rgb(255 255 255 / 0.25);
+	}
+	.sg-l {
+		display: block;
+		margin-top: 0.15rem;
+		font-size: 0.66rem;
+		color: var(--sc-steel);
+	}
+	.sr {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+	.sg-proof {
+		margin-top: 0.9rem;
+		padding: 0.85rem 1rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--accent) 7%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+	}
+	.sg-proof-h {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--sc-ivory);
+	}
+	.sg-proof ul {
+		margin: 0.5rem 0 0;
+		padding-left: 1.1rem;
+		font-size: 0.86rem;
+		line-height: 1.5;
+	}
+</style>

@@ -36,7 +36,7 @@ const cards = [
 	<div class="sd-track" tabindex="0">
 		{
 			cards.map((c, i) => (
-				<a class="sd-card" href={c.href} data-section={c.tint} aria-roledescription="slide" aria-label={`${i + 1} of ${cards.length}`}>
+				<a class="sd-card" href={c.href} data-section={c.tint} aria-roledescription="slide">
 					<span class="sd-glow" aria-hidden="true" />
 					<span class="sd-ck">{c.kicker}</span>
 					<span class="sd-big">{c.big}</span>

@@ -1,0 +1,236 @@
+---
+/**
+ * The panic button: two taps (what happened, where) to the first move and the
+ * steps. Every situation card is also a plain link, so it works without JS.
+ */
+import PlaybookPanel from './PlaybookPanel.astro';
+import { platforms, playbooks, situations } from '../lib/protect-playbooks';
+---
+
+<section class="pt sc-widget not-content" data-pt aria-label="Account emergency helper">
+	<div class="sc-widget__head">
+		<div>
+			<p class="sc-widget__kicker">Something just went wrong?</p>
+			<h2 class="sc-widget__title">Two taps to your next move</h2>
+		</div>
+	</div>
+
+	<ol class="pt-tree">
+		<li class="pt-stage" data-stage="1">
+			<p class="pt-q"><span class="pt-dot">1</span>What happened?</p>
+			<div class="pt-sits">
+				{
+					situations.map((s) => (
+						<a class="pt-sit" href={s.href} data-s={s.key} aria-pressed="false">
+							<span class="pt-emoji" aria-hidden="true">{s.emoji}</span>
+							<strong>{s.label}</strong>
+							<small>{s.short}</small>
+						</a>
+					))
+				}
+				<a class="pt-sit is-scam" href="/protect/scams/">
+					<span class="pt-emoji" aria-hidden="true">🎣</span>
+					<strong>I got a sketchy DM or email</strong>
+					<small>“Copyright violation”, “brand deal”, “verify your account”</small>
+				</a>
+			</div>
+		</li>
+		<li class="pt-stage" data-stage="2" hidden>
+			<p class="pt-q"><span class="pt-dot">2</span>Where?</p>
+			<div class="sc-chip-row pt-plats">
+				{
+					platforms.map((p) => (
+						<button type="button" class="sc-chip pt-plat" data-p={p.key} data-section={p.tint} aria-pressed="false">
+							{p.name}
+						</button>
+					))
+				}
+			</div>
+		</li>
+		<li class="pt-stage" data-stage="3" hidden aria-live="polite">
+			<p class="pt-q"><span class="pt-dot">3</span>Do this, in order</p>
+			{
+				situations.map((s) =>
+					platforms.map((p) => (
+						<div class="pt-result" data-s={s.key} data-p={p.key} data-section={p.tint} hidden>
+							<PlaybookPanel pb={playbooks[s.key][p.key]} compact />
+							<a class="pt-more" href={`${s.href}?p=${p.key}`}>
+								Full {p.name} playbook with sources →
+							</a>
+						</div>
+					)),
+				)
+			}
+			<button type="button" class="pt-reset">Start over</button>
+		</li>
+	</ol>
+	<p class="sc-widget__note">Breathe. Most hacked and banned accounts that come back, come back through the platform’s own free process. Anyone charging to “recover” or “unban” you is the second problem, not the fix.</p>
+</section>
+
+<style>
+	.pt-tree {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 1.25rem;
+		position: relative;
+	}
+	.pt-stage {
+		position: relative;
+		scroll-margin-top: 7.5rem;
+		margin: 0 !important;
+		padding-left: 1.1rem;
+		border-left: 1px dashed var(--sc-line-strong);
+		animation: pt-in var(--sc-dur-base) var(--sc-ease-settle) both;
+	}
+	.pt-stage[hidden] {
+		display: none;
+	}
+	@keyframes pt-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+	}
+	.pt-q {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		margin: 0 0 0.75rem -1.95rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+		font-size: 1.02rem;
+	}
+	.pt-dot {
+		width: 1.65rem;
+		height: 1.65rem;
+		display: grid;
+		place-items: center;
+		clip-path: var(--sc-seal-clip);
+		background: var(--accent);
+		color: var(--sc-obsidian);
+		font-family: var(--sc-font-sans);
+		font-size: 0.78rem;
+	}
+	.pt-sits {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.55rem;
+	}
+	.pt-sit {
+		display: grid;
+		align-content: start;
+		gap: 0.2rem;
+		padding: 0.85rem 0.8rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		text-decoration: none !important;
+		color: var(--sc-platinum) !important;
+		transition:
+			border-color var(--sc-dur-quick),
+			background var(--sc-dur-quick),
+			transform var(--sc-dur-quick);
+	}
+	.pt-sit:hover {
+		border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+	}
+	.pt-sit:active {
+		transform: scale(0.98);
+	}
+	.pt-sit[aria-pressed='true'] {
+		border-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+	}
+	.pt-sit.is-scam {
+		grid-column: 1 / -1;
+	}
+	.pt-emoji {
+		font-size: 1.35rem;
+		line-height: 1;
+		margin-bottom: 0.2rem;
+	}
+	.pt-sit strong {
+		color: var(--sc-ivory);
+		font-size: 0.92rem;
+		line-height: 1.25;
+	}
+	.pt-sit small {
+		color: var(--sc-steel);
+		font-size: 0.76rem;
+		line-height: 1.35;
+	}
+	.pt-plat {
+		font-size: 0.9rem !important;
+		padding: 0.55rem 1.05rem !important;
+		min-height: 2.6rem;
+	}
+	.pt-result[hidden] {
+		display: none;
+	}
+	.pt-more {
+		display: inline-block;
+		margin-top: 0.85rem;
+		font-weight: 600;
+		color: var(--sc-ivory) !important;
+	}
+	.pt-reset {
+		appearance: none;
+		display: block;
+		margin-top: 0.75rem;
+		background: none;
+		border: 0;
+		padding: 0.25rem 0;
+		color: var(--sc-steel);
+		font: inherit;
+		font-size: 0.82rem;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	@media (min-width: 48rem) {
+		.pt-sits {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-pt]').forEach((root) => {
+		const stage = (n: number) => root.querySelector<HTMLElement>(`[data-stage="${n}"]`)!;
+		let s = '';
+		let p = '';
+		const show = () => {
+			root.querySelectorAll<HTMLElement>('.pt-sit[data-s]').forEach((a) => a.setAttribute('aria-pressed', String(a.dataset.s === s)));
+			root.querySelectorAll<HTMLElement>('.pt-plat').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === p)));
+			stage(2).hidden = !s;
+			stage(3).hidden = !(s && p);
+			root.querySelectorAll<HTMLElement>('.pt-result').forEach((r) => (r.hidden = !(r.dataset.s === s && r.dataset.p === p)));
+		};
+		root.querySelectorAll<HTMLAnchorElement>('.pt-sit[data-s]').forEach((a) =>
+			a.addEventListener('click', (e) => {
+				e.preventDefault();
+				s = a.dataset.s!;
+				show();
+				if (p) stage(3).scrollIntoView({ behavior: 'smooth', block: 'start' });
+				else stage(2).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			}),
+		);
+		root.querySelectorAll<HTMLButtonElement>('.pt-plat').forEach((b) =>
+			b.addEventListener('click', () => {
+				p = b.dataset.p!;
+				try {
+					localStorage.setItem('sc-protect-platform', p);
+				} catch {}
+				show();
+				stage(3).scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}),
+		);
+		root.querySelector('.pt-reset')!.addEventListener('click', () => {
+			s = p = '';
+			show();
+			stage(1).scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
+	});
+</script>

@@ -3,26 +3,46 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { docsLoader } from '@astrojs/starlight/loaders';
 import { docsSchema } from '@astrojs/starlight/schema';
+import { people } from './data/people';
 
 /**
  * Every guide records who wrote it, who reviewed it, when it was last checked,
  * and how confident we are in it.
  */
+const guideFields = z.object({
+	// Ids from src/data/people.ts. Shown as "By" and "Reviewed by" bylines.
+	authors: z.array(z.string()).default([]),
+	reviewers: z.array(z.string()).default([]),
+	lastReviewed: z.coerce.date().optional(),
+	confidence: z.enum(['verified', 'practitioner-view', 'speculative']).optional(),
+	status: z.enum(['outline', 'draft', 'published']).default('outline'),
+	// Underground pages must never carry affiliate links or sponsors.
+	noAffiliates: z.boolean().default(false),
+	// Optional generated cover: big word and color key (see src/styles/sections.css).
+	cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
+	// "The short version": up to three points shown above the guide (or see src/data/tldr.ts).
+	tldr: z.array(z.string().max(160)).max(3).optional(),
+});
+
 const docs = defineCollection({
 	loader: docsLoader(),
-	schema: docsSchema({
-		extend: z.object({
-			authors: z.array(z.string()).default([]),
-			reviewers: z.array(z.string()).default([]),
-			lastReviewed: z.coerce.date().optional(),
-			confidence: z.enum(['verified', 'practitioner-view', 'speculative']).optional(),
-			status: z.enum(['outline', 'draft', 'published']).default('outline'),
-			// Underground pages must never carry affiliate links or sponsors.
-			noAffiliates: z.boolean().default(false),
-			// Optional generated cover: big word and color key (see src/styles/sections.css).
-			cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
+	schema: (context) =>
+		docsSchema({ extend: guideFields })(context).superRefine((d, ctx) => {
+			// Bylines must point at someone in src/data/people.ts.
+			for (const key of ['authors', 'reviewers'] as const) {
+				for (const id of d[key]) {
+					if (!people[id]) ctx.addIssue({ code: 'custom', path: [key], message: `"${id}" is not in src/data/people.ts` });
+				}
+			}
+			// "Fact-checked" is a promise: a named reviewer and a review date. See docs/publishing.md.
+			if (d.status === 'published' && (d.reviewers.length === 0 || !d.lastReviewed)) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['status'],
+					message: 'status: published needs reviewers and lastReviewed (see docs/publishing.md)',
+				});
+			}
 		}),
-	}),
 });
 
 /**
@@ -69,7 +89,7 @@ const tools = defineCollection({
 });
 
 /**
- * Curated "goldmine" resources in src/data/resources/. Each says why it is worth
+ * Curated "shortlist" resources in src/data/resources/. Each says why it is worth
  * someone's time; affiliate links must be flagged like tools.
  */
 const resources = defineCollection({
@@ -79,7 +99,7 @@ const resources = defineCollection({
 		// A full URL, or a path starting with / for our own guides.
 		url: z.string().refine((u) => u.startsWith('/') || URL.canParse(u), 'Must be a URL or a /path'),
 		kind: z.enum(['official', 'playbook', 'hiring', 'code', 'tool', 'learning']),
-		tint: z.string().default('goldmines'),
+		tint: z.string().default('shortlist'),
 		coverLabel: z.string().optional(),
 		why: z.string().min(20),
 		free: z.boolean(),
@@ -120,6 +140,13 @@ const setups = defineCollection({
 		source: z.url(),
 		sourceTitle: z.string(),
 		asOf: z.string(),
+		// What they make, so readers can find someone like them.
+		niche: z.enum(['education', 'lifestyle', 'beauty', 'business', 'film', 'music', 'podcast', 'tech', 'gaming', 'short-form']),
+		// page: their own gear page. video: their own setup video (youtubeId required).
+		from: z.enum(['page', 'video']).default('page'),
+		youtubeId: z.string().regex(/^[A-Za-z0-9_-]{11}$/).optional(),
+		// A total only when the creator states one, in their words (e.g. "$5,963").
+		cost: z.string().optional(),
 		note: z.string().optional(),
 		gear: z.object({
 			camera: z.array(z.string()).default([]),
@@ -129,7 +156,7 @@ const setups = defineCollection({
 			editing: z.array(z.string()).default([]),
 			support: z.array(z.string()).default([]),
 		}),
-	}),
+	}).refine((s) => s.from !== 'video' || s.youtubeId, { message: 'from: video needs a youtubeId' }),
 });
 
 export const collections = { docs, tools, resources, videos, setups };

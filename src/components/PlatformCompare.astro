@@ -129,6 +129,23 @@ const tagText = { code: 'From the code', platform: 'From the platform', practiti
 		width: 2.6rem;
 		align-self: center;
 	}
+	/* Eleven platforms: one swipeable row per side on phones instead of a wall of chips. */
+	.pc-pickers .sc-chip-row {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.pc-pickers .sc-chip-row::-webkit-scrollbar {
+		display: none;
+	}
+	.pc-pickers .sc-chip-row > * {
+		flex: none;
+	}
+	@media (min-width: 48rem) {
+		.pc-pickers .sc-chip-row {
+			flex-wrap: wrap;
+		}
+	}
 	.pc-pickers .sc-chip[aria-pressed='true'] {
 		background: var(--accent);
 		border-color: var(--accent);

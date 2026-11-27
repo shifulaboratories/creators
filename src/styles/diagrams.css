@@ -209,6 +209,7 @@
 	color: var(--sc-ivory);
 	min-width: 0;
 }
+.sc-flow__node small { display: block; margin-top: 2px; font-size: var(--sc-text-xs); color: var(--sc-silver); }
 .sc-flow__link {
 	width: 2px;
 	height: 28px;

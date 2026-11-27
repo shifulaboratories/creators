@@ -1,0 +1,160 @@
+---
+/**
+ * Sample role scopes for a creator's first hires: what they own, how people
+ * usually pay for it, and a fair paid trial. Phones: swipe rail.
+ */
+const roles = [
+	{
+		tint: 'is-ion',
+		emoji: '🎬',
+		name: 'Video editor',
+		when: 'Usually the first hire',
+		owns: ['Rough cut to final from your footage', 'Pacing, captions, music, sound', 'Exports and uploads to your specs', 'Notes back on retention dips'],
+		pay: 'Per video for freelancers, salary for full-time',
+		trial: 'Paid edit of one real video, with your notes round included',
+	},
+	{
+		tint: 'is-rose',
+		emoji: '🖼️',
+		name: 'Thumbnail designer',
+		when: 'Once packaging is the bottleneck',
+		owns: ['2–3 thumbnail concepts per video', 'A/B variants for testing', 'A consistent look for your channel', 'Source files you keep'],
+		pay: 'Per thumbnail or a monthly package',
+		trial: 'Paid redo of two past thumbnails, compared on CTR',
+	},
+	{
+		tint: 'is-jade',
+		emoji: '🗂️',
+		name: 'Ops / assistant',
+		when: 'When admin eats your week',
+		owns: ['Inbox triage and brand replies', 'Calendar, posting schedule, files', 'Invoices and chasing payments', 'Your SOPs, kept up to date'],
+		pay: 'Hourly or part-time monthly',
+		trial: 'Paid week on a real task list with a written handover',
+	},
+	{
+		tint: 'is-champagne',
+		emoji: '🧠',
+		name: 'Strategist / producer',
+		when: 'When you have a team to run',
+		owns: ['Ideas and title testing', 'Production calendar', 'Briefs for editor and designer', 'Weekly review of what worked'],
+		pay: 'Monthly retainer or salary',
+		trial: 'Paid audit of your last 20 videos with 10 pitched ideas',
+	},
+];
+---
+
+<div class="hs sc-rail not-content" data-rail>
+	{
+		roles.map((r) => (
+			<article class={`hs-card ${r.tint}`}>
+				<header>
+					<span class="hs-emoji" aria-hidden="true">{r.emoji}</span>
+					<div>
+						<h3>{r.name}</h3>
+						<p>{r.when}</p>
+					</div>
+				</header>
+				<p class="hs-label">They own</p>
+				<ul>
+					{r.owns.map((o) => (
+						<li>{o}</li>
+					))}
+				</ul>
+				<dl>
+					<div>
+						<dt>Usually paid</dt>
+						<dd>{r.pay}</dd>
+					</div>
+					<div>
+						<dt>Paid trial</dt>
+						<dd>{r.trial}</dd>
+					</div>
+				</dl>
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.hs {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+		gap: 0.75rem;
+		margin-block: 1.25rem 1.5rem;
+	}
+	.hs-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		padding: 1.1rem;
+		border: 1px solid color-mix(in srgb, var(--c) 28%, var(--sc-line));
+		border-radius: var(--sc-radius-lg);
+		background:
+			radial-gradient(140% 70% at 100% 0%, color-mix(in srgb, var(--c) 14%, transparent), transparent 65%),
+			rgb(255 255 255 / 0.02);
+	}
+	.hs-card header {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+	}
+	.hs-emoji {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--c) 18%, transparent);
+		font-size: 1.1rem;
+	}
+	.hs-card h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+	}
+	.hs-card header p {
+		margin: 0;
+		color: var(--c);
+		font-size: var(--sc-text-xs);
+		font-weight: 600;
+	}
+	.hs-label {
+		margin: 0.25rem 0 0;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+	}
+	.hs-card ul {
+		margin: 0;
+		padding-inline-start: 1.1rem;
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		line-height: 1.55;
+	}
+	.hs-card dl {
+		margin: auto 0 0;
+		display: grid;
+		gap: 0.4rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.hs-card dl div {
+		display: grid;
+		grid-template-columns: 5.75rem 1fr;
+		gap: 0.5rem;
+		font-size: var(--sc-text-xs);
+		line-height: 1.45;
+	}
+	.hs-card dt {
+		color: var(--sc-silver);
+	}
+	.hs-card dd {
+		margin: 0;
+		color: var(--sc-ivory);
+	}
+</style>
+
+<script>
+	import '../../scripts/rail';
+</script>

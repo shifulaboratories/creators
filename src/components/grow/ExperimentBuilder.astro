@@ -1,0 +1,105 @@
+---
+/** Experiment card builder: pick what to change, write a guess, copy a tidy test plan. */
+import './grow.css';
+import { experimentVars } from '../../lib/grow-data';
+const first = experimentVars[0];
+---
+
+<div class="sc-widget xb not-content" data-xb data-vars={JSON.stringify(experimentVars)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Experiment card</div>
+			<h4 class="sc-widget__title">Plan one test in 30 seconds</h4>
+		</div>
+	</div>
+
+	<p class="xb-q">1. What will you change? <span>Only one thing.</span></p>
+	<div class="sc-chip-row" role="group" aria-label="What to change">
+		{experimentVars.map((v, i) => <button type="button" class="sc-chip" data-key={v.key} aria-pressed={i === 0 ? 'true' : 'false'}>{v.label}</button>)}
+	</div>
+
+	<label class="xb-q" for="xb-guess">2. Your guess <span>What do you think will happen?</span></label>
+	<input id="xb-guess" class="xb-input" type="text" maxlength="140" placeholder="Showing the result first keeps more people" />
+
+	<div class="xb-card" aria-live="polite">
+		<span class="gr-pill">Experiment</span>
+		<dl>
+			<div><dt>Change</dt><dd data-f="change">{first.change}</dd></div>
+			<div><dt>Keep the same</dt><dd>Topic, length, posting day, everything else</dd></div>
+			<div><dt>Guess</dt><dd data-f="guess" class="is-muted">Write your guess above</dd></div>
+			<div><dt>Judge by</dt><dd data-f="metric">{first.metric}</dd></div>
+			<div><dt>How to run it</dt><dd data-f="tool">{first.tool}</dd></div>
+			<div><dt>Call it after</dt><dd>At least 3 posts per version, or the test tool’s own result. One post is a coin flip.</dd></div>
+		</dl>
+		<button type="button" class="gr-btn is-primary" data-copy>Copy this plan</button>
+	</div>
+</div>
+
+<script>
+	type V = { key: string; label: string; change: string; metric: string; tool: string };
+	document.querySelectorAll<HTMLElement>('[data-xb]').forEach((root) => {
+		const vars = JSON.parse(root.dataset.vars!) as V[];
+		let cur = vars[0];
+		const f = (k: string) => root.querySelector<HTMLElement>(`[data-f="${k}"]`)!;
+		const input = root.querySelector<HTMLInputElement>('.xb-input')!;
+		root.querySelectorAll<HTMLButtonElement>('[data-key]').forEach((b) =>
+			b.addEventListener('click', () => {
+				cur = vars.find((x) => x.key === b.dataset.key)!;
+				root.querySelectorAll('[data-key]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				f('change').textContent = cur.change;
+				f('metric').textContent = cur.metric;
+				f('tool').textContent = cur.tool;
+			}),
+		);
+		input.addEventListener('input', () => {
+			const g = input.value.trim();
+			f('guess').textContent = g || 'Write your guess above';
+			f('guess').classList.toggle('is-muted', !g);
+		});
+		const btn = root.querySelector<HTMLButtonElement>('[data-copy]')!;
+		btn.addEventListener('click', async () => {
+			const text = [
+				'EXPERIMENT',
+				`Change: ${cur.change}`,
+				'Keep the same: topic, length, posting day, everything else',
+				`Guess: ${input.value.trim() || '(write one)'}`,
+				`Judge by: ${cur.metric}`,
+				`How to run it: ${cur.tool}`,
+				'Call it after: at least 3 posts per version, or the test tool’s result',
+				'Result: ',
+				'Keep, drop or retest: ',
+			].join('\n');
+			try {
+				await navigator.clipboard.writeText(text);
+				btn.textContent = 'Copied. Paste it in your notes.';
+			} catch {
+				btn.textContent = 'Couldn’t copy. Select the card instead.';
+			}
+			setTimeout(() => (btn.textContent = 'Copy this plan'), 2200);
+		});
+	});
+</script>
+
+<style>
+	.xb-q { display: block; margin: 1rem 0 0.5rem; font-weight: 600; color: var(--sc-ivory); font-size: 0.92rem; }
+	.xb-q span { font-weight: 400; color: var(--sc-steel); margin-left: 0.3rem; }
+	.xb-input {
+		width: 100%; font: inherit; font-size: 16px; padding: 0.7rem 0.9rem; border-radius: 14px;
+		border: 1px solid var(--sc-line-strong); background: rgb(0 0 0 / 0.3); color: var(--sc-ivory);
+	}
+	.xb-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+	.xb-card {
+		margin-top: 1rem; padding: 1.1rem; border-radius: 20px; display: grid; gap: 0.8rem;
+		border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+		background: radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%), #0b0b0b;
+	}
+	.xb-card .gr-pill { justify-self: start; }
+	.xb-card dl { margin: 0; display: grid; gap: 0.55rem; }
+	.xb-card dl > div { display: grid; gap: 0.1rem; }
+	@media (min-width: 40rem) { .xb-card dl > div { grid-template-columns: 8.5rem 1fr; gap: 1rem; } }
+	.xb-card dt { font-size: 0.75rem; font-weight: 700; color: var(--accent); }
+	.xb-card dd { margin: 0; color: var(--sc-platinum); font-size: 0.9rem; line-height: 1.45; }
+	.xb-card dd::first-letter { text-transform: uppercase; }
+	.xb-card dd.is-muted { color: var(--sc-slate); font-style: italic; }
+	.xb-card .gr-btn { justify-self: start; }
+</style>

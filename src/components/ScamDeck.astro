@@ -1,0 +1,136 @@
+---
+/**
+ * Scam patterns aimed at creators, as swipeable cards on phones.
+ * Each card: what it looks like, the tell, what to do, and the reporting it comes from.
+ */
+import { scams } from '../lib/protect-playbooks';
+---
+
+<div class="sdk-wrap not-content">
+	<div class="sdk sc-rail" data-rail>
+		{
+			scams.map((s) => (
+				<article class={`sdk-card is-${s.tint}`}>
+					<header>
+						<span class="sdk-emoji" aria-hidden="true">{s.emoji}</span>
+						<h3>{s.name}</h3>
+					</header>
+					<p class="sdk-pitch">{s.pitch}</p>
+					<dl>
+						<dt>The tell</dt>
+						<dd>{s.tell}</dd>
+						<dt>Do this</dt>
+						<dd>{s.todo}</dd>
+					</dl>
+					<p class="sdk-src">
+						{s.src.map((r, i) => (
+							<>
+								{i > 0 && ' · '}
+								<a href={r.href}>{r.label}</a>
+							</>
+						))}
+					</p>
+				</article>
+			))
+		}
+	</div>
+	<div class="sc-rail-dots" aria-hidden="true">{scams.map((_, i) => <span class={i === 0 ? 'on' : ''} />)}</div>
+</div>
+
+<style>
+	.sdk {
+		display: grid;
+		gap: 0.75rem;
+		margin-block: 1.25rem 0.5rem;
+	}
+	@media (min-width: 40rem) {
+		.sdk {
+			grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+		}
+	}
+	.sdk-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+		padding: 1.05rem 1rem 1rem;
+		border-radius: var(--sc-radius-lg);
+		border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+		background:
+			radial-gradient(120% 70% at 0% 0%, var(--t), transparent 70%),
+			var(--sc-onyx);
+	}
+	.sdk-card header {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+	.sdk-emoji {
+		width: 2.3rem;
+		height: 2.3rem;
+		display: grid;
+		place-items: center;
+		clip-path: var(--sc-seal-clip);
+		background: color-mix(in srgb, var(--c) 22%, var(--sc-carbon));
+		font-size: 1.1rem;
+		flex: none;
+	}
+	.sdk-card h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.05rem;
+		color: var(--sc-ivory);
+		line-height: 1.2;
+	}
+	.sdk-pitch {
+		margin: 0;
+		padding: 0.7rem 0.8rem;
+		border-radius: 14px 14px 14px 4px;
+		background: rgb(255 255 255 / 0.06);
+		color: var(--sc-platinum);
+		font-size: 0.88rem;
+		line-height: 1.5;
+		font-style: italic;
+	}
+	.sdk-card dl {
+		margin: 0;
+		display: grid;
+		gap: 0.25rem;
+	}
+	.sdk-card dt {
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: var(--c);
+		margin-top: 0.35rem;
+	}
+	.sdk-card dd {
+		margin: 0;
+		font-size: 0.86rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.sdk-src {
+		margin: auto 0 0;
+		padding-top: 0.4rem;
+		font-size: 0.74rem;
+		color: var(--sc-steel);
+	}
+	.sdk-src a {
+		color: var(--sc-silver);
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.sdk-wrap').forEach((w) => {
+		const rail = w.querySelector<HTMLElement>('[data-rail]')!;
+		const dots = [...w.querySelectorAll<HTMLElement>('.sc-rail-dots span')];
+		rail.addEventListener(
+			'scroll',
+			() => {
+				const card = rail.firstElementChild as HTMLElement;
+				const i = Math.round(rail.scrollLeft / (card.offsetWidth + 12));
+				dots.forEach((d, j) => d.classList.toggle('on', j === i));
+			},
+			{ passive: true },
+		);
+	});
+</script>

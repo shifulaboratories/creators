@@ -11,6 +11,8 @@
 	--sc-protect: var(--sc-rose);
 	--sc-underground: var(--sc-ember);
 	--sc-news: var(--sc-silver);
+	/* Money basics: a minty money green, between jade and the lime sticker. */
+	--sc-money: color-mix(in srgb, var(--sc-jade) 60%, var(--sc-lime));
 }
 
 [data-section='grow'] { --accent: var(--sc-grow); }
@@ -21,24 +23,39 @@
 [data-section='protect'] { --accent: var(--sc-protect); }
 [data-section='underground'] { --accent: var(--sc-underground); }
 [data-section='news'] { --accent: var(--sc-news); }
+[data-section='money'] { --accent: var(--sc-money); }
 
 :root {
-	/* Platforms blend ion and cyan; Goldmines use brass, the disclosure gold. */
+	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */
 	--sc-algorithms: var(--sc-ion);
 	--sc-case-studies: var(--sc-champagne);
 	--sc-platforms: color-mix(in srgb, var(--sc-ion) 50%, var(--sc-cyan));
-	--sc-goldmines: var(--sc-brass);
+	--sc-shortlist: var(--sc-brass);
 	/* Per-platform tints for covers. */
 	--sc-youtube: var(--sc-ember);
 	--sc-tiktok: var(--sc-cyan);
 	--sc-instagram: var(--sc-rose);
 	--sc-x: var(--sc-silver);
+	--sc-linkedin: var(--sc-ion);
+	--sc-threads: var(--sc-platinum, var(--sc-silver));
+	--sc-pinterest: var(--sc-ember);
+	--sc-snapchat: var(--sc-brass);
+	--sc-twitch: var(--sc-amethyst);
+	--sc-newsletters: var(--sc-jade);
+	--sc-podcasts: var(--sc-champagne);
 }
 [data-section='algorithms'] { --accent: var(--sc-algorithms); }
 [data-section='case-studies'] { --accent: var(--sc-case-studies); }
 [data-section='platforms'] { --accent: var(--sc-platforms); }
-[data-section='goldmines'] { --accent: var(--sc-goldmines); }
+[data-section='shortlist'] { --accent: var(--sc-shortlist); }
 [data-section='youtube'] { --accent: var(--sc-youtube); }
 [data-section='tiktok'] { --accent: var(--sc-tiktok); }
 [data-section='instagram'] { --accent: var(--sc-instagram); }
 [data-section='x'] { --accent: var(--sc-x); }
+[data-section='linkedin'] { --accent: var(--sc-linkedin); }
+[data-section='threads'] { --accent: var(--sc-threads); }
+[data-section='pinterest'] { --accent: var(--sc-pinterest); }
+[data-section='snapchat'] { --accent: var(--sc-snapchat); }
+[data-section='twitch'] { --accent: var(--sc-twitch); }
+[data-section='newsletters'] { --accent: var(--sc-newsletters); }
+[data-section='podcasts'] { --accent: var(--sc-podcasts); }

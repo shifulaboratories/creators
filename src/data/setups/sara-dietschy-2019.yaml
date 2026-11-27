@@ -1,0 +1,16 @@
+creator: Sara Dietschy
+known: Creative tech and creator life on YouTube
+site: https://www.saradietschy.com/
+source: https://www.youtube.com/watch?v=0hEBtLCoJ2o
+sourceTitle: "My $4,485 Cinema Setup"
+asOf: "September 2019"
+niche: tech
+from: video
+youtubeId: 0hEBtLCoJ2o
+cost: "$4,485"
+note: "A cinema rig built around Blackmagic's pocket cameras. She mentions her everyday YouTube camera at the time was a Sony a7 III, and the Canon zooms in the video were borrowed."
+gear:
+  camera: [Blackmagic Pocket Cinema Camera 6K, Blackmagic Pocket Cinema Camera 4K]
+  lens: [Canon EF 24-70mm, Canon EF 70-200mm]
+  audio: [Sony MDR-7506 headphones]
+  support: [SmallRig cage, Samsung T5 SSD 1TB, Canon LP-E6 batteries]

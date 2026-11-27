@@ -1,0 +1,63 @@
+---
+title: "Why the algorithm exists"
+description: "Feeds are built to keep people coming back, because that's what sells ads. Once you see the loop, it's obvious why sends and watch time beat likes, and how a post snowballs."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-26
+cover:
+  label: Why feeds exist
+sidebar:
+  order: 1
+---
+
+import MoneyLoop from '../../../components/MoneyLoop.astro';
+import SnowballFlow from '../../../components/SnowballFlow.astro';
+
+**The short version:** an ad-funded feed makes money when people spend time in the app and come back tomorrow. Every ranking decision serves that. So the posts that win are the ones that keep someone watching, and the ones that pull other people in. That's why a send is worth more than a like.
+
+## Follow the money
+
+Meta is the clearest example because it reports the numbers to investors every quarter.
+
+<MoneyLoop />
+
+You don't have to like this to use it. The feed isn't judging your art. It's predicting whether showing your post makes someone more likely to stay and return.
+
+## What that means for what wins
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-rose"><h4>What the feed values</h4><ul><li>People watching to the end</li><li>People sending it to a friend, which brings someone new into the app</li><li>Conversations that bring people back to check replies</li><li>New viewers who follow and return</li></ul></div>
+<div class="sc-compare__side is-ion"><h4>What it discounts or punishes</h4><ul><li>A quick like and a scroll</li><li>Swiping away in the first seconds</li><li>"Not interested," mutes, blocks and reports</li><li>Clicks that end in disappointment</li></ul></div>
+</div>
+<figcaption>Our read of the business loop, consistent with what each platform says it measures. Signal-by-signal receipts are on <a href="/algorithms/what-to-optimize/">What to optimize for</a>.</figcaption>
+</figure>
+
+- **Shares are the growth engine.** A send puts the app in front of someone who wasn't looking at it, and starts a conversation that brings both people back. Instagram's head, Adam Mosseri, said sends per reach correlate with overall reach "more than anything else" in his experience. <span class="sc-tag is-platform">From the platform</span>
+- **Long-term users matter more than one session.** YouTube surveys viewers and counts time on videos they rate 4 or 5 stars as more valuable, because regret drives people away. <span class="sc-tag is-platform">From the platform</span>
+- **Rage is capped by penalties.** X's code gives a report a weight of −234 against 0.708 for a like. Content that makes people leave or mute you is expensive. <span class="sc-tag is-code">From the code</span>
+
+## How a post snowballs
+
+No feed shows a new post to everyone at once. It's shown to some people, the system watches what they do, and if they react better than expected it's shown to more. Think of it as rings.
+
+<SnowballFlow />
+
+Instagram turned the first ring into a feature: **Trial Reels** are shown to non-followers first, and after about 24 hours you can see their views, likes, comments and shares before deciding whether to show the Reel to your followers. You can also have a Trial Reel shared automatically if it performs well in its first 72 hours. <span class="sc-tag is-platform">From the platform</span>
+
+## What to do with this
+
+- **Design for the send.** Ask "who would someone send this to, and why?" before you post. Useful, relatable and surprising are the usual answers.
+- **Earn the full watch.** Cut the intro, put the payoff early, and give a reason to stay.
+- **Make people want to come back.** Series, recurring formats and replies to comments give viewers a reason to return to you specifically.
+- **Use a flop as data.** One weak first ring stops that post, not your account. Change the hook or the packaging and try again.
+
+## Sources
+
+- Meta, [Q3 2025 earnings call transcript](https://s21.q4cdn.com/399680738/files/doc_financials/2025/q3/META-Q3-2025-Earnings-Call-Transcript.pdf), Oct 29, 2025.
+- Meta, [Fourth quarter and full year 2024 results](https://investor.atmeta.com/investor-news/press-release-details/2025/Meta-Reports-Fourth-Quarter-and-Full-Year-2024-Results/default.aspx), Jan 29, 2025.
+- Kelly Hayes, [People spent 24% more time on Instagram after launch of AI-powered Reels, Zuckerberg says](https://www.fox6now.com/news/people-spent-24-more-time-on-instagram-after-launch-of-ai-powered-reels-zuckerberg-says), LiveNOW from FOX, Apr 27, 2023 (Q1 2023 earnings call).
+- Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
+- Instagram, [Trial reels: try content with non-followers first](https://creators.instagram.com/blog/instagram-trial-reels), Dec 10, 2024.
+- YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
+- X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026.

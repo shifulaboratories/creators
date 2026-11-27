@@ -12,6 +12,34 @@ import mark from '../assets/logo.svg?raw';
 import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from '../site.mjs';
 
+// Structured data so search engines show the site name, logo and search box.
+const homeJsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			'@id': 'https://creators.select/#site',
+			name: SITE_NAME,
+			url: 'https://creators.select/',
+			description: SITE_DESCRIPTION,
+			publisher: { '@id': 'https://creators.select/#org' },
+			potentialAction: {
+				'@type': 'SearchAction',
+				target: 'https://creators.select/guides/?q={query}',
+				'query-input': 'required name=query',
+			},
+		},
+		{
+			'@type': 'Organization',
+			'@id': 'https://creators.select/#org',
+			name: SITE_NAME,
+			url: 'https://creators.select/',
+			logo: 'https://creators.select/apple-touch-icon.png',
+			sameAs: ['https://www.instagram.com/selectcreators/', REPO_URL],
+		},
+	],
+};
+
 const sections = [
 	{ id: 'grow', name: 'Grow', href: '/grow/', blurb: 'How each platform ranks content, plus strategy, formats and real case studies.', size: 'wide' },
 	{ id: 'earn', name: 'Earn', href: '/earn/', blurb: 'Every way creators get paid, paywalls and memberships, and how to price a deal.', size: 'tall' },
@@ -51,8 +79,17 @@ const journey = [
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta property="og:title" content={SITE_NAME} />
 		<meta property="og:description" content={SITE_DESCRIPTION} />
-		<meta property="og:image" content="https://creators.select/og.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://creators.select/" />
+		<meta property="og:site_name" content={SITE_NAME} />
+		<meta property="og:image" content="https://creators.select/og/home.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
 		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://creators.select/og/home.png" />
+		<link rel="canonical" href="https://creators.select/" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<script type="application/ld+json" set:html={JSON.stringify(homeJsonLd)} />
 		<script is:inline>document.documentElement.classList.add('js');</script>
 	</head>
 	<body>
@@ -311,12 +348,21 @@ const journey = [
 				);
 				els.forEach((el) => io.observe(el));
 			}
+			const live = new IntersectionObserver((entries) => {
+				for (const e of entries) e.target.classList.toggle('live', e.isIntersecting);
+			});
+			document.querySelectorAll('.tile, .marquee').forEach((el) => live.observe(el));
 			if (window.matchMedia('(pointer: fine)').matches && !reduce) {
 				document.querySelectorAll<HTMLElement>('.tile').forEach((tile) => {
+					let raf = 0;
 					tile.addEventListener('pointermove', (e) => {
-						const r = tile.getBoundingClientRect();
-						tile.style.setProperty('--x', `${e.clientX - r.left}px`);
-						tile.style.setProperty('--y', `${e.clientY - r.top}px`);
+						if (raf) return;
+						raf = requestAnimationFrame(() => {
+							raf = 0;
+							const r = tile.getBoundingClientRect();
+							tile.style.setProperty('--x', `${e.clientX - r.left}px`);
+							tile.style.setProperty('--y', `${e.clientY - r.top}px`);
+						});
 					});
 				});
 			}
@@ -338,9 +384,12 @@ const journey = [
 		text-rendering: optimizeLegibility;
 		scroll-behavior: smooth;
 	}
+	html,
+	body {
+		overflow-x: clip;
+	}
 	body {
 		margin: 0;
-		overflow-x: hidden;
 	}
 	a {
 		color: inherit;
@@ -380,7 +429,6 @@ const journey = [
 		height: 70vmax;
 		border-radius: 50%;
 		opacity: 0.16;
-		will-change: transform;
 	}
 	.a1 {
 		background: radial-gradient(circle, var(--sc-rose), transparent 62%);
@@ -397,7 +445,7 @@ const journey = [
 	}
 	.a3 {
 		background: radial-gradient(circle, var(--sc-champagne), transparent 62%);
-		top: 40vh;
+		top: 40lvh;
 		left: 30vw;
 		opacity: 0.09;
 		animation: drift1 38s ease-in-out infinite alternate-reverse;
@@ -427,6 +475,30 @@ const journey = [
 		inset: 0;
 		opacity: 0.05;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	}
+
+	/* Phones and touch screens: a still background. Moving full-screen glows
+	   under two blurred bars forced a repaint every frame, which made scrolling
+	   and pinch-zoom stutter. */
+	@media (hover: none), (max-width: 720px) {
+		.aurora {
+			animation: none;
+		}
+		.grain {
+			display: none;
+		}
+		.nav {
+			backdrop-filter: none;
+			-webkit-backdrop-filter: none;
+			background: rgb(8 7 10 / 0.94);
+		}
+	}
+	/* Loops inside cards only run while the card is on screen. */
+	.tile:not(.live) *,
+	.tile:not(.live) *::before,
+	.tile:not(.live) *::after,
+	.marquee:not(.live) .marquee-track {
+		animation-play-state: paused !important;
 	}
 
 	/* ---------- Nav ---------- */
@@ -613,11 +685,26 @@ const journey = [
 		margin-top: 1.75rem;
 	}
 
-	/* 3D seal */
+	/* 3D seal: on phones it sits above the headline, short and wide, so it is
+	   the first thing you see instead of being pushed below the fold. */
 	.hero-3d {
 		display: grid;
 		place-items: center;
 		min-width: 0;
+	}
+	@media (max-width: 999px) {
+		.hero {
+			gap: 0.5rem;
+			padding-top: 0.5rem;
+		}
+		.hero-3d {
+			order: -1;
+			margin-inline: -1rem;
+		}
+		.hero-3d :global(.s3d) {
+			aspect-ratio: 1 / 0.68;
+			max-width: 520px;
+		}
 	}
 
 	/* ---------- Marquee ---------- */
