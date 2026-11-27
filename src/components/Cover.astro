@@ -1,8 +1,12 @@
 ---
 /**
  * Generated cover art for a guide or resource. Pure SVG, no image files:
- * a pattern picked from the title, tinted with the section color.
+ * a pattern picked from the title, tinted with the section color, and a
+ * floating 3D tile with the platform's logo or the topic's icon (Glyph3D).
  */
+import Glyph3D from './Glyph3D.astro';
+import { glyphFor } from '../lib/glyphs';
+
 interface Props {
 	title: string;
 	section: string;
@@ -11,6 +15,7 @@ interface Props {
 	pattern?: 'orbit' | 'bars' | 'wave' | 'grid' | 'rays';
 }
 const { title, section, label, kicker } = Astro.props;
+const glyph = glyphFor([label, title], section);
 
 let h = 0;
 for (const c of title) h = (h * 31 + c.charCodeAt(0)) >>> 0;
@@ -85,6 +90,7 @@ const seed = (n: number) => ((h >> n) & 0xff) / 255;
 
 		<rect x="0.5" y="0.5" width="319" height="179" rx="0" fill="none" stroke="rgb(255 255 255 / 0.06)" />
 	</svg>
+	<span class="cover-obj"><Glyph3D glyph={glyph} delay={(h % 70) / 10} /></span>
 	<div class="cover-text">
 		{kicker && <span class="kicker">{kicker}</span>}
 		{label && <span class="label">{label}</span>}
@@ -100,7 +106,21 @@ const seed = (n: number) => ((h >> n) & 0xff) / 255;
 		background: #0a0a0a;
 		isolation: isolate;
 	}
-	.cover svg {
+	.cover > svg {
+		opacity: 0.6;
+	}
+	.cover-obj {
+		position: absolute;
+		right: 7%;
+		top: 50%;
+		transform: translateY(-58%);
+	}
+	@media (max-width: 30rem) {
+		.cover-obj {
+			right: 4%;
+		}
+	}
+	.cover > svg {
 		position: absolute;
 		inset: 0;
 		width: 100%;

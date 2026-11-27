@@ -11,6 +11,7 @@
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import lockup from '../assets/logo-lockup.svg';
 import { navFor, groupFor } from '../data/nav';
+import { lineIcons } from '../lib/glyphs';
 import { SITE_NAME } from '../site.mjs';
 import { localeOfPath, basePath, localize, t, LOCALES, HTML_LANG } from '../i18n';
 
@@ -40,6 +41,11 @@ const icons: Record<string, string> = {
 	general: 'M12 3c.5 4 2.5 6 6.5 6.5-4 .5-6 2.5-6.5 6.5-.5-4-2.5-6-6.5-6.5C9.5 9 11.5 7 12 3z',
 };
 const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
+// A line icon for each menu link, from the section it points to.
+const linkIcon = (href: string) => {
+	const key = href.replace(/^\/(es|pt-br)\//, '/').split('/')[1] ?? '';
+	return { key, d: lineIcons[({ rates: 'tag', tools: 'box' } as Record<string, string>)[key] ?? key] };
+};
 ---
 
 <div class="sn" data-sn>
@@ -84,7 +90,14 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 						<ul>
 							{g.links.map((l) => (
 								<li>
-									<a href={l.href}>
+									<a href={l.href} data-section={linkIcon(l.href).key}>
+										{linkIcon(l.href).d && (
+											<span class="li" aria-hidden="true">
+												<svg viewBox="0 0 24 24">
+													<path d={linkIcon(l.href).d} />
+												</svg>
+											</span>
+										)}
 										<span class="t">
 											<strong>{l.label}</strong>
 											{l.text && <span>{l.text}</span>}
@@ -176,7 +189,16 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 					<ul class="sm-list">
 						{g.links.map((l) => (
 							<li>
-								<a href={l.href}>{l.label}</a>
+								<a href={l.href} class="with-ic" data-section={linkIcon(l.href).key}>
+									{linkIcon(l.href).d && (
+										<span class="li" aria-hidden="true">
+											<svg viewBox="0 0 24 24">
+												<path d={linkIcon(l.href).d} />
+											</svg>
+										</span>
+									)}
+									{l.label}
+								</a>
 							</li>
 						))}
 					</ul>
@@ -418,6 +440,26 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		font-size: 0.78rem;
 		color: var(--sc-silver);
 	}
+	.li {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2.1rem;
+		height: 2.1rem;
+		border-radius: 10px;
+		color: var(--accent, var(--sc-ivory));
+		background: linear-gradient(150deg, color-mix(in srgb, var(--accent, #fff) 22%, transparent), color-mix(in srgb, var(--accent, #fff) 7%, transparent));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent, #fff) 22%, transparent);
+	}
+	.li svg {
+		width: 1rem;
+		height: 1rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
 	.ic {
 		display: grid;
 		place-items: center;
@@ -572,6 +614,11 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		color: var(--sc-ivory);
 		text-decoration: none;
 		border-bottom: 1px solid var(--sc-line);
+	}
+	.sm-list a.with-ic {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 	}
 	.sm-list a.on {
 		color: var(--sc-ion);
