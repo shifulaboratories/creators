@@ -4,13 +4,15 @@ import { sources } from '../../lib/money-data';
 interface Props {
 	ids: string[];
 	title?: string;
+	/** Inside a folded <DeepDive>: no heading or top rule of its own. */
+	bare?: boolean;
 }
-const { ids, title = 'Sources' } = Astro.props;
+const { ids, title = 'Sources', bare = false } = Astro.props;
 const list = ids.map((id) => sources[id]).filter(Boolean);
 ---
 
-<section class="ms not-content" aria-label={title}>
-	<h2 class="ms-title">{title}</h2>
+<section class:list={['ms not-content', { bare }]} aria-label={title}>
+	{!bare && <h2 class="ms-title">{title}</h2>}
 	<ol>
 		{
 			list.map((s) => (
@@ -31,6 +33,11 @@ const list = ids.map((id) => sources[id]).filter(Boolean);
 		margin-top: 2.5rem;
 		padding-top: 1.25rem;
 		border-top: 1px solid var(--sc-line);
+	}
+	.ms.bare {
+		margin-top: 1rem;
+		padding-top: 0;
+		border-top: 0;
 	}
 	.ms-title {
 		font-family: var(--sc-font-display);

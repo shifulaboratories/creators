@@ -22,6 +22,13 @@ const guideFields = z.object({
 	cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
 	// "The short version": up to three points shown above the guide (or see src/data/tldr.ts).
 	tldr: z.array(z.string().max(160)).max(3).optional(),
+	// Action-first guides (docs/guide-format.md): what the reader walks away with,
+	// shown as the lead, and up to three "Do this today" moves that replace the short version.
+	payoff: z.string().max(140).optional(),
+	moves: z
+		.array(z.object({ do: z.string().max(140), why: z.string().max(200), source: z.string().max(60).optional() }))
+		.max(3)
+		.optional(),
 });
 
 const docs = defineCollection({
