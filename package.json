@@ -1,7 +1,7 @@
 {
   "name": "creators-select",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -11,7 +11,9 @@
     "astro": "astro",
     "deploy": "astro build && wrangler deploy",
     "cf-preview": "astro build && wrangler dev",
-    "i18n:status": "node scripts/i18n-status.mjs"
+    "i18n:status": "node scripts/i18n-status.mjs",
+    "roadmap:snapshot": "node scripts/roadmap-snapshot.mjs",
+    "release": "node scripts/release.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",

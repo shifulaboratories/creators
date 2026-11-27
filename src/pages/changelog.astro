@@ -1,0 +1,259 @@
+---
+/**
+ * /changelog/: every release from CHANGELOG.md, plus the notes waiting in
+ * changes/ for the next one. How to write both: docs/releasing.md.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { readChangelog, readFragments, inlineHtml, GROUPS } from '../lib/changelog-core.mjs';
+import { REPO_URL } from '../site.mjs';
+
+const root = process.cwd();
+const releases = readChangelog(root);
+const pending = readFragments(root);
+const html = (s: string) => inlineHtml(s, REPO_URL);
+const fmt = (d: string) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const anchor = (v: string) => 'v' + v.replace(/\./g, '-');
+const latest = releases[0];
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'What’s new',
+		description: 'Every update to Select Creators: new guides, tools and fixes, newest first.',
+		tableOfContents: false,
+		pagefind: false,
+		prev: false,
+		next: false,
+	}}
+>
+	<div class="cl not-content">
+		<p class="cl-lede">
+			We’re on <strong>v{latest?.version}</strong>. Want to see what’s coming? It’s on the <a href="/roadmap/">roadmap</a>.
+		</p>
+
+		{
+			pending.length > 0 && (
+				<section class="cl-next" aria-labelledby="cl-next-h">
+					<h2 id="cl-next-h">Coming in the next update</h2>
+					<ul>
+						{pending.map((f) => (
+							<li>
+								<span class={`cl-kind k-${f.type}`}>{GROUPS[f.type]}</span>
+								<span set:html={html(f.text)} />
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		<ol class="cl-list">
+			{
+				releases.map((r, i) => (
+					<li class="cl-rel" id={anchor(r.version)}>
+						<div class="cl-rail" aria-hidden="true">
+							<i class={i === 0 ? 'is-latest' : ''} />
+						</div>
+						<article>
+							<p class="cl-ver">
+								<a href={`#${anchor(r.version)}`}>v{r.version}</a>
+								<time datetime={r.date}>{fmt(r.date)}</time>
+								{i === 0 && <span class="cl-latest">Latest</span>}
+							</p>
+							<h2>{r.title || `Version ${r.version}`}</h2>
+							{r.summary && <p class="cl-sum" set:html={html(r.summary)} />}
+							{r.groups.map((g) => (
+								<div class="cl-group">
+									<h3 class={`cl-kind k-${g.key}`}>{GROUPS[g.key]}</h3>
+									<ul>
+										{g.items.map((it) => (
+											<li set:html={html(it)} />
+										))}
+									</ul>
+								</div>
+							))}
+						</article>
+					</li>
+				))
+			}
+		</ol>
+
+		<p class="cl-foot">
+			Also on <a href={`${REPO_URL}/releases`}>GitHub Releases</a> and in <a href={`${REPO_URL}/blob/main/CHANGELOG.md`}>CHANGELOG.md</a>. Versions follow semantic versioning: a new number in the middle means something new to read or use, a new last number means fixes.
+		</p>
+	</div>
+</StarlightPage>
+
+<style>
+	.cl-lede {
+		font-size: 1.05rem;
+		line-height: 1.55;
+		color: var(--sc-silver);
+		margin: 0 0 1.75rem;
+	}
+	.cl-lede strong {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.cl :global(a) {
+		color: var(--sc-platinum);
+	}
+	.cl :global(a:hover) {
+		color: var(--sc-ivory);
+	}
+	.cl-next {
+		border: 1px dashed var(--sc-line-strong);
+		border-radius: var(--sc-radius-md, 14px);
+		padding: 1rem 1.1rem;
+		margin-bottom: 2rem;
+	}
+	.cl-next h2 {
+		font-family: var(--sc-font-sans);
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0;
+		color: var(--sc-silver);
+		margin: 0 0 0.6rem;
+		padding: 0;
+		border: 0;
+	}
+	.cl-next ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.5rem;
+		font-size: 0.9rem;
+		color: var(--sc-platinum);
+	}
+	.cl-next li {
+		display: flex;
+		gap: 0.6rem;
+		align-items: baseline;
+	}
+
+	.cl-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.cl-rel {
+		display: grid;
+		grid-template-columns: 1.25rem minmax(0, 1fr);
+		gap: 0.9rem;
+	}
+	.cl-rail {
+		position: relative;
+	}
+	.cl-rail::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 0.55rem;
+		bottom: -0.55rem;
+		width: 1px;
+		background: var(--sc-line);
+	}
+	.cl-rel:last-child .cl-rail::before {
+		display: none;
+	}
+	.cl-rail i {
+		position: absolute;
+		left: 50%;
+		top: 0.35rem;
+		width: 0.6rem;
+		height: 0.6rem;
+		transform: translateX(-50%);
+		border-radius: 50%;
+		background: var(--sc-obsidian);
+		border: 1.5px solid var(--sc-slate);
+	}
+	.cl-rail i.is-latest {
+		border-color: var(--sc-jade);
+		background: var(--sc-jade);
+		box-shadow: 0 0 0 4px var(--sc-jade-tint);
+	}
+	.cl-rel article {
+		padding-bottom: 2.25rem;
+		min-width: 0;
+	}
+	.cl-ver {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.75rem;
+		margin: 0;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+		font-variant-numeric: tabular-nums;
+	}
+	.cl-ver a {
+		color: var(--sc-silver);
+		text-decoration: none;
+		font-weight: 600;
+	}
+	.cl-latest {
+		color: var(--sc-jade);
+		border: 1px solid color-mix(in srgb, var(--sc-jade) 35%, transparent);
+		border-radius: 999px;
+		padding: 0 0.45rem;
+		font-size: 0.7rem;
+	}
+	.cl-rel h2 {
+		margin: 0.35rem 0 0;
+		padding: 0;
+		border: 0;
+		font-size: clamp(1.2rem, 4vw, 1.45rem);
+		line-height: 1.25;
+		color: var(--sc-ivory);
+	}
+	.cl-sum {
+		margin: 0.45rem 0 0;
+		color: var(--sc-silver);
+		line-height: 1.55;
+	}
+	.cl-group {
+		margin-top: 1rem;
+	}
+	.cl-kind {
+		display: inline-block;
+		font-family: var(--sc-font-sans);
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--k, var(--sc-steel));
+		margin: 0;
+		flex: none;
+	}
+	.k-added { --k: var(--sc-jade); }
+	.k-changed { --k: var(--sc-ion); }
+	.k-fixed { --k: var(--sc-champagne); }
+	.k-removed { --k: var(--sc-steel); }
+	.cl-group ul {
+		margin: 0.45rem 0 0;
+		padding-left: 1.1rem;
+		display: grid;
+		gap: 0.45rem;
+		color: var(--sc-platinum);
+		font-size: 0.94rem;
+		line-height: 1.55;
+	}
+	.cl-group li::marker {
+		color: var(--sc-slate);
+	}
+	.cl-group :global(strong) {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.cl-group :global(code) {
+		font-size: 0.85em;
+	}
+	.cl-foot {
+		font-size: 0.85rem;
+		color: var(--sc-steel);
+		line-height: 1.6;
+		border-top: 1px solid var(--sc-line);
+		padding-top: 1.1rem;
+	}
+</style>

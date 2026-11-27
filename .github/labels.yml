@@ -1,0 +1,39 @@
+# Every label the board uses. Synced to GitHub by .github/workflows/labels.yml
+# whenever this file changes on main. Rules for using them: docs/board.md.
+# Labels not listed here are left alone.
+
+# Status: where a card sits on /roadmap/. Open with no status = Later. Closed as completed = Shipped.
+- { name: 'status: in progress', color: 'c3a6ff', description: 'Someone is building this now (Now column)' }
+- { name: 'status: next', color: 'ffb47e', description: 'Up after what is in progress (Next column)' }
+- { name: 'status: blocked', color: 'c9a25a', description: 'Waiting on something outside the team, e.g. a key or an expert review (Now column, marked Waiting)' }
+
+# Area: the site section. One per issue.
+- { name: 'area: platforms', color: '7cc8ff', description: 'Platform guides and algorithms' }
+- { name: 'area: grow', color: '5fe3b0', description: 'Grow your audience, case studies' }
+- { name: 'area: deals', color: 'a58bff', description: 'Brand deals, pricing, contracts' }
+- { name: 'area: paywall', color: 'ff86b8', description: 'Fan platforms and chatting agencies' }
+- { name: 'area: earn', color: 'ffb47e', description: 'Income streams, payouts, products' }
+- { name: 'area: money', color: '5fe3b0', description: 'Taxes, entities, banking' }
+- { name: 'area: team', color: 'ff86b8', description: 'Managers, agents, hiring, agency directory' }
+- { name: 'area: stack', color: '7cc8ff', description: 'Gear, software, tool directory and reviews' }
+- { name: 'area: protect', color: 'd0705f', description: 'Hacked, banned, impersonated, scams' }
+- { name: 'area: underground', color: '4e4e4d', description: 'Gray markets, reported as journalism' }
+- { name: 'area: tools', color: 'ffb47e', description: 'Free interactive tools' }
+- { name: 'area: rates', color: 'ffb47e', description: 'Rate pages and Rate Check' }
+- { name: 'area: translations', color: '9fb3c8', description: 'Spanish, Portuguese and other languages' }
+- { name: 'area: site', color: 'c3a6ff', description: 'Design, navigation, performance, repo' }
+
+# Type: what kind of work.
+- { name: 'type: feature', color: '262626', description: 'Something new to use' }
+- { name: 'type: content', color: '262626', description: 'A guide written, expanded or rewritten' }
+- { name: 'type: fix', color: '262626', description: 'Something broken or wrong' }
+- { name: 'type: review', color: '262626', description: 'An expert (CPA, lawyer) needs to check it' }
+
+# Priority, same scale as docs/backlog.md.
+- { name: 'P0', color: 'd0705f', description: 'Blocks launch or hurts trust' }
+- { name: 'P1', color: 'ffb47e', description: 'Next workstreams' }
+- { name: 'P2', color: '8a8a89', description: 'Worth doing' }
+- { name: 'P3', color: '4e4e4d', description: 'Someday' }
+
+# Visibility.
+- { name: 'internal', color: '121212', description: 'Hidden from the public roadmap' }

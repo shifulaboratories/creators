@@ -9,6 +9,10 @@ Thanks for helping. This handbook is only as good as the people who check it.
 3. **Add or correct a tool.** Add a YAML file in `src/data/tools/`, copying an existing one. The `alternative` field is required: name a free or non-affiliate option.
 4. **Write a guide.** Open a guide idea issue first so the section editor can help shape it.
 
+## What we're working on
+
+The plan lives in [GitHub Issues](https://github.com/shifulaboratories/creators/issues) and shows on the site at [creators.select/roadmap](https://creators.select/roadmap/). Pick something from it, or open an idea. How the board works: [docs/board.md](docs/board.md). Every update is listed at [creators.select/changelog](https://creators.select/changelog/); to add yours, see [docs/releasing.md](docs/releasing.md).
+
 ## Rules every pull request follows
 
 - **Cite your claims.** Link a source, a platform statement, or say it's first-hand.
@@ -17,6 +21,7 @@ Thanks for helping. This handbook is only as good as the people who check it.
 - **No undisclosed affiliate links.** Affiliate links only go in tool files with `affiliate: true` and an `affiliateUrl`; the site labels them automatically.
 - **Case studies need consent.** Only with the creator's written consent or from public information.
 - **Not legal advice.** Contract and deal pages are educational. Don't give individual legal advice.
+- **Link the issue and add a release note.** `Closes #N` in the description, and a one-line note in `changes/` if readers will notice the change.
 
 ## Underground section: extra rules
 

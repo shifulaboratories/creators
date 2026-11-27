@@ -2,6 +2,8 @@
 
 The standing audit of creators.select. Each round re-checks `main` plus open PRs, re-ranks this list, and moves finished items to the log at the bottom. Anyone can pick up an item; link the PR next to it.
 
+**Work is tracked in GitHub Issues** (public board at /roadmap/, rules in [board.md](board.md)). This file keeps the audit's scoring and reasoning; when a row becomes work, open an issue and link it here.
+
 **Scoring.** Impact and effort are S / M / L. Priority: **P0** blocks launch or hurts trust, **P1** next workstreams, **P2** worth doing, **P3** someday.
 
 **Vision check.** The ultimate free A-to-Z creator economy resource: algorithms, strategy, case studies, monetization, paywalls, brand management, deals, contracts, managers, agencies, hiring, tech stack. Credible (sourced, no guru talk), premium but warm, mobile feels like a social app, and a credibility funnel for the talent agency.
