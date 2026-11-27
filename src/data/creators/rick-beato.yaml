@@ -1,0 +1,45 @@
+name: Rick Beato
+known: Music theory, song breakdowns and artist interviews on YouTube
+niche: music
+platforms: [youtube]
+about: Rick Beato is a record producer and music educator whose YouTube channel covers music theory, song breakdowns and long interviews with artists. He records in his own studio in Georgia.
+tools:
+  - name: BAE Audio 1073 and 1032 preamps
+    use: The front end of his studio; he uses the 1032s on drums, especially toms
+    source: https://www.mixonline.com/?p=111241
+    sourceTitle: "Making Music More Approachable with 'White Haired' YouTube Sensation Rick Beato (Mix)"
+    date: "Apr 2021"
+  - name: Royer 122
+    use: Paired with a Shure SM57 on guitar cabinets
+    source: https://www.mixonline.com/?p=111241
+    sourceTitle: "Making Music More Approachable with 'White Haired' YouTube Sensation Rick Beato (Mix)"
+    date: "Apr 2021"
+  - name: Gibson Les Paul Special (2003)
+    use: Guitar he bought off the rack, strung with Ernie Ball .008s
+    source: https://www.premierguitar.com/gear/rig-rundown-rick-beato
+    sourceTitle: "Rig Rundown: Rick Beato (Premier Guitar)"
+    date: "Feb 2020"
+  - name: Orange Overdrive head
+    use: Amp he bought after hearing Dean DeLeo's tone through one
+    source: https://www.premierguitar.com/gear/rig-rundown-rick-beato
+    sourceTitle: "Rig Rundown: Rick Beato (Premier Guitar)"
+    date: "Feb 2020"
+  - name: Strymon Volante
+    use: Delay pedal on his board
+    source: https://www.premierguitar.com/gear/rig-rundown-rick-beato
+    sourceTitle: "Rig Rundown: Rick Beato (Premier Guitar)"
+    date: "Feb 2020"
+advice:
+  - text: I pretty much make videos on things that I find interesting and talk about with my friends
+    source: https://www.mixonline.com/?p=111241
+    sourceTitle: "Making Music More Approachable with 'White Haired' YouTube Sensation Rick Beato (Mix)"
+    date: "Apr 2021"
+  - text: Get your sound before it hits the DAW and spend your money on the front end.
+    source: https://www.mixonline.com/?p=111241
+    sourceTitle: "Making Music More Approachable with 'White Haired' YouTube Sensation Rick Beato (Mix)"
+    date: "Apr 2021"
+  - text: Go easy on brick-wall limiting. He calls heavy limiting the most common mistake in the mixes he receives.
+    quote: false
+    source: https://www.mixonline.com/?p=111241
+    sourceTitle: "Making Music More Approachable with 'White Haired' YouTube Sensation Rick Beato (Mix)"
+    date: "Apr 2021"

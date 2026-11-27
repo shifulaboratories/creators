@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Wispr Flow"
+url: https://wisprflow.ai/
+slot: ai
+what: "Voice dictation that works in any app on your computer or phone, so you can talk out scripts, captions and emails."
+who: "Creators who write a lot and think faster out loud."
+platforms: []
+pricing:
+  free: true
+  fromUsdPerMonth: 12
+  note: "Pro from $12 per user/mo; the free plan has a weekly word limit"
+pricingUrl: https://wisprflow.ai/pricing
+lastVerified: 2026-11-27
+bestFor: "Drafting scripts and posts by voice"
+alternative: "Your phone's built-in dictation (free)"
+affiliate: false

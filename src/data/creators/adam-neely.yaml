@@ -1,0 +1,26 @@
+name: Adam Neely
+known: Music theory and music culture video essays on YouTube
+niche: music
+platforms: [youtube]
+about: Adam Neely is a jazz bassist and composer who makes video essays about music theory, music history and the culture around music.
+tools:
+  - name: Final Cut
+    use: Video editing, which he compares to working in Ableton Live
+    source: https://www.spinmagazine.com/2021/04/adam-neely-interview/
+    sourceTitle: "Adam Neely interview (SPIN)"
+    date: "Apr 2021"
+  - name: Ableton Live
+    use: Music production
+    source: https://www.spinmagazine.com/2021/04/adam-neely-interview/
+    sourceTitle: "Adam Neely interview (SPIN)"
+    date: "Apr 2021"
+advice:
+  - text: There is a very specific timing to how the edit should reflect the music that is in the video.
+    source: https://www.spinmagazine.com/2021/04/adam-neely-interview/
+    sourceTitle: "Adam Neely interview (SPIN)"
+    date: "Apr 2021"
+  - text: Think of the channel as curiosity content that lets people discover things they don't know, not as lessons.
+    quote: false
+    source: https://www.spinmagazine.com/2021/04/adam-neely-interview/
+    sourceTitle: "Adam Neely interview (SPIN)"
+    date: "Apr 2021"

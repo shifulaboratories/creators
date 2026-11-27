@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Buzzsprout"
+url: https://www.buzzsprout.com/
+slot: podcast
+what: "Podcast hosting that publishes your show to Apple Podcasts, Spotify and other apps, with stats and a website."
+who: "New podcasters who want hosting that is simple to set up."
+platforms: [podcast]
+pricing:
+  free: false
+  fromUsdPerMonth: 15
+  note: "Audio plan $15/mo billed yearly (72 hours of uploads a year); audio + video $25/mo; free to try"
+pricingUrl: https://www.buzzsprout.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Easy podcast hosting and distribution"
+alternative: "Spotify for Creators (free hosting)"
+affiliate: false

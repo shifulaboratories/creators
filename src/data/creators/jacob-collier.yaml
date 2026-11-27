@@ -1,0 +1,36 @@
+name: Jacob Collier
+known: Multi-instrumentalist musician known for one-man multitrack videos
+niche: music
+platforms: [youtube, instagram]
+about: Jacob Collier is a British musician and arranger who first drew attention with split-screen YouTube videos where he sang and played every part himself. He has since won several Grammy awards.
+tools:
+  - name: Logic
+    use: His DAW, where he brings in recorded everyday sounds and treats them as instruments
+    source: https://www.musicradar.com/news/jacob-collier-interview
+    sourceTitle: "Jacob Collier interview (MusicRadar)"
+    date: "Nov 2021"
+  - name: Shure SM58
+    use: His first microphone, used for all the audio on his early YouTube videos
+    source: https://tapeop.com/interviews/151/jacob-collier
+    sourceTitle: "Jacob Collier (Tape Op #151)"
+    date: "Oct 2022"
+  - name: Shure MV88+
+    use: Stereo mic that plugs into his phone for recording everyday sounds
+    source: https://www.musicradar.com/news/jacob-collier-interview
+    sourceTitle: "Jacob Collier interview (MusicRadar)"
+    date: "Nov 2021"
+  - name: Final Cut Express
+    use: Editing his early multitrack videos together, on a 2013 MacBook Pro
+    source: https://tapeop.com/interviews/151/jacob-collier
+    sourceTitle: "Jacob Collier (Tape Op #151)"
+    date: "Oct 2022"
+advice:
+  - text: There aren't rules, the only rule is that you have your intuition and you should be true to that
+    source: https://www.musicradar.com/news/jacob-collier-interview
+    sourceTitle: "Jacob Collier interview (MusicRadar)"
+    date: "Nov 2021"
+  - text: Open up your process. He finds describing how something is made almost as joyful as playing it, and shares that with his audience.
+    quote: false
+    source: https://www.musicradar.com/news/jacob-collier-interview
+    sourceTitle: "Jacob Collier interview (MusicRadar)"
+    date: "Nov 2021"

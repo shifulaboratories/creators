@@ -1,0 +1,37 @@
+name: Casey Neistat
+known: Filmmaker and daily vlogger who shaped modern YouTube vlogging
+niche: film
+platforms: [youtube, instagram, x]
+about: Casey Neistat is a New York filmmaker known for his daily vlogs and short films on YouTube. He shoots and edits his own videos with a fast, raw editing style.
+tools:
+  - name: Sony a7S III
+    use: Main camera after he switched his kit entirely to Sony
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
+  - name: Sony ZV-1
+    use: Compact vlogging camera he called the perfect camera for a YouTuber
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
+  - name: Adobe Premiere Pro
+    use: Editing all of his YouTube videos, on a computer with keyboard and mouse
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
+advice:
+  - text: Edit chronologically. Start at the first frame and do not stop or review until you reach the end, so the edit keeps its raw energy.
+    quote: false
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
+  - text: Embrace the flaws in your footage, and even embellish them, rather than trying to hide them.
+    quote: false
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
+  - text: Stay true to your passion and trust that if you find something interesting, someone else will too.
+    quote: false
+    source: https://www.premiumbeat.com/blog/casey-neistat-creative-video-content/
+    sourceTitle: "Interview: Casey Neistat on the Future of Creative Video Content (PremiumBeat)"
+    date: "Nov 2020"
