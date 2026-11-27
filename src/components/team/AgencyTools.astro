@@ -1,0 +1,156 @@
+---
+/**
+ * Software agencies name in their own public job postings. Aggregated into a
+ * tool cloud (bigger = named by more agencies), then per-agency cards with the
+ * posting each tool came from.
+ */
+import { agencies, toolSightings, type AgencyId } from '../../data/rosters';
+
+const byTool = new Map<string, Set<AgencyId>>();
+for (const s of toolSightings) for (const t of s.tools) byTool.set(t.name, (byTool.get(t.name) ?? new Set()).add(s.agency));
+const cloud = [...byTool.entries()].map(([name, set]) => ({ name, n: set.size })).sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+
+const byAgency = new Map<AgencyId, typeof toolSightings>();
+for (const s of toolSightings) byAgency.set(s.agency, [...(byAgency.get(s.agency) ?? []), s]);
+---
+
+<section class="at not-content">
+	<ul class="at-cloud" aria-label="Tools named across agency job posts">
+		{
+			cloud.map((t) => (
+				<li class:list={['at-tag', t.n > 1 && 'is-multi']}>
+					{t.name}
+					{t.n > 1 && <span>×{t.n}</span>}
+				</li>
+			))
+		}
+	</ul>
+	<p class="at-legend">×2 means two different agencies named it.</p>
+
+	<div class="at-grid sc-rail" data-rail>
+		{
+			[...byAgency.entries()].map(([id, posts]) => (
+				<article class={`at-card ${agencies[id].tint}`}>
+					<p class="at-kind">{agencies[id].kind}</p>
+					<h3>{agencies[id].name}</h3>
+					{posts.map((p) => (
+						<div class="at-post">
+							<ul>
+								{p.tools.map((t) => (
+									<li>
+										<b>{t.name}</b>
+										<span>{t.how}</span>
+									</li>
+								))}
+							</ul>
+							<a href={p.url} rel="noopener">
+								From their job post “{p.posting}” · read {new Date(p.seen + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })} ↗
+							</a>
+						</div>
+					))}
+				</article>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.at {
+		margin-block: 1.25rem 2rem;
+	}
+	.at-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.at-tag {
+		padding: 0.4rem 0.75rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-pill);
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+		font-weight: 500;
+	}
+	.at-tag.is-multi {
+		border-color: color-mix(in srgb, var(--sc-lime) 60%, transparent);
+		background: color-mix(in srgb, var(--sc-lime) 12%, transparent);
+		color: var(--sc-ivory);
+		font-weight: 700;
+	}
+	.at-tag span {
+		margin-left: 0.3rem;
+		color: var(--sc-lime);
+		font-size: var(--sc-text-xs);
+	}
+	.at-legend {
+		margin: 0.5rem 0 1rem;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+	}
+	.at-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+		gap: 0.75rem;
+	}
+	.at-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid color-mix(in srgb, var(--c) 28%, var(--sc-line));
+		border-radius: var(--sc-radius-lg);
+		background:
+			radial-gradient(140% 70% at 100% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 65%),
+			rgb(255 255 255 / 0.02);
+	}
+	.at-kind {
+		margin: 0;
+		color: var(--c);
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.at-card h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+	}
+	.at-post {
+		display: grid;
+		gap: 0.4rem;
+		padding-top: 0.6rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.at-post ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.25rem;
+	}
+	.at-post li {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-size: var(--sc-text-sm);
+	}
+	.at-post b {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.at-post li span {
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+	}
+	.at-post a {
+		color: var(--sc-silver);
+		font-size: var(--sc-text-xs);
+	}
+</style>
+
+<script>
+	import '../../scripts/rail';
+</script>

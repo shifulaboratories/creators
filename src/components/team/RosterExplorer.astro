@@ -1,0 +1,401 @@
+---
+/**
+ * Who reps who: search reported signings by creator or agency. Static HTML,
+ * filtered in the browser. Every event links the reporting it came from.
+ */
+import { agencies, signings, type AgencyId, type Signing } from '../../data/rosters';
+
+const month = (d: string) =>
+	new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const eventLabel = { signed: 'Signed', roster: 'Named as a client', left: 'Left' } as const;
+
+// Group by creator, newest event first.
+const byCreator = new Map<string, Signing[]>();
+for (const s of signings) byCreator.set(s.creator, [...(byCreator.get(s.creator) ?? []), s]);
+const creators = [...byCreator.entries()]
+	.map(([name, events]) => ({ name, events: events.sort((a, b) => b.date.localeCompare(a.date)) }))
+	.sort((a, b) => b.events[0].date.localeCompare(a.events[0].date));
+
+const agencyIds = (Object.keys(agencies) as AgencyId[]).filter((id) => signings.some((s) => s.agency === id));
+const countFor = (id: AgencyId) => new Set(signings.filter((s) => s.agency === id).map((s) => s.creator)).size;
+const latest = signings[0]?.date;
+---
+
+<section class="rx not-content" data-rx>
+	<div class="rx-stats">
+		<div><b>{creators.length}</b><span>creators</span></div>
+		<div><b>{agencyIds.length}</b><span>agencies</span></div>
+		<div><b>{signings.length}</b><span>reported moves</span></div>
+		<div><b>100%</b><span>linked to a source</span></div>
+	</div>
+
+	<label class="rx-search">
+		<span class="sr-only">Search creators or agencies</span>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+		<input type="search" placeholder="Search a creator or agency…" autocomplete="off" data-q />
+	</label>
+
+	<div class="rx-chips" role="toolbar" aria-label="Filter by agency">
+		<button type="button" class="rx-chip" aria-pressed="true" data-a="all">All</button>
+		{
+			agencyIds.map((id) => (
+				<button type="button" class={`rx-chip ${agencies[id].tint}`} aria-pressed="false" data-a={id}>
+					{agencies[id].name} <span>{countFor(id)}</span>
+				</button>
+			))
+		}
+	</div>
+
+	<div class="rx-agency" data-agency-card hidden>
+		{
+			agencyIds.map((id) => (
+				<div class={`rx-agency__inner ${agencies[id].tint}`} data-for={id} hidden>
+					<span class="rx-kind">{agencies[id].kind}</span>
+					<strong>{agencies[id].name}</strong>
+					<span>
+						{countFor(id)} creators in reporting{agencies[id].note ? ` · ${agencies[id].note}` : ''}
+					</span>
+				</div>
+			))
+		}
+	</div>
+
+	<p class="rx-count" aria-live="polite"><span data-count>{creators.length}</span> creators</p>
+
+	<ul class="rx-list">
+		{
+			creators.map((c) => (
+				<li
+					class="rx-card"
+					data-name={c.name.toLowerCase()}
+					data-agencies={[...new Set(c.events.map((e) => e.agency))].join(' ')}
+					data-agency-names={[...new Set(c.events.map((e) => agencies[e.agency].name.toLowerCase()))].join(' ')}
+				>
+					<span class="rx-avatar" aria-hidden="true">
+						{c.name.replace(/^The /, '').charAt(0)}
+					</span>
+					<div class="rx-body">
+						<h3>{c.name}</h3>
+						<ol class="rx-events">
+							{c.events.map((e) => (
+								<li class={`rx-event is-${e.event} ${agencies[e.agency].tint}`}>
+									<span class="rx-pill">{agencies[e.agency].name}</span>
+									<span class="rx-what">
+										{eventLabel[e.event]} · reported {month(e.date)}
+									</span>
+									<a href={e.url} rel="noopener" class="rx-src" title={`Source: ${e.publisher}, ${month(e.date)}`}>
+										{e.publisher === 'Wikipedia' ? 'Wikipedia entry' : `${e.publisher} article`} ↗
+									</a>
+								</li>
+							))}
+						</ol>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+	<button type="button" class="rx-more" data-more hidden>Show all creators</button>
+	<p class="rx-empty" data-empty hidden>No one matches that yet. Know of a reported signing? <a href="/about/contribute/">Add it</a>.</p>
+	<p class="rx-foot">Newest report: {latest && month(latest)}. Every move shows the month it was reported and links the article it came from. Representation changes, so check before you rely on it.</p>
+</section>
+
+<style>
+	.rx {
+		margin-block: 1.25rem 2rem;
+	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+	.rx-stats {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+	.rx-stats div {
+		display: grid;
+		gap: 2px;
+		padding: 0.75rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		background: rgb(255 255 255 / 0.02);
+	}
+	.rx-stats b {
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+		line-height: 1.1;
+	}
+	.rx-stats span {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-silver);
+	}
+	@media (max-width: 30rem) {
+		.rx-stats {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	.rx-search {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0 1rem;
+		height: 3rem;
+		border: 1px solid var(--sc-line-strong, var(--sc-line));
+		border-radius: var(--sc-radius-pill);
+		background: rgb(255 255 255 / 0.03);
+		transition: border-color 0.2s;
+	}
+	.rx-search:focus-within {
+		border-color: var(--sc-ion);
+	}
+	.rx-search svg {
+		flex: none;
+		width: 1.1rem;
+		height: 1.1rem;
+		fill: none;
+		stroke: var(--sc-silver);
+		stroke-width: 2;
+		stroke-linecap: round;
+	}
+	.rx-search input {
+		flex: 1;
+		min-width: 0;
+		border: 0;
+		background: transparent;
+		color: var(--sc-ivory);
+		font: 500 1rem / 1 var(--sc-font-sans);
+		outline: none;
+	}
+	.rx-chips {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		padding: 0.75rem 0 0.25rem;
+		scrollbar-width: none;
+	}
+	.rx-chips::-webkit-scrollbar {
+		display: none;
+	}
+	.rx-chip {
+		--c: var(--sc-ivory);
+		flex: none;
+		display: inline-flex;
+		gap: 0.35rem;
+		align-items: center;
+		padding: 0.45rem 0.85rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-pill);
+		background: transparent;
+		color: var(--sc-platinum);
+		font: 600 var(--sc-text-sm) / 1 var(--sc-font-sans);
+		cursor: pointer;
+	}
+	.rx-chip span {
+		opacity: 0.6;
+		font-weight: 500;
+	}
+	.rx-chip[aria-pressed='true'] {
+		background: color-mix(in srgb, var(--c) 18%, transparent);
+		border-color: color-mix(in srgb, var(--c) 55%, transparent);
+		color: var(--sc-ivory);
+	}
+	.rx-chip:focus-visible {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 2px;
+	}
+	.rx-agency__inner {
+		display: grid;
+		gap: 2px;
+		margin-top: 0.75rem;
+		padding: 0.9rem 1rem;
+		border-radius: var(--sc-radius-lg);
+		border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+		background: color-mix(in srgb, var(--c) 9%, transparent);
+	}
+	.rx-agency__inner[hidden],
+	.rx-agency[hidden] {
+		display: none;
+	}
+	.rx-agency__inner strong {
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+	}
+	.rx-agency__inner span {
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+	}
+	.rx-agency__inner .rx-kind {
+		color: var(--c);
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.rx-count {
+		margin: 1rem 0 0.5rem;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+	}
+	.rx-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+		gap: 0.6rem;
+	}
+	.rx-card {
+		display: flex;
+		gap: 0.75rem;
+		padding: 0.9rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-lg);
+		background: rgb(255 255 255 / 0.02);
+		animation: rx-in 0.3s var(--sc-ease-settle, ease) both;
+	}
+	.rx-card[hidden] {
+		display: none;
+	}
+	@keyframes rx-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rx-card {
+			animation: none;
+		}
+	}
+	.rx-avatar {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
+		background: var(--sc-aurora, linear-gradient(135deg, #ffb47e, #ff86b8, #c3a6ff));
+		color: #111;
+		font: 700 1.05rem / 1 var(--sc-font-display);
+	}
+	.rx-body {
+		min-width: 0;
+		flex: 1;
+	}
+	.rx-body h3 {
+		margin: 0 0 0.4rem;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-base);
+		color: var(--sc-ivory);
+		line-height: 1.25;
+	}
+	.rx-events {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.35rem;
+	}
+	.rx-event {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.25rem 0.5rem;
+		font-size: var(--sc-text-xs);
+		line-height: 1.4;
+	}
+	.rx-pill {
+		padding: 2px 8px;
+		border-radius: var(--sc-radius-pill);
+		background: color-mix(in srgb, var(--c) 16%, transparent);
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.rx-event.is-left .rx-pill {
+		background: transparent;
+		border: 1px dashed var(--sc-steel);
+		color: var(--sc-silver);
+		text-decoration: line-through;
+	}
+	.rx-what {
+		color: var(--sc-silver);
+	}
+	.rx-src {
+		margin-left: auto;
+		color: var(--sc-silver);
+	}
+	.rx-more {
+		display: block;
+		width: 100%;
+		margin-top: 0.75rem;
+		padding: 0.85rem;
+		border: 1px solid var(--sc-line-strong, var(--sc-line));
+		border-radius: var(--sc-radius-pill);
+		background: rgb(255 255 255 / 0.04);
+		color: var(--sc-ivory);
+		font: 600 var(--sc-text-sm) / 1 var(--sc-font-sans);
+		cursor: pointer;
+	}
+	.rx-more[hidden] {
+		display: none;
+	}
+	.rx-empty,
+	.rx-foot {
+		margin: 1rem 0 0;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-rx]').forEach((root) => {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('.rx-chip')];
+		const cards = [...root.querySelectorAll<HTMLElement>('.rx-card')];
+		const count = root.querySelector<HTMLElement>('[data-count]')!;
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+		const agencyWrap = root.querySelector<HTMLElement>('[data-agency-card]')!;
+		const agencyCards = [...root.querySelectorAll<HTMLElement>('[data-for]')];
+		const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
+		const LIMIT = 24;
+		let agency = 'all';
+		let expanded = false;
+		const apply = () => {
+			const term = q.value.trim().toLowerCase();
+			const browsing = !term && agency === 'all' && !expanded;
+			let n = 0;
+			for (const c of cards) {
+				const okA = agency === 'all' || (c.dataset.agencies || '').split(' ').includes(agency);
+				const okQ = !term || c.dataset.name!.includes(term) || (c.dataset.agencyNames || '').includes(term);
+				const match = okA && okQ;
+				if (match) n++;
+				c.hidden = !match || (browsing && n > LIMIT);
+			}
+			more.hidden = !(browsing && n > LIMIT);
+			more.textContent = `Show all ${n} creators`;
+			count.textContent = String(n);
+			empty.hidden = n > 0;
+			agencyWrap.hidden = agency === 'all';
+			agencyCards.forEach((a) => (a.hidden = a.dataset.for !== agency));
+		};
+		chips.forEach((chip) =>
+			chip.addEventListener('click', () => {
+				agency = chip.dataset.a || 'all';
+				chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+				apply();
+			}),
+		);
+		q.addEventListener('input', apply);
+		more.addEventListener('click', () => {
+			expanded = true;
+			apply();
+		});
+		const fromHash = new URLSearchParams(location.hash.slice(1)).get('q');
+		if (fromHash) q.value = fromHash;
+		apply();
+	});
+</script>
