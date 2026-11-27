@@ -12,6 +12,34 @@ import mark from '../assets/logo.svg?raw';
 import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, SITE_DESCRIPTION, REPO_URL } from '../site.mjs';
 
+// Structured data so search engines show the site name, logo and search box.
+const homeJsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			'@id': 'https://creators.select/#site',
+			name: SITE_NAME,
+			url: 'https://creators.select/',
+			description: SITE_DESCRIPTION,
+			publisher: { '@id': 'https://creators.select/#org' },
+			potentialAction: {
+				'@type': 'SearchAction',
+				target: 'https://creators.select/guides/?q={query}',
+				'query-input': 'required name=query',
+			},
+		},
+		{
+			'@type': 'Organization',
+			'@id': 'https://creators.select/#org',
+			name: SITE_NAME,
+			url: 'https://creators.select/',
+			logo: 'https://creators.select/apple-touch-icon.png',
+			sameAs: ['https://www.instagram.com/selectcreators/', REPO_URL],
+		},
+	],
+};
+
 const sections = [
 	{ id: 'grow', name: 'Grow', href: '/grow/', blurb: 'How each platform ranks content, plus strategy, formats and real case studies.', size: 'wide' },
 	{ id: 'earn', name: 'Earn', href: '/earn/', blurb: 'Every way creators get paid, paywalls and memberships, and how to price a deal.', size: 'tall' },
@@ -51,8 +79,17 @@ const journey = [
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta property="og:title" content={SITE_NAME} />
 		<meta property="og:description" content={SITE_DESCRIPTION} />
-		<meta property="og:image" content="https://creators.select/og.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://creators.select/" />
+		<meta property="og:site_name" content={SITE_NAME} />
+		<meta property="og:image" content="https://creators.select/og/home.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
 		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://creators.select/og/home.png" />
+		<link rel="canonical" href="https://creators.select/" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<script type="application/ld+json" set:html={JSON.stringify(homeJsonLd)} />
 		<script is:inline>document.documentElement.classList.add('js');</script>
 	</head>
 	<body>

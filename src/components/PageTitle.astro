@@ -1,6 +1,7 @@
 ---
 // Guide header: colored section kicker, title, lead, and trust chips.
 import AskAI from './AskAI.astro';
+import ShareBar from './ShareBar.astro';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
 const { entry } = Astro.locals.starlightRoute;
@@ -49,6 +50,7 @@ const confidenceText: Record<string, string> = {
 			<AskAI mdPath={`/${entry.id}.md`} title={data.title} />
 		</div>
 	)}
+	{entry.id !== '404' && <ShareBar title={data.title} description={data.description} section={section} />}
 </header>
 
 <style>

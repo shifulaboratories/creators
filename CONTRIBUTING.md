@@ -42,6 +42,22 @@ confidence: practitioner-view
 ---
 ```
 
+## Shareable stats and link previews
+
+Every page gets a link-preview image automatically (built from its `title`, `description` and section; see `src/pages/og/`). Keep descriptions under about 120 characters so they fit.
+
+To let readers post a number to their Instagram or TikTok Story, use `ShareStat` in an `.mdx` page. Only share numbers the page cites, and name the source: it prints on the card.
+
+```mdx
+import ShareStat from '../../../components/ShareStat.astro';
+
+<div class="sc-stats">
+  <ShareStat value="4.5x" label="What the number means, in one sentence." source="Who published it, year" />
+</div>
+```
+
+Widgets can opt in too: any element with `data-story-value` (plus optional `data-story-label`, `data-story-source`) opens the Story card when tapped. Update those attributes as the widget's numbers change.
+
 ## Sign-off
 
 By opening a pull request you confirm you wrote the contribution or have the right to submit it, and you agree it can be published under this project's licenses. Add `Signed-off-by: Your Name <email>` to your commits (`git commit -s`).
