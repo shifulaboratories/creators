@@ -29,7 +29,7 @@ const en = {
 		tools: 'Free tools',
 		rates: 'Creator rates',
 		reviews: 'Tool reviews',
-		guides: 'All guides',
+		guides: 'Resources',
 	} as Record<string, string>,
 	page: {
 		status: { outline: 'Coming soon', draft: 'In progress', published: 'Fact-checked' } as Record<string, string>,
@@ -205,7 +205,7 @@ const es: UI = {
 		tools: 'Herramientas gratis',
 		rates: 'Tarifas de creadores',
 		reviews: 'Reseñas de herramientas',
-		guides: 'Todas las guías',
+		guides: 'Recursos',
 	},
 	page: {
 		status: { outline: 'Próximamente', draft: 'En progreso', published: 'Verificado' },
@@ -379,7 +379,7 @@ const pt: UI = {
 		tools: 'Ferramentas grátis',
 		rates: 'Preços de criadores',
 		reviews: 'Análises de ferramentas',
-		guides: 'Todos os guias',
+		guides: 'Recursos',
 	},
 	page: {
 		status: { outline: 'Em breve', draft: 'Em andamento', published: 'Checado' },
