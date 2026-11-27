@@ -1,6 +1,14 @@
 ## What this changes
 
-<!-- One or two sentences. Link the issue if there is one. -->
+<!-- One or two sentences, for a reader of the site. -->
+
+Closes #<!-- issue number on the roadmap; create one if there isn't -->
+
+## Release note
+
+<!-- Pick one. Guide: docs/releasing.md -->
+- [ ] Added a note in `changes/` (type + bump + one line for creators)
+- [ ] No reader-facing change (CI, docs, refactor)
 
 ## Checklist
 

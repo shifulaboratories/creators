@@ -1,0 +1,39 @@
+# Creates and updates the board's labels from .github/labels.yml.
+name: Labels
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/labels.yml', '.github/workflows/labels.yml']
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            // One label per line: - { name: '...', color: '...', description: '...' }
+            const field = (line, k) => line.match(new RegExp(k + ":\\s*'([^']*)'"))?.[1];
+            const want = fs.readFileSync('.github/labels.yml', 'utf8').split('\n')
+              .filter((l) => /^- \{/.test(l))
+              .map((l) => ({ name: field(l, 'name'), color: field(l, 'color'), description: field(l, 'description') }));
+            if (!want.length || want.some((l) => !l.name || !/^[0-9a-f]{6}$/.test(l.color))) throw new Error('Bad .github/labels.yml line');
+            const have = await github.paginate(github.rest.issues.listLabelsForRepo, { ...context.repo, per_page: 100 });
+            for (const l of want) {
+              const cur = have.find((h) => h.name.toLowerCase() === l.name.toLowerCase());
+              const body = { ...context.repo, color: l.color, description: l.description ?? '' };
+              if (!cur) {
+                await github.rest.issues.createLabel({ ...body, name: l.name });
+                core.info(`created ${l.name}`);
+              } else if (cur.color !== l.color || (cur.description ?? '') !== (l.description ?? '') || cur.name !== l.name) {
+                await github.rest.issues.updateLabel({ ...body, name: cur.name, new_name: l.name });
+                core.info(`updated ${l.name}`);
+              }
+            }

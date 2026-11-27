@@ -1,0 +1,445 @@
+---
+/**
+ * /roadmap/: the public board, built from GitHub Issues at build time.
+ * Columns, labels and how threads use the board: docs/board.md.
+ * Data: src/lib/roadmap.ts (live) with src/data/roadmap-snapshot.json as fallback.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { loadRoadmap, column, COLUMNS, AREAS, TYPES } from '../lib/roadmap';
+import { REPO_URL } from '../site.mjs';
+import pkg from '../../package.json';
+
+const { items } = await loadRoadmap();
+const cols = COLUMNS.map((c) => ({ ...c, cards: column(items, c.key), total: items.filter((i) => i.column === c.key).length }));
+const areaName = (a: string | null) => (a ? ((AREAS as Record<string, string>)[a] ?? a) : null);
+const typeName = (t: string | null) => (t ? ((TYPES as Record<string, string>)[t] ?? t) : null);
+const areasUsed = [...new Set(cols.flatMap((c) => c.cards.map((i) => i.area)).filter(Boolean))] as string[];
+areasUsed.sort((a, b) => (areaName(a) ?? a).localeCompare(areaName(b) ?? b));
+const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }) : '');
+const built = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'Roadmap',
+		description: 'What we’re building for creators right now, what’s next and what just shipped. Every card is a GitHub issue you can follow or comment on.',
+		template: 'splash',
+		tableOfContents: false,
+		pagefind: false,
+		prev: false,
+		next: false,
+	}}
+>
+	<div class="rm not-content" data-roadmap>
+		<header class="rm-head">
+			<div class="rm-meta">
+				<span>Updated {built}</span>
+				<a href="/changelog/">v{pkg.version} · What’s new</a>
+				<a class="rm-suggest" href={`${REPO_URL}/issues/new/choose`}>Suggest an idea</a>
+			</div>
+		</header>
+
+		{
+			areasUsed.length > 1 && (
+				<div class="rm-filters" role="group" aria-label="Filter by section">
+					<button type="button" aria-pressed="true" data-area="">All</button>
+					{areasUsed.map((a) => (
+						<button type="button" aria-pressed="false" data-area={a}>
+							<i class={`rm-dot a-${a}`} />
+							{areaName(a)}
+						</button>
+					))}
+				</div>
+			)
+		}
+
+		<nav class="rm-tabs" aria-label="Columns">
+			{
+				cols.map((c, i) => (
+					<a href={`#col-${c.key}`} data-tab={c.key} aria-current={i === 0 ? 'true' : undefined}>
+						{c.label} <span>{c.total}</span>
+					</a>
+				))
+			}
+		</nav>
+
+		<div class="rm-board" data-board>
+			{
+				cols.map((c) => (
+					<section class={`rm-col is-${c.key}`} id={`col-${c.key}`} data-col={c.key} aria-labelledby={`h-${c.key}`}>
+						<header>
+							<h2 id={`h-${c.key}`}>
+								{c.label} <span class="rm-count">{c.total}</span>
+							</h2>
+							<p>{c.text}</p>
+						</header>
+						<ol>
+							{c.cards.map((i) => (
+								<li class="rm-card" data-area={i.area ?? ''}>
+									<a href={i.url} class="rm-card__link">
+										<span class="rm-card__top">
+											{i.area && (
+												<span class="rm-area">
+													<i class={`rm-dot a-${i.area}`} />
+													{areaName(i.area)}
+												</span>
+											)}
+											{i.blocked && <span class="rm-wait">Waiting</span>}
+										</span>
+										<strong>{i.title}</strong>
+										{i.summary && <span class="rm-sum">{i.summary}</span>}
+										<span class="rm-card__foot">
+											<span>{typeName(i.type)}</span>
+											<span>{c.key === 'shipped' ? fmt(i.closed) : `#${i.number}`}</span>
+										</span>
+									</a>
+								</li>
+							))}
+							{c.cards.length === 0 && <li class="rm-empty">Nothing here right now.</li>}
+						</ol>
+					</section>
+				))
+			}
+		</div>
+
+		<footer class="rm-foot">
+			<p>
+				<strong>How to read this.</strong> <em>Now</em> is being built, <em>Next</em> is up after that, <em>Later</em> is on the list with no date yet. Cards marked <em>Waiting</em> are paused on something outside our hands, like an expert review. Dates are never promises.
+			</p>
+			<p>
+				Shipped work is written up in the <a href="/changelog/">changelog</a>. Want something on the board? <a href={`${REPO_URL}/issues/new/choose`}>Open an idea on GitHub</a>, no coding needed.
+			</p>
+		</footer>
+	</div>
+</StarlightPage>
+
+<script>
+	function init() {
+		const root = document.querySelector<HTMLElement>('[data-roadmap]');
+		if (!root || root.dataset.ready) return;
+		root.dataset.ready = '1';
+		const board = root.querySelector<HTMLElement>('[data-board]')!;
+		const tabs = [...root.querySelectorAll<HTMLAnchorElement>('[data-tab]')];
+		const cols = [...root.querySelectorAll<HTMLElement>('[data-col]')];
+
+		// Filter by section.
+		root.querySelectorAll<HTMLButtonElement>('[data-area]').forEach((b) => {
+			if (b.tagName !== 'BUTTON') return;
+			b.addEventListener('click', () => {
+				const a = b.dataset.area ?? '';
+				root.querySelectorAll<HTMLButtonElement>('button[data-area]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				root.querySelectorAll<HTMLElement>('.rm-card').forEach((c) => (c.hidden = !!a && c.dataset.area !== a));
+			});
+		});
+
+		// Phones: columns are a swipe rail; the tabs follow the column in view.
+		tabs.forEach((t) =>
+			t.addEventListener('click', (e) => {
+				const col = root.querySelector<HTMLElement>(`[data-col="${t.dataset.tab}"]`);
+				if (!col || getComputedStyle(board).overflowX !== 'auto') return;
+				e.preventDefault();
+				board.scrollTo({ left: col.offsetLeft - board.offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+			}),
+		);
+		const io = new IntersectionObserver(
+			(es) => {
+				for (const e of es) {
+					if (!e.isIntersecting) continue;
+					const key = (e.target as HTMLElement).dataset.col;
+					tabs.forEach((t) => (t.dataset.tab === key ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current')));
+				}
+			},
+			{ root: board, threshold: 0.6 },
+		);
+		cols.forEach((c) => io.observe(c));
+	}
+	init();
+	document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+	.rm {
+		--rm-gap: 0.9rem;
+		margin-top: 0.25rem;
+	}
+	.rm-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1.1rem;
+		font-size: 0.82rem;
+		color: var(--sc-steel);
+	}
+	.rm-meta a {
+		color: var(--sc-platinum);
+		text-decoration: none;
+		border-bottom: 1px solid var(--sc-line-strong);
+	}
+	.rm-meta a:hover {
+		color: var(--sc-ivory);
+		border-color: var(--sc-ion);
+	}
+	.rm-meta .rm-suggest {
+		margin-left: auto;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 999px;
+		padding: 0.35rem 0.85rem;
+	}
+
+	.rm-filters {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		margin: 1.5rem 0 0;
+		padding-bottom: 0.2rem;
+	}
+	.rm-filters button {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font: inherit;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+		background: var(--sc-fill-subtle);
+		border: 1px solid var(--sc-line);
+		border-radius: 999px;
+		padding: 0.4rem 0.8rem;
+		cursor: pointer;
+		transition: border-color 0.15s ease, color 0.15s ease;
+	}
+	.rm-filters button:hover {
+		color: var(--sc-ivory);
+	}
+	.rm-filters button[aria-pressed='true'] {
+		color: var(--sc-ivory);
+		border-color: var(--sc-line-bright);
+		background: var(--sc-fill-muted);
+	}
+
+	.rm-dot {
+		display: inline-block;
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 50%;
+		background: var(--dot, var(--sc-steel));
+		flex: none;
+	}
+	.a-platforms { --dot: var(--sc-cyan); }
+	.a-grow { --dot: var(--sc-jade); }
+	.a-deals { --dot: var(--sc-amethyst); }
+	.a-paywall { --dot: var(--sc-rose); }
+	.a-earn { --dot: var(--sc-champagne); }
+	.a-money { --dot: var(--sc-jade); }
+	.a-team { --dot: var(--sc-rose); }
+	.a-stack { --dot: var(--sc-cyan); }
+	.a-protect { --dot: var(--sc-ember); }
+	.a-underground { --dot: var(--sc-steel); }
+	.a-tools { --dot: var(--sc-champagne); }
+	.a-rates { --dot: var(--sc-champagne); }
+	.a-translations { --dot: var(--sc-mist); }
+	.a-site { --dot: var(--sc-ion); }
+
+	.rm-tabs {
+		display: none;
+	}
+
+	.rm-board {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--rm-gap);
+		margin-top: 1.25rem;
+		align-items: start;
+	}
+	.rm-col {
+		background: var(--sc-fill-subtle);
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md, 14px);
+		padding: 0.85rem 0.7rem 0.7rem;
+		min-width: 0;
+	}
+	.rm-col > header {
+		padding: 0 0.25rem 0.7rem;
+	}
+	.rm-col h2 {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-family: var(--sc-font-sans);
+		font-size: 0.92rem;
+		font-weight: 600;
+		letter-spacing: 0;
+		color: var(--sc-ivory);
+	}
+	.rm-col h2::before {
+		content: '';
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		border: 1.5px solid var(--col, var(--sc-steel));
+	}
+	.is-now { --col: var(--sc-ion); }
+	.is-next { --col: var(--sc-champagne); }
+	.is-later { --col: var(--sc-slate); }
+	.is-shipped { --col: var(--sc-jade); }
+	.is-now h2::before { background: color-mix(in srgb, var(--col) 45%, transparent); }
+	.is-shipped h2::before { background: var(--col); }
+	.rm-count {
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--sc-steel);
+		font-variant-numeric: tabular-nums;
+	}
+	.rm-col > header p {
+		margin: 0.2rem 0 0;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.rm-col ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.5rem;
+	}
+	.rm-card__link {
+		display: grid;
+		gap: 0.4rem;
+		padding: 0.8rem 0.85rem 0.7rem;
+		border-radius: var(--sc-radius-sm, 10px);
+		background: var(--sc-carbon);
+		border: 1px solid var(--sc-line);
+		color: inherit;
+		text-decoration: none;
+		transition: border-color 0.15s ease, background 0.15s ease;
+	}
+	.rm-card__link:hover {
+		border-color: var(--sc-line-strong);
+		background: var(--sc-graphite);
+	}
+	.rm-card__link:focus-visible {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 2px;
+	}
+	.rm-card__top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		min-height: 1rem;
+	}
+	.rm-area {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.rm-wait {
+		font-size: 0.68rem;
+		color: var(--sc-brass);
+		border: 1px solid color-mix(in srgb, var(--sc-brass) 40%, transparent);
+		border-radius: 999px;
+		padding: 0.05rem 0.45rem;
+	}
+	.rm-card strong {
+		font-size: 0.9rem;
+		font-weight: 600;
+		line-height: 1.35;
+		color: var(--sc-ivory);
+	}
+	.rm-sum {
+		font-size: 0.8rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.rm-card__foot {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.7rem;
+		color: var(--sc-steel);
+		font-variant-numeric: tabular-nums;
+		padding-top: 0.15rem;
+	}
+	.rm-empty {
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+		padding: 0.6rem 0.3rem;
+	}
+	.rm-foot {
+		max-width: 44rem;
+		margin-top: 2rem;
+		font-size: 0.85rem;
+		line-height: 1.6;
+		color: var(--sc-steel);
+	}
+	.rm-foot strong,
+	.rm-foot em {
+		color: var(--sc-silver);
+		font-style: normal;
+	}
+	.rm-foot a {
+		color: var(--sc-platinum);
+	}
+
+	@media (max-width: 60rem) {
+		.rm-meta .rm-suggest {
+			margin-left: 0;
+		}
+		.rm-tabs {
+			display: flex;
+			gap: 0.25rem;
+			margin-top: 1.1rem;
+			padding: 0.25rem;
+			border-radius: 999px;
+			background: var(--sc-fill-subtle);
+			border: 1px solid var(--sc-line);
+			position: sticky;
+			top: calc(var(--sl-nav-height, 3.5rem) + 0.5rem);
+			z-index: 2;
+			backdrop-filter: blur(12px);
+		}
+		.rm-tabs a {
+			flex: 1;
+			text-align: center;
+			font-size: 0.82rem;
+			color: var(--sc-silver);
+			text-decoration: none;
+			padding: 0.45rem 0.2rem;
+			border-radius: 999px;
+		}
+		.rm-tabs a span {
+			color: var(--sc-steel);
+			font-variant-numeric: tabular-nums;
+		}
+		.rm-tabs a[aria-current='true'] {
+			background: var(--sc-graphite);
+			color: var(--sc-ivory);
+		}
+		.rm-board {
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			gap: 0.75rem;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding-inline: var(--sl-content-pad-x, 1rem);
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+		}
+		.rm-board::-webkit-scrollbar {
+			display: none;
+		}
+		.rm-col {
+			flex: 0 0 min(86%, 24rem);
+			scroll-snap-align: start;
+		}
+	}
+</style>

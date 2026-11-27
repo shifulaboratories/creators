@@ -58,6 +58,8 @@ const words = mainText.split(/\s+/).filter(Boolean).length;
 const minutes = Math.max(1, Math.round(words / 220));
 const showTime = data.status !== 'outline' && !['guides', '404'].includes(base) && words > 120;
 const statusText = L.page.status;
+// Pages built in src/pages/ with their own header content: no chips, Ask AI or Share.
+const bare = ['guides', 'roadmap', 'changelog'].includes(base);
 const confidenceText = L.page.confidence;
 ---
 
@@ -70,7 +72,7 @@ const confidenceText = L.page.confidence;
 		{news.confirmed === 'official' ? <li class="chip status-published">Official</li> : <li class="chip brass">Reported</li>}
 		{news.updated && news.updated.getTime() !== news.published.getTime() && <li class="chip">Updated {fmtDate(news.updated)}</li>}
 	</ul>}
-	{base !== 'guides' && !news && section !== 'news' && <ul class="chips">
+	{!bare && !news && section !== 'news' && <ul class="chips">
 		{!tool && showTime && <li class="chip time">{L.page.minRead(minutes)}</li>}
 		{!tool && data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{!tool && data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
@@ -92,7 +94,7 @@ const confidenceText = L.page.confidence;
 			{translated === 'native' ? L.page.reviewed : L.page.machine} <a href={`/${base}/`} hreflang="en">{L.page.readOriginal}</a>
 		</p>
 	)}
-	{base !== '404' && base !== 'guides' && (
+	{base !== '404' && !bare && (
 		<div class="actions">
 			<AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />
 			<ShareBar title={data.title} description={data.description} section={section} />

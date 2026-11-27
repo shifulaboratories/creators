@@ -1,0 +1,27 @@
+# Rebuilds the site when an issue changes, so /roadmap/ stays current between merges.
+# Needs one repository secret, CLOUDFLARE_DEPLOY_HOOK: the Deploy Hook URL from
+# Cloudflare (Workers & Pages > creators > Settings > Builds > Deploy Hooks, branch main).
+# Without the secret this does nothing; the roadmap still refreshes on every merge to main.
+name: Roadmap refresh
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, deleted]
+
+# Bursts of label changes collapse into one rebuild.
+concurrency:
+  group: roadmap-refresh
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for related changes to settle
+        run: sleep 90
+      - name: Trigger a production build
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "No CLOUDFLARE_DEPLOY_HOOK secret; skipping."; exit 0; fi
+          curl -fsS -X POST "$HOOK" > /dev/null && echo "Build triggered."

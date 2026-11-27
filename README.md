@@ -103,6 +103,8 @@ Full details: [Editorial standards](https://creators.select/about/editorial-stan
 
 ## Contributing
 
+See what's being built on the [roadmap](https://creators.select/roadmap/) (from [Issues](https://github.com/shifulaboratories/creators/issues), rules in [docs/board.md](docs/board.md)) and what shipped in the [changelog](https://creators.select/changelog/) ([CHANGELOG.md](CHANGELOG.md), [how to release](docs/releasing.md)).
+
 Spotted something wrong or out of date? That's the most useful thing you can tell us.
 
 - **Quick fix:** every page has an "Edit page" link that opens the file here on GitHub.
