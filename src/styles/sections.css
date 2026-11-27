@@ -27,6 +27,7 @@
 [data-section='news'] { --accent: var(--sc-news); }
 [data-section='money'] { --accent: var(--sc-money); }
 [data-section='paywall'] { --accent: var(--sc-paywall); }
+[data-section='glossary'] { --accent: var(--sc-ion); }
 
 :root {
 	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */
