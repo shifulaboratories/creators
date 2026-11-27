@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Karat"
+url: https://www.trykarat.com/
+slot: banking
+what: "Business banking and cards built for creators, with no monthly fee and cash back on card spend."
+who: "Full-time creators separating business money from personal."
+pricing:
+  free: true
+  note: "Every account is free, $0 a month; 1% cash back on the banking card"
+pricingUrl: https://www.trykarat.com/pricing
+lastVerified: 2026-11-27
+bestFor: "A business account and card made for creators"
+alternative: "Found (free plan)"
+guide: /money/
+affiliate: false

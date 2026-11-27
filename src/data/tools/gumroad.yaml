@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Gumroad"
+url: https://gumroad.com/
+slot: storefront
+what: "A checkout and storefront for digital products, with no monthly fee and a marketplace where buyers can find you."
+who: "Creators testing a first product or selling now and then."
+pricing:
+  free: true
+  feePct: 0.1
+  note: "10% + $0.50 per sale, plus processing; 30% on Discover sales"
+pricingUrl: https://gumroad.com/help/article/66-gumroads-fees.html
+lastVerified: 2026-11-27
+bestFor: "Selling a first digital product with no monthly fee"
+alternative: "Beacons (free plan, 9%)"
+review: gumroad
+affiliate: false

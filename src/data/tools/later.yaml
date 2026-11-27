@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Later"
+url: https://later.com/
+slot: scheduling
+what: "A visual planner and scheduler for Instagram, TikTok and more, with a grid preview and link in bio."
+who: "Instagram-first creators who plan visually."
+platforms: [instagram, tiktok]
+pricing:
+  free: false
+  fromUsdPerMonth: 18.75
+  note: "Starter is $18.75/mo billed yearly; 14-day free trial"
+pricingUrl: https://later.com/pricing/
+lastVerified: 2026-11-27
+bestFor: "Visual planning for Instagram and TikTok"
+alternative: "Buffer (free plan)"
+affiliate: false

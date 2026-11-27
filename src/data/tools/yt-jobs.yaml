@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "YT Jobs"
+url: https://ytjobs.co/
+slot: hiring
+what: "A job board just for YouTube teams: creators post roles for editors, thumbnail designers and strategists."
+who: "YouTubers hiring their first editor or designer."
+platforms: [youtube]
+pricing:
+  free: false
+  note: "Job-posting prices aren’t shown on its public pages"
+pricingUrl: https://ytjobs.co/
+lastVerified: 2026-11-27
+bestFor: "Hiring editors and designers who know YouTube"
+alternative: "Upwork (general freelancers)"
+guide: /team/
+affiliate: false

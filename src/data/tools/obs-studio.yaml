@@ -1,9 +1,15 @@
-# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
-name: OBS Studio
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "OBS Studio"
 url: https://obsproject.com/
-slot: editing
+slot: streaming
+what: "Free, open-source software for recording your screen and camera and streaming live."
+who: "Streamers, and anyone recording screen tutorials."
+platforms: [twitch, youtube, kick]
 pricing:
   free: true
-bestFor: Screen recording and live streaming
-alternative: Built-in screen recorders on macOS and Windows
+  note: "Free and open source"
+pricingUrl: https://obsproject.com/
+lastVerified: 2026-11-27
+bestFor: "Streaming and screen recording"
+alternative: "Streamlabs Desktop (free)"
 affiliate: false

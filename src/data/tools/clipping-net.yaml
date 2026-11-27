@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Clipping.net"
+url: https://clipping.net/
+slot: clipping
+what: "A clipping network: brands and creators fund campaigns, and clippers post short clips and get paid per verified view."
+who: "Creators who want reach from many clip accounts, and clippers looking for paid work."
+platforms: [tiktok, youtube, instagram, x]
+pricing:
+  free: true
+  note: "Free for clippers; campaigns pay per verified view, brand pricing not published"
+pricingUrl: https://clipping.net/
+lastVerified: 2026-11-27
+bestFor: "Getting your content clipped at scale, paid per view"
+alternative: "OpusClip (clip it yourself with AI)"
+affiliate: false

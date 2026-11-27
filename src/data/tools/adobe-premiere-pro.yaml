@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Adobe Premiere"
+url: https://www.adobe.com/products/premiere.html
+slot: editing
+what: "Adobe’s pro video editor, the industry standard in agencies and studios, sold as a subscription."
+who: "Editors who work with agencies or other Adobe apps."
+platforms: [youtube]
+pricing:
+  free: false
+  fromUsdPerMonth: 22.99
+  note: "$22.99/mo on an annual plan billed monthly; 7-day free trial"
+pricingUrl: https://www.adobe.com/products/premiere/plans.html
+lastVerified: 2026-11-27
+bestFor: "Professional editing that matches agency workflows"
+alternative: "DaVinci Resolve (free version)"
+affiliate: false

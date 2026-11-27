@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Fourthwall"
+url: https://fourthwall.com/
+slot: merch
+what: "A creator shop for print-on-demand merch, digital products and memberships, with no inventory."
+who: "Creators who want merch without holding stock."
+platforms: [youtube, twitch]
+pricing:
+  free: true
+  fromUsdPerMonth: 15
+  note: "Free plan takes 5% on digital products; Pro is $15/mo with none"
+pricingUrl: https://fourthwall.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Merch with no inventory"
+alternative: "Spring (print on demand)"
+affiliate: false

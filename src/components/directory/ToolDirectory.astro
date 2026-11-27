@@ -1,0 +1,297 @@
+---
+/**
+ * The searchable tool directory: search, category and budget filters, cards by
+ * category. Filtering runs in the browser; every card is in the HTML for search engines.
+ */
+import { getCollection } from 'astro:content';
+import { BUDGETS, CATEGORIES, budgetOf, directoryTools, priceText, toolPath, DIRECTORY_PATH } from '../../lib/tool-directory';
+import ToolLogo from './ToolLogo.astro';
+
+interface Props {
+	/** Only this category (category pages). */
+	category?: string;
+}
+const { category } = Astro.props;
+const tools = directoryTools(await getCollection('tools'));
+const cats = CATEGORIES.filter((c) => (!category || c.key === category) && tools.some((t) => t.slot === c.key));
+const searchable = (t: (typeof tools)[number]) => [t.name, t.what, t.bestFor, t.who, t.alternative, ...(t.platforms ?? [])].join(' ').toLowerCase();
+---
+
+<div class="td not-content" data-section="stack" data-td>
+	{!category && (
+		<div class="td-controls">
+			<label class="td-search">
+				<span class="sr-only">Search tools</span>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.43 4.43 1.06-1.06-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z" /></svg>
+				<input type="search" placeholder={`Search ${tools.length} tools: “editing”, “newsletter”, “Karat”…`} data-td-q autocomplete="off" />
+			</label>
+			<div class="td-chips" role="group" aria-label="Category">
+				<button type="button" aria-pressed="true" data-td-cat="">All</button>
+				{cats.map((c) => <button type="button" aria-pressed="false" data-td-cat={c.key}>{c.label}</button>)}
+			</div>
+			<div class="td-chips td-chips--budget" role="group" aria-label="Budget">
+				{BUDGETS.map((b) => <button type="button" aria-pressed="false" data-td-budget={b.key}>{b.label}</button>)}
+			</div>
+			<p class="td-count" aria-live="polite" data-td-count>{tools.length} tools</p>
+		</div>
+	)}
+
+	{cats.map((c) => (
+		<section class="td-sec" data-td-sec={c.key}>
+			{!category && (
+				<header>
+					<h2 id={c.key}>{c.label}</h2>
+					<a href={`${DIRECTORY_PATH}${c.key}/`}>Compare {c.label.toLowerCase()} →</a>
+				</header>
+			)}
+			<ul class="td-grid">
+				{tools
+					.filter((t) => t.slot === c.key)
+					.map((t) => (
+						<li data-td-item data-cat={t.slot} data-budget={budgetOf(t.pricing)} data-text={searchable(t)}>
+							<a href={toolPath(t.slug)}>
+								<span class="td-top">
+									<ToolLogo slug={t.slug} name={t.name} />
+									<span>
+										<b>{t.name}</b>
+										<small>{priceText(t.pricing)}</small>
+									</span>
+								</span>
+								<span class="td-what">{t.what}</span>
+								{t.review && <span class="td-tag">Full review</span>}
+							</a>
+						</li>
+					))}
+			</ul>
+		</section>
+	))}
+	<p class="td-empty" data-td-empty hidden>No tools match. Try another word or clear a filter.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-td]').forEach((root) => {
+		const q = root.querySelector<HTMLInputElement>('[data-td-q]');
+		if (!q) return;
+		const items = [...root.querySelectorAll<HTMLElement>('[data-td-item]')];
+		const secs = [...root.querySelectorAll<HTMLElement>('[data-td-sec]')];
+		const count = root.querySelector('[data-td-count]')!;
+		const empty = root.querySelector<HTMLElement>('[data-td-empty]')!;
+		let cat = '';
+		const budgets = new Set<string>();
+		const apply = () => {
+			const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+			let n = 0;
+			for (const el of items) {
+				const ok = (!cat || el.dataset.cat === cat) && (!budgets.size || budgets.has(el.dataset.budget!)) && words.every((w) => el.dataset.text!.includes(w));
+				el.hidden = !ok;
+				if (ok) n++;
+			}
+			for (const s of secs) s.hidden = !s.querySelector('[data-td-item]:not([hidden])');
+			count.textContent = `${n} tool${n === 1 ? '' : 's'}`;
+			empty.hidden = n > 0;
+		};
+		q.addEventListener('input', apply);
+		root.querySelectorAll<HTMLButtonElement>('[data-td-cat]').forEach((b) =>
+			b.addEventListener('click', () => {
+				cat = b.dataset.tdCat!;
+				root.querySelectorAll('[data-td-cat]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				apply();
+			}),
+		);
+		root.querySelectorAll<HTMLButtonElement>('[data-td-budget]').forEach((b) =>
+			b.addEventListener('click', () => {
+				const k = b.dataset.tdBudget!;
+				budgets.has(k) ? budgets.delete(k) : budgets.add(k);
+				b.setAttribute('aria-pressed', String(budgets.has(k)));
+				apply();
+			}),
+		);
+		// Deep link: /stack/directory/?q=editing
+		const p = new URLSearchParams(location.search).get('q');
+		if (p) {
+			q.value = p;
+			apply();
+		}
+	});
+</script>
+
+<style>
+	.td [hidden] {
+		display: none !important;
+	}
+	.td-controls {
+		display: grid;
+		gap: 0.7rem;
+		margin: 1.2rem 0 0.5rem;
+	}
+	.td-search {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0 1rem;
+		min-height: 3rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong, var(--sc-line));
+		background: var(--sc-fill-subtle);
+	}
+	.td-search:focus-within {
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+	}
+	.td-search svg {
+		width: 1.1rem;
+		height: 1.1rem;
+		fill: var(--sc-steel);
+		flex: none;
+	}
+	.td-search input {
+		flex: 1;
+		min-width: 0;
+		border: 0;
+		background: none;
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 1rem;
+		outline: none;
+	}
+	.td-chips {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		margin: 0 -1rem;
+		padding: 0.1rem 1rem;
+	}
+	.td-chips::-webkit-scrollbar {
+		display: none;
+	}
+	@media (min-width: 50rem) {
+		.td-chips {
+			flex-wrap: wrap;
+			overflow: visible;
+			margin: 0;
+			padding: 0;
+		}
+	}
+	.td-chips button {
+		flex: none;
+		min-height: 2.25rem;
+		padding: 0 0.85rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line);
+		background: none;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 550;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.td-chips button[aria-pressed='true'] {
+		background: color-mix(in srgb, var(--accent) 20%, transparent);
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+		color: var(--sc-ivory);
+	}
+	.td-count {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+	}
+	.td-sec {
+		margin-top: 1.8rem;
+	}
+	.td-sec header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		margin-bottom: 0.7rem;
+	}
+	.td-sec h2 {
+		margin: 0;
+		font-size: 1.15rem;
+	}
+	.td-sec header a {
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.td-sec header a:hover {
+		color: var(--accent);
+	}
+	.td-grid {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.7rem;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	}
+	.td-grid li {
+		margin: 0;
+	}
+	.td-grid a {
+		display: grid;
+		gap: 0.6rem;
+		align-content: start;
+		height: 100%;
+		padding: 0.95rem 1rem;
+		border-radius: var(--sc-radius-md, 16px);
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		text-decoration: none;
+		transition:
+			border-color 0.2s ease,
+			transform 0.2s ease;
+	}
+	.td-grid a:hover,
+	.td-grid a:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+		transform: translateY(-1px);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.td-grid a {
+			transition: none;
+		}
+		.td-grid a:hover {
+			transform: none;
+		}
+	}
+	.td-top {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.td-top b {
+		display: block;
+		color: var(--sc-ivory);
+		font-size: 1rem;
+	}
+	.td-top small {
+		display: block;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.td-what {
+		font-size: 0.86rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+	}
+	.td-tag {
+		justify-self: start;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+	.td-empty {
+		margin-top: 1.5rem;
+		color: var(--sc-steel);
+	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+</style>

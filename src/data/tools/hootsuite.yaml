@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Hootsuite"
+url: https://www.hootsuite.com/
+slot: scheduling
+what: "A social media dashboard for scheduling, inbox and analytics across many accounts, built for teams."
+who: "Creators with a team, or managers running several accounts."
+platforms: [instagram, tiktok, youtube, linkedin, facebook, x]
+pricing:
+  free: false
+  fromUsdPerMonth: 99
+  note: "Standard is $99 per user/mo, billed yearly; 14-day free trial"
+pricingUrl: https://www.hootsuite.com/plans
+lastVerified: 2026-11-27
+bestFor: "Scheduling and inbox for teams"
+alternative: "Buffer (free plan)"
+affiliate: false

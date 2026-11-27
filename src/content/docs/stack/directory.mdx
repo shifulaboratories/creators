@@ -1,0 +1,35 @@
+---
+title: "Creator tool directory"
+description: "Every tool creators use, in one searchable directory: editing, clipping, scheduling, link in bio, newsletters, memberships, hiring, banking and AI. Prices checked on each tool’s own site, no affiliate links."
+payoff: "Find the right tool for any job, with its real price and a free alternative."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+noAffiliates: true
+tableOfContents: false
+cover:
+  label: Directory
+sidebar:
+  order: 1
+  label: Tool directory
+faq:
+  - q: "What tools do creators need to start?"
+    a: "Usually just three: an editor (CapCut or DaVinci Resolve, both free), a design tool for thumbnails (Canva’s free plan), and a link in bio. Add a scheduler, an email list and a store once you post regularly. Every tool here shows whether it has a free plan."
+  - q: "How are these tools chosen and priced?"
+    a: "We list tools creators actually use, and read each price on the tool’s own pricing page, linked with the date we checked. There are no affiliate links and nobody paid to be listed. Where a tool doesn’t publish a price, we say so."
+  - q: "What’s the cheapest way to sell from my link in bio?"
+    a: "It depends on your sales. Under about $320 a month, a free plan with a percentage fee usually costs least; above that, a flat plan with 0% fees wins. Our tool reviews work out the exact number."
+---
+
+import ToolDirectory from '../../../components/directory/ToolDirectory.astro';
+import Faq from '../../../components/tools/Faq.astro';
+
+Search every tool by what you need done, then filter by budget. Each one has its own page with the price, who it’s for and a free alternative. Prices come from each tool’s own site, checked on the date shown, and there are no affiliate links here.
+
+<ToolDirectory />
+
+## Missing a tool?
+
+The directory lives in one folder on [GitHub](https://github.com/shifulaboratories/creators/tree/main/src/data/tools), one small file per tool. Add one, or [open an issue](https://github.com/shifulaboratories/creators/issues) with the tool’s pricing page and we’ll check it.
+
+<Faq />

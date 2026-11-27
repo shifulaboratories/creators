@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Metricool"
+url: https://metricool.com/
+slot: scheduling
+what: "Scheduling plus analytics for your accounts and competitors, with a free plan that never expires."
+who: "Creators who want scheduling and stats in one free tool."
+platforms: [instagram, tiktok, youtube, linkedin, facebook, x]
+pricing:
+  free: true
+  fromUsdPerMonth: 25
+  note: "Starter from $25/mo, or $20/mo billed yearly"
+pricingUrl: https://metricool.com/pricing/
+lastVerified: 2026-11-27
+bestFor: "Scheduling and analytics together"
+alternative: "Buffer (free plan)"
+affiliate: false

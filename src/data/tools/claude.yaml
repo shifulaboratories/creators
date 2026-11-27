@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Claude"
+url: https://claude.ai/
+slot: ai
+what: "Anthropic’s assistant for long scripts, research, editing drafts and reading long documents like contracts."
+who: "Creators who write long-form or review contracts and briefs."
+pricing:
+  free: true
+  fromUsdPerMonth: 20
+  note: "Pro is $20/mo, or $17/mo billed yearly"
+pricingUrl: https://claude.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Long scripts, research and reading documents"
+alternative: "ChatGPT (free plan)"
+affiliate: false

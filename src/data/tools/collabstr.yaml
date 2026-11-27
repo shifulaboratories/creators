@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Collabstr"
+url: https://collabstr.com/
+slot: brand-deals
+what: "A marketplace where brands search creators, buy listed packages and pay through escrow."
+who: "Creators under 100K looking for first paid deals and UGC."
+pricing:
+  free: true
+  feePct: 0.15
+  note: "Free to list; 15% of every sale"
+pricingUrl: https://collabstr.com/faq
+lastVerified: 2026-11-27
+bestFor: "Landing your first paid deals"
+alternative: "Passionfroot (0% on your own deals)"
+review: collabstr
+affiliate: false

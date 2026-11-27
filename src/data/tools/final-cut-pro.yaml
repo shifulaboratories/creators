@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Final Cut Pro"
+url: https://www.apple.com/final-cut-pro/
+slot: editing
+what: "Apple’s pro video editor for Mac, fast on Apple silicon, sold once on the App Store or as part of a subscription."
+who: "Mac users who want a fast editor without a monthly bill."
+platforms: [youtube]
+pricing:
+  free: false
+  note: "One-time App Store purchase, or included in an Apple subscription; free trial"
+pricingUrl: https://www.apple.com/final-cut-pro/
+lastVerified: 2026-11-27
+bestFor: "Fast editing on a Mac"
+alternative: "iMovie (free on Mac) or DaVinci Resolve (free)"
+affiliate: false

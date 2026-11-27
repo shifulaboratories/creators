@@ -1,0 +1,323 @@
+---
+/**
+ * Directory pages: one per tool (/stack/directory/<tool>/) and one per category
+ * (/stack/directory/<category>/). Data: src/data/tools/*.yaml, src/lib/tool-directory.ts.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { CATEGORIES, DIRECTORY_PATH, categoryOf, directoryTools, priceText, toolPath, type Category, type Tool } from '../../../lib/tool-directory';
+import { SITE_NAME } from '../../../site.mjs';
+import ToolLogo from '../../../components/directory/ToolLogo.astro';
+import ToolDirectory from '../../../components/directory/ToolDirectory.astro';
+
+export const getStaticPaths = (async () => {
+	const tools = directoryTools(await getCollection('tools'));
+	const cats = CATEGORIES.filter((c) => tools.some((t) => t.slot === c.key));
+	return [
+		...tools.map((t) => ({ params: { slug: t.slug }, props: { tool: t, all: tools } })),
+		...cats.map((c) => ({ params: { slug: c.key }, props: { cat: c, all: tools } })),
+	];
+}) satisfies GetStaticPaths;
+
+const { tool, cat, all } = Astro.props as { tool?: Tool; cat?: Category; all: Tool[] };
+const date = (d?: Date) => d?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
+
+// Tool page
+const tc = tool ? categoryOf(tool.slot)! : undefined;
+const others = tool ? all.filter((t) => t.slot === tool.slot && t.slug !== tool.slug) : [];
+// Link the named alternative when it's in the directory too.
+const altTool = tool ? all.find((t) => t.slug !== tool.slug && tool.alternative.toLowerCase().startsWith(t.name.toLowerCase())) : undefined;
+
+// Category page
+const inCat = cat ? all.filter((t) => t.slot === cat.key) : [];
+
+const title = tool ? tool.name : `${cat!.label} tools`;
+const seo = tool ? `${tool.name}: pricing, fees and free alternative` : `${cat!.label} tools for creators: prices compared`;
+const description = tool ? tool.what : `${cat!.intro} ${inCat.length} tools, with prices checked on each tool’s own site.`;
+---
+
+<StarlightPage
+	frontmatter={{
+		title,
+		description,
+		head: [{ tag: 'title', content: `${seo} | ${SITE_NAME}` }],
+		tableOfContents: false,
+		prev: false,
+		next: false,
+		editUrl: false,
+		noAffiliates: true,
+		status: 'draft',
+		confidence: 'verified',
+	}}
+>
+	<div class="dp not-content" data-section="stack">
+		<p class="dp-crumbs">
+			<a href={DIRECTORY_PATH}>Tool directory</a>
+			{tool && (
+				<>
+					<span aria-hidden="true">/</span>
+					<a href={`${DIRECTORY_PATH}${tc!.key}/`}>{tc!.label}</a>
+				</>
+			)}
+		</p>
+
+		{tool && (
+			<>
+				<header class="dp-head">
+					<ToolLogo slug={tool.slug} name={tool.name} size="lg" />
+					<a class="dp-visit" href={tool.url} target="_blank" rel="noopener nofollow">Visit {host(tool.url)} ↗</a>
+				</header>
+
+				<dl class="dp-facts">
+					<div class="dp-price">
+						<dt>Price</dt>
+						<dd>
+							<b>{priceText(tool.pricing)}</b>
+							{tool.pricing.note && <span>{tool.pricing.note}.</span>}
+						</dd>
+					</div>
+					<div>
+						<dt>Best for</dt>
+						<dd>{tool.bestFor}</dd>
+					</div>
+					{tool.who && (
+						<div>
+							<dt>Who it’s for</dt>
+							<dd>{tool.who}</dd>
+						</div>
+					)}
+					<div>
+						<dt>Instead, try</dt>
+						<dd>{altTool ? <a href={toolPath(altTool.slug)}>{tool.alternative}</a> : tool.alternative}</dd>
+					</div>
+				</dl>
+
+				{(tool.review || tool.guide) && (
+					<p class="dp-more">
+						{tool.review && <a href={`/reviews/${tool.review}/`}>Read our full {tool.name} review, with what it costs at real sales →</a>}
+						{tool.guide && !tool.review && <a href={tool.guide}>Read the guide that covers this →</a>}
+					</p>
+				)}
+
+				<p class="dp-src">
+					Price checked {date(tool.lastVerified)} on <a href={tool.pricingUrl} rel="noopener nofollow" target="_blank">{host(tool.pricingUrl!)}</a>. Prices change: check the live page before you buy. No affiliate link, and nobody paid to be listed. Spot a change? <a href="https://github.com/shifulaboratories/creators/issues">Tell us on GitHub</a>.
+				</p>
+
+				{others.length > 0 && (
+					<section class="dp-others">
+						<h2>Other {tc!.label.toLowerCase()} tools</h2>
+						<ul>
+							{others.map((o) => (
+								<li>
+									<a href={toolPath(o.slug)}>
+										<ToolLogo slug={o.slug} name={o.name} />
+										<span>
+											<b>{o.name}</b>
+											<small>{priceText(o.pricing)}</small>
+										</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				)}
+			</>
+		)}
+
+		{cat && (
+			<>
+				<div class="dp-scroll">
+					<table>
+						<thead>
+							<tr><th>Tool</th><th>Price</th><th>Best for</th></tr>
+						</thead>
+						<tbody>
+							{inCat.map((t) => (
+								<tr>
+									<td><a href={toolPath(t.slug)}>{t.name}</a></td>
+									<td>{priceText(t.pricing)}</td>
+									<td>{t.bestFor}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+				<p class="dp-src">Prices checked on each tool’s own pricing page; the date is on each tool’s page. No affiliate links, and nobody paid to be listed.</p>
+				<ToolDirectory category={cat.key} />
+				<p class="dp-more"><a href={DIRECTORY_PATH}>See every category in the directory →</a></p>
+			</>
+		)}
+	</div>
+</StarlightPage>
+
+<style>
+	.dp-crumbs {
+		display: flex;
+		gap: 0.5rem;
+		font-size: 0.82rem;
+		color: var(--sc-steel);
+		margin: 0 0 1rem;
+	}
+	.dp-crumbs a {
+		color: var(--sc-silver);
+		text-decoration: none;
+	}
+	.dp-crumbs a:hover {
+		color: var(--accent);
+	}
+	.dp-head {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+	.dp-head p {
+		margin: 0;
+		font-size: 1.08rem;
+		line-height: 1.55;
+		color: var(--sc-platinum);
+		max-width: 40rem;
+	}
+	.dp-visit {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		padding: 0 1.2rem;
+		border-radius: 999px;
+		background: var(--sc-ivory);
+		color: var(--sc-obsidian, #0a0a0c);
+		font-weight: 650;
+		font-size: 0.9rem;
+		text-decoration: none;
+	}
+	.dp-facts {
+		display: grid;
+		gap: 0.7rem;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		margin: 1.5rem 0 0;
+	}
+	.dp-facts > div {
+		padding: 0.9rem 1rem;
+		border-radius: var(--sc-radius-md, 16px);
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.dp-facts .dp-price {
+		border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+		background: color-mix(in srgb, var(--accent) 7%, transparent);
+	}
+	.dp-facts dt {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--sc-steel);
+		margin: 0 0 0.3rem;
+	}
+	.dp-facts dd {
+		margin: 0;
+		color: var(--sc-platinum);
+		font-size: 0.92rem;
+		line-height: 1.5;
+	}
+	.dp-facts dd b {
+		display: block;
+		color: var(--sc-ivory);
+		font-size: 1.05rem;
+	}
+	.dp-facts dd span {
+		display: block;
+		margin-top: 0.2rem;
+		font-size: 0.84rem;
+		color: var(--sc-silver);
+	}
+	.dp-facts a,
+	.dp-more a {
+		color: var(--accent);
+	}
+	.dp-more {
+		margin: 1.2rem 0 0;
+		font-weight: 600;
+	}
+	.dp-src {
+		margin: 1rem 0 0;
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--sc-steel);
+	}
+	.dp-src a {
+		color: var(--sc-silver);
+	}
+	.dp-others h2 {
+		font-size: 1.1rem;
+		margin: 2rem 0 0.7rem;
+	}
+	.dp-others ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.6rem;
+		grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+	}
+	.dp-others li {
+		margin: 0;
+	}
+	.dp-others a {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0.7rem 0.8rem;
+		border-radius: var(--sc-radius-md, 16px);
+		border: 1px solid var(--sc-line);
+		text-decoration: none;
+	}
+	.dp-others a:hover {
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+	}
+	.dp-others b {
+		display: block;
+		color: var(--sc-ivory);
+	}
+	.dp-others small {
+		display: block;
+		font-size: 0.74rem;
+		color: var(--sc-steel);
+	}
+	.dp-intro {
+		font-size: 1.05rem;
+		line-height: 1.55;
+		color: var(--sc-platinum);
+		max-width: 42rem;
+	}
+	.dp-scroll {
+		overflow-x: auto;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md, 16px);
+		margin-top: 1rem;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.88rem;
+	}
+	th,
+	td {
+		padding: 0.6rem 0.8rem;
+		border-bottom: 1px solid var(--sc-line);
+		text-align: left;
+		vertical-align: top;
+		color: var(--sc-platinum);
+	}
+	th {
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+		font-weight: 600;
+	}
+	tr:last-child td {
+		border-bottom: 0;
+	}
+	td a {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+</style>

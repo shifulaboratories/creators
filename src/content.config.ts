@@ -100,18 +100,44 @@ const tools = defineCollection({
 				'analytics',
 				'payments',
 				'content-protection',
+				'clipping',
+				'podcast',
+				'streaming',
+				'growth',
+				'courses',
+				'community',
+				'brand-deals',
+				'hiring',
+				'banking',
+				'ai',
+				'music',
+				'merch',
 			]),
+			// Directory fields (src/lib/tool-directory.ts). `what` is one plain sentence.
+			what: z.string().max(200).optional(),
+			who: z.string().max(160).optional(),
+			// Where the price came from: the tool's own pricing page or help center.
+			pricingUrl: z.url().optional(),
+			// Our review (src/lib/reviews-data.ts) or guide that covers it.
+			review: z.string().optional(),
+			guide: z.string().optional(),
 			platforms: z.array(z.string()).default([]),
 			pricing: z.object({
 				free: z.boolean(),
 				fromUsdPerMonth: z.number().nonnegative().optional(),
 				oneTimeUsd: z.number().nonnegative().optional(),
+				// The tool's cut of what you sell or earn through it, 0–1.
+				feePct: z.number().min(0).max(1).optional(),
+				note: z.string().max(160).optional(),
 			}),
 			bestFor: z.string(),
 			alternative: z.string().min(1),
 			affiliate: z.boolean().default(false),
 			affiliateUrl: z.url().optional(),
 			lastVerified: z.coerce.date().optional(),
+		})
+		.refine((t) => !t.what || (t.pricingUrl && t.lastVerified), {
+			message: 'a directory entry (with `what`) needs pricingUrl and lastVerified',
 		})
 		.refine((t) => !t.affiliate || t.affiliateUrl, {
 			message: 'affiliate: true needs an affiliateUrl',

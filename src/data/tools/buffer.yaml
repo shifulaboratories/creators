@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Buffer"
+url: https://buffer.com/
+slot: scheduling
+what: "A simple scheduler for posting to Instagram, TikTok, LinkedIn, X and more, priced per channel."
+who: "Solo creators who want to batch posts without a big tool."
+platforms: [instagram, tiktok, linkedin, x, facebook, youtube]
+pricing:
+  free: true
+  fromUsdPerMonth: 6
+  note: "Free for up to 3 channels; Essentials from $6/mo per channel"
+pricingUrl: https://buffer.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Simple scheduling for solo creators"
+alternative: "Metricool (free plan)"
+affiliate: false

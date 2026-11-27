@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Skool"
+url: https://www.skool.com/
+slot: community
+what: "An all-in-one paid community with courses, a feed, calendar and leaderboards."
+who: "Educators and coaches running a paid community."
+pricing:
+  free: false
+  fromUsdPerMonth: 9
+  feePct: 0.1
+  note: "Hobby is $9/mo + 10% per sale; Pro is $99/mo + 2.9%"
+pricingUrl: https://www.skool.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Paid communities with courses inside"
+alternative: "Discord (free)"
+affiliate: false

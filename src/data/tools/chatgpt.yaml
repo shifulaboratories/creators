@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "ChatGPT"
+url: https://chatgpt.com/
+slot: ai
+what: "OpenAI’s assistant for scripts, hooks, research, captions and brainstorming."
+who: "Any creator who writes scripts or captions."
+pricing:
+  free: true
+  fromUsdPerMonth: 20
+  note: "Plus is $20/mo"
+pricingUrl: https://openai.com/chatgpt/pricing/
+lastVerified: 2026-11-27
+bestFor: "Brainstorming, scripts and captions"
+alternative: "Claude (free plan)"
+affiliate: false

@@ -1,9 +1,15 @@
-# Seed entry. Confirm pricing and set lastVerified (YYYY-MM-DD) before launch.
-name: Audacity
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Audacity"
 url: https://www.audacityteam.org/
-slot: audio
+slot: podcast
+what: "A free, open-source audio editor for recording, cleaning up and cutting voice and music."
+who: "Anyone cleaning up voiceovers or podcast audio on a budget."
+platforms: [podcast]
 pricing:
   free: true
-bestFor: Cleaning up voiceovers and podcast audio
-alternative: GarageBand (free on Mac)
+  note: "Free and open source"
+pricingUrl: https://www.audacityteam.org/
+lastVerified: 2026-11-27
+bestFor: "Cleaning up voiceovers and podcast audio"
+alternative: "GarageBand (free on Mac)"
 affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Passionfroot"
+url: https://www.passionfroot.me/
+slot: brand-deals
+what: "A storefront where brands book and pay for your sponsorship packages, plus a network that matches you with brands."
+who: "Newsletters, podcasts and B2B creators with inbound interest."
+pricing:
+  free: true
+  feePct: 0
+  note: "You keep 100% of your own deals; network deals cost 15%"
+pricingUrl: https://help.passionfroot.me/en/articles/11552638-pricing
+lastVerified: 2026-11-27
+bestFor: "Letting brands book you directly"
+alternative: "Collabstr (15% marketplace)"
+review: passionfroot
+affiliate: false
