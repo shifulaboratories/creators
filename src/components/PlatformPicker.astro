@@ -20,6 +20,7 @@ const cards: Card[] = [
 	{ key: 'youtube', name: 'YouTube', tint: 'youtube', find: 'Recommendations on Home and Up Next', rewards: 'Clicks, watch time and viewer satisfaction', paid: '500 subs for fan money, 1,000 for ad revenue', fits: ['long', 'short', 'talking', 'live'] },
 	{ key: 'tiktok', name: 'TikTok', tint: 'tiktok', find: 'The For You feed, fresh for every video', rewards: 'Watching to the end, shares, comments', paid: '10K followers and 100K views a month, videos over 1 minute', fits: ['short', 'live', 'talking'] },
 	{ key: 'instagram', name: 'Instagram', tint: 'instagram', find: 'Reels and Explore, mostly non-followers', rewards: 'Sends, watch time and likes', paid: 'Per-tool eligibility in your dashboard', fits: ['short', 'photos'] },
+	{ key: 'facebook', name: 'Facebook', tint: 'facebook', find: 'Feed and Reels, ranked from likes, comments and watching', rewards: 'Original posts. Reposts lose reach and pay', paid: 'Content Monetization (invite). Fast Track at 100K elsewhere', fits: ['short', 'long', 'photos', 'writing'] },
 	{ key: 'x', name: 'X', tint: 'x', find: 'For You, about half from non-followers', rewards: 'Replies, quotes and shares, weighted in open code', paid: 'Premium, 500 verified followers, 500K verified impressions in 90 days', fits: ['writing', 'short'] },
 	{ key: 'linkedin', name: 'LinkedIn', tint: 'linkedin', find: 'Feed matched to professional interests', rewards: 'Genuine expertise, not engagement bait', paid: 'No ad share. Clients, B2B deals, invite-only BrandLink', fits: ['writing', 'photos', 'talking'] },
 	{ key: 'threads', name: 'Threads', tint: 'threads', find: 'For You, tied to your Instagram', rewards: 'Likes, opened replies, profile taps, follows', paid: 'No direct payouts yet. Pays through Instagram', fits: ['writing'] },
@@ -41,7 +42,7 @@ const cards: Card[] = [
 	<div class="pp-chips" role="group" aria-label="What you like making">
 		{makes.map((m, i) => <button type="button" class="sc-chip" data-make={m.key} aria-pressed={i === 0 ? 'true' : 'false'}>{m.label}</button>)}
 	</div>
-	<p class="pp-count" aria-live="polite" data-count>All 11 platforms</p>
+	<p class="pp-count" aria-live="polite" data-count>All 12 platforms</p>
 	<div class="pp-grid sc-rail not-content" data-rail>
 		{
 			cards.map((c) => (
@@ -85,7 +86,7 @@ const cards: Card[] = [
 				});
 				// On phones the cards are a swipe rail: bring the first match into view.
 				if (first && grid.scrollWidth > grid.clientWidth) grid.scrollTo({ left: grid.scrollLeft + first.getBoundingClientRect().left - grid.getBoundingClientRect().left - 16, behavior: 'smooth' });
-				count.textContent = k === 'all' ? 'All 11 platforms' : `${n} platforms fit ${chip.textContent!.toLowerCase()}`;
+				count.textContent = k === 'all' ? 'All 12 platforms' : `${n} platforms fit ${chip.textContent!.toLowerCase()}`;
 			}),
 		);
 	});

@@ -1,18 +1,42 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import GuidesHub from '../components/GuidesHub.astro';
 import GuideGallery from '../components/GuideGallery.astro';
 import AskAI from '../components/AskAI.astro';
 ---
 
 <StarlightPage
 	frontmatter={{
-		title: 'All guides',
-		description: 'Every guide on Select Creators. Search, filter by topic, sort, or hand the whole library to your AI assistant.',
+		title: 'Where do you want to go?',
+		description: 'Pick a platform or a goal. Every guide is free, sourced, and written in plain English.',
 		template: 'splash',
 		tableOfContents: false,
 		pagefind: false,
 	}}
 >
+	<GuidesHub />
+	<section id="all" class="guides-all not-content" aria-labelledby="all-title">
+		<h2 id="all-title">Every guide</h2>
+		<p>Search, filter by section, or sort by what you have time for.</p>
+	</section>
 	<GuideGallery />
 	<div style="margin-top:2rem"><AskAI scope="site" /></div>
 </StarlightPage>
+
+<style>
+	.guides-all {
+		margin-top: 3.5rem;
+		scroll-margin-top: calc(var(--sl-nav-height, 3.5rem) + 1rem);
+	}
+	.guides-all h2 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.45rem, 4.5vw, 1.9rem);
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+	}
+	.guides-all p {
+		margin: 0.35rem 0 1rem;
+		color: var(--sc-silver);
+	}
+</style>

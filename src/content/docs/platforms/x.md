@@ -8,7 +8,7 @@ cover:
   label: X
   tint: x
 sidebar:
-  order: 4
+  order: 6
 ---
 
 **The short version:** X picks a pool of candidate posts from people you follow and people you don't, ranks them by how likely you are to engage, then filters for variety and safety. X has published its code twice, in 2023 and in January 2026. Since September 2026, X pays creators for original posts seen by Premium subscribers.
