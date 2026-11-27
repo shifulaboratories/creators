@@ -22,6 +22,7 @@ sidebar:
 ---
 
 import Playbook from '../../../components/Playbook.astro';
+import CopyBlock from '../../../components/guide/CopyBlock.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** read the notice, appeal through the app the same day, and keep it short and factual. Appeals have deadlines and some have a limited number of tries. Nobody outside the platform can unban you.
@@ -36,11 +37,11 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 <figcaption>How enforcement escalates on most platforms. The earlier you appeal, the less there is to undo.</figcaption>
 </figure>
 
-## Pick your platform
+## Appeal on your platform
 
 <Playbook situation="banned" />
 
-## How strikes work, side by side
+## Compare how strikes work
 
 | | Strikes expire | What ends the account | Appeal window |
 | --- | --- | --- | --- |
@@ -51,12 +52,24 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 
 Only YouTube and TikTok publish their strike windows. For Instagram and X, the notice you see is the source of truth.
 
-## Writing an appeal that gets read
+## Write an appeal that gets read
 
-1. **Name the rule they cited** and say plainly why your content or account doesn't break it. <span class="sc-tag is-practitioner">Creator-tested</span>
+1. **Name the rule they cited** and say plainly why your content or account doesn't break it.
 2. **Stick to facts.** Dates, links, what you posted. Leave out anger and follower counts.
-3. **If you were hacked, say so first** and recover the login before appealing, so the platform sees you back in control. YouTube says appeals for hacked channels may fail if recovery isn't complete. <span class="sc-tag is-platform">From the platform</span>
+3. **If you were hacked, say so first** and recover the login before appealing, so the platform sees you back in control. YouTube says appeals for hacked channels may fail if recovery isn't complete.
 4. **If it was a mass-report**, say that the reports came in a burst and include screenshots of anyone organizing it.
+
+<CopyBlock
+  label="Appeal template"
+  text={`Hi, my account [@handle] was [restricted / removed] on [date] for [the rule they cited].
+
+I don't believe it breaks that rule because [one or two plain sentences].
+
+The post in question: [link]. [If hacked: My account was accessed by someone else on [date]. I've recovered it and secured it.] [If mass-reported: The reports came in a burst on [date]; screenshots attached.]
+
+Thank you for taking another look.`}
+  note="Facts only. Leave out anger and follower counts."
+/>
 
 ## Don't dig the hole deeper
 
