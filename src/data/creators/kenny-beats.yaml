@@ -1,0 +1,39 @@
+name: Kenny Beats
+known: Hip-hop producer and host of the freestyle series The Cave on YouTube
+niche: music
+platforms: [youtube]
+about: Kenny Beats is a record producer who works with rappers and singers and hosts The Cave, a YouTube series where artists freestyle over beats he makes on the spot.
+tools:
+  - name: Ableton Live
+    use: His main production software, run from a template with his whole studio ready to go
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+  - name: Ableton Simpler
+    use: Starting a beat quickly the way he always has, after deleting everything else from the template
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+  - name: Omnisphere
+    use: Synth he says can cover everything on one channel with a couple of plugins
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+  - name: FabFilter Pro-L 2
+    use: Part of the master chain he uses when mastering a vocal session
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+advice:
+  - text: "You shouldn't be doing too much, in my opinion."
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+  - text: "If it's not getting used at least once a month, it's gotta go."
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
+  - text: "I don't ever put a master chain when I'm just making instrumentals."
+    source: https://www.ableton.com/en/blog/kenny-beats-connecting-dots/
+    sourceTitle: "Kenny Beats: Connecting the D.O.T.S (Ableton)"
+    date: "Jun 2021"
