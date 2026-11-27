@@ -1,0 +1,187 @@
+---
+/**
+ * Interactive: "What do you like making?" Pick a chip and the platforms that
+ * fit it light up. Each card says how people find you there, what it rewards,
+ * and the bar for getting paid. Facts come from each platform guide's sources.
+ */
+type Card = { key: string; name: string; tint: string; find: string; rewards: string; paid: string; fits: string[] };
+
+const makes = [
+	{ key: 'all', label: 'Show all' },
+	{ key: 'short', label: 'Short videos' },
+	{ key: 'long', label: 'Long videos' },
+	{ key: 'photos', label: 'Photos' },
+	{ key: 'writing', label: 'Writing' },
+	{ key: 'talking', label: 'Talking' },
+	{ key: 'live', label: 'Going live' },
+];
+
+const cards: Card[] = [
+	{ key: 'youtube', name: 'YouTube', tint: 'youtube', find: 'Recommendations on Home and Up Next', rewards: 'Clicks, watch time and viewer satisfaction', paid: '500 subs for fan money, 1,000 for ad revenue', fits: ['long', 'short', 'talking', 'live'] },
+	{ key: 'tiktok', name: 'TikTok', tint: 'tiktok', find: 'The For You feed, fresh for every video', rewards: 'Watching to the end, shares, comments', paid: '10K followers and 100K views a month, videos over 1 minute', fits: ['short', 'live', 'talking'] },
+	{ key: 'instagram', name: 'Instagram', tint: 'instagram', find: 'Reels and Explore, mostly non-followers', rewards: 'Sends, watch time and likes', paid: 'Per-tool eligibility in your dashboard', fits: ['short', 'photos'] },
+	{ key: 'x', name: 'X', tint: 'x', find: 'For You, about half from non-followers', rewards: 'Replies, quotes and shares, weighted in open code', paid: 'Premium, 500 verified followers, 500K verified impressions in 90 days', fits: ['writing', 'short'] },
+	{ key: 'linkedin', name: 'LinkedIn', tint: 'linkedin', find: 'Feed matched to professional interests', rewards: 'Genuine expertise, not engagement bait', paid: 'No ad share. Clients, B2B deals, invite-only BrandLink', fits: ['writing', 'photos', 'talking'] },
+	{ key: 'threads', name: 'Threads', tint: 'threads', find: 'For You, tied to your Instagram', rewards: 'Likes, opened replies, profile taps, follows', paid: 'No direct payouts yet. Pays through Instagram', fits: ['writing'] },
+	{ key: 'pinterest', name: 'Pinterest', tint: 'pinterest', find: 'Search and a planning-based home feed', rewards: 'Keywords, fresh original images, good links', paid: 'Affiliate links and traffic to your own site', fits: ['photos', 'short'] },
+	{ key: 'snapchat', name: 'Snapchat', tint: 'snapchat', find: 'Spotlight, Public Stories and the Map', rewards: 'Original, human-made Snaps', paid: '50K followers plus a heavy posting schedule', fits: ['short', 'photos'] },
+	{ key: 'twitch', name: 'Twitch', tint: 'twitch', find: 'Mostly people you bring from elsewhere', rewards: 'Average live viewers and consistency', paid: '25 followers, 4 hours on 4 days, 3 average viewers', fits: ['live', 'talking'] },
+	{ key: 'newsletters', name: 'Newsletters', tint: 'newsletters', find: 'Your list, plus Substack-style networks', rewards: 'Opens, replies, recommendations', paid: 'From your first paid subscriber', fits: ['writing'] },
+	{ key: 'podcasts', name: 'Podcasts', tint: 'podcasts', find: 'YouTube, Spotify and Apple charts', rewards: 'Follows, finishes and watch time', paid: 'Spotify: 1,000 engaged fans, 2,000 hours, 3 episodes', fits: ['talking', 'long'] },
+];
+---
+
+<div class="sc-widget pp" data-pp>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Where should you post?</div>
+			<h4 class="sc-widget__title">What do you like making?</h4>
+		</div>
+	</div>
+	<div class="pp-chips" role="group" aria-label="What you like making">
+		{makes.map((m, i) => <button type="button" class="sc-chip" data-make={m.key} aria-pressed={i === 0 ? 'true' : 'false'}>{m.label}</button>)}
+	</div>
+	<p class="pp-count" aria-live="polite" data-count>All 11 platforms</p>
+	<div class="pp-grid sc-rail not-content" data-rail>
+		{
+			cards.map((c) => (
+				<a class="pp-card" href={`/platforms/${c.key}/`} data-section={c.tint} data-fits={c.fits.join(' ')}>
+					<span class="pp-name">{c.name}</span>
+					<dl>
+						<dt>How people find you</dt>
+						<dd>{c.find}</dd>
+						<dt>What it rewards</dt>
+						<dd>{c.rewards}</dd>
+						<dt>Getting paid</dt>
+						<dd>{c.paid}</dd>
+					</dl>
+					<span class="pp-go">Read the guide →</span>
+				</a>
+			))
+		}
+	</div>
+	<p class="sc-widget__note">Simplified from each platform guide, where every line is sourced and dated. Checked November 2026.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-pp]').forEach((root) => {
+		const chips = root.querySelectorAll<HTMLButtonElement>('[data-make]');
+		const cards = [...root.querySelectorAll<HTMLElement>('.pp-card')];
+		const grid = root.querySelector<HTMLElement>('.pp-grid')!;
+		const count = root.querySelector<HTMLElement>('[data-count]')!;
+		chips.forEach((chip) =>
+			chip.addEventListener('click', () => {
+				const k = chip.dataset.make!;
+				chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+				let n = 0;
+				let first: HTMLElement | undefined;
+				cards.forEach((c) => {
+					const match = k === 'all' || c.dataset.fits!.split(' ').includes(k);
+					c.classList.toggle('is-dim', !match);
+					if (match) {
+						n++;
+						first ??= c;
+					}
+				});
+				// On phones the cards are a swipe rail: bring the first match into view.
+				if (first && grid.scrollWidth > grid.clientWidth) grid.scrollTo({ left: grid.scrollLeft + first.getBoundingClientRect().left - grid.getBoundingClientRect().left - 16, behavior: 'smooth' });
+				count.textContent = k === 'all' ? 'All 11 platforms' : `${n} platforms fit ${chip.textContent!.toLowerCase()}`;
+			}),
+		);
+	});
+</script>
+
+<style>
+	.pp-chips {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		padding-bottom: 0.25rem;
+	}
+	.pp-chips::-webkit-scrollbar {
+		display: none;
+	}
+	.pp-chips .sc-chip {
+		flex: none;
+	}
+	@media (min-width: 48rem) {
+		.pp-chips {
+			flex-wrap: wrap;
+		}
+	}
+	.pp-count {
+		margin: 0.75rem 0 0.5rem;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.pp-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+	@media (min-width: 40rem) {
+		.pp-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (min-width: 64rem) {
+		.pp-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+	.pp-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		padding: 1rem;
+		border: 1px solid var(--sc-line);
+		border-top: 3px solid var(--accent);
+		border-radius: var(--sc-radius-md);
+		background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, transparent), rgb(255 255 255 / 0.01));
+		text-decoration: none;
+		color: var(--sc-ivory);
+		transition:
+			opacity 0.25s ease,
+			transform 0.25s ease,
+			border-color 0.25s ease;
+	}
+	.pp-card:hover {
+		transform: translateY(-2px);
+		border-color: var(--accent);
+	}
+	.pp-card.is-dim {
+		opacity: 0.32;
+	}
+	.pp-name {
+		font: 600 1.25rem / 1.1 var(--sc-font-display, inherit);
+		color: var(--accent);
+	}
+	.pp-card dl {
+		margin: 0;
+		display: grid;
+		gap: 0.15rem;
+	}
+	.pp-card dt {
+		font-size: 0.7rem;
+		color: var(--sc-silver);
+		margin-top: 0.35rem;
+	}
+	.pp-card dd {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.4;
+		color: var(--sc-platinum);
+	}
+	.pp-go {
+		margin-top: auto;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pp-card {
+			transition: none;
+		}
+	}
+</style>

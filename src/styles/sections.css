@@ -33,6 +33,13 @@
 	--sc-tiktok: var(--sc-cyan);
 	--sc-instagram: var(--sc-rose);
 	--sc-x: var(--sc-silver);
+	--sc-linkedin: var(--sc-ion);
+	--sc-threads: var(--sc-platinum, var(--sc-silver));
+	--sc-pinterest: var(--sc-ember);
+	--sc-snapchat: var(--sc-brass);
+	--sc-twitch: var(--sc-amethyst);
+	--sc-newsletters: var(--sc-jade);
+	--sc-podcasts: var(--sc-champagne);
 }
 [data-section='algorithms'] { --accent: var(--sc-algorithms); }
 [data-section='case-studies'] { --accent: var(--sc-case-studies); }
@@ -42,3 +49,10 @@
 [data-section='tiktok'] { --accent: var(--sc-tiktok); }
 [data-section='instagram'] { --accent: var(--sc-instagram); }
 [data-section='x'] { --accent: var(--sc-x); }
+[data-section='linkedin'] { --accent: var(--sc-linkedin); }
+[data-section='threads'] { --accent: var(--sc-threads); }
+[data-section='pinterest'] { --accent: var(--sc-pinterest); }
+[data-section='snapchat'] { --accent: var(--sc-snapchat); }
+[data-section='twitch'] { --accent: var(--sc-twitch); }
+[data-section='newsletters'] { --accent: var(--sc-newsletters); }
+[data-section='podcasts'] { --accent: var(--sc-podcasts); }
