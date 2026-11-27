@@ -1,13 +1,55 @@
 ---
-title: "Brand management"
-description: "Consistency, reputation and handling a crisis."
-status: outline
+title: "Handling a public crisis"
+description: "A calm playbook for the first 48 hours when something you said, posted or did blows up, plus how to keep an eye on your name before it does."
+status: draft
+confidence: practitioner-view
+lastReviewed: 2026-11-26
+cover:
+  label: Crisis
 sidebar:
-  order: 1
+  order: 8
 ---
 
-:::note[Outline]
-This page is an outline. Want to write it? See [Contribute](/about/contribute/).
-:::
+**The short version:** pause everything scheduled, get the facts straight before you say anything, tell your brand partners before they read it online, and say one clear thing in your own voice. Most crises get worse through rushed replies, not through the original mistake.
 
-Brand basics, monitoring mentions, and a calm crisis playbook.
+This page is practitioner advice, not platform policy. It's what creator managers and PR people consistently recommend, and we've kept it to steps you can act on.
+
+## The first 48 hours
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li class="is-active"><strong>Hour 0: pause</strong><span>Stop scheduled posts and ads. A cheerful sponsored post in the middle of a pile-on looks tone-deaf.</span></li>
+<li><strong>Hours 1–6: facts</strong><span>What exactly happened, what's being said, and what's wrong. Screenshot it all. Don't reply in comments yet.</span></li>
+<li><strong>Hours 6–24: partners</strong><span>Brief your active brand partners and your team privately. Check your contracts for morality clauses.</span></li>
+<li><strong>Hours 24–48: respond</strong><span>One statement, in your own words, on the platform where it started. Then stop and let it land.</span></li>
+</ol>
+<figcaption>A practitioner sequence, not a platform rule</figcaption>
+</figure>
+
+## Is it a crisis, or just noise?
+
+<div class="sc-compare">
+<div class="sc-compare__side is-jade"><h4>Probably noise: don't feed it</h4><ul><li>A few loud accounts, no change in your sponsors' or press interest</li><li>Criticism of taste, not of harm</li><li>It's already fading after a day</li></ul></div>
+<div class="sc-compare__side is-rose"><h4>A real crisis: act</h4><ul><li>Someone was actually hurt, or a claim is true</li><li>Brands, press or the platform are contacting you</li><li>A legal issue: defamation, privacy, contracts</li></ul></div>
+</div>
+
+## A statement that works
+
+1. **Say what happened**, in plain words, without minimizing it.
+2. **Own your part.** "I'm sorry if anyone was offended" reads as no apology at all.
+3. **Say what changes**, concretely, and then actually do it.
+4. **Don't attack critics** or drag in other people.
+
+If a claim about you is false and damaging, talk to a lawyer before posting. A public rebuttal can make legal options harder.
+
+## Don't make it worse
+
+- **Don't mass-delete posts.** It looks like hiding and screenshots already exist. Archive or hide specific items if you need to.
+- **Don't argue in comments or DMs.** Anything you write can become the next screenshot.
+- **Don't let a hacked account speak for you.** If posts you didn't make caused this, start with [Hacked or locked out](/protect/hacked/), and say publicly that you were hacked.
+
+## Keep an eye on your name
+
+- **Set a Google Alert** for your name and handles.
+- **Search your handles on each platform weekly** for fakes. If you find one, use the [impersonation playbook](/protect/impersonation/).
+- **Know your contracts.** Our [clause library](/deals/clause-library/) explains morality clauses and what brands can do under them.

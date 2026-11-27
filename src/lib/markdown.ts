@@ -4,6 +4,7 @@
  */
 import type { CollectionEntry } from 'astro:content';
 import { sets, myths, rows, platforms } from './widget-data';
+import { protectWidgetMarkdown } from './protect-playbooks';
 
 export const SITE = 'https://creators.select';
 
@@ -15,7 +16,7 @@ export function toMarkdown(e: CollectionEntry<'docs'>): string {
 		.replace(/<style>[\s\S]*?<\/style>/g, '')
 		.replace(/<svg[\s\S]*?<\/svg>/g, '')
 		// self-closing MDX components like <FeedSimulator />
-		.replace(/<([A-Z][A-Za-z]+)[^>]*\/>/g, (_m, name) => '\n' + (widgetText[name] ?? `> Interactive element on the web page: ${name}. See ${SITE}/${e.id}/`) + '\n')
+		.replace(/<([A-Z][A-Za-z]+)[^>]*\/>/g, (m, name) => '\n' + (widgetText[name] ?? protectWidgetMarkdown(name, m) ?? `> Interactive element on the web page: ${name}. See ${SITE}/${e.id}/`) + '\n')
 		// list items in diagrams keep their text
 		.replace(/<li[^>]*>/g, '\n- ')
 		.replace(/<(h4|strong)[^>]*>/g, '**')

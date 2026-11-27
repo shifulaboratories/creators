@@ -1,0 +1,140 @@
+---
+/**
+ * Platform switcher for one situation's playbooks. Without JavaScript every
+ * platform shows, stacked. With it, one shows at a time and the choice is
+ * remembered across Protect pages (and can be set with ?p=instagram).
+ */
+import PlaybookPanel from './PlaybookPanel.astro';
+import { platforms, playbooks, CHECKED, type SituationKey } from '../lib/protect-playbooks';
+interface Props {
+	situation: SituationKey;
+}
+const { situation } = Astro.props;
+const set = playbooks[situation];
+const checked = new Date(CHECKED).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+<section class="pb sc-widget not-content" data-pb>
+	<div class="pb-tabs sc-chip-row" role="tablist" aria-label="Pick your platform">
+		{
+			platforms.map((p, i) => (
+				<button
+					type="button"
+					class="sc-chip pb-tab"
+					role="tab"
+					id={`pb-${situation}-tab-${p.key}`}
+					aria-controls={`pb-${situation}-${p.key}`}
+					aria-selected={i === 0 ? 'true' : 'false'}
+					data-p={p.key}
+					data-section={p.tint}
+				>
+					{p.name}
+				</button>
+			))
+		}
+	</div>
+	{
+		platforms.map((p) => (
+			<div class="pb-panel" role="tabpanel" id={`pb-${situation}-${p.key}`} aria-labelledby={`pb-${situation}-tab-${p.key}`} data-p={p.key} data-section={p.tint}>
+				<h3 class="pb-name">{p.name}</h3>
+				<PlaybookPanel pb={set[p.key]} />
+			</div>
+		))
+	}
+	<p class="sc-widget__note">Official routes only, checked {checked}. Menus move: if a step doesn’t match your app, the linked help page is the source of truth.</p>
+</section>
+
+<style>
+	.pb {
+		scroll-margin-top: 7.5rem;
+	}
+	.pb-tabs {
+		flex-wrap: nowrap !important;
+		overflow-x: auto;
+		scrollbar-width: none;
+		margin: -0.25rem -0.25rem 1rem;
+		padding: 0.25rem;
+	}
+	.pb-tabs::-webkit-scrollbar {
+		display: none;
+	}
+	.pb-tab {
+		flex: 1 0 auto;
+		font-size: 0.82rem !important;
+		padding: 0.5rem 0.8rem !important;
+		min-height: 2.5rem;
+	}
+	.pb-panel + .pb-panel {
+		margin-top: 2rem;
+	}
+	.pb-name {
+		margin: 0 0 0.75rem;
+		font-family: var(--sc-font-display);
+		font-size: 1.15rem;
+		color: var(--sc-ivory);
+	}
+	:global(.pb.is-js) .pb-panel:not(.is-on) {
+		display: none;
+	}
+	:global(.pb.is-js) .pb-panel + .pb-panel {
+		margin-top: 0;
+	}
+	:global(.pb.is-js) .pb-name {
+		display: none;
+	}
+	:global(.pb:not(.is-js)) .pb-tabs {
+		display: none;
+	}
+	.pb-panel.is-on {
+		animation: pb-in var(--sc-dur-base) var(--sc-ease-settle) both;
+	}
+	@keyframes pb-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+	}
+</style>
+
+<script>
+	const KEY = 'sc-protect-platform';
+	const read = () => {
+		try {
+			return localStorage.getItem(KEY);
+		} catch {
+			return null;
+		}
+	};
+	const save = (v: string) => {
+		try {
+			localStorage.setItem(KEY, v);
+		} catch {}
+	};
+	const roots = [...document.querySelectorAll<HTMLElement>('[data-pb]')];
+	const fromUrl = new URLSearchParams(location.search).get('p');
+	const pick = (root: HTMLElement, key: string) => {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('.pb-tab')];
+		if (!tabs.some((t) => t.dataset.p === key)) key = tabs[0].dataset.p!;
+		tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.p === key)));
+		root.querySelectorAll<HTMLElement>('.pb-panel').forEach((p) => p.classList.toggle('is-on', p.dataset.p === key));
+	};
+	const start = fromUrl || read() || 'instagram';
+	roots.forEach((root) => {
+		root.classList.add('is-js');
+		pick(root, start);
+		root.addEventListener('click', (e) => {
+			const tab = (e.target as HTMLElement).closest<HTMLButtonElement>('.pb-tab');
+			if (!tab) return;
+			save(tab.dataset.p!);
+			roots.forEach((r) => pick(r, tab.dataset.p!));
+		});
+		root.addEventListener('keydown', (e) => {
+			const tabs = [...root.querySelectorAll<HTMLButtonElement>('.pb-tab')];
+			const i = tabs.indexOf(document.activeElement as HTMLButtonElement);
+			if (i < 0 || !['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+			const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+			next.focus();
+			next.click();
+		});
+	});
+</script>
