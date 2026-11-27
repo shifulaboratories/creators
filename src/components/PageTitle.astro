@@ -9,6 +9,7 @@ import DoThis from './guide/DoThis.astro';
 import LibraryButton from './LibraryButton.astro';
 import { isGuideId } from '../lib/library';
 import { tldrFor } from '../data/tldr';
+import { NEWS_PLATFORM_INFO, getNews, newsPath, fmtDate, isoDate } from '../lib/news';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
 const { entry } = Astro.locals.starlightRoute;
@@ -19,9 +20,16 @@ const data = entry.data as typeof entry.data & {
 	reviewers?: string[];
 	lastReviewed?: Date;
 	tldr?: string[];
+	news?: { platform: string; announced: Date; published: Date; updated?: Date; confirmed: 'official' | 'reported' };
 	payoff?: string;
 	moves?: { do: string; why: string; source?: string }[];
 };
+const news = data.news;
+const newsPlatform = news ? NEWS_PLATFORM_INFO[news.platform] : undefined;
+// Platform guides and platform news pages link to that platform's latest update.
+const [s0, s1] = entry.id.split('/');
+const latestFor = !news && ((s0 === 'platforms' || s0 === 'news') && s1 && NEWS_PLATFORM_INFO[s1] && !entry.id.split('/')[2]) ? s1 : undefined;
+const latest = s0 === 'platforms' && latestFor ? (await getNews(latestFor))[0] : undefined;
 const section = entry.id.split('/')[0];
 const labels: Record<string, string> = {
 	grow: 'Grow',
@@ -62,10 +70,15 @@ const confidenceText: Record<string, string> = {
 ---
 
 <header class="guide-head" data-section={section}>
-	{labels[section] && <p class="kicker"><span class="swatch"></span>{labels[section]}</p>}
+	{labels[section] && <p class="kicker"><span class="swatch"></span>{news && newsPlatform ? <><a href="/news/">News</a><span aria-hidden="true">·</span><a href={`/news/${news.platform}/`}>{newsPlatform.name}</a></> : labels[section]}</p>}
 	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
 	{(data.payoff || data.description) && <p class={data.payoff ? 'lead payoff' : 'lead'}>{data.payoff ?? data.description}</p>}
-	{entry.id !== 'guides' && <ul class="chips">
+	{news && <ul class="chips">
+		<li class="chip">Announced <time datetime={isoDate(news.announced)}>{fmtDate(news.announced)}</time></li>
+		{news.confirmed === 'official' ? <li class="chip status-published">Official</li> : <li class="chip brass">Reported</li>}
+		{news.updated && news.updated.getTime() !== news.published.getTime() && <li class="chip">Updated {fmtDate(news.updated)}</li>}
+	</ul>}
+	{entry.id !== 'guides' && !news && section !== 'news' && <ul class="chips">
 		{showTime && <li class="chip time">{minutes} min read</li>}
 		{data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
@@ -90,6 +103,12 @@ const confidenceText: Record<string, string> = {
 	)}
 	{moves.length > 0 && <DoThis moves={moves} />}
 	{tldr.length > 0 && <Tldr points={tldr} />}
+	{latest && (
+		<a class="latest" href={newsPath(latest)}>
+			<span class="latest__k">Latest change · {fmtDate(latest.data.announced)}</span>
+			<span class="latest__t">{latest.data.title}</span>
+		</a>
+	)}
 	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 || moves.length > 0 }}>
 		// Tint the whole page with the section color, without :root:has() (slow on long pages).
 		const r = document.documentElement;
@@ -187,6 +206,41 @@ const confidenceText: Record<string, string> = {
 		display: flex;
 		gap: 0.5rem;
 		margin-top: 1.1rem;
+	}
+	.kicker a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.kicker a:hover {
+		text-decoration: underline;
+	}
+	.brass {
+		color: var(--sc-brass);
+		border-color: color-mix(in srgb, var(--sc-brass) 45%, transparent);
+	}
+	.latest {
+		display: grid;
+		gap: 0.1rem;
+		max-width: 40rem;
+		margin-top: 0.9rem;
+		padding: 0.6rem 0.9rem;
+		font-size: var(--sc-text-sm);
+		border-radius: 14px;
+		border: 1px solid var(--sc-line-strong);
+		text-decoration: none;
+		color: inherit;
+	}
+	.latest:hover {
+		background: var(--sc-fill-muted);
+	}
+	.latest__k {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-lime);
+		font-weight: 600;
+	}
+	.latest__t {
+		color: var(--sc-ivory);
+		font-weight: 600;
 	}
 	.ember {
 		color: var(--sc-ember);

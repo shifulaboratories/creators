@@ -47,7 +47,7 @@ These clear the automatic bar (500+ words and 3+ sources, or 150+ words for over
 | Formats by platform | `grow/formats` | outline | outline notice, 28 words, 0 sources |
 | Content strategy | `grow/strategy` | outline | outline notice, 39 words, 0 sources |
 | News | `news` | outline | 18 words |
-| Weekly roundup | `news/weekly` | outline | outline notice, 30 words, 0 sources |
+| Platform news | `news/*` | draft | replaced the weekly roundup outline (2026-11-27) |
 | Instagram | `platforms/instagram` | draft | 329 words, 1 sources |
 | TikTok | `platforms/tiktok` | draft | 315 words, 1 sources |
 | X | `platforms/x` | draft | 377 words |

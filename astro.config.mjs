@@ -18,6 +18,7 @@ export default defineConfig({
 		'/grow/strategy': '/grow/niche/',
 		'/earn/brand-deals': '/deals/brand-deals/',
 		'/earn/pricing': '/deals/pricing/',
+		'/news/weekly': '/news/',
 	},
 	integrations: [
 		starlight({
@@ -65,7 +66,7 @@ export default defineConfig({
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),
 				section('Underground', 'underground'),
-				section('News', 'news'),
+				section('Platform news', 'news'),
 				section('About', 'about'),
 			],
 		}),
