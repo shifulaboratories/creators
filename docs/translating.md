@@ -14,7 +14,7 @@ Select Creators is published in English, Spanish (`/es/`) and Brazilian Portugue
 
 1. Pick the next page from the priority list below and check it isn't being rewritten (ask in the project chat, or check open pull requests touching it).
 2. Copy the English file to the same path under `es/` or `pt-br/`.
-3. Translate the frontmatter `title`, `description`, `tldr`, `cover.label` and `sidebar.label`, then the body. Keep `status`, `confidence`, `authors`, `reviewers`, `lastReviewed` and `sidebar.order` as they are.
+3. Translate the frontmatter `title`, `description`, `payoff`, each of the `moves` (`do`, `why` and `source`), `tldr`, `cover.label` and `sidebar.label`, then the body, including component props like `title`, `hint`, `items` and `text` on `<DeepDive>`, `<QuickCheck>`, `<CopyBlock>` and `<BeforeAfter>` (format spec: [guide-format.md](guide-format.md)). Wrap a hand-written English source list in `<div lang="en">`; the `<Sources>` components do this themselves. Keep `status`, `confidence`, `authors`, `reviewers`, `lastReviewed` and `sidebar.order` as they are.
 4. Add the translation block, with the English file's latest commit:
 
    ```yaml
@@ -46,15 +46,15 @@ Interface strings aren't tracked this way: when you add English text to a compon
 
 ## Priority list
 
-Translated so far: home, Guides gallery, Paywall overview, Fanfix, OnlyFans, How we make money.
+Translated so far: home, Guides gallery, Paywall overview, Fanfix, OnlyFans, Brand deals 101, Instagram, How we make money.
 
-Next, in order. Pages marked "after the guide-format rewrite" are being restructured; translate them once that lands so the work isn't done twice.
+Next, in order:
 
-1. Paywall: Fanvue, Patreon and Ko-fi, compare, chatting agencies, signing with an agency
-2. About: about, editorial standards, corrections, privacy, disclaimers
-3. Platforms: Instagram, TikTok, YouTube, then the rest (after the guide-format rewrite)
-4. Brand deals: overview, brand deals, pricing, negotiation, usage rights (after the guide-format rewrite)
-5. Algorithms: how recommenders work, what to optimize, myths (after the guide-format rewrite)
+1. Platforms: TikTok, YouTube, then Facebook, LinkedIn and X
+2. Brand deals: pricing (its rate calculator needs its labels moved to `src/i18n/ui.ts` first), negotiation, pitching brands, getting paid
+3. Paywall: Fanvue, Patreon and Ko-fi, compare, chatting agencies, signing with an agency
+4. About: about, editorial standards, corrections, privacy, disclaimers
+5. Algorithms: how recommenders work, what to optimize, myths
 6. Protect: hacked, banned, impersonation, scams
 7. Team, Grow, Earn, Case studies
 8. Money basics last: it is US-specific and needs local versions rather than translation.
