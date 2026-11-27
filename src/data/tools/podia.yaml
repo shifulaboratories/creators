@@ -1,0 +1,17 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Podia"
+url: https://www.podia.com/
+slot: courses
+what: "One place to sell courses, downloads, webinars and coaching, with a website and email included."
+who: "Creators selling a mix of small digital products."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 42
+  feePct: 0.05
+  note: "Mover is $42/mo billed yearly with a 5% fee; Shaker has no Podia fee; 14-day trial, no card"
+pricingUrl: https://www.podia.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Courses, downloads and email in one simple tool"
+alternative: "Gumroad (no monthly fee)"
+affiliate: false

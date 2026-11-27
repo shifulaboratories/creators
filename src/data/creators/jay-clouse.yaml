@@ -1,0 +1,48 @@
+name: Jay Clouse
+known: Creator Science podcast, newsletter and YouTube channel on the creator business
+niche: business
+platforms: [podcast, newsletter, youtube]
+site: https://creatorscience.com/
+about: Jay Clouse hosts the Creator Science podcast and newsletter, interviewing creators about how they build audiences and businesses. He runs a paid community and courses on newsletters and audience growth.
+tools:
+  - name: OpenClaw
+    use: Open-source AI agent he has used since early 2026 to build internal tools, such as dashboards and a membership CRM
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - name: Claude
+    use: Writes the code for his internal tools; he uses AI for research, planning and operations rather than for content
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - name: Circle
+    use: Hosts his paid community; its member data feeds his churn and renewals dashboard
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - name: ManyChat
+    use: Turns comments on a keyword into email sign-ups
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+advice:
+  - text: Treat revenue growth as a series of experiments. He dedicates whole months to testing new offers, like a live paid relaunch of a course.
+    quote: false
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - text: Take fewer, longer-term sponsorships and only for products you actually use, so each one reads as a full endorsement.
+    quote: false
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - text: In his community, members who commented before posting stayed longest, so he now onboards people by having them welcome others first and spaces welcome emails a few days apart.
+    quote: false
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"
+  - text: You don't need to go viral to reach 1,000 true fans. Slow growth is a valid path.
+    quote: false
+    source: https://creatorscience.com/podcast/9-things-2026/
+    sourceTitle: "9 Things I'm Doing Differently in My Business (Creator Science, Ep 298)"
+    date: "Mar 2026"

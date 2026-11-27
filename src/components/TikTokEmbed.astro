@@ -1,0 +1,192 @@
+---
+/**
+ * One tap-to-load TikTok. Nothing loads from TikTok until the reader taps:
+ * the card is drawn by us, then TikTok's official player replaces it.
+ * Wrap two or three in <div class="tt-row"> to sit them side by side.
+ */
+interface Props {
+	id: string;
+	handle: string;
+	title: string;
+	// e.g. "Jun 2021"
+	date?: string;
+	// e.g. "361M views by Nov 2026"
+	stat?: string;
+	caption?: string;
+}
+const { id, handle, title, date, stat, caption } = Astro.props;
+const url = `https://www.tiktok.com/@${handle}/video/${id}`;
+---
+
+<figure class="tt not-content">
+	<button type="button" class="tt-frame" data-tt={id} aria-label={`Play on TikTok: ${title}`}>
+		<span class="tt-glow" aria-hidden="true"></span>
+		<span class="tt-top">
+			<span class="tt-handle">@{handle}</span>
+			{date && <span class="tt-date">{date}</span>}
+		</span>
+		<span class="tt-play" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"></path></svg>
+		</span>
+		<span class="tt-bottom">
+			<span class="tt-title">{title}</span>
+			{stat && <span class="tt-stat">{stat}</span>}
+			<span class="tt-hint">Tap to play · loads TikTok</span>
+		</span>
+	</button>
+	<figcaption>
+		{caption && <span>{caption} </span>}
+		<a href={url} target="_blank" rel="noopener">Open on TikTok ↗</a>
+	</figcaption>
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('.tt-frame[data-tt]').forEach((b) =>
+		b.addEventListener(
+			'click',
+			() => {
+				const f = document.createElement('iframe');
+				f.src = `https://www.tiktok.com/player/v1/${b.dataset.tt}?autoplay=1&description=1&music_info=1&rel=0`;
+				f.title = b.getAttribute('aria-label')?.replace(/^Play on TikTok: /, '') ?? 'TikTok video';
+				f.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+				f.allowFullscreen = true;
+				f.className = 'tt-iframe';
+				b.replaceWith(f);
+			},
+			{ once: true },
+		),
+	);
+</script>
+
+<style>
+	.tt {
+		width: 100%;
+		max-width: 20rem;
+		margin: 1.5rem auto;
+	}
+	:global(.tt-row) {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 1rem;
+		margin: 1.5rem 0;
+	}
+	:global(.tt-row) .tt {
+		margin: 0 auto;
+	}
+	/* Phones: swipe between TikToks instead of scrolling past each one. */
+	@media (max-width: 39.99rem) {
+		:global(.tt-row:has(.tt + .tt)) {
+			grid-template-columns: none;
+			grid-auto-flow: column;
+			grid-auto-columns: 72%;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			padding-bottom: 0.25rem;
+		}
+		:global(.tt-row) .tt {
+			scroll-snap-align: start;
+		}
+	}
+	.tt-frame {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		width: 100%;
+		aspect-ratio: 9 / 16;
+		padding: 1rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 22px;
+		overflow: hidden;
+		background: #0b0b0d;
+		color: #fff;
+		text-align: left;
+		cursor: pointer;
+		isolation: isolate;
+	}
+	.tt-glow {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background:
+			radial-gradient(70% 45% at 15% 10%, rgb(37 244 238 / 0.32), transparent 70%),
+			radial-gradient(70% 45% at 90% 95%, rgb(254 44 85 / 0.32), transparent 70%),
+			linear-gradient(160deg, #141418, #070708);
+		transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.tt-frame:hover .tt-glow,
+	.tt-frame:focus-visible .tt-glow {
+		transform: scale(1.08) rotate(-2deg);
+	}
+	.tt-top {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+	}
+	.tt-date {
+		color: rgb(255 255 255 / 0.6);
+		font-weight: 500;
+	}
+	.tt-play {
+		position: absolute;
+		inset: 50% auto auto 50%;
+		translate: -50% -50%;
+		display: grid;
+		place-items: center;
+		width: 64px;
+		height: 64px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.14);
+		backdrop-filter: blur(8px);
+		border: 1px solid rgb(255 255 255 / 0.25);
+		transition: transform 0.3s;
+	}
+	.tt-frame:hover .tt-play {
+		transform: scale(1.08);
+	}
+	.tt-bottom {
+		display: grid;
+		gap: 0.35rem;
+	}
+	.tt-title {
+		font: 600 1.05rem / 1.25 var(--sc-font-display, inherit);
+	}
+	.tt-stat {
+		justify-self: start;
+		padding: 0.15rem 0.55rem;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.12);
+		font-size: 0.74rem;
+		font-weight: 600;
+	}
+	.tt-hint {
+		font-size: 0.72rem;
+		color: rgb(255 255 255 / 0.55);
+	}
+	:global(.tt-iframe) {
+		display: block;
+		width: 100%;
+		aspect-ratio: 9 / 16;
+		border: 0;
+		border-radius: 22px;
+		background: #000;
+	}
+	.tt figcaption {
+		margin-top: 0.5rem;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	.tt figcaption a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tt-glow,
+		.tt-play {
+			transition: none;
+		}
+	}
+</style>

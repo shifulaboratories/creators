@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Uppbeat"
+url: https://uppbeat.io/
+slot: music
+what: "Royalty-free music and sound effects made for creators, with a free tier and cheap paid plans."
+who: "Small YouTubers who need safe background music on a budget."
+platforms: [youtube, tiktok, instagram, podcast]
+pricing:
+  free: true
+  fromUsdPerMonth: 6.99
+  note: "Essentials is $8.99/mo, or $6.99/mo billed yearly; free plan gives 3 downloads"
+pricingUrl: https://uppbeat.io/pricing
+lastVerified: 2026-11-27
+bestFor: "Cheap, safe background music for videos"
+alternative: "YouTube Audio Library (free)"
+affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Printful"
+url: https://www.printful.com/
+slot: merch
+what: "Print-on-demand merch that connects to your store. They print and ship each order, so you hold no stock."
+who: "Creators who want merch on their own store without inventory."
+platforms: []
+pricing:
+  free: true
+  fromUsdPerMonth: 24.99
+  note: "Free to use, you pay per product; optional Growth plan is $24.99/mo, free past $12K/yr in sales"
+pricingUrl: https://www.printful.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Merch on your own store with no inventory"
+alternative: "Fourthwall (free to start)"
+affiliate: false

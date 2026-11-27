@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Screen Studio"
+url: https://screen.studio/
+slot: editing
+what: "A Mac screen recorder that adds smooth automatic zooms, cursor effects and backgrounds so demos look polished."
+who: "Creators who make software tutorials, product demos or course videos."
+platforms: [youtube, x, linkedin]
+pricing:
+  free: false
+  fromUsdPerMonth: 9
+  note: "$29/mo, or $9/mo billed yearly; 40% off for students and educators"
+pricingUrl: https://screen.studio/pricing
+lastVerified: 2026-11-27
+bestFor: "Polished screen recordings with auto zoom"
+alternative: "OBS Studio (free)"
+affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "CleanShot X"
+url: https://cleanshot.com/
+slot: design
+what: "A Mac screenshot and screen recording app with annotation, blur, scrolling capture and quick sharing."
+who: "Mac users who make tutorials, thumbnails or explainer posts from screenshots."
+platforms: []
+pricing:
+  free: false
+  oneTimeUsd: 35
+  note: "$35 once (on sale for $24.50 when checked); optional Cloud Pro is $10/user/mo billed yearly; no trial"
+pricingUrl: https://cleanshot.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Clean, annotated screenshots and quick recordings on Mac"
+alternative: "macOS Screenshot (Cmd+Shift+5, free)"
+affiliate: false

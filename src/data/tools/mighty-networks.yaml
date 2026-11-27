@@ -1,0 +1,17 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Mighty Networks"
+url: https://www.onmighty.com/
+slot: community
+what: "A community platform with courses, events, memberships and your own branded app option."
+who: "Creators running a membership with courses and live events."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 79
+  feePct: 0.02
+  note: "Starter is $79/mo billed yearly with a 2% transaction fee; 14-day trial, no card"
+pricingUrl: https://www.onmighty.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Memberships that mix community, courses and events"
+alternative: "Discord (free)"
+affiliate: false

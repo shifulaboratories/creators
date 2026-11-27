@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Epidemic Sound"
+url: https://www.epidemicsound.com/
+slot: music
+what: "A subscription library of music and sound effects you can use in monetized videos without copyright claims."
+who: "YouTubers, podcasters and short-form creators who want safe, unlimited music."
+platforms: [youtube, tiktok, instagram, podcast]
+pricing:
+  free: false
+  fromUsdPerMonth: 9.99
+  note: "Creator plan $9.99/mo billed yearly ($119.88), covers 1 channel per platform; 30 days free"
+pricingUrl: https://www.epidemicsound.com/pricing/
+lastVerified: 2026-11-27
+bestFor: "Unlimited claim-free music and sound effects for one channel"
+alternative: "Uppbeat (free plan)"
+affiliate: false

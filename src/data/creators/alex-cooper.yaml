@@ -10,3 +10,16 @@ advice:
     source: https://en.wikipedia.org/wiki/Call_Her_Daddy
     sourceTitle: "Call Her Daddy (Wikipedia, citing NYT, Variety and CNN)"
     date: "Checked Nov 2026"
+videos:
+  - platform: youtube
+    id: MKSK3xctT0I
+    title: "The truth about Call Her Daddy"
+    channel: Alexandra Cooper
+    date: May 2020
+    why: "Posted to her own channel on May 22, 2020, in the middle of the Barstool contract fight."
+  - platform: youtube
+    id: uar9p8vwOag
+    title: "Inside Alex Cooper's $125 Million Deal To Grow Her Multimedia Empire"
+    channel: Forbes
+    date: Nov 2024
+    why: "Forbes' cover interview on the SiriusXM deal and what she now has to deliver."

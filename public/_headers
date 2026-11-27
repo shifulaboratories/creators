@@ -6,6 +6,10 @@
 /og/*
   Cache-Control: public, max-age=86400
 
+# Build stamp checked after every deploy: never cache.
+/version.json
+  Cache-Control: no-store
+
 /pagefind/*
   Cache-Control: public, max-age=3600
 

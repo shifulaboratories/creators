@@ -1,0 +1,41 @@
+name: Lenny Rachitsky
+known: Lenny's Newsletter and Lenny's Podcast on product, growth and careers
+niche: business
+platforms: [newsletter, podcast, youtube]
+site: https://www.lennysnewsletter.com/
+about: A former Airbnb product lead who writes one of the largest paid newsletters on Substack and hosts an interview podcast for product and growth people.
+tools:
+  - name: Substack
+    use: Publishes and runs his paid newsletter so he can write without handling the infrastructure
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+  - name: Codex
+    use: Vibe-coded an app for browsing his newsletter archive
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+  - name: Manus
+    use: Runs a saved prompt to research podcast guests
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+advice:
+  - text: "I've come to realize quality is actually the only thing that matters."
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+  - text: "But the newsletter and the podcast work together. Having both is key."
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+  - text: Use an AI model to draft interview questions in the style of great interviewers like Charlie Rose or Terry Gross, then pick and adapt the best.
+    quote: false
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
+  - text: Give yourself a real time-off policy. He set four weeks off a year after finding he never felt able to take a week off.
+    quote: false
+    source: https://review.firstround.com/reluctantly-influential-inside-lenny-rachitskys-demandingly-chill-life/
+    sourceTitle: "Reluctantly Influential: Inside Lenny Rachitsky's Demandingly Chill Life (First Round Review)"
+    date: "Apr 2026"
