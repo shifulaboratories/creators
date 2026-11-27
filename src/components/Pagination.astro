@@ -6,8 +6,11 @@
  */
 import { getCollection } from 'astro:content';
 import { SECTION_LABELS } from '../lib/share';
+import LibraryButton from './LibraryButton.astro';
+import { isGuideId } from '../lib/library';
 
-const { pagination } = Astro.locals.starlightRoute;
+const { pagination, entry } = Astro.locals.starlightRoute;
+const isGuide = isGuideId(entry.id);
 const { prev, next } = pagination;
 
 const docs = await getCollection('docs');
@@ -27,13 +30,14 @@ const p = describe(prev);
 const n = describe(next);
 ---
 
+{isGuide && <LibraryButton kind="done" id={entry.id} title={entry.data.title} section={entry.id.split('/')[0]} />}
 {
 	(p || n) && (
-		<nav class="pager print:hidden" aria-label="More guides" data-pager data-prev={p?.href} data-next={n?.href}>
+		<nav class="pager print:hidden" aria-label="More guides" data-lib-mark data-pager data-prev={p?.href} data-next={n?.href}>
 			{n && (
 				<a class="next" href={n.href} rel="next" data-section={n.section} data-astro-prefetch="viewport">
 					<span class="eyebrow">Up next{n.kicker && <> · {n.kicker}</>}</span>
-					<span class="title">{n.title}</span>
+					<span class="title">{n.title}<span class="lib-tick" role="img" aria-label="done" /></span>
 					<span class="go" aria-hidden="true">
 						<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 					</span>

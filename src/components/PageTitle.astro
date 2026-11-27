@@ -6,6 +6,8 @@ import ShareBar from './ShareBar.astro';
 import { personName, CONTRIBUTORS_PATH } from '../data/people';
 import Tldr from './Tldr.astro';
 import DoThis from './guide/DoThis.astro';
+import LibraryButton from './LibraryButton.astro';
+import { isGuideId } from '../lib/library';
 import { tldrFor } from '../data/tldr';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
@@ -38,6 +40,7 @@ const labels: Record<string, string> = {
 	shortlist: 'The Shortlist',
 	about: 'About',
 };
+const isGuide = isGuideId(entry.id);
 const moves = data.moves ?? [];
 const tldr = moves.length > 0 ? [] : tldrFor(entry.id, data.tldr);
 // Read time covers the main read only: imports, tags and the folded-away
@@ -82,6 +85,7 @@ const confidenceText: Record<string, string> = {
 		<div class="actions">
 			{entry.id !== 'guides' && <AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />}
 			<ShareBar title={data.title} description={data.description} section={section} />
+			{isGuide && <LibraryButton kind="save" id={entry.id} title={data.title} section={section} />}
 		</div>
 	)}
 	{moves.length > 0 && <DoThis moves={moves} />}
@@ -92,6 +96,12 @@ const confidenceText: Record<string, string> = {
 		r.dataset.section = section;
 		if (hasTldr) r.dataset.tldr = '';
 		else delete r.dataset.tldr;
+	</script>
+	<script>
+		// Check off finished guides in the sidebar (stored on this device only).
+		import { markLinks, onChange } from '../scripts/library';
+		markLinks();
+		onChange(() => markLinks());
 	</script>
 </header>
 
