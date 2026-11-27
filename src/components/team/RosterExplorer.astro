@@ -81,10 +81,10 @@ const latest = signings[0]?.date;
 								<li class={`rx-event is-${e.event} ${agencies[e.agency].tint}`}>
 									<span class="rx-pill">{agencies[e.agency].name}</span>
 									<span class="rx-what">
-										{eventLabel[e.event]} · {month(e.date)}
+										{eventLabel[e.event]} · reported {month(e.date)}
 									</span>
-									<a href={e.url} rel="noopener" class="rx-src">
-										{e.publisher} ↗
+									<a href={e.url} rel="noopener" class="rx-src" title={`Source: ${e.publisher}, ${month(e.date)}`}>
+										{e.publisher === 'Wikipedia' ? 'Wikipedia entry' : `${e.publisher} article`} ↗
 									</a>
 								</li>
 							))}
@@ -96,7 +96,7 @@ const latest = signings[0]?.date;
 	</ul>
 	<button type="button" class="rx-more" data-more hidden>Show all creators</button>
 	<p class="rx-empty" data-empty hidden>No one matches that yet. Know of a reported signing? <a href="/about/contribute/">Add it</a>.</p>
-	<p class="rx-foot">Newest report: {latest && month(latest)}. Dates are when it was reported. Representation changes, so check before you rely on it.</p>
+	<p class="rx-foot">Newest report: {latest && month(latest)}. Every move shows the month it was reported and links the article it came from. Representation changes, so check before you rely on it.</p>
 </section>
 
 <style>
