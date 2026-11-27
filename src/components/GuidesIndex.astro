@@ -72,6 +72,8 @@ const termRows = sortedTerms.map((t, i) => ({
 	description: t.short,
 	rank: 9000 + i,
 }));
+const lookup = Object.fromEntries(rows.map((r) => [r.id, [r.title, r.label, r.section, r.minutes]]));
+const totals = Object.fromEntries(liveTopics.map((t) => [t.id, t.n]));
 
 const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 'hooks'];
 ---
@@ -104,6 +106,25 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 
 	<!-- Browse (hidden while searching) -->
 	<div data-browse>
+		<section class="gi-block gi-mine" id="mine" aria-labelledby="gi-mine" data-mine data-rows={JSON.stringify(lookup)} data-total={rows.length} hidden>
+			<div class="gi-mine-head">
+				<h2 id="gi-mine">My guides</h2>
+				<span class="gi-local">Saved on this device only</span>
+			</div>
+			<div class="gi-progress" data-progress>
+				<p><strong data-done-n>0</strong> of {rows.length} guides done</p>
+				<span class="bar" aria-hidden="true"><span data-bar></span></span>
+			</div>
+			<a class="gi-resume" href="#" data-resume hidden>
+				<span class="eyebrow">Pick up where you left off</span>
+				<strong data-resume-title></strong>
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+			</a>
+			<h3 class="gi-sub" data-saved-head>Saved</h3>
+			<ul class="gi-saved" data-saved data-lib-mark></ul>
+			<p class="gi-hint" data-saved-empty hidden>Nothing saved yet. Tap <b>Save</b> under any guide’s title and it shows up here.</p>
+			<button type="button" class="gi-clear" data-clear>Clear my guides</button>
+		</section>
 		<section class="gi-block" aria-labelledby="gi-plat">
 			<h2 id="gi-plat">Platforms</h2>
 			<ul class="gi-plats">
@@ -135,7 +156,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 
 		<section class="gi-block" aria-labelledby="gi-topics">
 			<h2 id="gi-topics">Topics</h2>
-			<ul class="gi-topics">
+			<ul class="gi-topics" data-totals={JSON.stringify(totals)}>
 				{
 					liveTopics.map((t) => (
 						<li>
@@ -145,7 +166,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 									<strong>{t.title}</strong>
 									<span>{t.text}</span>
 								</span>
-								<span class="n">{t.n}</span>
+								<span class="n" data-topic-n={t.id}>{t.n}</span>
 							</a>
 						</li>
 					))
@@ -165,12 +186,12 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 
 		<details class="gi-all">
 			<summary>Browse all {rows.length} guides</summary>
-			<ol class="gi-list">
+			<ol class="gi-list" data-lib-mark>
 				{
 					rows.map((r) => (
 						<li>
 							<a href={r.href} data-section={r.section}>
-								<strong>{r.title}</strong>
+								<strong>{r.title}<span class="lib-tick" role="img" aria-label="done" /></strong>
 								<span class="meta">
 									<span class="dot" aria-hidden="true" />
 									{r.label} · {r.minutes} min
@@ -186,7 +207,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	<!-- Results (shown while searching) -->
 	<div class="gi-results" data-results hidden>
 		<p class="gi-count" aria-live="polite" data-count></p>
-		<ol class="gi-list" data-list>
+		<ol class="gi-list" data-list data-lib-mark>
 			{
 				rows.map((r) => (
 					<li
@@ -197,7 +218,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 						hidden
 					>
 						<a href={r.href} data-section={r.section}>
-							<strong>{r.title}</strong>
+							<strong>{r.title}<span class="lib-tick" role="img" aria-label="done" /></strong>
 							<span class="desc">{r.description}</span>
 							<span class="hit" data-hit hidden />
 							<span class="meta">
@@ -351,12 +372,93 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			}
 		});
 
-		const initial = new URLSearchParams(location.search).get('q');
+		const params = new URLSearchParams(location.search);
+		const initial = params.get('q');
+		if (params.has('focus') && !initial) q.focus({ preventScroll: true });
 		if (initial) {
 			q.value = initial;
 			render();
 			fullText();
 		}
+	}
+</script>
+
+<script>
+	// "My guides": saved guides, done count and where you left off (this device only).
+	import { read, toggle, clear, onChange, markLinks } from '../scripts/library';
+
+	const mine = document.querySelector<HTMLElement>('[data-mine]');
+	if (mine) {
+		const rows: Record<string, [string, string, string, number]> = JSON.parse(mine.dataset.rows!);
+		const total = +mine.dataset.total!;
+		const $ = <T extends HTMLElement>(s: string) => mine.querySelector<T>(s)!;
+		const savedList = $('[data-saved]');
+		const resume = $<HTMLAnchorElement>('[data-resume]');
+		const topics = document.querySelector<HTMLElement>('[data-totals]');
+		const totals: Record<string, number> = topics ? JSON.parse(topics.dataset.totals!) : {};
+		const esc = (t: string) => t.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+
+		const render = () => {
+			const lib = read();
+			const done = Object.keys(lib.done).filter((id) => rows[id]);
+			const saved = Object.entries(lib.saved).sort((a, b) => b[1].at - a[1].at);
+			const last = lib.last && rows[lib.last.id] && !lib.done[lib.last.id] && !lib.saved[lib.last.id] ? lib.last : undefined;
+			const any = done.length + saved.length > 0 || !!last;
+			mine.hidden = !any && location.hash !== '#mine';
+
+			$('[data-done-n]').textContent = String(done.length);
+			$('[data-bar]').style.width = `${Math.min(100, (done.length / Math.max(1, total)) * 100)}%`;
+			$('[data-progress]').hidden = done.length === 0;
+
+			resume.hidden = !last;
+			if (last) {
+				resume.href = `/${last.id}/`;
+				resume.dataset.section = last.section;
+				$('[data-resume-title]').textContent = rows[last.id][0];
+			}
+
+			$('[data-saved-head]').hidden = saved.length === 0;
+			$('[data-saved-empty]').hidden = saved.length > 0;
+			$('[data-clear]').hidden = !any;
+			savedList.innerHTML = saved
+				.map(([id, e]) => {
+					const r = rows[id];
+					const title = r ? r[0] : e.title;
+					const meta = r ? `${r[1]} · ${r[3]} min` : '';
+					return `<li><a href="/${id}/" data-section="${esc(r ? r[2] : e.section)}"><span class="dot" aria-hidden="true"></span><strong>${esc(title)}<span class="lib-tick" role="img" aria-label="done"></span></strong><span class="meta">${esc(meta)}</span></a><button type="button" class="rm" data-rm="${esc(id)}" aria-label="Remove ${esc(title)} from saved">×</button></li>`;
+				})
+				.join('');
+
+			// "2/9" on topic tiles once you've finished something there.
+			document.querySelectorAll<HTMLElement>('[data-topic-n]').forEach((el) => {
+				const t = el.dataset.topicN!;
+				const n = done.filter((id) => id.startsWith(t + '/')).length;
+				el.textContent = n ? `${n}/${totals[t]}` : String(totals[t]);
+				el.classList.toggle('has-done', n > 0);
+				el.title = n ? `${n} of ${totals[t]} done` : '';
+			});
+			markLinks();
+		};
+
+		savedList.addEventListener('click', (e) => {
+			const b = (e.target as Element).closest<HTMLButtonElement>('[data-rm]');
+			if (!b) return;
+			const e2 = read().saved[b.dataset.rm!];
+			if (e2) toggle('saved', b.dataset.rm!, e2, false);
+		});
+		$('[data-clear]').addEventListener('click', () => {
+			if ($('[data-clear]').dataset.armed) return clear();
+			const b = $('[data-clear]');
+			b.dataset.armed = '1';
+			b.textContent = 'Tap again to clear saved guides and progress';
+			setTimeout(() => {
+				delete b.dataset.armed;
+				b.textContent = 'Clear my guides';
+			}, 4000);
+		});
+		onChange(render);
+		render();
+		if (location.hash === '#mine') mine.scrollIntoView();
 	}
 </script>
 
@@ -472,6 +574,167 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	}
 	.gi li {
 		margin: 0;
+	}
+
+	/* My guides (saved and progress, on this device) */
+	.gi-mine {
+		padding: 1.1rem 1.1rem 0.9rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--gi-r);
+		background: rgb(255 255 255 / 0.02);
+		scroll-margin-top: 5rem;
+	}
+	.gi-mine-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.75rem;
+	}
+	.gi-mine-head h2 {
+		margin: 0;
+	}
+	.gi-local {
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	.gi-progress p {
+		margin: 0 0 0.45rem;
+		font-size: 0.88rem;
+		color: var(--sc-silver);
+	}
+	.gi-progress strong {
+		color: var(--sc-jade);
+	}
+	.gi-progress .bar {
+		display: block;
+		height: 6px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.07);
+		overflow: hidden;
+	}
+	.gi-progress .bar span {
+		display: block;
+		height: 100%;
+		width: 0;
+		border-radius: inherit;
+		background: var(--sc-jade);
+		transition: width 0.4s ease-out;
+	}
+	.gi-resume {
+		position: relative;
+		display: grid;
+		gap: 0.2rem;
+		margin-top: 1rem;
+		padding: 0.85rem 3rem 0.85rem 1rem;
+		border-radius: 14px;
+		border: 1px solid color-mix(in srgb, var(--accent, var(--sc-ion)) 40%, transparent);
+		background: color-mix(in srgb, var(--accent, var(--sc-ion)) 8%, transparent);
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	.gi-resume .eyebrow {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--accent, var(--sc-ion));
+	}
+	.gi-resume svg {
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		width: 20px;
+		height: 20px;
+		translate: 0 -50%;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.gi h3.gi-sub {
+		margin: 1.1rem 0 0.2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--sc-silver);
+	}
+	.gi-saved :global(li) {
+		position: relative;
+	}
+	.gi-saved :global(a) {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.15rem 0.6rem;
+		padding: 0.75rem 2.75rem 0.75rem 0;
+		border-bottom: 1px solid var(--sc-line);
+		color: inherit;
+		text-decoration: none;
+	}
+	.gi-saved :global(li:last-child a) {
+		border-bottom: 0;
+	}
+	.gi-saved :global(strong) {
+		font-size: 0.98rem;
+		color: var(--sc-ivory);
+	}
+	.gi-saved :global(a:hover strong) {
+		color: var(--accent);
+	}
+	.gi-saved :global(.meta) {
+		grid-column: 2;
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	.gi-saved :global(.rm) {
+		position: absolute;
+		right: 0;
+		top: 50%;
+		translate: 0 -50%;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 0;
+		border-radius: 50%;
+		background: transparent;
+		color: var(--sc-silver);
+		font-size: 1.3rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.gi-saved :global(.rm:hover) {
+		color: var(--sc-ivory);
+		background: rgb(255 255 255 / 0.06);
+	}
+	.gi-hint {
+		margin: 0.9rem 0 0;
+		font-size: 0.88rem;
+		color: var(--sc-silver);
+	}
+	.gi-clear {
+		margin-top: 0.75rem;
+		padding: 0.3rem 0;
+		border: 0;
+		background: none;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: 0.78rem;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+	.gi-clear:hover {
+		color: var(--sc-ivory);
+	}
+	.gi-saved :global(.dot) {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+	.n.has-done {
+		color: #06140e;
+		background: var(--sc-jade);
 	}
 
 	/* Platforms: one tidy row */

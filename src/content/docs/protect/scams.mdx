@@ -1,6 +1,17 @@
 ---
 title: "Scams aimed at creators"
 description: "Fake brand deals, fake copyright notices, private-video phishing, SIM swaps and paid unbans: what each looks like and the tell that gives it away."
+payoff: "Spot the messages that lead to account takeovers before you click."
+moves:
+  - do: "Never log in through a link in a message."
+    why: "Almost every takeover starts with a message that looks like business."
+    source: "Platforms"
+  - do: "Never download or run a file a brand sends you."
+    why: "Fake sponsorship files are a common way in."
+    source: "Platforms"
+  - do: "Check copyright and policy notices inside the app, not in email."
+    why: "Real notices show up in the app."
+    source: "Platforms"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,6 +22,7 @@ sidebar:
 ---
 
 import ScamDeck from '../../../components/ScamDeck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** almost every creator account takeover starts with a message that looks like business: a sponsorship, a copyright notice, a message from "the platform". The tell is nearly always the same. It wants you to **log in through its link, run a file, or hand over a code.**
 
@@ -52,7 +64,7 @@ Our [Brand deals](/deals/) section covers what a real contract should look like.
 3. **Ran a file?** Treat the computer as infected. Cookie-stealing malware takes your logged-in sessions, so a new password alone may not be enough. Sign out of all sessions, scan or reset the computer, then change passwords from a clean device. <span class="sc-tag is-practitioner">Security practice</span>
 4. **Report the message** in the app it came through, so it gets taken down for the next person.
 
-## Sources
+<DeepDive title="Sources" hint="7 sources">
 
 - Google Threat Analysis Group, [Phishing campaign targets YouTube creators with cookie theft malware](https://blog.google/threat-analysis-group/phishing-campaign-targets-youtube-creators-cookie-theft-malware/), Oct 20, 2021.
 - Google Help, [YouTube phishing](https://support.google.com/faqs/answer/14329556).
@@ -61,3 +73,5 @@ Our [Brand deals](/deals/) section covers what a real contract should look like.
 - Sophos Naked Security, [Instagram copyright infringement scams: don't get sucked in](https://www.sophos.com/en-us/blog/instagram-copyright-infringment-scams-dont-get-sucked-in).
 - TechCrunch, [TikTok acknowledges exploit targeting high-profile accounts](https://techcrunch.com/2024/06/04/tiktok-acknowledges-exploit-targeting-high-profile-accounts), June 4, 2024.
 - FCC, [Protecting consumers from SIM swap and port-out fraud](https://www.fcc.gov/node/262577).
+
+</DeepDive>

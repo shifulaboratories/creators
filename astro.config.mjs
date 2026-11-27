@@ -39,6 +39,7 @@ export default defineConfig({
 		'/grow/strategy': '/grow/niche/',
 		'/earn/brand-deals': '/deals/brand-deals/',
 		'/earn/pricing': '/deals/pricing/',
+		'/news/weekly': '/news/',
 	},
 	integrations: [
 		sitemap({ filter: (page) => !noindex.has(new URL(page).pathname) }),
@@ -63,6 +64,8 @@ export default defineConfig({
 				PageTitle: './src/components/PageTitle.astro',
 				SkipLink: './src/components/SkipLink.astro',
 				Pagination: './src/components/Pagination.astro',
+				Header: './src/components/Header.astro',
+				MobileMenuToggle: './src/components/MobileMenuToggle.astro',
 			},
 			social: [
 				{ icon: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/selectcreators/' },
@@ -70,11 +73,8 @@ export default defineConfig({
 			],
 			editLink: { baseUrl: `${REPO_URL}/edit/main/` },
 			lastUpdated: true,
-			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
+			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css'],
 			sidebar: [
-				{ label: 'Start here', link: '/' },
-				{ label: 'All guides: search and browse', link: '/guides/' },
-				{ label: 'Glossary: CPM, usage rights and more', link: '/glossary/' },
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
 				section('Case studies', 'case-studies'),
@@ -88,7 +88,7 @@ export default defineConfig({
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),
 				section('Underground', 'underground'),
-				section('News', 'news'),
+				section('Platform news', 'news'),
 				section('About', 'about'),
 			],
 		}),

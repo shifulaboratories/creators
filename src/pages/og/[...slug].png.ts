@@ -3,10 +3,15 @@ import { getCollection } from 'astro:content';
 import { renderOg } from '../../lib/og';
 import { SECTION_LABELS, accentFor } from '../../lib/share';
 import { terms, seoTitle } from '../../lib/glossary';
+import { getNews, newsId, NEWS_PLATFORM_INFO } from '../../lib/news';
 
 // One preview image per guide, plus the home page and the gallery, built once at deploy.
 export const getStaticPaths = (async () => {
 	const docs = await getCollection('docs');
+	const news = (await getNews()).map((n) => ({
+		params: { slug: newsId(n) },
+		props: { title: n.data.title, description: n.data.summary, kicker: `News · ${NEWS_PLATFORM_INFO[n.data.platform].name}`, accent: accentFor(`news/${n.data.platform}`) },
+	}));
 	return [
 		{
 			params: { slug: 'home' },
@@ -38,6 +43,7 @@ export const getStaticPaths = (async () => {
 					},
 				};
 			}),
+		...news,
 	];
 }) satisfies GetStaticPaths;
 

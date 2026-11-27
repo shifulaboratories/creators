@@ -1,0 +1,185 @@
+---
+/**
+ * A tick-off checklist inside a guide ("Before you post", "Before you sign").
+ * Ticks live only on the page; nothing is stored. Each item has a stable
+ * data-check id so a progress feature can hook in later.
+ */
+interface Item {
+	text: string;
+	hint?: string;
+}
+interface Props {
+	title: string;
+	items: (string | Item)[];
+	done?: string;
+	id?: string;
+}
+const { title, items, done = 'All set.', id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') } = Astro.props;
+const list = items.map((i) => (typeof i === 'string' ? { text: i } : i));
+// Hints may carry Markdown links: [text](/path/).
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const md = (t: string) => esc(t).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>');
+---
+
+<section class="qc not-content" data-qc aria-label={title}>
+	<div class="qc-head">
+		<p class="qc-title">{title}</p>
+		<p class="qc-count" aria-live="polite"><span data-qc-n>0</span> of {list.length}</p>
+	</div>
+	<div class="qc-bar" aria-hidden="true"><span data-qc-bar></span></div>
+	<ul>
+		{
+			list.map((item, i) => (
+				<li>
+					<label>
+						<input type="checkbox" data-check={`${id}-${i}`} />
+						<span class="qc-box" aria-hidden="true" />
+						<span class="qc-text">
+							{item.text}
+							{item.hint && <span class="qc-hint" set:html={md(item.hint)} />}
+						</span>
+					</label>
+				</li>
+			))
+		}
+	</ul>
+	<p class="qc-done" data-qc-done hidden>{done}</p>
+</section>
+
+<script>
+	for (const root of document.querySelectorAll<HTMLElement>('[data-qc]')) {
+		const boxes = [...root.querySelectorAll<HTMLInputElement>('input[type=checkbox]')];
+		const n = root.querySelector('[data-qc-n]')!;
+		const bar = root.querySelector<HTMLElement>('[data-qc-bar]')!;
+		const done = root.querySelector<HTMLElement>('[data-qc-done]')!;
+		const update = () => {
+			const c = boxes.filter((b) => b.checked).length;
+			n.textContent = String(c);
+			bar.style.transform = `scaleX(${c / boxes.length})`;
+			done.hidden = c !== boxes.length;
+		};
+		boxes.forEach((b) => b.addEventListener('change', update));
+		update();
+	}
+</script>
+
+<style>
+	.qc {
+		margin: 1.75rem 0;
+		padding: 1.1rem 1.1rem 0.9rem;
+		border-radius: 20px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.025);
+	}
+	.qc-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+	}
+	.qc-title {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.1rem;
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.qc-count {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+	.qc-bar {
+		height: 4px;
+		margin: 0.7rem 0 0.4rem;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.08);
+		overflow: hidden;
+	}
+	.qc-bar span {
+		display: block;
+		height: 100%;
+		background: var(--sc-jade);
+		transform-origin: left;
+		transform: scaleX(0);
+		transition: transform 0.25s ease;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	li {
+		margin: 0;
+	}
+	li + li {
+		border-top: 1px solid var(--sc-line);
+	}
+	label {
+		display: grid;
+		grid-template-columns: 1.4rem 1fr;
+		gap: 0.75rem;
+		align-items: start;
+		padding: 0.75rem 0;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.qc-box {
+		width: 1.4rem;
+		height: 1.4rem;
+		margin-top: 0.05rem;
+		border-radius: 7px;
+		border: 1.5px solid var(--sc-line-bright);
+		display: grid;
+		place-items: center;
+		transition: background 0.15s ease, border-color 0.15s ease;
+	}
+	input:checked + .qc-box {
+		background: var(--sc-jade);
+		border-color: var(--sc-jade);
+	}
+	input:checked + .qc-box::after {
+		content: '';
+		width: 0.38rem;
+		height: 0.7rem;
+		margin-top: -0.12rem;
+		border: solid #0b0b0b;
+		border-width: 0 2px 2px 0;
+		transform: rotate(45deg);
+	}
+	input:focus-visible + .qc-box {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 2px;
+	}
+	.qc-text {
+		font-size: 0.98rem;
+		line-height: 1.45;
+		color: var(--sc-platinum);
+		transition: color 0.15s ease;
+	}
+	input:checked ~ .qc-text {
+		color: var(--sc-steel);
+	}
+	.qc-hint {
+		display: block;
+		margin-top: 0.15rem;
+		font-size: 0.82rem;
+		color: var(--sc-steel);
+	}
+	.qc-hint :global(a) {
+		color: var(--sc-silver);
+	}
+	.qc-done {
+		margin: 0.2rem 0 0.2rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--sc-jade);
+	}
+</style>

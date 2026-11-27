@@ -17,6 +17,11 @@ export function toMarkdown(e: CollectionEntry<'docs'>): string {
 		.replace(/^import .*$/gm, '')
 		.replace(/<style>[\s\S]*?<\/style>/g, '')
 		.replace(/<svg[\s\S]*?<\/svg>/g, '')
+		// folded "details" sections keep their content
+		.replace(/<DeepDive[^>]*>/g, '\n')
+		.replace(/<\/DeepDive>/g, '\n')
+		// guide-format components: keep every string they show
+		.replace(/<(BeforeAfter|QuickCheck|CopyBlock|RatioCheck)\b([\s\S]*?)\/>/g, (_m, name, props) => '\n' + guideText(name, props) + '\n')
 		// self-closing MDX components like <FeedSimulator />
 		.replace(/<([A-Z][A-Za-z]+)[^>]*\/>/g, (m, name) => '\n' + (widgetText[name] ?? protectWidgetMarkdown(name, m) ?? `> Interactive element on the web page: ${name}. See ${SITE}/${e.id}/`) + '\n')
 		// list items in diagrams keep their text
@@ -40,7 +45,11 @@ export function toMarkdown(e: CollectionEntry<'docs'>): string {
 	]
 		.filter(Boolean)
 		.join(' · ');
-	return `# ${e.data.title}\n\n> ${e.data.description ?? ''}\n\n${meta}\n\n${body}\n`;
+	const moves = (d as { moves?: { do: string; why: string; source?: string }[] }).moves ?? [];
+	const doThis = moves.length
+		? '## Do this today\n\n' + moves.map((m, i) => `${i + 1}. **${m.do}** ${m.why}${m.source ? ` (Source: ${m.source})` : ''}`).join('\n') + '\n\n'
+		: '';
+	return `# ${e.data.title}\n\n> ${e.data.description ?? ''}\n\n${meta}\n\n${doThis}${body}\n`;
 }
 
 const widgetText: Record<string, string> = {
@@ -63,5 +72,14 @@ const widgetText: Record<string, string> = {
 		'| | ' + platforms.map((p) => p.name).join(' | ') + ' |\n|' + ' --- |'.repeat(platforms.length + 1) + '\n' +
 		rows.map((r) => `| ${r.label} | ` + platforms.map((p) => `${p.rows[r.key].t} [${p.rows[r.key].s}]`).join(' | ') + ' |').join('\n'),
 };
+
+/** Pull the visible strings out of a guide-format component's props. */
+function guideText(name: string, props: string): string {
+	const strings = [...props.matchAll(/(?:"((?:[^"\\]|\\.)*)"|`([^`]*)`)/g)]
+		.map((m) => (m[1] ?? m[2] ?? '').replace(/\\"/g, '"').trim())
+		.filter((t) => t && !['text', 'hint', 'label', 'title', 'lines', 'note'].includes(t) && !/^(is-|[a-z]+-[a-z-]+$)/.test(t));
+	if (name === 'CopyBlock') return strings.map((t, i) => (i === 1 ? '```\n' + t + '\n```' : `**${t}**`)).join('\n\n');
+	return strings.map((t) => `- ${t}`).join('\n');
+}
 
 export const isPublic = (e: CollectionEntry<'docs'>) => !e.data.draft;

@@ -1,6 +1,17 @@
 ---
 title: "Inside X's open-source algorithm"
 description: "X publishes the code that ranks its For You feed. The real weights, what changed from 2023 to 2026, and what it means for what you post."
+payoff: "The real weights in X's published feed code, and what they mean for how you post."
+moves:
+  - do: "Write posts people would copy the link to and send."
+    why: "Share via copy link carries the biggest positive weight in the 2026 code."
+    source: "X code, 2026"
+  - do: "Aim for replies, not likes."
+    why: "A reply is weighted about 7× a like in the 2026 code."
+    source: "X code, 2026"
+  - do: "Avoid anything your audience would mute, block or report."
+    why: "Negative actions carry large penalties."
+    source: "X code"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -12,6 +23,7 @@ sidebar:
 ---
 
 import XWeights from '../../../components/XWeights.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** X is the only major platform that publishes the code behind its main feed. It predicts how likely you are to take each of dozens of actions on a post, multiplies each prediction by a published weight, and adds them up. In the current code, the predicted chance of a reply, quote or DM share is weighted about 7 times as heavily as the chance of a like, sharing via copied link about 28 times, and "not interested," mute, block and report all carry heavy penalties. Those weights apply to predictions, not counts, which the calculator below makes concrete. <span class="sc-tag is-code">From the code</span>
 
@@ -82,9 +94,11 @@ People have drawn this system out in more detail. These are the ones worth your 
 
 Skip summaries that claim there are "no hand-engineered features." The published filters and visibility rules say otherwise.
 
-## Sources
+<DeepDive title="Sources" hint="4 sources">
 
 - xAI, [xai-org/x-algorithm](https://github.com/xai-org/x-algorithm), README and [`home-mixer/params/param.rs`](https://github.com/xai-org/x-algorithm/blob/main/home-mixer/params/param.rs), checked Nov 26, 2026.
 - Twitter, [twitter/the-algorithm-ml, Heavy Ranker README](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md), weights dated April 5, 2023.
 - X Engineering, [Twitter's Recommendation Algorithm](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm), 2023.
 - TechCrunch, [X open sources its algorithm while facing a transparency fine and Grok controversies](https://techcrunch.com/2026/01/20/x-open-sources-its-algorithm-while-facing-a-transparency-fine-and-grok-controversies/), Jan 20, 2026.
+
+</DeepDive>

@@ -21,6 +21,14 @@ export const SEO: Record<string, { title?: string; description?: string }> = {
 	'paywall/fanvue': { title: 'Fanvue review for creators: fees, payouts and rules' },
 	'paywall/fanfix': { title: 'Fanfix review for creators: fees, payouts and rules' },
 
+	// Platform news hubs: match "<platform> algorithm update" searches
+	'news/instagram': { title: 'Instagram algorithm updates and creator news' },
+	'news/tiktok': { title: 'TikTok algorithm updates and creator news' },
+	'news/youtube': { title: 'YouTube algorithm and Partner Program updates' },
+	'news/facebook': { title: 'Facebook algorithm updates and creator news' },
+	'news/linkedin': { title: 'LinkedIn algorithm updates and creator news' },
+	'news/x': { title: 'X (Twitter) algorithm updates and creator news' },
+
 	// Summaries that Google would cut off
 	'money/llc-vs-s-corp': {
 		description: 'What a sole proprietorship, an LLC and an S corp each change for a creator, and a calculator to see if an S corp would save you anything.',
