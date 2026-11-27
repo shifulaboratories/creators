@@ -56,13 +56,18 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 	if (!isFallback) for (const l of langs) if (l !== locale) route.head.push({ tag: 'meta', attrs: { property: 'og:locale:alternate', content: OG_LOCALE[l] } });
 	const head = route.head;
 
-	// The sidebar shows only the section you're in. The top nav covers the rest.
+	// Keep only the section you're in (the phone menu lists it).
 	type SB = (typeof route.sidebar)[number];
 	const hasCurrent = (e: SB): boolean => (e.type === 'group' ? e.entries.some(hasCurrent) : e.isCurrent);
 	const current = route.sidebar.filter((e) => e.type === 'group' && hasCurrent(e));
 	if (current.length) {
 		route.sidebar = current.map((g) => (g.type === 'group' ? { ...g, collapsed: false } : g));
 	}
+	// No side rails: guide pages are the top bar, the page and prev/next. The
+	// section's pages stay reachable from the phone menu (it reads route.sidebar)
+	// and from each section's front page.
+	route.hasSidebar = false;
+	route.toc = undefined;
 	const ogId = base === 'guides' ? base : id;
 	const image = `${SITE_ORIGIN}${ogPath(ogId)}`;
 	const url = new URL(context.url.pathname, SITE_ORIGIN).href;

@@ -1,7 +1,7 @@
 ---
 /**
  * The one site header, shared by the home page and every guide page:
- * logo, four menus (Platforms, Grow, Get paid, Business), Guides, search.
+ * logo, Guides, three menus (Grow with the platforms, Get paid, Business), search.
  * On phones: logo, search and a Menu button that opens a full-screen menu,
  * which also lists the pages in the section you're reading.
  *
@@ -26,7 +26,6 @@ const L = (p: string) => localize(locale, p);
 const path = basePath(Astro.url.pathname);
 const active = groupFor(path);
 const onGuides = path.startsWith('/guides');
-const onTools = path.startsWith('/tools');
 // The same page in each language. Single news updates are English-only, so they
 // switch to that language's news front page instead.
 const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
@@ -59,22 +58,33 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 							<path d="M3 4.5 6 7.5 9 4.5" />
 						</svg>
 					</button>
-					<div class:list={['sn-panel', { wide: g.id === 'platforms' }]} data-panel>
+					<div class:list={['sn-panel', { wide: !!g.chips }]} data-panel>
+						{g.chips && (
+							<ul class="chips">
+								{g.chips.map((l) => (
+									<li>
+										<a href={l.href} data-section={tint(l.icon)} class="chip">
+											{l.icon && (
+												<span class="ic" aria-hidden="true">
+													{icons[l.icon] ? (
+														<svg viewBox="0 0 24 24">
+															<path d={icons[l.icon]} />
+														</svg>
+													) : (
+														<b>in</b>
+													)}
+												</span>
+											)}
+											{l.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						)}
 						<ul>
 							{g.links.map((l) => (
 								<li>
-									<a href={l.href} data-section={tint(l.icon)}>
-										{l.icon && (
-											<span class="ic" aria-hidden="true">
-												{icons[l.icon] ? (
-													<svg viewBox="0 0 24 24">
-														<path d={icons[l.icon]} />
-													</svg>
-												) : (
-													<b>in</b>
-												)}
-											</span>
-										)}
+									<a href={l.href}>
 										<span class="t">
 											<strong>{l.label}</strong>
 											{l.text && <span>{l.text}</span>}
@@ -87,16 +97,29 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 				</div>
 			))
 		}
-		<a class:list={['sn-top', { on: onTools }]} href="/tools/" aria-current={onTools ? 'page' : undefined}>Free tools</a>
 	</nav>
 
 	<div class="sn-right">
 		<div class="sn-search"><slot name="search" /></div>
-		<nav class="sn-lang" aria-label={T.language}>
-			{langs.map((x) => (
-				<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} title={x.name} aria-current={x.l === locale ? 'true' : undefined}>{x.short}</a>
-			))}
-		</nav>
+		<div class="sn-item sn-lang" data-item>
+			<button type="button" class="sn-top" aria-expanded="false" aria-label={T.language} data-trigger>
+				{langs.find((x) => x.l === locale)?.short}
+				<svg viewBox="0 0 12 12" aria-hidden="true">
+					<path d="M3 4.5 6 7.5 9 4.5" />
+				</svg>
+			</button>
+			<div class="sn-panel lang" data-panel>
+				<ul>
+					{langs.map((x) => (
+						<li>
+							<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} aria-current={x.l === locale ? 'true' : undefined}>
+								<span class="t"><strong>{x.name}</strong></span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
 		<button type="button" class="sn-menu" aria-label={T.openMenu} aria-haspopup="dialog" data-open-menu>
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
 		</button>
@@ -117,15 +140,11 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
 			{T.searchAll}
 		</a>
-		<a class="sm-tools" href="/tools/">
-			<span aria-hidden="true">✦</span>
-			<span><b>Free tools</b><small>Media kit, invoice, rate and engagement calculators</small></span>
-		</a>
 
 		{
 			section && section.links.length > 1 && (
-				<section class="sm-group">
-					<h2>{T.inSection(section.label)}</h2>
+				<details class="sm-group sm-section">
+					<summary>{T.inSection(section.label)}</summary>
 					<ul class="sm-list">
 						{section.links.map((l) => (
 							<li>
@@ -135,7 +154,7 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 							</li>
 						))}
 					</ul>
-				</section>
+				</details>
 			)
 		}
 
@@ -143,12 +162,21 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 			NAV.map((g) => (
 				<section class="sm-group">
 					<h2>{g.label}</h2>
-					<ul class:list={['sm-list', { chips: g.id === 'platforms' }]}>
+					{g.chips && (
+						<ul class="sm-list chips">
+							{g.chips.map((l) => (
+								<li>
+									<a href={l.href} data-section={tint(l.icon)}>
+										{l.label}
+									</a>
+								</li>
+							))}
+						</ul>
+					)}
+					<ul class="sm-list">
 						{g.links.map((l) => (
 							<li>
-								<a href={l.href} data-section={tint(l.icon)}>
-									{l.label}
-								</a>
+								<a href={l.href}>{l.label}</a>
 							</li>
 						))}
 					</ul>
@@ -158,13 +186,10 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 
 		<p class="sm-foot">
 			<a href={L('/guides/')}>{T.allGuides}</a>
-			<a href="/tools/" hreflang={locale === 'en' ? undefined : 'en'}>Free tools</a>
 			<a href="/glossary/" hreflang={locale === 'en' ? undefined : 'en'}>{T.glossary}</a>
+			<a href="/creators/" hreflang={locale === 'en' ? undefined : 'en'}>Creator directory</a>
 			<a href={L('/about/')}>{T.about}</a>
-			<a href={L('/about/contribute/')}>{T.contribute}</a>
-			<a href="/roadmap/" hreflang={locale === 'en' ? undefined : 'en'}>Roadmap</a>
 			<a href="/changelog/" hreflang={locale === 'en' ? undefined : 'en'}>What’s new</a>
-			<a href="https://www.instagram.com/selectcreators/">Instagram</a>
 		</p>
 		<nav class="sm-lang" aria-label={T.language}>
 			{langs.map((x) => (
@@ -298,17 +323,49 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.8);
 	}
 	.sn-panel.wide {
-		min-width: 25rem;
+		min-width: 26rem;
 	}
-	.sn-panel.wide ul {
+	/* Platforms as a tidy grid of icon chips above the menu's links. */
+	.sn-panel ul.chips {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.25rem;
+		padding-bottom: 0.5rem;
+		margin-bottom: 0.4rem;
+		border-bottom: 1px solid var(--sc-line);
 	}
-	.sn-panel.wide li:last-child {
-		grid-column: 1 / -1;
-		border-top: 1px solid var(--sc-line);
-		margin-top: 0.25rem;
-		padding-top: 0.25rem;
+	.sn-panel a.chip {
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.6rem 0.25rem;
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: var(--sc-silver);
+		text-align: center;
+	}
+	.sn-panel a.chip:hover {
+		color: var(--sc-ivory);
+	}
+	.sn-panel li:has(> a.chip:not(:has(.ic))) {
+		grid-column: span 1;
+		display: grid;
+	}
+	.sn-panel a.chip:not(:has(.ic)) {
+		justify-content: center;
+		color: var(--sc-ivory);
+	}
+	.sn-panel.lang {
+		left: auto;
+		right: 0;
+		min-width: 11rem;
+	}
+	.sn-lang .sn-top {
+		height: 2.25rem;
+		padding: 0 0.7rem;
+		font-size: 0.8rem;
+	}
+	.sn-panel.lang a[aria-current] strong {
+		color: var(--sc-ion);
 	}
 	.sn-item.open .sn-panel {
 		display: block;
@@ -489,6 +546,16 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		letter-spacing: 0;
 		color: var(--sc-silver);
 	}
+	.sm-section summary {
+		cursor: pointer;
+		margin: 0 0 0.5rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--sc-silver);
+	}
+	.sm-list.chips + .sm-list {
+		margin-top: 0.4rem;
+	}
 	.sm-list {
 		margin: 0;
 		padding: 0;
@@ -531,24 +598,13 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		color: var(--sc-silver);
 	}
 
-	/* Language switch: EN · ES · PT on wide screens, full names in the phone menu. */
-	.sn-lang {
-		display: flex;
-		gap: 2px;
-		padding: 2px;
-		border: 1px solid var(--sc-line);
-		border-radius: 999px;
-		font-size: 0.72rem;
-		font-weight: 600;
-	}
-	.sn-lang a,
+	/* Language names in the phone menu. */
 	.sm-lang a {
 		padding: 0.25rem 0.5rem;
 		border-radius: 999px;
 		color: var(--sc-steel);
 		text-decoration: none;
 	}
-	.sn-lang a[aria-current],
 	.sm-lang a[aria-current] {
 		background: rgb(255 255 255 / 0.1);
 		color: var(--sc-ivory);
@@ -573,28 +629,5 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 <style is:global>
 	html.sm-open {
 		overflow: hidden;
-	}
-	.sm-tools {
-		display: flex;
-		align-items: center;
-		gap: 0.8rem;
-		margin-top: 0.6rem;
-		padding: 0.85rem 1rem;
-		border-radius: var(--sc-radius-md);
-		border: 1px solid color-mix(in srgb, var(--sc-champagne) 35%, transparent);
-		background: color-mix(in srgb, var(--sc-champagne) 9%, transparent);
-		text-decoration: none;
-		color: var(--sc-ivory);
-	}
-	.sm-tools > span:first-child {
-		color: var(--sc-champagne);
-		font-size: 1.2rem;
-	}
-	.sm-tools b {
-		display: block;
-	}
-	.sm-tools small {
-		color: var(--sc-silver);
-		font-size: 0.78rem;
 	}
 </style>

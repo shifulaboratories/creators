@@ -1,37 +1,30 @@
 /**
- * The site's main navigation: one source for the top nav, its dropdowns, the
- * phone menu and the bottom tab bar. Keep it short. Four groups, each a handful
- * of links, in the order creators look for them.
+ * The site's main navigation: one source for the top nav, its dropdowns and
+ * the phone menu. Keep it short: three menus, five or so links each. Anything
+ * else is one search away. William finds busy menus confusing (2026-11-27).
  */
 export type NavLink = { label: string; href: string; text?: string; icon?: string };
-export type NavGroup = { id: string; label: string; href: string; links: NavLink[] };
+export type NavGroup = { id: string; label: string; href: string; chips?: NavLink[]; links: NavLink[] };
 
 export const NAV: NavGroup[] = [
 	{
-		id: 'platforms',
-		label: 'Platforms',
-		href: '/platforms/',
-		links: [
-			{ label: 'General', href: '/algorithms/', text: 'How every feed works', icon: 'general' },
+		id: 'grow',
+		label: 'Grow',
+		href: '/grow/',
+		chips: [
+			{ label: 'General', href: '/algorithms/', icon: 'general' },
 			{ label: 'Instagram', href: '/platforms/instagram/', icon: 'instagram' },
 			{ label: 'TikTok', href: '/platforms/tiktok/', icon: 'tiktok' },
 			{ label: 'YouTube', href: '/platforms/youtube/', icon: 'youtube' },
 			{ label: 'Facebook', href: '/platforms/facebook/', icon: 'facebook' },
 			{ label: 'LinkedIn', href: '/platforms/linkedin/', icon: 'linkedin' },
 			{ label: 'X', href: '/platforms/x/', icon: 'x' },
-			{ label: 'All platforms', href: '/platforms/', text: 'Threads, Pinterest, Twitch and more' },
+			{ label: 'All platforms', href: '/platforms/' },
 		],
-	},
-	{
-		id: 'grow',
-		label: 'Grow',
-		href: '/grow/',
 		links: [
 			{ label: 'Grow your audience', href: '/grow/', text: 'Niche, hooks, formats, cadence' },
 			{ label: 'How algorithms work', href: '/algorithms/', text: 'What feeds actually reward' },
-			{ label: 'The research behind feeds', href: '/algorithms/the-research/', text: 'Straight from platform engineers' },
 			{ label: 'Case studies', href: '/case-studies/', text: 'How top creators grew' },
-			{ label: 'The Shortlist', href: '/shortlist/', text: 'The few resources worth it' },
 		],
 	},
 	{
@@ -42,9 +35,8 @@ export const NAV: NavGroup[] = [
 			{ label: 'Brand deals', href: '/deals/', text: 'Pitch, price, negotiate, contracts' },
 			{ label: 'Paywall', href: '/paywall/', text: 'Fanfix, OnlyFans, Patreon, Fanvue' },
 			{ label: 'Every income stream', href: '/earn/', text: 'Affiliate, payouts, products' },
-			{ label: 'Price your rates', href: '/deals/pricing/', text: 'Check a quote against benchmarks' },
-			{ label: 'Rates by platform and size', href: '/rates/', text: 'What Instagram, TikTok and YouTube creators charge' },
-			{ label: 'Free media kit builder', href: '/tools/media-kit-builder/', text: 'One page, PDF or link, no signup' },
+			{ label: 'Rates', href: '/rates/', text: 'What creators charge, by platform and size' },
+			{ label: 'Free tools', href: '/tools/', text: 'Media kit, invoice and rate calculators' },
 		],
 	},
 	{
@@ -54,12 +46,9 @@ export const NAV: NavGroup[] = [
 		links: [
 			{ label: 'Money basics', href: '/money/', text: 'Taxes, set-asides, LLC vs S corp' },
 			{ label: 'Team', href: '/team/', text: 'Managers, agents, first hires' },
-			{ label: 'Stack', href: '/stack/', text: 'Gear and software by budget' },
-			{ label: 'Creator directory', href: '/creators/', text: 'What top creators use and advise' },
-			{ label: 'Tool reviews', href: '/reviews/', text: 'Stan, Beacons, Linktree: real fees' },
 			{ label: 'Protect', href: '/protect/', text: 'Hacked, banned, impersonated' },
+			{ label: 'Stack', href: '/stack/', text: 'Gear, software and tool reviews' },
 			{ label: 'Underground', href: '/underground/', text: 'Gray markets, reported' },
-			{ label: 'Glossary', href: '/glossary/', text: 'CPM, usage rights and every term' },
 		],
 	},
 ];
@@ -67,9 +56,8 @@ export const NAV: NavGroup[] = [
 /** Which group a path belongs to, for highlighting the top nav. */
 export const groupFor = (path: string): string | undefined => {
 	const p = path.replace(/\/?$/, '/');
-	if (p.startsWith('/platforms/')) return 'platforms';
-	if (/^\/(grow|algorithms|case-studies|shortlist)\//.test(p)) return 'grow';
-	if (/^\/(deals|paywall|earn|rates)\//.test(p)) return 'paid';
+	if (/^\/(platforms|grow|algorithms|case-studies|shortlist)\//.test(p)) return 'grow';
+	if (/^\/(deals|paywall|earn|rates|tools)\//.test(p)) return 'paid';
 	if (/^\/(money|team|stack|creators|reviews|protect|underground)\//.test(p)) return 'business';
 	return undefined;
 };
@@ -79,7 +67,7 @@ export const groupFor = (path: string): string | undefined => {
  * Brand and platform names stay as they are. Machine-assisted: see docs/translating.md.
  */
 type Words = { label: string; text?: string };
-const ENGLISH_ONLY = ['/glossary/', '/creators/'];
+const ENGLISH_ONLY = ['/glossary/', '/creators/', '/tools/', '/rates/'];
 
 const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links: Record<string, Words> }> = {
 	es: {
@@ -98,12 +86,14 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/deals/pricing/': { label: 'Pon precio a tus tarifas', text: 'Compara una cotización con referencias' },
 			'/money/': { label: 'Finanzas básicas', text: 'Impuestos, apartados, LLC vs S corp (EE. UU.)' },
 			'/team/': { label: 'Equipo', text: 'Managers, agentes, primeras contrataciones' },
-			'/stack/': { label: 'Herramientas', text: 'Equipo y software según tu presupuesto' },
+			'/stack/': { label: 'Herramientas', text: 'Equipo, software y reseñas' },
 			'/reviews/': { label: 'Reseñas de herramientas', text: 'Stan, Beacons, Linktree: comisiones reales' },
 			'/protect/': { label: 'Protégete', text: 'Hackeos, baneos, suplantación' },
 			'/underground/': { label: 'Underground', text: 'Mercados grises, contados como periodismo' },
 			'/glossary/': { label: 'Glosario', text: 'CPM, derechos de uso y cada término (en inglés)' },
 			'/creators/': { label: 'Directorio de creadores', text: 'Qué usan y recomiendan (en inglés)' },
+			'/rates/': { label: 'Tarifas', text: 'Lo que cobran los creadores (en inglés)' },
+			'/tools/': { label: 'Herramientas gratis', text: 'Media kit, factura y calculadoras (en inglés)' },
 		},
 	},
 	'pt-br': {
@@ -122,12 +112,14 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/deals/pricing/': { label: 'Precifique seus valores', text: 'Compare uma proposta com referências' },
 			'/money/': { label: 'Finanças básicas', text: 'Impostos, reservas, LLC vs S corp (EUA)' },
 			'/team/': { label: 'Equipe', text: 'Empresários, agentes, primeiras contratações' },
-			'/stack/': { label: 'Ferramentas', text: 'Equipamento e software por orçamento' },
+			'/stack/': { label: 'Ferramentas', text: 'Equipamento, software e análises' },
 			'/reviews/': { label: 'Análises de ferramentas', text: 'Stan, Beacons, Linktree: taxas reais' },
 			'/protect/': { label: 'Proteção', text: 'Conta hackeada, banida, perfil falso' },
 			'/underground/': { label: 'Underground', text: 'Mercados cinzentos, como jornalismo' },
 			'/glossary/': { label: 'Glossário', text: 'CPM, direitos de uso e cada termo (em inglês)' },
 			'/creators/': { label: 'Diretório de criadores', text: 'O que usam e recomendam (em inglês)' },
+			'/rates/': { label: 'Valores', text: 'Quanto os criadores cobram (em inglês)' },
+			'/tools/': { label: 'Ferramentas grátis', text: 'Mídia kit, fatura e calculadoras (em inglês)' },
 		},
 	},
 };
@@ -136,17 +128,18 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 export function navFor(locale: 'en' | 'es' | 'pt-br'): NavGroup[] {
 	if (locale === 'en') return NAV;
 	const w = NAV_WORDS[locale];
+	const tr = (l: NavLink, key = l.href): NavLink => {
+		const words = w.links[key];
+		// English-only pages keep their English address.
+		const href = ENGLISH_ONLY.some((p) => l.href.startsWith(p)) ? l.href : `/${locale}${l.href}`;
+		return { ...l, label: words?.label ?? l.label, text: words?.text ?? l.text, href };
+	};
 	return NAV.map((g) => ({
 		...g,
 		label: w.groups[g.id] ?? g.label,
 		href: `/${locale}${g.href}`,
-		links: g.links.map((l) => {
-			// "How algorithms work" shares /algorithms/ with "General", so it has its own key.
-			const key = g.id === 'grow' && l.href === '/algorithms/' ? '/algorithms/#grow' : l.href;
-			const tr = w.links[key];
-			// The glossary is English only for now, so it keeps its English address.
-			const href = ENGLISH_ONLY.some((p) => l.href.startsWith(p)) ? l.href : `/${locale}${l.href}`;
-			return { ...l, label: tr?.label ?? l.label, text: tr?.text ?? l.text, href };
-		}),
+		chips: g.chips?.map((l) => tr(l)),
+		// "How algorithms work" shares /algorithms/ with the "General" chip, so it has its own key.
+		links: g.links.map((l) => tr(l, g.id === 'grow' && l.href === '/algorithms/' ? '/algorithms/#grow' : l.href)),
 	}));
 }
