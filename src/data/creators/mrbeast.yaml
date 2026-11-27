@@ -1,0 +1,20 @@
+name: MrBeast
+known: "The biggest channel on YouTube, with huge challenges and giveaways"
+niche: entertainment
+platforms: [youtube]
+about: Jimmy Donaldson runs the most-subscribed channel on YouTube. He's unusually open about his process, from thumbnails to retention, and his team's handbook leaked in 2024.
+caseStudy: case-studies/mrbeast
+advice:
+  - text: "I'd rather have that existential crisis before I make the video."
+    source: https://techcrunch.com/2022/06/24/mrbeast-explain-algorithm-youtube-vidcon/
+    sourceTitle: "MrBeast explains YouTube's algorithm (TechCrunch, on sketching the thumbnail first)"
+    date: "Jun 2022"
+  - text: "I've never seen anything that says that videos need to be longer. Just make videos that people want to watch."
+    source: https://techcrunch.com/2022/06/24/mrbeast-explain-algorithm-youtube-vidcon/
+    sourceTitle: "MrBeast explains YouTube's algorithm (TechCrunch)"
+    date: "Jun 2022"
+  - text: Make 100 videos and improve one thing in each.
+    quote: false
+    source: https://techcrunch.com/2022/06/24/mrbeast-explain-algorithm-youtube-vidcon/
+    sourceTitle: "MrBeast explains YouTube's algorithm (TechCrunch)"
+    date: "Jun 2022"

@@ -7,18 +7,24 @@ sidebar:
   label: Overview
 ---
 
-import ToolList from '../../../components/ToolList.astro';
 import CreatorSetups from '../../../components/CreatorSetups.astro';
+import StackDoors from '../../../components/StackDoors.astro';
+import StackLeaders from '../../../components/StackLeaders.astro';
+import ToolCards from '../../../components/ToolCards.astro';
 
-Every tool below lists a free or non-affiliate alternative. Affiliate links are labeled **affiliate** where they appear. To add or correct a tool, edit its file in `src/data/tools/`.
+You don't need the gear you see in big creators' videos. You need what they started with, plus the few things almost all of them end up buying. This page shows both, in their own words.
 
-:::note[Coming soon]
-The interactive Stack picker (choose a creator type and budget, get a full stack and its monthly cost) is planned. This table is the data it will use.
-:::
+<StackDoors />
+
+## What shows up again and again
+
+Counted across every creator's own gear list and app list on this site. Each creator counts once, however many times they mention it. Audio and light top the list, not cameras.
+
+<StackLeaders />
 
 ## What creators actually use
 
-Real setups from beauty, lifestyle, business, music, podcast and film creators, taken only from gear pages they published or setup videos they filmed themselves. Each one is dated, because gear changes fast. Tap a niche to find someone who makes what you make.
+Real setups from beauty, lifestyle, business, music, podcast and film creators, taken only from gear pages they published or setup videos they filmed themselves. Each one is dated, because gear changes fast. Tap a niche to find someone who makes what you make, or open the [creator directory](/creators/) to see their apps and advice too.
 
 **The pattern across all of them:** sound and light come before the camera. A ring light did most of the work for Keiko Lynn's beauty shots, Matt D'Avella lights with a paper lantern, and Tim Ferriss runs a top podcast on a field recorder and two classic mics.
 
@@ -28,6 +34,8 @@ Real setups from beauty, lifestyle, business, music, podcast and film creators, 
 We only list gear a creator confirmed themselves, and most streamer "setup" lists online are guesses by third-party sites. If you know a streamer or TikTok creator who published their own setup, add a file to `src/data/setups/` on [GitHub](https://github.com/shifulaboratories/creators).
 :::
 
-## Software and tools
+## Free software to start with
 
-<ToolList />
+Every pick has a free option and a named alternative, so you're never locked in. Affiliate links are labeled where they appear. To add or correct a tool, edit its file in `src/data/tools/`.
+
+<ToolCards />

@@ -1,0 +1,12 @@
+name: Tim Ferriss
+known: The Tim Ferriss Show, a long-form interview podcast
+niche: podcast
+platforms: [podcast, newsletter]
+site: https://tim.blog/
+about: Author and host of one of the longest-running top interview podcasts. His gear page is a reminder of how simple a great podcast setup can be.
+advice:
+  - text: A field recorder and two classic dynamic mics are enough for in-person interviews. For remote guests, a USB mic and a webcam.
+    quote: false
+    source: https://tim.blog/podcast-gear/
+    sourceTitle: Podcast Gear
+    date: "Oct 2024"

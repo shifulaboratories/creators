@@ -1,0 +1,17 @@
+name: Andrew Huang
+known: Music production and sound experiments on YouTube
+niche: music
+platforms: [youtube]
+site: https://andrewhuang.com/
+about: A musician and producer who turns sound experiments into videos, from making beats out of everyday objects to building songs with odd instruments.
+tools:
+  - name: Ableton Live
+    use: Music production
+    source: https://www.youtube.com/watch?v=GpybLwr4W4k
+    sourceTitle: "Did NOT expect how good some of these sound in my guitar! (video description)"
+    date: "Sep 2026"
+  - name: Universal Audio Apollo x8p
+    use: Audio interface for recording
+    source: https://www.youtube.com/watch?v=PY1t5-xTNVE
+    sourceTitle: "My studio has gotten even more ridiculous…"
+    date: "Jul 2026"

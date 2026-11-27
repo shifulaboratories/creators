@@ -5,8 +5,10 @@ import Cover from './Cover.astro';
 
 interface Props {
 	kind?: string;
+	/** Only resources by or about this creator directory id. */
+	creator?: string;
 }
-const { kind } = Astro.props;
+const { kind, creator } = Astro.props;
 const kindLabels: Record<string, string> = {
 	official: 'Straight from the platform',
 	playbook: 'Playbooks',
@@ -17,7 +19,7 @@ const kindLabels: Record<string, string> = {
 };
 const resources = (await getCollection('resources'))
 	.map((r) => r.data)
-	.filter((r) => !kind || r.kind === kind)
+	.filter((r) => (!kind || r.kind === kind) && (!creator || r.creators.includes(creator)))
 	.sort((a, b) => Number(b.featured) - Number(a.featured) || a.name.localeCompare(b.name));
 ---
 
@@ -39,6 +41,7 @@ const resources = (await getCollection('resources'))
 						{r.featured && <span class="pill gold">Top pick</span>}
 					</div>
 					<h3>{r.name}</h3>
+					{r.by && <p class="by">By {r.by}</p>}
 					<p>{r.why}</p>
 					<span class="src">{r.url.startsWith('/') ? 'Read our guide →' : new URL(r.url).hostname.replace(/^www\./, '') + ' ↗'}</span>
 				</div>
@@ -48,6 +51,11 @@ const resources = (await getCollection('resources'))
 </div>
 
 <style>
+	.res .by {
+		margin: -0.2rem 0 0;
+		font-size: 0.78rem;
+		color: var(--accent);
+	}
 	.res-grid {
 		display: grid;
 		grid-template-columns: 1fr;

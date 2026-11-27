@@ -1,0 +1,77 @@
+---
+/** The Stack page's front door: three places to go next, with live counts. */
+import { getCollection } from 'astro:content';
+
+const [creators, setups, docs] = await Promise.all([getCollection('creators'), getCollection('setups'), getCollection('docs')]);
+const reviews = docs.filter((d) => d.id.startsWith('reviews/') && d.id !== 'reviews/index').length;
+const freeTools = docs.filter((d) => d.id.startsWith('tools/') && d.id !== 'tools/index').length;
+const doors = [
+	{ href: '/creators/', kicker: `${creators.length} creators`, title: 'See what top creators use', text: 'Their apps, gear and advice, each with a source.', tint: 'stack' },
+	{ href: '#what-creators-actually-use', kicker: `${setups.length} real setups`, title: 'Compare real setups', text: 'Filter by niche: beauty, lifestyle, music, podcast and more.', tint: 'case-studies' },
+	{ href: '/reviews/', kicker: `${reviews} reviews`, title: 'Pick a link-in-bio or shop', text: 'Stan, Beacons, Linktree and Gumroad, with real fees.', tint: 'earn' },
+	{ href: '/tools/', kicker: `${freeTools} free tools`, title: 'Use our free calculators', text: 'Rates, engagement, taxes and a media kit builder.', tint: 'grow' },
+];
+---
+
+<nav class="sd not-content" aria-label="Start here">
+	{
+		doors.map((d) => (
+			<a href={d.href} data-section={d.tint}>
+				<span class="sd-k">{d.kicker}</span>
+				<strong>{d.title}</strong>
+				<span class="sd-t">{d.text}</span>
+				<span class="sd-arrow" aria-hidden="true">→</span>
+			</a>
+		))
+	}
+</nav>
+
+<style>
+	.sd {
+		display: grid;
+		gap: 0.65rem;
+		margin: 1.25rem 0 0.5rem;
+	}
+	@media (min-width: 40rem) {
+		.sd {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.sd a {
+		position: relative;
+		display: grid;
+		gap: 0.25rem;
+		padding: 1rem 2.6rem 1rem 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 65%),
+			var(--sc-fill-subtle);
+		text-decoration: none;
+		transition: border-color var(--sc-dur-quick) var(--sc-ease-settle);
+	}
+	.sd a:hover {
+		border-color: color-mix(in srgb, var(--accent) 50%, var(--sc-line));
+	}
+	.sd-k {
+		font-size: var(--sc-text-xs);
+		color: var(--accent);
+	}
+	.sd strong {
+		font: 600 1.05rem / 1.3 var(--sc-font-display);
+		color: var(--sc-ivory);
+	}
+	.sd-t {
+		font-size: var(--sc-text-sm);
+		line-height: 1.45;
+		color: var(--sc-silver);
+	}
+	.sd-arrow {
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		translate: 0 -50%;
+		color: var(--accent);
+		font-size: 1.1rem;
+	}
+</style>

@@ -135,6 +135,37 @@ const resources = defineCollection({
 		free: z.boolean(),
 		featured: z.boolean().default(false),
 		affiliate: z.boolean().default(false),
+		// Who made it, credited on the card (e.g. "Colin and Samir").
+		by: z.string().optional(),
+		// Creator directory ids (src/data/creators/) this resource is by or about.
+		creators: z.array(z.string()).default([]),
+	}),
+});
+
+/**
+ * The creator directory, one YAML file per creator in src/data/creators/.
+ * Each becomes /creators/<file name>/. Every tool and piece of advice carries
+ * the page or video it came from and a date. `quote: true` means the exact
+ * words; otherwise it is our paraphrase and is shown that way.
+ */
+const sourced = {
+	source: z.url(),
+	sourceTitle: z.string(),
+	date: z.string(),
+};
+const creators = defineCollection({
+	loader: glob({ pattern: '**/*.yaml', base: './src/data/creators' }),
+	schema: z.object({
+		name: z.string(),
+		known: z.string().max(90),
+		niche: z.enum(['education', 'lifestyle', 'beauty', 'business', 'film', 'music', 'podcast', 'tech', 'gaming', 'short-form', 'entertainment', 'strategy']),
+		platforms: z.array(z.enum(['youtube', 'tiktok', 'instagram', 'podcast', 'newsletter', 'twitch', 'x'])).min(1),
+		site: z.url().optional(),
+		about: z.string().min(40),
+		tools: z.array(z.object({ name: z.string(), use: z.string(), ...sourced })).default([]),
+		advice: z.array(z.object({ text: z.string(), quote: z.boolean().default(true), ...sourced })).default([]),
+		// A docs id like case-studies/mrbeast
+		caseStudy: z.string().optional(),
 	}),
 });
 
@@ -238,4 +269,4 @@ const news = defineCollection({
 // Overrides for Starlight's own UI strings per language (src/content/i18n/*.json).
 const i18n = defineCollection({ loader: i18nLoader(), schema: i18nSchema() });
 
-export const collections = { docs, i18n, tools, resources, videos, setups, news };
+export const collections = { docs, i18n, tools, resources, videos, setups, news, creators };

@@ -1,7 +1,7 @@
 ---
 /**
  * What creators actually use, from pages they published themselves.
- * Also computes the gear that shows up in more than one setup.
+ * Shared gear is counted in StackLeaders.astro.
  */
 import { getCollection } from 'astro:content';
 
@@ -15,18 +15,9 @@ const cats = [
 	{ key: 'support', label: 'Support and storage', icon: 'M12 3v9M7 21l5-9 5 9M5 3h14' },
 ] as const;
 
-// Gear that appears in two or more setups (matched on the first two words, e.g. "Sennheiser MKH").
-const key = (s: string) => s.toLowerCase().replace(/\(.*?\)/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
-const seen = new Map<string, { name: string; who: Set<string> }>();
-for (const s of setups)
-	for (const c of cats)
-		for (const g of s.gear[c.key]) {
-			const k = key(g);
-			const v = seen.get(k) ?? { name: g.replace(/\s*\(.*?\)/g, ''), who: new Set() };
-			v.who.add(s.creator);
-			seen.set(k, v);
-		}
-const shared = [...seen.values()].filter((v) => v.who.size > 1);
+// Setup files are <creator id>-<year>.yaml; link to the directory profile when there is one.
+const profiles = new Set((await getCollection('creators')).map((c) => c.id));
+const profileOf = new Map((await getCollection('setups')).map((s) => [s.data.creator, s.id.replace(/-\d{4}$/, '')]));
 const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 
 const nicheText: Record<string, string> = {
@@ -43,21 +34,6 @@ const nicheText: Record<string, string> = {
 };
 const niches = [...new Set(setups.map((s) => s.niche))].sort((a, b) => nicheText[a].localeCompare(nicheText[b]));
 ---
-
-{
-	shared.length > 0 && (
-		<div class="cs-shared not-content">
-			<span class="cs-kicker">Shows up in more than one setup</span>
-			<div class="cs-pills">
-				{shared.map((v) => (
-					<span class="cs-pill">
-						{v.name} <b>×{v.who.size}</b>
-					</span>
-				))}
-			</div>
-		</div>
-	)
-}
 
 <div class="cs-filter sc-chip-row not-content" role="group" aria-label="Filter setups by niche" data-cs-filter>
 	<button type="button" class="sc-chip" aria-pressed="true" data-niche="all">All {setups.length}</button>
@@ -117,6 +93,11 @@ const niches = [...new Set(setups.map((s) => s.niche))].sort((a, b) => nicheText
 				<a class="cs-src" href={s.source} target="_blank" rel="noopener">
 					{s.from === 'video' ? <>From their video “{s.sourceTitle}” ↗</> : <>From “{s.sourceTitle}” on {host(s.source)} ↗</>}
 				</a>
+				{profiles.has(profileOf.get(s.creator) ?? '') && (
+					<a class="cs-profile" href={`/creators/${profileOf.get(s.creator)}/`}>
+						Apps and advice from {s.creator.replace(/\s*\(.*?\)/, '')} →
+					</a>
+				)}
 			</article>
 		))
 	}
@@ -358,5 +339,10 @@ const niches = [...new Set(setups.map((s) => s.niche))].sort((a, b) => nicheText
 		font-size: 0.7rem;
 		color: var(--accent);
 		text-decoration: none;
+	}
+	.cs-profile {
+		font-size: 0.8rem;
+		color: var(--sc-ivory);
+		text-underline-offset: 3px;
 	}
 </style>

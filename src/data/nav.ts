@@ -55,6 +55,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'Money basics', href: '/money/', text: 'Taxes, set-asides, LLC vs S corp' },
 			{ label: 'Team', href: '/team/', text: 'Managers, agents, first hires' },
 			{ label: 'Stack', href: '/stack/', text: 'Gear and software by budget' },
+			{ label: 'Creator directory', href: '/creators/', text: 'What top creators use and advise' },
 			{ label: 'Tool reviews', href: '/reviews/', text: 'Stan, Beacons, Linktree: real fees' },
 			{ label: 'Protect', href: '/protect/', text: 'Hacked, banned, impersonated' },
 			{ label: 'Underground', href: '/underground/', text: 'Gray markets, reported' },
@@ -69,7 +70,7 @@ export const groupFor = (path: string): string | undefined => {
 	if (p.startsWith('/platforms/')) return 'platforms';
 	if (/^\/(grow|algorithms|case-studies|shortlist)\//.test(p)) return 'grow';
 	if (/^\/(deals|paywall|earn|rates)\//.test(p)) return 'paid';
-	if (/^\/(money|team|stack|reviews|protect|underground)\//.test(p)) return 'business';
+	if (/^\/(money|team|stack|creators|reviews|protect|underground)\//.test(p)) return 'business';
 	return undefined;
 };
 
@@ -78,7 +79,7 @@ export const groupFor = (path: string): string | undefined => {
  * Brand and platform names stay as they are. Machine-assisted: see docs/translating.md.
  */
 type Words = { label: string; text?: string };
-const ENGLISH_ONLY = ['/glossary/'];
+const ENGLISH_ONLY = ['/glossary/', '/creators/'];
 
 const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links: Record<string, Words> }> = {
 	es: {
@@ -102,6 +103,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/protect/': { label: 'Protégete', text: 'Hackeos, baneos, suplantación' },
 			'/underground/': { label: 'Underground', text: 'Mercados grises, contados como periodismo' },
 			'/glossary/': { label: 'Glosario', text: 'CPM, derechos de uso y cada término (en inglés)' },
+			'/creators/': { label: 'Directorio de creadores', text: 'Qué usan y recomiendan (en inglés)' },
 		},
 	},
 	'pt-br': {
@@ -125,6 +127,7 @@ const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links:
 			'/protect/': { label: 'Proteção', text: 'Conta hackeada, banida, perfil falso' },
 			'/underground/': { label: 'Underground', text: 'Mercados cinzentos, como jornalismo' },
 			'/glossary/': { label: 'Glossário', text: 'CPM, direitos de uso e cada termo (em inglês)' },
+			'/creators/': { label: 'Diretório de criadores', text: 'O que usam e recomendam (em inglês)' },
 		},
 	},
 };

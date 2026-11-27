@@ -1,0 +1,18 @@
+name: Thomas Frank
+known: Study skills, productivity and Notion on YouTube
+niche: education
+platforms: [youtube, newsletter]
+site: https://thomasjfrank.com/
+about: Started as a college study-tips channel and grew into a business built on Notion templates and tutorials. His gear list is a full studio for under $4,000.
+tools:
+  - name: Notion
+    use: Scripts, a B-roll shot list database, a project archive and checklists for new hires
+    source: https://www.notion.com/customers/thomasfrank
+    sourceTitle: "YouTuber Thomas Frank built his business on this video production process (Notion customer story)"
+    date: "Oct 2026"
+advice:
+  - text: You can build a studio that looks professional for under $4,000. His own camera is a Canon C70, but his list gives the cheaper route to the same look.
+    quote: false
+    source: https://thomasjfrank.com/creator/the-video-gear-list/
+    sourceTitle: The Video Gear List
+    date: "Apr 2026"
