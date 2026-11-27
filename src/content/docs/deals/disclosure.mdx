@@ -22,13 +22,37 @@ sidebar:
 ---
 
 import Sources from '../../../components/money/Sources.astro';
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** if a brand gave you anything (money, free product, a discount, a commission, a trip) and you post about it, US law says you have to tell people, clearly, where they’ll see it. The FTC says the responsibility is yours, not only the brand’s. Disclosing doesn’t hurt good content, and hiding it can hurt you and the brand.
 
+## What good disclosure looks like
+
+<BeforeAfter
+  before={{ title: "“Obsessed with this serum ✨ #skincare #glow #love #sp”", note: "“sp” buried in hashtags, nothing in the video. The FTC names both as not enough." }}
+  after={{ title: "“#ad Obsessed with this serum ✨” plus “This is sponsored by [Brand]” said and on screen in the first seconds", note: "Up front, in plain words, in the video itself, with the paid-partnership label on too." }}
+  caption="Based on the FTC's Disclosures 101 for Social Media Influencers."
+/>
+
+<QuickCheck
+  title="Disclosure check"
+  id="deal-disclose"
+  items={[
+    { text: "Said out loud in the video, near the start" },
+    { text: "Shown on screen long enough to read" },
+    { text: "Plain word: “ad,” “sponsored” or “thanks to [Brand] for the free product”", hint: "Not “sp,” “spon” or “collab.”" },
+    { text: "At the start of the caption, not after “more”" },
+    { text: "Platform paid-partnership label on too" },
+    { text: "Repeated during a livestream" },
+  ]}
+  done="Clearly disclosed."
+/>
+
 ## When you have to disclose
 
-The FTC’s guide for creators says to disclose any “financial, employment, personal, or family relationship with a brand.” That includes: <span class="sc-tag is-platform">From the law</span>
+The FTC’s guide for creators says to disclose any “financial, employment, personal, or family relationship with a brand.” That includes:
 
 - **Paid posts** and brand deals of any size.
 - **Free or discounted products**, even if the brand didn’t ask you to post.
@@ -59,7 +83,7 @@ The FTC’s guide for creators says to disclose any “financial, employment, pe
 
 ## What you can and can’t say
 
-The FTC’s guide is also clear about the content of the endorsement itself: <span class="sc-tag is-platform">From the law</span>
+The FTC’s guide is also clear about the content of the endorsement itself:
 
 - **Only talk about products you’ve actually tried.**
 - **Don’t say you love something you didn’t.** If you thought it was terrible, you can’t call it terrific because you were paid.

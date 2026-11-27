@@ -23,11 +23,12 @@ sidebar:
 
 import ScriptCards from '../../../components/money/ScriptCards.astro';
 import Sources from '../../../components/money/Sources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** most late payments are paperwork problems: a missing purchase order number, the invoice sent to the wrong inbox, or a vague due date. Fix those in the contract, invoice the day your post goes live, and follow up on the due date. If you’re in New York City or New York State, the law gives you real leverage.
 
-## Payment terms, decoded
+## Know what the terms mean
 
 | Term | What it means |
 | --- | --- |
@@ -39,17 +40,26 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 
 Aim for a deposit on signing with new brands, the balance Net 30 from posting, and a late fee written into the contract. See [payment terms in the clause library](/deals/clause-library/#clause-payment).
 
-## Invoice checklist
+## Send an invoice that gets paid
 
-<figure class="sc-figure">
-<div class="sc-compare">
-<div class="sc-compare__side is-jade"><h4>Every invoice includes</h4><ul><li>Your legal or business name, address and email</li><li>The brand’s billing name and accounts-payable email</li><li>Invoice number and date</li><li>The purchase order (PO) or campaign number, if they gave one</li><li>Each deliverable with links to the live posts</li><li>Amount, due date and the contract’s payment terms</li><li>How to pay you</li></ul></div>
-<div class="sc-compare__side is-champagne"><h4>Before you send it</h4><ul><li>Ask who receives invoices. It’s rarely the marketer you talk to</li><li>Check the brand has your tax form (a W-9 in the US) on file</li><li>Send it the day the content goes live</li><li>Put the due date in your calendar</li></ul></div>
-</div>
-<figcaption>Invoice checklist <span class="sc-tag is-practitioner">Creator-tested</span></figcaption>
-</figure>
+<QuickCheck
+  title="Invoice check"
+  id="deal-invoice"
+  items={[
+    { text: "Sent to accounts payable, not just your marketing contact", hint: "Ask who receives invoices. It's rarely the person you talk to." },
+    { text: "Your tax form is on file with them", hint: "A W-9 in the US." },
+    { text: "Purchase order or campaign number, if they gave one" },
+    { text: "Your name, address and email, and their billing name" },
+    { text: "Invoice number and date" },
+    { text: "Each deliverable with links to the live posts" },
+    { text: "Amount, due date and the contract's payment terms" },
+    { text: "How to pay you" },
+    { text: "Sent the day it went live, due date in your calendar" },
+  ]}
+  done="Invoice sent. Follow up on the due date."
+/>
 
-## When the money is late
+## When the money is late, escalate on a schedule
 
 <figure class="sc-figure">
 <ol class="sc-steps">
@@ -65,7 +75,7 @@ Aim for a deposit on signing with new brands, the balance Net 30 from posting, a
 
 ## The law on your side (New York)
 
-New York City and New York State both have a Freelance Isn’t Free Act. If you’re an independent contractor working for a New York client, they’re worth knowing: <span class="sc-tag is-platform">From the law</span>
+New York City and New York State both have a Freelance Isn’t Free Act. If you’re an independent contractor working for a New York client, they’re worth knowing:
 
 <figure class="sc-figure">
 <div class="sc-stats">
@@ -76,14 +86,18 @@ New York City and New York State both have a Freelance Isn’t Free Act. If you�
 <figcaption>NYC Department of Consumer and Worker Protection; NY General Business Law Article 44-A, in effect statewide since Aug 28, 2024</figcaption>
 </figure>
 
+:::caution[Not legal advice]
+This is a summary for creators, not legal advice. Check the current rules where you and the brand are based, and talk to a lawyer before you file a claim.
+:::
+
+<DeepDive title="The New York rules in detail" hint="What the contract must include, retaliation, how to file">
+
 - The written contract must list the work, the pay, and the date you get paid. The state law also requires both parties’ names and mailing addresses.
 - It’s illegal for the client to retaliate, for example by blacklisting you, for using these rights.
 - In NYC, you can file a complaint with the Department of Consumer and Worker Protection (online or through 311). The hiring party has to respond within 20 days.
 - Other places have similar rules, and more are being added. Search your city or state plus “freelance worker protection.”
 
-:::caution[Not legal advice]
-This is a summary for creators, not legal advice. Check the current rules where you and the brand are based, and talk to a lawyer before you file a claim.
-:::
+</DeepDive>
 
 <DeepDive title="Sources" hint="2 sources">
 <Sources bare ids={['nyc', 'nys']} />
