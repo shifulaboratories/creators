@@ -1,0 +1,60 @@
+---
+/** Platform switcher for current format limits, each row linked to its source. */
+import './grow.css';
+import { specs, CHECKED } from '../../lib/grow-data';
+---
+
+<div class="sc-widget fsx not-content" data-fsx>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Cheat sheet · Specs that matter</div>
+			<h4 class="sc-widget__title">The limits, platform by platform</h4>
+		</div>
+		<span class="gr-src">Checked {new Date(CHECKED).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+	</div>
+	<div class="sc-chip-row" role="tablist" aria-label="Platform">
+		{specs.map((p, i) => <button type="button" role="tab" class="sc-chip" id={`fsx-tab-${p.key}`} aria-controls={`fsx-${p.key}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={p.key}>{p.name}</button>)}
+	</div>
+	{
+		specs.map((p, i) => (
+			<ul class={`fsx-list gr-tint-${p.tint}`} id={`fsx-${p.key}`} role="tabpanel" aria-labelledby={`fsx-tab-${p.key}`} hidden={i !== 0}>
+				{p.rows.map((r) => (
+					<li>
+						<span class="fsx-label">{r.label}</span>
+						<span class="fsx-value">{r.value}</span>
+						<a class="fsx-src" href={r.href}>{r.src}</a>
+					</li>
+				))}
+			</ul>
+		))
+	}
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-fsx]').forEach((root) => {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+		tabs.forEach((t) =>
+			t.addEventListener('click', () => {
+				tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+				root.querySelectorAll<HTMLElement>('[role=tabpanel]').forEach((p) => (p.hidden = p.id !== `fsx-${t.dataset.tab}`));
+			}),
+		);
+	});
+</script>
+
+<style>
+	.fsx-list { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+	.fsx-list[hidden] { display: none; }
+	.fsx-list li {
+		display: grid; gap: 0.2rem; padding: 0.8rem 0.9rem; border-radius: 14px;
+		border: 1px solid var(--sc-line); background: rgb(255 255 255 / 0.02);
+		border-left: 3px solid var(--c);
+	}
+	.fsx-label { font-size: 0.72rem; font-weight: 700; color: var(--c); }
+	.fsx-value { color: var(--sc-ivory); font-size: 0.95rem; line-height: 1.45; }
+	.fsx-src { font-size: 0.72rem; color: var(--sc-steel); }
+	@media (min-width: 44rem) {
+		.fsx-list[hidden] { display: none; }
+	.fsx-list li { grid-template-columns: 10rem 1fr auto; align-items: baseline; gap: 1rem; }
+	}
+</style>

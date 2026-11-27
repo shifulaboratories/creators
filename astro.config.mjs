@@ -12,6 +12,7 @@ export default defineConfig({
 		'/grow/case-studies': '/case-studies/',
 		'/goldmines': '/shortlist/',
 		'/goldmines/mrbeast-production-handbook': '/shortlist/mrbeast-production-handbook/',
+		'/grow/strategy': '/grow/niche/',
 	},
 	integrations: [
 		starlight({

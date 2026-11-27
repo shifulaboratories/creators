@@ -1,0 +1,94 @@
+---
+/**
+ * Hook lab: swipeable cards, one hook pattern each, with an example line,
+ * why it works and the trap. Tap a card to flip between the line and the why.
+ */
+import './grow.css';
+import { hooks } from '../../lib/grow-data';
+---
+
+<section class="sc-widget hl not-content" data-gr-rail aria-roledescription="carousel" aria-label="Hook lab">
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Swipe · Hook lab</div>
+			<h4 class="sc-widget__title">Eight openings that stop the scroll</h4>
+		</div>
+		<div class="gr-arrows">
+			<button type="button" data-dir="-1" aria-label="Previous hook">‹</button>
+			<button type="button" data-dir="1" aria-label="Next hook">›</button>
+		</div>
+	</div>
+	<div class="gr-rail" tabindex="0">
+		{
+			hooks.map((h, i) => (
+				<article class={`hl-card gr-tint-${h.tint}`} aria-roledescription="slide">
+					<button type="button" class="hl-flip" aria-pressed="false" data-flip>
+						<span class="hl-front">
+							<span class="hl-top">
+								<span class="gr-pill">{String(i + 1).padStart(2, '0')} · {h.name}</span>
+								<span class="hl-niche">{h.niche}</span>
+							</span>
+							<span class="hl-big">{h.big}</span>
+							<span class="hl-line">{h.line}</span>
+							<span class="hl-hint">Tap for why it works</span>
+						</span>
+						<span class="hl-back">
+							<span class="hl-label">Why it works</span>
+							<span class="hl-text">{h.why}</span>
+							<span class="hl-label is-warn">Watch out</span>
+							<span class="hl-text">{h.watch}</span>
+							<span class="hl-hint">Tap to flip back</span>
+						</span>
+					</button>
+				</article>
+			))
+		}
+	</div>
+	<div class="gr-dots" aria-hidden="true">{hooks.map(() => <span />)}</div>
+	<p class="sc-widget__note">Example lines are ours, written to show the pattern. The rule under every one: the opening is a promise, and the rest of the video has to keep it.</p>
+</section>
+
+<script>
+	import { initRails } from '../../scripts/gr-rail';
+	initRails();
+	document.querySelectorAll<HTMLButtonElement>('[data-flip]').forEach((b) =>
+		b.addEventListener('click', () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true')),
+	);
+</script>
+
+<style>
+	.hl-card { min-height: 21rem; }
+	.hl-flip {
+		appearance: none; font: inherit; text-align: left; color: inherit; cursor: pointer;
+		position: relative; display: grid; width: 100%; height: 100%; min-height: 21rem; padding: 0;
+		border-radius: 22px; border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+		background:
+			radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--c) 22%, transparent), transparent 60%),
+			#0c0c0c;
+		overflow: hidden; -webkit-tap-highlight-color: transparent;
+		transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s;
+	}
+	.hl-flip:active { transform: scale(0.98); }
+	.hl-flip:focus-visible { outline: 2px solid var(--c); outline-offset: 3px; }
+	.hl-front, .hl-back {
+		grid-area: 1 / 1; display: flex; flex-direction: column; gap: 0.7rem; padding: 1.2rem 1.15rem 1.1rem;
+		transition: opacity 0.3s, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.hl-back { opacity: 0; transform: translateY(12px); pointer-events: none; }
+	.hl-flip[aria-pressed='true'] .hl-front { opacity: 0; transform: translateY(-12px); }
+	.hl-flip[aria-pressed='true'] .hl-back { opacity: 1; transform: none; }
+	.hl-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+	.hl-niche { font-size: 0.7rem; color: var(--sc-steel); }
+	.hl-big {
+		margin-top: 0.4rem; font-family: var(--sc-font-display); font-weight: 800;
+		font-size: clamp(1.9rem, 8vw, 2.4rem); line-height: 1; letter-spacing: -0.04em; color: var(--c);
+	}
+	.hl-line { font-size: 1.02rem; line-height: 1.45; color: var(--sc-ivory); font-weight: 500; }
+	.hl-hint { margin-top: auto; font-size: 0.72rem; color: var(--sc-steel); }
+	.hl-label { font-size: 0.72rem; font-weight: 700; color: var(--c); }
+	.hl-label.is-warn { color: var(--sc-champagne); margin-top: 0.3rem; }
+	.hl-text { font-size: 0.9rem; line-height: 1.5; color: var(--sc-platinum); }
+	@media (prefers-reduced-motion: reduce) {
+		.hl-front, .hl-back { transition: none; }
+	}
+</style>
