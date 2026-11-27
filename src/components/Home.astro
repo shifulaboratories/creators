@@ -16,7 +16,8 @@ import { localeOfPath, localize, HTML_LANG, OG_LOCALE, LOCALES, t, withFallback,
 import { getCollection } from 'astro:content';
 import { HAS_VIDEO } from '../lib/og-video';
 import { ogVideoTags } from '../lib/share';
-import { topicIcons } from '../data/topic-icons';
+import Glyph3D from '../components/Glyph3D.astro';
+import { lineIcons, type Glyph } from '../lib/glyphs';
 
 // One home page per language: /, /es/, /pt-br/ (copy in src/i18n/home.ts).
 const locale = localeOfPath(Astro.url.pathname);
@@ -30,20 +31,19 @@ const otherLocales = LOCALES.filter((l) => l !== locale);
 // Six guides people ask about most, shown as covers under the search.
 // Translated where a translation exists, otherwise the English guide (marked EN).
 const docs = withFallback(await getCollection('docs'), locale);
-const chat = 'M4 5h16v11H8l-4 4zM8 9h8M8 12h5';
 const picks = [
-	['algorithms/how-recommenders-work', topicIcons.algorithms],
-	['deals/pricing', topicIcons.earn],
-	['deals/negotiation', chat],
-	['paywall/compare', topicIcons.paywall],
-	['money/set-aside', topicIcons.money],
-	['protect/hacked', topicIcons.protect],
+	['algorithms/how-recommenders-work', lineIcons.algorithms],
+	['deals/pricing', lineIcons.earn],
+	['deals/negotiation', lineIcons.chat],
+	['paywall/compare', lineIcons.paywall],
+	['money/set-aside', lineIcons.money],
+	['protect/hacked', lineIcons.key],
 ]
 	.map(([id, icon]) => ({ d: docs.find((d) => d.base === id), icon }))
 	.flatMap(({ d, icon }) => (d ? [{ d, icon }] : []))
 	.map(({ d, icon }) => {
 		const section = d.base.split('/')[0];
-		return { icon, href: L(`/${d.base}/`), section, label: sectionLabel(section, locale) ?? section, title: d.entry.data.title, text: d.entry.data.description ?? '', en: !d.translated && locale !== 'en' };
+		return { glyph: { kind: 'line', d: icon } as Glyph, href: L(`/${d.base}/`), section, label: sectionLabel(section, locale) ?? section, title: d.entry.data.title, text: d.entry.data.description ?? '', en: !d.translated && locale !== 'en' };
 	});
 const guideCount = docs.filter((d) => d.base.includes('/') && !d.base.endsWith('/index') && !d.base.startsWith('about/')).length;
 
@@ -146,13 +146,11 @@ const homeJsonLd = {
 				<h2 id="start-h">{T.popular}</h2>
 				<ul>
 					{
-						picks.map((g) => (
+						picks.map((g, i) => (
 							<li>
 								<a href={g.href} data-section={g.section} hreflang={g.en ? 'en' : undefined}>
 									<span class="cover" aria-hidden="true">
-										<svg viewBox="0 0 24 24">
-											<path d={g.icon} />
-										</svg>
+										<Glyph3D glyph={g.glyph} delay={i * 1.3} />
 									</span>
 									<span class="sec">{g.label}{g.en && <span class="en"> · EN</span>}</span>
 									<strong lang={g.en ? 'en' : undefined}>{g.title}</strong>
@@ -431,15 +429,6 @@ const homeJsonLd = {
 			radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
 			#111014;
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
-	}
-	.cover svg {
-		width: 2.4rem;
-		height: 2.4rem;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.5;
-		stroke-linecap: round;
-		stroke-linejoin: round;
 	}
 	.start .sec {
 		padding-inline: 0.25rem;
