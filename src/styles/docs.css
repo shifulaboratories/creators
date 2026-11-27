@@ -232,7 +232,11 @@ html:active-view-transition-type(back)::view-transition-new(root) {
 	}
 }
 
-/* The site header replaces Starlight's menu toggle, so drop the room it reserved. */
-:root[data-has-sidebar] header.header {
-	padding-inline-end: var(--sl-nav-pad-x);
+/*
+ * Guide pages have no side rails (see route-data.ts). Without them Starlight
+ * stretches the text to 67.5rem; keep a comfortable reading column instead.
+ * The Guides gallery is not indexed by Pagefind, so it keeps the wide layout.
+ */
+:root:has(main[data-pagefind-body]) {
+	--sl-content-width: 46rem;
 }
