@@ -23,7 +23,8 @@ export const SECTION_LABELS: Record<string, string> = {
 	rates: 'Creator rates',
 	reviews: 'Tool reviews',
 	about: 'About',
-	guides: 'All guides',
+	guides: 'Resources',
+	jobs: 'Jobs',
 	glossary: 'Glossary',
 };
 

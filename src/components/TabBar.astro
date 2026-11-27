@@ -1,6 +1,7 @@
 ---
 /**
- * Bottom tab bar for phones: Home, Guides, Search, Menu. Solid and full width
+ * Bottom tab bar for phones: Home, Resources, Search, Menu. Jobs, Directories,
+ * News and Contributors are one tap away in Menu. Solid and full width
  * like a native app, hidden while you scroll down to read and back when you
  * scroll up. Menu opens the same menu as the header (SiteNav.astro).
  */
@@ -8,6 +9,7 @@ interface Props {
 	variant?: 'docs' | 'landing';
 }
 import { localeOfPath, basePath, localize, t } from '../i18n';
+import { groupFor } from '../data/nav';
 const locale = localeOfPath(Astro.url.pathname);
 const L = t(locale).tabs;
 const path = basePath(Astro.url.pathname);
@@ -18,7 +20,7 @@ const icons = {
 	menu: 'M4 7h16M4 12h16M4 17h16',
 };
 const isHome = path === '/';
-const isGuides = !isHome;
+const isGuides = groupFor(path) === 'resources';
 ---
 
 <nav class="tabbar" aria-label={L.nav} data-tabbar>

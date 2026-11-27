@@ -12,5 +12,7 @@ export const topicIcons: Record<string, string> = {
 	stack: 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5',
 	underground: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
 	glossary: 'M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2zM4 21V5M9 8h7M9 12h5',
+	jobs: 'M3 8h18v12H3zM8 8V5h8v3M3 13h18',
+	news: 'M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5',
 	shortlist: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
 };

@@ -63,6 +63,12 @@ export default defineConfig({
 		'/earn/brand-deals': '/deals/brand-deals/',
 		'/earn/pricing': '/deals/pricing/',
 		'/news/weekly': '/news/',
+		// Short addresses for the five top-nav items (src/data/nav.ts).
+		'/resources': '/guides/',
+		'/directories': '/creators/',
+		'/companies': '/team/agency-directory/',
+		'/contributors': '/about/contributors/',
+		'/careers': '/jobs/',
 	},
 	integrations: [
 		sitemap({
@@ -126,6 +132,7 @@ export default defineConfig({
 				section('protect'),
 				section('underground'),
 				section('news'),
+				section('jobs'),
 				section('about'),
 			],
 		}),
