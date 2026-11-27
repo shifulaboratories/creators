@@ -116,3 +116,28 @@ export function directoryTools(entries: CollectionEntry<'tools'>[]): Tool[] {
 	}
 	return out.sort((a, b) => a.name.localeCompare(b.name));
 }
+
+const norm = (s: string) =>
+	s
+		.toLowerCase()
+		.normalize('NFKD')
+		.replace(/[^a-z0-9 ]+/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+
+/**
+ * The directory tool a creator's tool name refers to, if any: "Canva Pro" is Canva,
+ * "Adobe Premiere Pro" is Adobe Premiere. Matches whole words from the start only,
+ * so "Kit" never matches "Kitchen".
+ */
+export function findDirectoryTool<T extends { name: string; slug: string }>(name: string, tools: T[]): T | undefined {
+	const n = norm(name);
+	let best: T | undefined;
+	for (const t of tools) {
+		const tn = norm(t.name);
+		const slug = t.slug.replace(/-/g, ' ');
+		const hit = [tn, slug].some((k) => k && (n === k || n.startsWith(k + ' ')));
+		if (hit && (!best || norm(best.name).length < tn.length)) best = t;
+	}
+	return best;
+}

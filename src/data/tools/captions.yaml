@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Captions"
+url: https://www.captions.ai/
+slot: editing
+what: "A phone-first AI video editor for talking videos, with auto captions, eye contact fixes and AI edits."
+who: "Creators who film and edit talking videos on their phone."
+platforms: [tiktok, instagram, youtube]
+pricing:
+  free: true
+  fromUsdPerMonth: 24.99
+  note: "Max is $24.99/mo on iOS; limited free version"
+pricingUrl: https://www.captions.ai/pricing
+lastVerified: 2026-11-27
+bestFor: "Editing talking videos on your phone"
+alternative: "CapCut (free plan)"
+affiliate: false

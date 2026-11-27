@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Sprout Social"
+url: https://sproutsocial.com/
+slot: scheduling
+what: "A social media suite for scheduling, a shared inbox, analytics and reports across many accounts."
+who: "Creator teams and agencies managing several brands."
+platforms: [instagram, tiktok, youtube, linkedin, x]
+pricing:
+  free: false
+  fromUsdPerMonth: 79
+  note: "Entry plan is $99 per seat/mo, or $79 billed yearly; 30-day free trial"
+pricingUrl: https://sproutsocial.com/pricing/
+lastVerified: 2026-11-27
+bestFor: "Team scheduling, inbox and client reports"
+alternative: "Buffer (free plan)"
+affiliate: false

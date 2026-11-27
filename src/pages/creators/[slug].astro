@@ -8,6 +8,8 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import CreatorCard from '../../components/CreatorCard.astro';
 import { loadDirectory, NICHES, NICHE_TINT, PLATFORMS, initials, creatorPath, type DirectoryEntry } from '../../lib/creators';
 import { SITE_NAME } from '../../site.mjs';
+import { getCollection } from 'astro:content';
+import { directoryTools, findDirectoryTool, toolPath } from '../../lib/tool-directory';
 
 export const getStaticPaths = (async () => {
 	const all = await loadDirectory();
@@ -24,6 +26,10 @@ const GEAR = [
 	['editing', 'Editing'],
 	['support', 'Support and storage'],
 ] as const;
+
+// Link each app to its tool directory page when we list it.
+const dirTools = directoryTools(await getCollection('tools'));
+const tools = c.tools.map((t) => ({ ...t, dir: findDirectoryTool(t.name, dirTools) }));
 
 const host = (u: string) => new URL(u).hostname.replace(/^www\./, '');
 const similar = all
@@ -126,11 +132,11 @@ const ld = {
 				<section id="software" aria-labelledby="h-software">
 					<h2 id="h-software">Software and apps</h2>
 					<ul class="cp-tools">
-						{c.tools.map((t) => (
+						{tools.map((t) => (
 							<li>
 								<span class="cp-tool-mono" aria-hidden="true">{t.name[0]}</span>
 								<span class="cp-tool-body">
-									<strong>{t.name}</strong>
+									<strong>{t.dir ? <a class="cp-tool-dir" href={toolPath(t.dir.slug)}>{t.name}</a> : t.name}</strong>
 									<span>{t.use}</span>
 								</span>
 								<a href={t.source} target="_blank" rel="noopener" aria-label={`Source: ${t.sourceTitle}`}>
@@ -434,6 +440,17 @@ const ld = {
 		color: var(--sc-steel);
 		white-space: nowrap;
 		text-decoration: none;
+	}
+	.cp-tools a.cp-tool-dir {
+		font-size: inherit;
+		color: inherit;
+		white-space: normal;
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+		text-underline-offset: 0.2em;
+	}
+	.cp-tools a.cp-tool-dir:hover {
+		color: var(--accent);
 	}
 	.cp-setup {
 		padding: 1.1rem;

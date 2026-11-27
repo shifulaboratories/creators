@@ -1,0 +1,15 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Fiverr"
+url: https://www.fiverr.com/
+slot: hiring
+what: "A freelance marketplace where you buy fixed-price gigs, like thumbnails, edits, intros and voiceovers."
+who: "Creators who want a small, defined job done without a long hiring process."
+platforms: []
+pricing:
+  free: true
+  note: "Buyers pay a 5.5% service fee, plus $3.50 on orders under $200; no subscription"
+pricingUrl: https://help.fiverr.com/hc/en-us/articles/360050216133-Paying-for-orders-extras-or-custom-offers
+lastVerified: 2026-11-27
+bestFor: "Buying one-off thumbnails, edits and voiceovers"
+alternative: "Upwork (2.75% client fee)"
+affiliate: false

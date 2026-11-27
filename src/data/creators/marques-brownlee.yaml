@@ -1,0 +1,51 @@
+name: Marques Brownlee
+known: Tech reviews on YouTube (MKBHD) and the Waveform podcast
+niche: tech
+platforms: [youtube, podcast, x]
+site: https://mkbhd.com/
+about: Marques Brownlee has reviewed consumer tech on YouTube since 2009 and runs a small studio team behind the MKBHD channel. He also co-hosts the Waveform podcast.
+tools:
+  - name: RED cameras
+    use: Main video cameras, shot with manual focus because he finds the autofocus poor
+    source: https://www.ycombinator.com/blog/marques-brownlee-on-building-an-audience-and-other-advice-for-creators
+    sourceTitle: "Marques Brownlee on Building an Audience and Other Advice for Creators (Y Combinator)"
+    date: "Mar 2019"
+  - name: Sigma 18-35mm f/1.8
+    use: His favorite fast wide zoom lens
+    source: https://www.gearpatrol.com/tech/marques-brownlee-interview/
+    sourceTitle: "The New Renaissance Man: Marques Brownlee (Gear Patrol)"
+    date: "Dec 2022"
+  - name: Peak Design Everyday Backpack
+    use: The camera bag he keeps coming back to
+    source: https://www.gearpatrol.com/tech/marques-brownlee-interview/
+    sourceTitle: "The New Renaissance Man: Marques Brownlee (Gear Patrol)"
+    date: "Dec 2022"
+  - name: AirPods Max
+    use: Noise-canceling headphones for travel
+    source: https://www.gearpatrol.com/tech/marques-brownlee-interview/
+    sourceTitle: "The New Renaissance Man: Marques Brownlee (Gear Patrol)"
+    date: "Dec 2022"
+  - name: Opal C1
+    use: Webcam for video calls (he is an investor in the company)
+    source: https://www.gearpatrol.com/tech/marques-brownlee-interview/
+    sourceTitle: "The New Renaissance Man: Marques Brownlee (Gear Patrol)"
+    date: "Dec 2022"
+advice:
+  - text: Find your own new angle, your own new voice, your own new way of showing or talking about things.
+    source: https://www.ycombinator.com/blog/marques-brownlee-on-building-an-audience-and-other-advice-for-creators
+    sourceTitle: "Marques Brownlee on Building an Audience and Other Advice for Creators (Y Combinator)"
+    date: "Mar 2019"
+  - text: If it's 95% there and it's done, that's better than 99% there and still working on it.
+    quote: false
+    source: https://www.ycombinator.com/blog/marques-brownlee-on-building-an-audience-and-other-advice-for-creators
+    sourceTitle: "Marques Brownlee on Building an Audience and Other Advice for Creators (Y Combinator)"
+    date: "Mar 2019"
+  - text: You have to diversify your income. That's the simple answer.
+    source: https://www.ycombinator.com/blog/marques-brownlee-on-building-an-audience-and-other-advice-for-creators
+    sourceTitle: "Marques Brownlee on Building an Audience and Other Advice for Creators (Y Combinator)"
+    date: "Mar 2019"
+  - text: Take a brand deal only when it is a win for the brand, for the channel and for the audience, who should get a better video out of it.
+    quote: false
+    source: https://business.google.com/us/think/search-and-video/marques-brownlee-interview/
+    sourceTitle: "YouTube creator Marques Brownlee on building a production powerhouse (Think with Google)"
+    date: "Sep 2025"

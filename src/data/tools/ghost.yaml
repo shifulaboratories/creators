@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Ghost"
+url: https://ghost.org/
+slot: email
+what: "An open-source publishing platform for a website, newsletter and paid memberships, with no cut of your subscription revenue."
+who: "Writers who want their own site and paid newsletter without a revenue share."
+platforms: [newsletter]
+pricing:
+  free: false
+  fromUsdPerMonth: 18
+  note: "Starter is $18/mo billed yearly; paid subscriptions start on Publisher ($29/mo yearly) with 0% Ghost fee"
+pricingUrl: https://ghost.org/pricing/
+lastVerified: 2026-11-27
+bestFor: "A paid newsletter on your own site with no revenue share"
+alternative: "Substack (free, 10% of paid subs)"
+affiliate: false

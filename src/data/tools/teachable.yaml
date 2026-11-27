@@ -1,0 +1,17 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Teachable"
+url: https://www.teachable.com/
+slot: courses
+what: "A course platform for selling online courses, coaching and downloads, with checkout and student management built in."
+who: "Creators launching a first online course."
+platforms: []
+pricing:
+  free: false
+  fromUsdPerMonth: 29
+  feePct: 0.075
+  note: "Starter is $39/mo, or $29/mo billed yearly, with a 7.5% fee; 0% on Builder and up; 7-day trial"
+pricingUrl: https://www.teachable.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Selling a first course with simple setup"
+alternative: "Stan (from $29/mo)"
+affiliate: false

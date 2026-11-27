@@ -1,0 +1,56 @@
+name: Justin Welsh
+known: Solopreneur writing on LinkedIn, X and The Saturday Solopreneur newsletter
+niche: business
+platforms: [newsletter, x]
+site: https://justinwelsh.me/
+about: A former SaaS sales executive who built a one-person business around social posts, a weekly newsletter and online courses. He publishes the software he uses to run it.
+tools:
+  - name: Kit
+    use: Runs his newsletter and email campaigns
+    source: https://justinwelsh.me/tools
+    sourceTitle: The Tools I Use to Run and Grow My Business
+    date: "Nov 2026"
+  - name: Kajabi
+    use: Sells his courses and digital products; he has used it for years
+    source: https://justinwelsh.me/tools
+    sourceTitle: The Tools I Use to Run and Grow My Business
+    date: "Nov 2026"
+  - name: Notion
+    use: Organizes almost everything in the business, from to-dos to his publishing calendar
+    source: https://justinwelsh.me/tools
+    sourceTitle: The Tools I Use to Run and Grow My Business
+    date: "Nov 2026"
+  - name: Fathom Analytics
+    use: Website analytics instead of Google Analytics, chosen for privacy and simplicity
+    source: https://justinwelsh.me/tools
+    sourceTitle: The Tools I Use to Run and Grow My Business
+    date: "Nov 2026"
+  - name: Tweet Hunter
+    use: Used daily to manage, analyze and grow his X following
+    source: https://justinwelsh.me/tools
+    sourceTitle: The Tools I Use to Run and Grow My Business
+    date: "Nov 2026"
+  - name: Taplio
+    use: His preferred tool for scheduling LinkedIn posts
+    source: https://justinwelsh.me/essays/my-writing-process-for-162-597m-impressions-on-linkedin
+    sourceTitle: My writing process for 162.597M impressions on LinkedIn
+    date: "Oct 2022"
+  - name: Testimonial.to
+    use: Collects video and text testimonials that he adds to his landing pages
+    source: https://justinwelsh.me/essays/5-of-my-favorite-tools-for-online-business-growth
+    sourceTitle: 5 of my favorite tools for online business growth
+    date: "Jun 2022"
+advice:
+  - text: "Break the scroll pattern with the first line."
+    source: https://justinwelsh.me/essays/my-writing-process-for-162-597m-impressions-on-linkedin
+    sourceTitle: My writing process for 162.597M impressions on LinkedIn
+    date: "Oct 2022"
+  - text: "Make each line intriguing enough to get the reader to the next one."
+    source: https://justinwelsh.me/essays/my-writing-process-for-162-597m-impressions-on-linkedin
+    sourceTitle: My writing process for 162.597M impressions on LinkedIn
+    date: "Oct 2022"
+  - text: Find your 3 to 5 best-performing posts, turn them into reusable templates, and keep using the formats that work.
+    quote: false
+    source: https://justinwelsh.me/essays/the-power-of-repeatable-content
+    sourceTitle: The power of repeatable content
+    date: "Sep 2023"

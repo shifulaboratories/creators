@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Frame.io"
+url: https://frame.io/
+slot: editing
+what: "Upload cuts and get frame-accurate comments from editors and clients, with versions and approvals in one place."
+who: "Creators who work with an editor or send drafts to sponsors for review."
+platforms: [youtube]
+pricing:
+  free: true
+  fromUsdPerMonth: 15
+  note: "Pro is $15 per member/mo + tax; yearly saves 13%; free plan for up to 2 members"
+pricingUrl: https://frame.io/pricing
+lastVerified: 2026-11-27
+bestFor: "Reviewing edits with your editor or a sponsor"
+alternative: "Frame.io free plan"
+affiliate: false

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "TubeBuddy"
+url: https://www.tubebuddy.com/
+slot: growth
+what: "A browser extension for YouTube with keyword research, bulk editing, thumbnail A/B tests and upload checklists."
+who: "YouTubers with a growing back catalogue to manage and test."
+platforms: [youtube]
+pricing:
+  free: false
+  fromUsdPerMonth: 16
+  note: "Pro lists at $16/mo billed yearly; on sale for $8/mo ($96/yr) when checked"
+pricingUrl: https://www.tubebuddy.com/pricing
+lastVerified: 2026-11-27
+bestFor: "Thumbnail tests and bulk edits across many videos"
+alternative: "vidIQ (free plan)"
+affiliate: false

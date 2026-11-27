@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "Soundstripe"
+url: https://www.soundstripe.com/
+slot: music
+what: "A subscription library of royalty-free music and sound effects licensed for online video."
+who: "Creators and small teams who need a steady supply of licensed tracks."
+platforms: [youtube, podcast]
+pricing:
+  free: false
+  fromUsdPerMonth: 9.99
+  note: "Personal plans start at $9.99/mo"
+pricingUrl: https://www.soundstripe.com/pricing
+lastVerified: 2026-11-27
+bestFor: "A licensed music library for regular uploads"
+alternative: "Uppbeat (free plan)"
+affiliate: false

@@ -1,0 +1,31 @@
+name: Ryan Holiday
+known: Daily Stoic, bestselling books and a long-running reading-list newsletter
+niche: business
+platforms: [newsletter, youtube, podcast]
+site: https://ryanholiday.net/
+about: Author of books including The Obstacle Is the Way and Ego Is the Enemy, and founder of Daily Stoic. He has written in detail about the paper notecard system behind his research and writing.
+tools:
+  - name: 4x6 index cards
+    use: Every idea, quote or note from his reading goes on a handwritten card tagged with a theme
+    source: https://ryanholiday.net/the-notecard-system-the-key-for-remembering-organizing-and-using-everything-you-read/
+    sourceTitle: "The Notecard System: The Key For Remembering, Organizing And Using Everything You Read"
+    date: "Apr 2014"
+  - name: Cropper Hopper photo box
+    use: Stores large collections of notecards, sorted by theme
+    source: https://ryanholiday.net/the-notecard-system-the-key-for-remembering-organizing-and-using-everything-you-read/
+    sourceTitle: "The Notecard System: The Key For Remembering, Organizing And Using Everything You Read"
+    date: "Apr 2014"
+advice:
+  - text: "Get in the habit. If you have an idea, put it on a damn card."
+    source: https://ryanholiday.net/the-notecard-system-the-key-for-remembering-organizing-and-using-everything-you-read/
+    sourceTitle: "The Notecard System: The Key For Remembering, Organizing And Using Everything You Read"
+    date: "Apr 2014"
+  - text: "Writing them down by hand forces me to take my time and to go over everything again"
+    source: https://ryanholiday.net/the-notecard-system-the-key-for-remembering-organizing-and-using-everything-you-read/
+    sourceTitle: "The Notecard System: The Key For Remembering, Organizing And Using Everything You Read"
+    date: "Apr 2014"
+  - text: Mark passages while you read, then go back later and transfer the best ones to cards, so the material gets a second pass before it reaches your writing.
+    quote: false
+    source: https://ryanholiday.net/the-notecard-system-the-key-for-remembering-organizing-and-using-everything-you-read/
+    sourceTitle: "The Notecard System: The Key For Remembering, Organizing And Using Everything You Read"
+    date: "Apr 2014"

@@ -1,0 +1,16 @@
+# Directory entry. Price checked 2026-11-27 on the page in pricingUrl.
+name: "vidIQ"
+url: https://vidiq.com/
+slot: growth
+what: "A YouTube research tool for keywords, video ideas, titles and competitor tracking, with a browser extension and AI helpers."
+who: "YouTubers who want data on what to make next and how to title it."
+platforms: [youtube]
+pricing:
+  free: true
+  fromUsdPerMonth: 16.58
+  note: "Boost is $19/mo, or $16.58/mo billed yearly ($199/yr); free plan with 150 AI credits a month"
+pricingUrl: https://vidiq.com/plans/
+lastVerified: 2026-11-27
+bestFor: "Finding video ideas and keywords on YouTube"
+alternative: "vidIQ free plan or YouTube Studio's Inspiration tab"
+affiliate: false
