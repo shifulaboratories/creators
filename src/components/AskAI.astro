@@ -7,6 +7,7 @@
  * (used in guide headers so phones don't open on a wall of buttons).
  */
 import { SITE_NAME } from '../site.mjs';
+import { currentLocale, t } from '../i18n';
 interface Props {
 	scope?: 'page' | 'site';
 	mdPath?: string; // e.g. /platforms/youtube.md
@@ -17,15 +18,13 @@ const { scope = 'page', mdPath, title, variant = 'row' } = Astro.props;
 const site = (Astro.site ?? new URL('https://creators.select')).origin;
 const pageUrl = new URL(Astro.url.pathname, site).href;
 const source = scope === 'site' ? `${site}/llms-full.txt` : mdPath ? `${site}${mdPath}` : pageUrl;
-const prompt =
-	scope === 'site'
-		? `Read ${source}, the full ${SITE_NAME} creator handbook. Use it as your main source and cite the page URLs you rely on. First ask me what platform I'm on, my niche and my goal, then help me make a plan.`
-		: `Read ${source} (the "${title}" guide from ${SITE_NAME}, ${pageUrl}). Use it as your source. Summarize it in five bullets, then ask about my platform, niche and goal and help me apply it.`;
+const L = t(currentLocale(Astro)).ai;
+const prompt = scope === 'site' ? L.promptSite(source, SITE_NAME) : L.promptPage(source, title ?? '', SITE_NAME, pageUrl);
 const q = encodeURIComponent(prompt);
 const targets = [
-	{ name: 'Claude', href: `https://claude.ai/new?q=${q}`, note: 'Summarize it, then plan with you' },
-	{ name: 'ChatGPT', href: `https://chatgpt.com/?q=${q}`, note: 'Same prompt, opens in ChatGPT' },
-	{ name: 'Perplexity', href: `https://www.perplexity.ai/search?q=${q}`, note: 'Good for checking the sources' },
+	{ name: 'Claude', href: `https://claude.ai/new?q=${q}`, note: L.notes[0] },
+	{ name: 'ChatGPT', href: `https://chatgpt.com/?q=${q}`, note: L.notes[1] },
+	{ name: 'Perplexity', href: `https://www.perplexity.ai/search?q=${q}`, note: L.notes[2] },
 ];
 const sparkle = 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z';
 ---
@@ -34,14 +33,14 @@ const sparkle = 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z
 	<>
 		<button type="button" class="ga-btn" data-sheet-open="ai-sheet" aria-haspopup="dialog">
 			<svg viewBox="0 0 24 24" aria-hidden="true" class="is-fill"><path d={sparkle} /></svg>
-			Ask AI
+			{L.button}
 		</button>
 		<dialog id="ai-sheet" class="sc-sheet not-content" aria-labelledby="ai-sheet-title">
-			<button type="button" class="sc-sheet__grab" data-sheet-grab data-sheet-close aria-label="Close"></button>
-			<button type="button" class="sc-sheet__close" data-sheet-close aria-label="Close">×</button>
+			<button type="button" class="sc-sheet__grab" data-sheet-grab data-sheet-close aria-label={L.close}></button>
+			<button type="button" class="sc-sheet__close" data-sheet-close aria-label={L.close}>×</button>
 			<div class="sc-sheet__body">
-				<p class="sc-sheet__title" id="ai-sheet-title">Ask AI about this guide</p>
-				<p class="sc-sheet__sub">Opens your assistant with this guide already loaded, so you can ask how it applies to you.</p>
+				<p class="sc-sheet__title" id="ai-sheet-title">{L.sheetTitle}</p>
+				<p class="sc-sheet__sub">{L.sheetSub}</p>
 				<ul class="sc-sheet__list">
 					{targets.map((t, i) => (
 						<li>
@@ -54,9 +53,9 @@ const sparkle = 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z
 					))}
 					{mdPath && (
 						<li>
-							<button type="button" class="sc-sheet__row" data-copy={mdPath}>
+							<button type="button" class="sc-sheet__row" data-copy={mdPath} data-ok={L.copiedPaste} data-fail={L.copyFailed}>
 								<span class="sc-sheet__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg></span>
-								<span data-copy-label>Copy the guide for any AI<small>Plain text, ready to paste</small></span>
+								<span data-copy-label>{L.copyGuide}<small>{L.copyGuideSmall}</small></span>
 							</button>
 						</li>
 					)}
@@ -69,11 +68,11 @@ const sparkle = 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z
 {variant === 'row' && <div class="ai not-content" data-ai>
 	<span class="ai-label">
 		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" /></svg>
-		{scope === 'site' ? 'Ask AI about the whole library' : 'Ask AI about this guide'}
+		{scope === 'site' ? L.askLibrary : L.sheetTitle}
 	</span>
 	<div class="ai-btns">
 		{targets.map((t) => <a class="ai-btn" href={t.href} target="_blank" rel="noopener">{t.name} ↗</a>)}
-		{mdPath && <button type="button" class="ai-btn" data-copy={mdPath}>Copy for AI</button>}
+		{mdPath && <button type="button" class="ai-btn" data-copy={mdPath} data-ok={L.copied} data-fail={L.copyFailed}>{L.copyForAI}</button>}
 		{scope === 'site' && <a class="ai-btn" href="/llms-full.txt">llms-full.txt</a>}
 	</div>
 </div>}
@@ -93,9 +92,9 @@ const sparkle = 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z
 				} else {
 					await navigator.clipboard.writeText(await text);
 				}
-				el.textContent = el === b ? 'Copied ✓' : 'Copied ✓ Paste it into any assistant';
+				el.textContent = b.dataset.ok ?? 'Copied ✓';
 			} catch {
-				el.textContent = 'Couldn’t copy';
+				el.textContent = b.dataset.fail ?? 'Couldn’t copy';
 			}
 			setTimeout(() => (el.innerHTML = label), 2000);
 		}),

@@ -7,7 +7,10 @@
 interface Props {
 	variant?: 'docs' | 'landing';
 }
-const path = Astro.url.pathname;
+import { localeOfPath, basePath, localize, t } from '../i18n';
+const locale = localeOfPath(Astro.url.pathname);
+const L = t(locale).tabs;
+const path = basePath(Astro.url.pathname);
 const icons = {
 	home: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
 	guides: 'M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13z',
@@ -18,22 +21,22 @@ const isHome = path === '/';
 const isGuides = !isHome;
 ---
 
-<nav class="tabbar" aria-label="Quick navigation" data-tabbar>
-	<a href="/" class:list={['tab', { on: isHome }]} aria-current={isHome ? 'page' : undefined}>
+<nav class="tabbar" aria-label={L.nav} data-tabbar>
+	<a href={localize(locale, '/')} class:list={['tab', { on: isHome }]} aria-current={isHome ? 'page' : undefined}>
 		<svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.home}></path></svg>
-		<span>Home</span>
+		<span>{L.home}</span>
 	</a>
-	<a href="/guides/" class:list={['tab', { on: isGuides }]} aria-current={path.startsWith('/guides') ? 'page' : undefined}>
+	<a href={localize(locale, '/guides/')} class:list={['tab', { on: isGuides }]} aria-current={path.startsWith('/guides') ? 'page' : undefined}>
 		<svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.guides}></path></svg>
-		<span>Guides</span>
+		<span>{L.guides}</span>
 	</a>
-	<a href="/guides/?focus=1" class="tab" data-tab-search>
+	<a href={localize(locale, '/guides/') + '?focus=1'} class="tab" data-tab-search>
 		<svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.search}></path></svg>
-		<span>Search</span>
+		<span>{L.search}</span>
 	</a>
 	<button type="button" class="tab" data-open-menu aria-haspopup="dialog">
 		<svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons.menu}></path></svg>
-		<span>Menu</span>
+		<span>{L.menu}</span>
 	</button>
 </nav>
 

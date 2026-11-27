@@ -1,13 +1,15 @@
 ---
 /** "The short version": three numbered points at the top of a guide (see src/data/tldr.ts). */
+import { currentLocale, t } from '../i18n';
 interface Props {
 	points: string[];
 }
 const { points } = Astro.props;
+const label = t(currentLocale(Astro)).page.shortVersion;
 ---
 
 <section class="tldr not-content" aria-labelledby="tldr-title">
-	<p class="tldr-title" id="tldr-title">The short version</p>
+	<p class="tldr-title" id="tldr-title">{label}</p>
 	<ol>
 		{points.map((p) => <li>{p}</li>)}
 	</ol>

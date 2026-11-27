@@ -1,18 +1,5 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import GuidesIndex from '../components/GuidesIndex.astro';
+import GuidesPage from '../components/GuidesPage.astro';
 ---
 
-<StarlightPage
-	frontmatter={{
-		title: 'Guides',
-		description: 'Free, sourced guides for creators on algorithms, growth, brand deals, paywalls, taxes and account safety.',
-		template: 'splash',
-		tableOfContents: false,
-		pagefind: false,
-		prev: false,
-		next: false,
-	}}
->
-	<GuidesIndex />
-</StarlightPage>
+<GuidesPage />
