@@ -1,0 +1,74 @@
+---
+title: "The research behind feeds"
+description: "What the platforms' own machine learning teams have published about how they rank posts, explained in plain English, with what each finding means you should do."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+cover:
+  label: The research
+sidebar:
+  order: 2
+tldr:
+  - "YouTube's own researchers found ranking by clicks promotes deceptive videos, so they rank on expected watch time."
+  - "Instagram scores each post by predicted clicks and likes minus the chance someone taps 'see less.'"
+  - "Feeds learn from your first viewers within minutes, and ranking measurably changes what travels."
+---
+
+import ResearchCards from '../../../components/algorithms/ResearchCards.astro';
+
+**The short version:** you don't have to guess how feeds work. YouTube, Meta, ByteDance, LinkedIn and Twitter have all published papers and engineering write-ups about their own systems. Below is what each one built, what it found, and the one thing it means for you. Every card links to the original.
+
+## Every feed, the same three moves
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li><strong>Shortlist</strong><span>Pull a few hundred candidates out of millions. YouTube calls it candidate generation, Instagram calls it retrieval.</span></li>
+<li class="is-active"><strong>Predict and score</strong><span>Guess how likely this viewer is to watch, like, click or say "see less," and combine the guesses into one score.</span></li>
+<li><strong>Clean up the list</strong><span>Spread out authors and topics, apply safety rules and the viewer's own choices, then show it.</span></li>
+</ol>
+<figcaption>The shape described in YouTube's 2016 paper, Instagram's 2023 Explore write-up and Facebook's 2026 engineering post</figcaption>
+</figure>
+
+## The formula Instagram published
+
+Instagram's engineers wrote the Explore score out in plain terms in 2023:
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-jade"><h4>Adds to your score</h4><ul><li>Chance this person taps your post</li><li>Chance they like it</li><li>More predicted actions, each with a weight</li></ul></div>
+<div class="sc-compare__side is-rose"><h4>Subtracts from it</h4><ul><li>Chance they tap "see less"</li><li>Same author shown twice in a row (dropped in reranking)</li></ul></div>
+</div>
+<figcaption>Expected value = W<sub>click</sub> × P(click) + W<sub>like</sub> × P(like) − W<sub>see less</sub> × P(see less) + … Engineering at Meta, Aug 9, 2023</figcaption>
+</figure>
+
+That one line explains most good advice: earn the actions with plus signs, and never give people a reason for the minus sign. <span class="sc-tag is-research">From the research</span>
+
+## The papers, card by card
+
+Swipe on a phone. Tap a title to read the original.
+
+<ResearchCards />
+
+## What all of it adds up to
+
+- **Finishing beats clicking.** YouTube moved off click-through ranking because it promoted videos people didn't finish. <span class="sc-tag is-research">From the research</span>
+- **Negative reactions cost you.** Instagram subtracts "see less," and Facebook demotes topics people mark "not interested." <span class="sc-tag is-research">From the research</span>
+- **Your first viewers train the model.** ByteDance built its system to learn from reactions in real time, and LinkedIn tests new posts on a small group first. <span class="sc-tag is-research">From the research</span>
+- **Ranking changes outcomes.** Twitter's randomized test showed a ranked feed and a time-ordered feed give the same posts different reach. <span class="sc-tag is-research">From the research</span>
+
+## How to read a paper like this
+
+- **Papers describe a system at one moment.** The 2016 YouTube paper is the foundation, not today's exact model. We pair each one with the platform's current explainer in its [platform guide](/platforms/).
+- **Weights are rarely published.** Only X publishes its ranking code and weights. See [Inside X's open-source algorithm](/algorithms/x-open-source/).
+- **A finding is not a hack.** These papers say what the system tries to predict. The move is to make things people genuinely watch, like and share, not to game a number.
+
+## Sources
+
+- Paul Covington, Jay Adams, Emre Sargin, [Deep Neural Networks for YouTube Recommendations](https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/), RecSys 2016.
+- Zhe Zhao et al., [Recommending What Video to Watch Next: A Multitask Ranking System](https://research.google/pubs/recommending-what-video-to-watch-next-a-multitask-ranking-system/), RecSys 2019.
+- Vladislav Vorotilov, Ilnur Shugaepov, [Scaling the Instagram Explore recommendations system](https://engineering.fb.com/2023/08/09/ml-applications/scaling-instagram-explore-recommendations-system/), Engineering at Meta, Aug 9, 2023.
+- Zhuoran Liu et al., [Monolith: Real Time Recommendation System With Collisionless Embedding Table](https://arxiv.org/abs/2209.07663), ByteDance, 2022.
+- Jiaqi Zhai et al., [Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations](https://arxiv.org/abs/2402.17152), Meta, ICML 2024.
+- Engineering at Meta, [Your Algorithm: Giving People More Ways to Personalize Facebook Recommendations](https://engineering.fb.com/2026/11/10/ml-applications/your-algorithm-giving-people-more-ways-to-personalize-facebook-recommendations/), Nov 10, 2026.
+- Fedor Borisyuk et al., [LiRank: Industrial Large Scale Ranking Models at LinkedIn](https://arxiv.org/abs/2402.06859), 2024.
+- Ferenc Huszár et al., [Algorithmic Amplification of Politics on Twitter](https://arxiv.org/abs/2110.11010), 2021 (published in PNAS).

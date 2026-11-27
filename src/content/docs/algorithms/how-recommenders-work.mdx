@@ -3,11 +3,11 @@ title: "How the algorithm picks what people see"
 description: "What happens between hitting post and showing up in someone's feed, in five steps. Then play with a mini feed and see what wins when the rules change."
 status: draft
 confidence: verified
-lastReviewed: 2026-11-26
+lastReviewed: 2026-11-27
 cover:
   label: How it picks
 sidebar:
-  order: 3
+  order: 4
 ---
 
 import RecPipeline from '../../../components/RecPipeline.astro';
@@ -31,7 +31,7 @@ Three things to notice:
 
 - **Clicks alone reward clickbait.** That's not a hypothetical. YouTube says it added watch time in 2012 because clicks alone rewarded misleading videos. <span class="sc-tag is-platform">From the platform</span>
 - **Rewarding replies without a penalty rewards rage.** Every platform we cover subtracts negative signals like "not interested," mutes, blocks or reports. X's published weights for those are large and negative. <span class="sc-tag is-code">From the code</span>
-- **Deep value and shareable content win under most settings.** When a feed measures whether people stayed and whether they passed it on, the posts that actually deliver tend to rise. <span class="sc-tag is-practitioner">Creator-tested</span>
+- **Deep value wins when the feed measures it.** YouTube's own researchers found click-based ranking "often promotes deceptive videos that the user does not complete," so they rank on expected watch time. Instagram subtracts the chance someone taps "see less." Both push up posts that actually deliver. <span class="sc-tag is-research">From the research</span> See [the research behind feeds](/algorithms/the-research/).
 
 ## It's personal, not global
 
@@ -52,4 +52,6 @@ That's why "post at 9 a.m." or "use exactly 5 hashtags" rarely survives contact 
 - X Engineering, [Twitter's Recommendation Algorithm](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm), 2023.
 - YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
 - Cristos Goodrow, [On YouTube's recommendation system](https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/), Sept 15, 2021.
+- Paul Covington, Jay Adams, Emre Sargin, [Deep Neural Networks for YouTube Recommendations](https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/), RecSys 2016.
+- Engineering at Meta, [Scaling the Instagram Explore recommendations system](https://engineering.fb.com/2023/08/09/ml-applications/scaling-instagram-explore-recommendations-system/), Aug 9, 2023.
 - TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.

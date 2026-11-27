@@ -1,0 +1,228 @@
+---
+/**
+ * The research behind feeds: papers and engineering write-ups published by the
+ * platforms' own ML teams, each as "what they built / what they found / so you
+ * should". Swipeable on phones. Every card links its primary source.
+ */
+type Paper = { who: string; tint: string; year: string; title: string; href: string; venue: string; built: string; found: string; act: string };
+export const papers: Paper[] = [
+	{
+		who: 'YouTube',
+		tint: 'youtube',
+		year: '2016',
+		title: 'Deep Neural Networks for YouTube Recommendations',
+		href: 'https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/',
+		venue: 'Google, RecSys 2016',
+		built: 'Two models: one narrows millions of videos to a few hundred, the second ranks them.',
+		found: 'Ranking by clicks "often promotes deceptive videos that the user does not complete." So the ranker predicts expected watch time per impression instead.',
+		act: 'A thumbnail that wins the click but loses the viewer scores worse than an honest one people finish.',
+	},
+	{
+		who: 'YouTube',
+		tint: 'youtube',
+		year: '2019',
+		title: 'Recommending What Video to Watch Next: A Multitask Ranking System',
+		href: 'https://research.google/pubs/recommending-what-video-to-watch-next-a-multitask-ranking-system/',
+		venue: 'Google, RecSys 2019',
+		built: 'One ranker that scores several competing goals at once, instead of a single number.',
+		found: 'Feedback is biased toward whatever was already shown, so the model corrects for it rather than trusting raw clicks.',
+		act: 'Don’t chase one metric. Videos that do well on watching, liking and coming back beat videos that spike one of them.',
+	},
+	{
+		who: 'Instagram',
+		tint: 'instagram',
+		year: '2023',
+		title: 'Scaling the Instagram Explore recommendations system',
+		href: 'https://engineering.fb.com/2023/08/09/ml-applications/scaling-instagram-explore-recommendations-system/',
+		venue: 'Engineering at Meta, Aug 9, 2023',
+		built: 'Four stages: retrieval, first-stage ranking, second-stage ranking, final reranking.',
+		found: 'Each post gets an expected value: weighted chances of a click and a like, minus the chance someone taps "see less." Reranking also avoids the same author twice in a row.',
+		act: 'A post that annoys part of your audience is penalized, not just ignored. Make things your followers would never "see less" of.',
+	},
+	{
+		who: 'TikTok (ByteDance)',
+		tint: 'tiktok',
+		year: '2022',
+		title: 'Monolith: Real Time Recommendation System With Collisionless Embedding Table',
+		href: 'https://arxiv.org/abs/2209.07663',
+		venue: 'ByteDance, arXiv 2022',
+		built: 'A system "tailored for online training": the model updates from user reactions as they happen, not in nightly batches.',
+		found: 'Batch training stops a model from reacting to feedback in real time, so they built one that does. It now runs in ByteDance\u2019s BytePlus Recommend product.',
+		act: 'The first wave of viewers is live training data. Your opening seconds decide who sees the video next, within minutes.',
+	},
+	{
+		who: 'Meta',
+		tint: 'facebook',
+		year: '2024',
+		title: 'Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations',
+		href: 'https://arxiv.org/abs/2402.17152',
+		venue: 'Meta, ICML 2024',
+		built: 'A model that reads each person’s sequence of recent actions, from "tens of billions of user actions" a day, and predicts the next one.',
+		found: 'Recommendation becomes one question: given this person\u2019s recent actions, what will they do next?',
+		act: 'What people did just before your post matters. Make content that fits a habit (a series, a format) so you show up in the sequence.',
+	},
+	{
+		who: 'Facebook',
+		tint: 'facebook',
+		year: '2026',
+		title: 'Your Algorithm: Giving People More Ways to Personalize Facebook Recommendations',
+		href: 'https://engineering.fb.com/2026/11/10/ml-applications/your-algorithm-giving-people-more-ways-to-personalize-facebook-recommendations/',
+		venue: 'Engineering at Meta, Nov 10, 2026',
+		built: 'Lets viewers type the topics they want more or less of, applied from retrieval through reranking.',
+		found: '"Not interested" topics are demoted, named creators are filtered out, and one interest is capped per day.',
+		act: 'Own a topic people would add on purpose. Being easy to name is now a ranking signal people control.',
+	},
+	{
+		who: 'LinkedIn',
+		tint: 'linkedin',
+		year: '2024',
+		title: 'LiRank: Industrial Large Scale Ranking Models at LinkedIn',
+		href: 'https://arxiv.org/abs/2402.06859',
+		venue: 'LinkedIn, arXiv 2024',
+		built: 'Feed ranking with calibrated predictions and an explore/exploit layer that keeps testing new content.',
+		found: 'In live A/B tests the models lifted Feed sessions 0.5%. Explore/exploit means new posts get a trial, not only proven ones.',
+		act: 'Every post gets a small test audience. Write for that first group, the people closest to your expertise.',
+	},
+	{
+		who: 'Twitter (now X)',
+		tint: 'x',
+		year: '2021',
+		title: 'Algorithmic Amplification of Politics on Twitter',
+		href: 'https://arxiv.org/abs/2110.11010',
+		venue: 'Twitter researchers, arXiv 2021, later in PNAS',
+		built: 'A randomized test: nearly 2 million accounts kept a reverse-chronological feed with no ranking.',
+		found: 'Compared with that control group, ranking measurably changed what got reach. In 6 of 7 countries, the mainstream right was amplified more than the left.',
+		act: 'Ranking is not neutral. The same post can travel very differently ranked than in time order, so judge reach by the feed, not the follower count.',
+	},
+];
+---
+
+<div class="rc not-content" data-no-swipe>
+	{
+		papers.map((p, i) => (
+			<article class="rc-card" data-section={p.tint} style={`--i:${i}`}>
+				<header>
+					<span class="who">{p.who}</span>
+					<span class="year">{p.year}</span>
+				</header>
+				<h3>
+					<a href={p.href} target="_blank" rel="noopener">{p.title}</a>
+				</h3>
+				<p class="venue">{p.venue}</p>
+				<dl>
+					<div>
+						<dt>What they built</dt>
+						<dd>{p.built}</dd>
+					</div>
+					<div>
+						<dt>What they found</dt>
+						<dd>{p.found}</dd>
+					</div>
+					<div class="act">
+						<dt>So you should</dt>
+						<dd>{p.act}</dd>
+					</div>
+				</dl>
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.rc {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+		gap: 0.9rem;
+		margin: 1.5rem 0;
+	}
+	.rc-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1.1rem 1.1rem 1.2rem;
+		border-radius: 22px;
+		border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--sc-line));
+		background:
+			radial-gradient(120% 70% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.02);
+	}
+	.rc-card header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.who {
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 15%, transparent);
+	}
+	.year {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-silver);
+	}
+	h3 {
+		margin: 0.2rem 0 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.02rem;
+		line-height: 1.3;
+	}
+	h3 a {
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	h3 a:hover {
+		color: var(--accent);
+	}
+	.venue {
+		margin: 0;
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	dl {
+		display: grid;
+		gap: 0.6rem;
+		margin: 0.4rem 0 0;
+	}
+	dt {
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: var(--sc-silver);
+	}
+	dd {
+		margin: 0.1rem 0 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--sc-ivory);
+	}
+	.act {
+		margin-top: auto;
+		padding: 0.7rem 0.8rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+	}
+	.act dt {
+		color: var(--accent);
+	}
+	@media (max-width: 50rem) {
+		.rc {
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding: 0 var(--sl-content-pad-x, 1rem) 0.5rem;
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+			scrollbar-width: none;
+		}
+		.rc::-webkit-scrollbar {
+			display: none;
+		}
+		.rc-card {
+			flex: 0 0 85%;
+			scroll-snap-align: start;
+		}
+	}
+</style>

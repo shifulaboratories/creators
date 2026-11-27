@@ -100,6 +100,9 @@
 .sc-tag.is-practitioner {
 	color: var(--sc-champagne);
 }
+.sc-tag.is-research {
+	color: var(--sc-ion);
+}
 .sc-tag.is-illustrative {
 	color: var(--sc-silver);
 }
