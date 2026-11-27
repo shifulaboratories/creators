@@ -337,7 +337,9 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			}
 		});
 
-		const initial = new URLSearchParams(location.search).get('q');
+		const params = new URLSearchParams(location.search);
+		const initial = params.get('q');
+		if (params.has('focus') && !initial) q.focus({ preventScroll: true });
 		if (initial) {
 			q.value = initial;
 			render();

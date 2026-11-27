@@ -7,12 +7,21 @@ import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
 import { SITE_NAME } from './site.mjs';
 import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
 import { personName, CONTRIBUTORS_PATH } from './data/people';
+import { NEWS_PLATFORM_INFO } from './lib/news';
 
 export const onRequest = defineRouteMiddleware((context) => {
 	const route = context.locals.starlightRoute;
 	const { entry, head } = route;
 	const id = entry.id;
 	if (id === '404') return;
+
+	// The sidebar shows only the section you're in. The top nav covers the rest.
+	type SB = (typeof route.sidebar)[number];
+	const hasCurrent = (e: SB): boolean => (e.type === 'group' ? e.entries.some(hasCurrent) : e.isCurrent);
+	const current = route.sidebar.filter((e) => e.type === 'group' && hasCurrent(e));
+	if (current.length) {
+		route.sidebar = current.map((g) => (g.type === 'group' ? { ...g, collapsed: false } : g));
+	}
 	const image = `${SITE_ORIGIN}${ogPath(id)}`;
 	const url = new URL(context.url.pathname, SITE_ORIGIN).href;
 	const title = entry.data.title;
@@ -27,10 +36,21 @@ export const onRequest = defineRouteMiddleware((context) => {
 
 	const section = id.split('/')[0];
 	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}/` }];
+	const data = entry.data as typeof entry.data & {
+		authors?: string[];
+		lastReviewed?: Date;
+		status?: string;
+		news?: { platform: string; announced: Date; published: Date; updated?: Date };
+	};
+	const news = data.news;
 	if (id.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: SECTION_LABELS[section], url: `${SITE_ORIGIN}/${section}/` });
+	if (news) crumbs.push({ name: NEWS_PLATFORM_INFO[news.platform]?.name ?? news.platform, url: `${SITE_ORIGIN}/news/${news.platform}/` });
 	crumbs.push({ name: title, url });
 
-	const data = entry.data as typeof entry.data & { authors?: string[]; lastReviewed?: Date; status?: string };
+	// News pages offer the RSS feed to readers and feed readers.
+	if (section === 'news') {
+		head.push({ tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', title: `Platform news · ${SITE_NAME}`, href: `${SITE_ORIGIN}/news/feed.xml` } });
+	}
 
 	// Outline pages are placeholders: keep them out of search results until written.
 	head.push({
@@ -39,11 +59,13 @@ export const onRequest = defineRouteMiddleware((context) => {
 	});
 
 	// Section front pages and the Guides index are collections, not articles.
-	const isCollection = id === 'guides' || (!id.includes('/') && id !== 'index');
-	const modified = route.lastUpdated ?? data.lastReviewed;
+	// Per-platform news pages (news/instagram) are collections too.
+	const isCollection = id === 'guides' || (!id.includes('/') && id !== 'index') || (section === 'news' && id.split('/').length === 2 && !news);
+	const modified = news ? (news.updated ?? news.published) : (route.lastUpdated ?? data.lastReviewed);
 	const graph = [
 		{
-			'@type': isCollection ? 'CollectionPage' : 'Article',
+			'@type': news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
+			...(news ? { datePublished: news.published.toISOString(), articleSection: NEWS_PLATFORM_INFO[news.platform]?.name, about: { '@type': 'Organization', name: NEWS_PLATFORM_INFO[news.platform]?.name } } : {}),
 			headline: title,
 			description: entry.data.description,
 			image,

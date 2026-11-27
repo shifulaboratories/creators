@@ -1,0 +1,71 @@
+---
+// Quiet row of platform links for the News hub: name, number of updates, latest date.
+import { getNews, NEWS_PLATFORM_INFO, fmtDate } from '../../lib/news';
+const all = await getNews();
+const tiles = Object.entries(NEWS_PLATFORM_INFO).map(([key, p]) => {
+	const items = all.filter((n) => n.data.platform === key);
+	return { key, ...p, count: items.length, latest: items[0]?.data.announced };
+});
+---
+
+<nav class="np not-content" aria-label="News by platform">
+	{tiles.map((t) => (
+		<a class="np-tile" href={`/news/${t.key}/`} data-platform={t.key}>
+			<span class="np-name"><span class="np-dot" />{t.name}</span>
+			<span class="np-sub">{t.latest ? `Latest ${fmtDate(t.latest)}` : 'No changes logged yet'}</span>
+		</a>
+	))}
+</nav>
+
+<style>
+	.np {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+		margin: 1.25rem 0 0.5rem;
+	}
+	@media (max-width: 40rem) {
+		.np {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.np-tile {
+		display: grid;
+		gap: 0.2rem;
+		padding: 0.8rem 0.95rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		text-decoration: none;
+		color: inherit;
+		transition: border-color var(--sc-dur-quick), background var(--sc-dur-quick);
+	}
+	.np-tile:hover,
+	.np-tile:focus-visible {
+		border-color: var(--sc-line-strong);
+		background: var(--sc-fill-muted);
+	}
+	.np-name {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.np-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--plat, var(--sc-silver));
+	}
+	.np-sub {
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+	[data-platform='instagram'] { --plat: var(--sc-rose); }
+	[data-platform='tiktok'] { --plat: var(--sc-cyan); }
+	[data-platform='youtube'] { --plat: var(--sc-ember); }
+	[data-platform='facebook'] { --plat: #7ea6ff; }
+	[data-platform='linkedin'] { --plat: #6fb6e8; }
+	[data-platform='x'] { --plat: var(--sc-silver); }
+</style>
