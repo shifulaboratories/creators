@@ -63,7 +63,7 @@ const confidenceText: Record<string, string> = {
 		)}
 		{section === 'underground' && <li class="chip ember">No affiliate links</li>}
 	</ul>}
-	{entry.id !== '404' && (
+	{entry.id !== '404' && entry.id !== 'guides' && (
 		<div class="actions">
 			{entry.id !== 'guides' && <AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />}
 			<ShareBar title={data.title} description={data.description} section={section} />

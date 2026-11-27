@@ -1,6 +1,6 @@
 ---
 title: "Merch and products"
-description: "Platforms for merch, digital products and storefronts."
+description: "Where creators sell merch, digital products and courses: print-on-demand, storefronts and checkout platforms and the fees to expect."
 status: outline
 sidebar:
   order: 3
