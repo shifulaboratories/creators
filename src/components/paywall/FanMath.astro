@@ -1,0 +1,245 @@
+---
+/**
+ * Where a fan's money goes: pick a platform, a price, how many fans, and an
+ * agency's commission. Shows the platform cut, the agency cut and what you keep,
+ * plus how much an agency has to grow sales to break even. Fees: src/lib/paywall-data.ts.
+ */
+import { platforms } from '../../lib/paywall-data';
+const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key, name, pct, procPct, procFixed }));
+---
+
+<section class="fm sc-widget not-content" data-fm data-p={JSON.stringify(payload)} aria-labelledby="fm-title" data-no-swipe>
+	<p class="fm-kick">Try it</p>
+	<h3 id="fm-title" class="fm-title">Where a fan’s money goes</h3>
+
+	<div class="fm-plats" role="radiogroup" aria-label="Platform">
+		{
+			platforms.map((p, i) => (
+				<button type="button" class="sc-chip" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-k={p.key}>
+					{p.name}
+				</button>
+			))
+		}
+	</div>
+
+	<div class="fm-controls">
+		<label class="fm-field">
+			<span>Subscription price per month</span>
+			<output data-out="price">$10</output>
+			<input type="range" min="3" max="50" step="1" value="10" data-in="price" />
+		</label>
+		<label class="fm-field">
+			<span>Paying fans</span>
+			<output data-out="fans">500</output>
+			<input type="range" min="10" max="5000" step="10" value="500" data-in="fans" />
+		</label>
+		<label class="fm-field">
+			<span>Agency or manager commission</span>
+			<output data-out="agency">0%</output>
+			<input type="range" min="0" max="70" step="5" value="0" data-in="agency" />
+		</label>
+	</div>
+
+	<div class="fm-split" aria-hidden="true">
+		<i class="s-plat" data-seg="plat"></i>
+		<i class="s-agency" data-seg="agency"></i>
+		<i class="s-you" data-seg="you"></i>
+	</div>
+	<ul class="fm-legend">
+		<li class="s-plat">Platform and card fees <b data-val="plat"></b></li>
+		<li class="s-agency">Agency <b data-val="agency"></b></li>
+		<li class="s-you">You keep <b data-val="you"></b></li>
+	</ul>
+	<p class="fm-verdict" data-verdict aria-live="polite"></p>
+	<p class="fm-note">
+		Subscriptions only, before tax. Tips, paid messages and locked posts usually carry the same platform cut. Agencies
+		normally take their commission from what the platform pays you, which is how it’s shown here. Commission ranges in
+		reporting run from 20% to 80%; check the contract.
+	</p>
+</section>
+
+<script>
+	type P = { key: string; name: string; pct: number; procPct: number; procFixed: number };
+	const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+	document.querySelectorAll<HTMLElement>('[data-fm]').forEach((root) => {
+		const plats: P[] = JSON.parse(root.dataset.p!);
+		let cur = plats[0];
+		const get = (k: string) => Number(root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!.value);
+		const set = (sel: string, v: string) => root.querySelectorAll<HTMLElement>(sel).forEach((el) => (el.textContent = v));
+		const update = () => {
+			const price = get('price');
+			const fans = get('fans');
+			const c = get('agency') / 100;
+			const gross = price * fans;
+			const platCut = gross * cur.pct + fans * (price * cur.procPct + cur.procFixed);
+			const net = Math.max(0, gross - platCut);
+			const agency = net * c;
+			const you = net - agency;
+			set('[data-out="price"]', '$' + price);
+			set('[data-out="fans"]', fans.toLocaleString('en-US'));
+			set('[data-out="agency"]', Math.round(c * 100) + '%');
+			set('[data-val="plat"]', usd(platCut));
+			set('[data-val="agency"]', usd(agency));
+			set('[data-val="you"]', usd(you));
+			const w = (v: number) => (gross ? (v / gross) * 100 : 0) + '%';
+			root.querySelector<HTMLElement>('[data-seg="plat"]')!.style.width = w(platCut);
+			root.querySelector<HTMLElement>('[data-seg="agency"]')!.style.width = w(agency);
+			root.querySelector<HTMLElement>('[data-seg="you"]')!.style.width = w(you);
+			const v = root.querySelector<HTMLElement>('[data-verdict]')!;
+			if (c === 0) {
+				v.textContent = `Fans pay ${usd(gross)} a month on ${cur.name}. You keep ${usd(you)}, or ${Math.round((you / gross) * 100)}%.`;
+			} else {
+				const be = Math.round((c / (1 - c)) * 100);
+				v.textContent = `You keep ${usd(you)} of ${usd(gross)}. At ${Math.round(c * 100)}%, an agency has to grow your sales by ${be}% just for you to break even.`;
+			}
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-k]').forEach((b) =>
+			b.addEventListener('click', () => {
+				cur = plats.find((p) => p.key === b.dataset.k)!;
+				root.querySelectorAll('[data-k]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+				update();
+			}),
+		);
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
+		update();
+	});
+</script>
+
+<style>
+	.fm {
+		margin-block: 1.5rem 2rem;
+		padding: 1.25rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-lg);
+		background:
+			radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--sc-paywall, var(--sc-rose)) 14%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.02);
+	}
+	.fm-kick {
+		margin: 0;
+		display: inline-block;
+		padding: 2px 10px;
+		border-radius: var(--sc-radius-pill);
+		background: var(--sc-lime);
+		color: #111;
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+	}
+	.fm-title {
+		margin: 0.5rem 0 1rem;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+		line-height: 1.2;
+	}
+	.fm-plats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 1rem;
+	}
+	.fm-plats [aria-checked='true'] {
+		background: var(--sc-ivory);
+		color: #111;
+		border-color: var(--sc-ivory);
+	}
+	.fm-controls {
+		display: grid;
+		gap: 1rem;
+	}
+	@media (min-width: 48rem) {
+		.fm-controls {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+	.fm-field {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.35rem 0.75rem;
+		align-items: baseline;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.fm-field output {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+		font-size: var(--sc-text-lg);
+	}
+	.fm-field input {
+		grid-column: 1 / -1;
+		width: 100%;
+		accent-color: var(--sc-rose);
+		height: 28px;
+	}
+	.fm-split {
+		display: flex;
+		height: 18px;
+		margin-top: 1.25rem;
+		border-radius: var(--sc-radius-pill);
+		background: rgb(255 255 255 / 0.06);
+		overflow: hidden;
+	}
+	.fm-split i {
+		display: block;
+		height: 100%;
+		transition: width 0.45s var(--sc-ease-settle, ease);
+	}
+	.s-plat {
+		--c: var(--sc-steel);
+	}
+	.s-agency {
+		--c: var(--sc-champagne);
+	}
+	.s-you {
+		--c: var(--sc-rose);
+	}
+	.fm-split .s-plat {
+		background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.25) 0 4px, rgb(255 255 255 / 0.1) 4px 8px);
+	}
+	.fm-split .s-agency {
+		background: var(--sc-champagne);
+	}
+	.fm-split .s-you {
+		background: linear-gradient(90deg, var(--sc-amethyst), var(--sc-rose));
+	}
+	.fm-legend {
+		list-style: none;
+		margin: 0.7rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.1rem;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.fm-legend li::before {
+		content: '';
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		margin-right: 6px;
+		border-radius: 3px;
+		background: var(--c);
+	}
+	.fm-legend b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.fm-verdict {
+		margin: 1rem 0 0.5rem;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.fm-note {
+		margin: 0;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+		line-height: 1.55;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fm-split i {
+			transition: none;
+		}
+	}
+</style>

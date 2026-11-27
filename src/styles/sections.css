@@ -13,6 +13,8 @@
 	--sc-news: var(--sc-silver);
 	/* Money basics: a minty money green, between jade and the lime sticker. */
 	--sc-money: color-mix(in srgb, var(--sc-jade) 60%, var(--sc-lime));
+	/* Paywall (fan platforms): a warm orchid between rose and amethyst. */
+	--sc-paywall: color-mix(in srgb, var(--sc-rose) 65%, var(--sc-amethyst));
 }
 
 [data-section='grow'] { --accent: var(--sc-grow); }
@@ -24,6 +26,7 @@
 [data-section='underground'] { --accent: var(--sc-underground); }
 [data-section='news'] { --accent: var(--sc-news); }
 [data-section='money'] { --accent: var(--sc-money); }
+[data-section='paywall'] { --accent: var(--sc-paywall); }
 
 :root {
 	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */

@@ -43,18 +43,19 @@ const homeJsonLd = {
 const sections = [
 	{ id: 'grow', name: 'Grow', href: '/grow/', blurb: 'How each platform ranks content, plus strategy, formats and real case studies.', size: 'wide' },
 	{ id: 'earn', name: 'Earn', href: '/earn/', blurb: 'Every way creators get paid, paywalls and memberships, and how to price a deal.', size: 'tall' },
+	{ id: 'paywall', name: 'Paywall', href: '/paywall/', blurb: 'Fanfix, OnlyFans, Patreon and Fanvue compared, plus the truth about chatting agencies.', size: '' },
 	{ id: 'deals', name: 'Brand deals', href: '/deals/', blurb: 'Pitch, price and negotiate brand deals, fix the contract, and know who takes a cut.', size: '' },
 	{ id: 'team', name: 'Team', href: '/team/', blurb: 'When to get a manager, how to vet one, and who to hire first.', size: '' },
 	{ id: 'protect', name: 'Protect', href: '/protect/', blurb: 'Account security, content removal, impersonation and brand management.', size: '' },
 	{ id: 'underground', name: 'Underground', href: '/underground/', blurb: 'How the gray market really works, from published reporting. No seller links, ever.', size: '' },
 	{ id: 'stack', name: 'Stack', href: '/stack/', blurb: 'Pick your tools by job and budget. A free alternative next to every pick.', size: 'wide' },
-	{ id: 'news', name: 'News', href: '/news/', blurb: 'Platform changes and creator-economy news, explained weekly.', size: 'wide' },
+	{ id: 'news', name: 'News', href: '/news/', blurb: 'Platform changes and creator-economy news, explained weekly.', size: '' },
 ];
 
 const topics = [
 	'The algorithm', 'Brand deals', 'Paywalls', 'Fixing bad contracts', 'Usage rights', 'Managers',
 	'Agencies', 'Hiring editors', 'Tool picker', 'Content removal', 'Account security', 'Fake verification',
-	'Username trading', 'Case studies', 'Memberships', 'Negotiation scripts',
+	'Username trading', 'Fanfix vs OnlyFans', 'Chatting agencies', 'Case studies', 'Memberships', 'Negotiation scripts',
 ];
 
 const journey = [
@@ -155,7 +156,7 @@ const journey = [
 			<!-- BENTO -->
 			<section class="block">
 				<div class="block-head reveal">
-					<p class="kicker">Eight sections</p>
+					<p class="kicker">Nine sections</p>
 					<h2>Everything, A to Z.</h2>
 					<p class="sub">Each section is a set of visual guides, tools and checklists, kept current through public edits.</p>
 				</div>
@@ -246,6 +247,13 @@ const journey = [
 											<p><b>Weekly</b> The creator economy roundup</p>
 											<p><b>Platform update</b> Policy change, explained</p>
 										</div>
+									</div>
+								)}
+								{s.id === 'paywall' && (
+									<div class="subs">
+										<div class="sub-card"><span class="sub-dot"></span><span>Fan club</span><b>$9.99/mo</b></div>
+										<div class="sub-split"><i style="--w: 80%"></i><i style="--w: 20%"></i></div>
+										<p class="note">You keep 80% on Fanfix, OnlyFans and Fanvue</p>
 									</div>
 								)}
 							</div>
@@ -1116,6 +1124,46 @@ const journey = [
 	}
 
 	/* News ticker */
+	.subs {
+		display: grid;
+		gap: 10px;
+		padding: 4px 2px;
+	}
+	.sub-card {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 12px;
+		border-radius: 14px;
+		border: 1px solid color-mix(in srgb, var(--sc-paywall) 40%, transparent);
+		background: color-mix(in srgb, var(--sc-paywall) 10%, transparent);
+		font-size: 0.8rem;
+		color: var(--sc-platinum);
+	}
+	.sub-card b {
+		margin-left: auto;
+		color: var(--sc-ivory);
+	}
+	.sub-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--sc-paywall);
+		box-shadow: 0 0 12px var(--sc-paywall);
+	}
+	.sub-split {
+		display: flex;
+		gap: 3px;
+		height: 8px;
+	}
+	.sub-split i {
+		width: var(--w);
+		border-radius: 999px;
+		background: var(--sc-paywall);
+	}
+	.sub-split i + i {
+		background: rgb(255 255 255 / 0.15);
+	}
 	.ticker {
 		width: 100%;
 		height: 108px;
