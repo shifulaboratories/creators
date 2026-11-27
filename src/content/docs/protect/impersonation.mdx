@@ -1,6 +1,17 @@
 ---
 title: "Someone's pretending to be you"
 description: "Report fake accounts on Instagram, TikTok, YouTube and X, collect the right evidence, and stop fakes from scamming your audience."
+payoff: "Get fake accounts using your name taken down, and warn your fans."
+moves:
+  - do: "Screenshot the fake account before you report it."
+    why: "You'll need it if it's renamed or deleted."
+    source: "Creator-tested"
+  - do: "Report it yourself through the impersonation route."
+    why: "Your report carries the ID check. Fan reports don't."
+    source: "Platforms"
+  - do: "Tell your audience what you'll never DM them about."
+    why: "Fakes exist to scam your fans with giveaways and investments."
+    source: "Platforms"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,6 +22,8 @@ sidebar:
 ---
 
 import Playbook from '../../../components/Playbook.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** fakes exist to scam your fans, usually with "you won a giveaway, DM me" or an investment pitch. Screenshot the fake, report it yourself through the platform's impersonation route (your report carries the ID check, fan reports don't), and tell your audience what you'll never ask them for.
 
@@ -22,29 +35,38 @@ import Playbook from '../../../components/Playbook.astro';
 <figcaption>The pattern repeats across platforms. The fix is the same: report, warn, filter.</figcaption>
 </figure>
 
-## Pick your platform
+## Report it on your platform
 
 <Playbook situation="impersonated" />
 
-## The evidence kit
+## Build your evidence kit
 
 Keep one folder per fake. Platforms ask for some of this, and you'll want it if a lawyer or the police get involved.
 
-1. **The profile:** screenshot plus the exact URL and @handle. Display names can change in seconds; handles are what reports use.
-2. **The harm:** DMs or comments it sent your fans, ideally with fans' permission to share them.
-3. **Your proof:** a photo of your government ID (only to the platform's form), and links to your real accounts.
-4. **Dates:** when you first saw it and when you reported it.
+<QuickCheck
+  title="Evidence kit"
+  id="protect-evidence"
+  items={[
+    { text: "The profile", hint: "Screenshot plus the exact URL and @handle. Display names can change in seconds; handles are what reports use." },
+    { text: "The harm", hint: "DMs or comments it sent your fans, ideally with fans' permission to share them." },
+    { text: "Your proof", hint: "A photo of your government ID (only to the platform's form), and links to your real accounts." },
+    { text: "Dates", hint: "When you first saw it and when you reported it." },
+  ]}
+  done="Kit complete. Report it."
+/>
 
 ## Stop the next one
 
-- **Pin your handles.** A highlight or pinned post: "My only accounts are @… on Instagram, TikTok, YouTube. I will never DM you about prizes, investments or payments." <span class="sc-tag is-practitioner">Creator-tested</span>
+- **Pin your handles.** A highlight or pinned post: "My only accounts are @… on Instagram, TikTok, YouTube. I will never DM you about prizes, investments or payments."
 - **Filter comments.** Most platforms let you hide or hold comments with chosen words or links. Add your own name's lookalikes and words like "WhatsApp" and "Telegram".
 - **Get verified the official way** where you qualify. It makes the real account easy to spot. Never pay a third party for a badge: see our reporting on [paid verification](/underground/paid-verification/).
 - **Watch for deepfakes.** Scammers have already used an [AI-generated video of YouTube's own CEO](https://www.bleepingcomputer.com/news/security/youtube-warns-of-ai-generated-video-of-its-ceo-used-in-phishing-attacks/) to phish creators. If someone makes an AI fake of you, report it through the same impersonation routes.
 
-## Sources
+<DeepDive title="Sources" hint="4 sources">
 
 - Instagram Help, [Report an impersonation account on Instagram or Threads](https://help.instagram.com/contact/636276399721841).
 - TikTok Support, [Report an impersonation account](https://support.tiktok.com/en/safety-hc/report-a-problem/report-an-impersonation-account).
 - YouTube Help, [Impersonation policy](https://support.google.com/youtube/answer/2801947).
 - X Help, [Misleading and deceptive identities policy](https://help.x.com/en/rules-and-policies/x-impersonation-and-deceptive-identities-policy).
+
+</DeepDive>

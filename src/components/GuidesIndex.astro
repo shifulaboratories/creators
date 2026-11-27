@@ -9,12 +9,24 @@
 import { getCollection } from 'astro:content';
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import { SECTION_LABELS } from '../lib/share';
+import { currentLocale, t, withFallback, localize, sectionLabel } from '../i18n';
+import { sortedTerms, termPath } from '../lib/glossary';
+import { topicIcons } from '../data/topic-icons';
 
-const docs = await getCollection('docs');
-const has = (id: string) => docs.some((e) => e.id === id);
+const locale = currentLocale(Astro);
+const L = t(locale).gallery;
+const LB = t(locale).library;
+// Spanish and Portuguese show the translation where there is one, else the English guide.
+// Ids stay the English ones ("paywall/fanfix") so saved guides and progress carry across languages.
+const all = withFallback(await getCollection('docs'), locale);
+const docs = all.map((d) => d.entry);
+const info = new Map(all.map((d) => [d.entry, d]));
+const idOf = (e: (typeof docs)[number]) => info.get(e)!.base;
+const has = (id: string) => all.some((e) => e.base === id);
+const prefix = locale === 'en' ? '' : `/${locale}`;
 
 type Topic = { id: string; title: string; text: string };
-const topics: Topic[] = [
+const topicsEn: Topic[] = [
 	{ id: 'algorithms', title: 'How algorithms work', text: 'What feeds reward, from the platforms’ own research' },
 	{ id: 'grow', title: 'Grow', text: 'Niche, hooks, formats, cadence and analytics' },
 	{ id: 'paywall', title: 'Paywall', text: 'Fanfix, OnlyFans, Patreon, Fanvue and chatting agencies' },
@@ -30,32 +42,44 @@ const topics: Topic[] = [
 	{ id: 'underground', title: 'Underground', text: 'Gray markets, reported as journalism' },
 	{ id: 'shortlist', title: 'The Shortlist', text: 'The few resources worth your time' },
 ];
+const topics = topicsEn.map((tp) => {
+	const tr = L.topicText[tp.id];
+	return tr ? { ...tp, title: tr[0], text: tr[1] } : tp;
+});
 
-const guides = docs.filter((e) => e.id.includes('/') && !e.id.endsWith('/index') && SECTION_LABELS[e.id.split('/')[0]] && !e.id.startsWith('about/'));
-const count = (s: string) => guides.filter((e) => e.id.startsWith(s + '/')).length;
+const guides = docs.filter((e) => {
+	const id = idOf(e);
+	return id.includes('/') && !id.endsWith('/index') && SECTION_LABELS[id.split('/')[0]] && !id.startsWith('about/');
+});
+const count = (s: string) => guides.filter((e) => idOf(e).startsWith(s + '/')).length;
 const liveTopics = topics.filter((t) => has(t.id) || count(t.id) > 0).map((t) => ({ ...t, n: count(t.id) }));
 
 type Plat = { key: string; name: string; path?: string; href: string };
 const platforms: Plat[] = [
-	{ key: 'general', name: 'General', href: '/algorithms/' },
+	{ key: 'general', name: L.general, href: '/algorithms/' },
 	{ key: 'instagram', name: 'Instagram', path: siInstagram.path, href: '/platforms/instagram/' },
 	{ key: 'tiktok', name: 'TikTok', path: siTiktok.path, href: '/platforms/tiktok/' },
 	{ key: 'youtube', name: 'YouTube', path: siYoutube.path, href: '/platforms/youtube/' },
 	{ key: 'facebook', name: 'Facebook', path: siFacebook.path, href: '/platforms/facebook/' },
 	{ key: 'linkedin', name: 'LinkedIn', href: '/platforms/linkedin/' },
 	{ key: 'x', name: 'X', path: siX.path, href: '/platforms/x/' },
-].filter((p) => p.key === 'general' || has(p.href.slice(1, -1)));
+]
+	.filter((p) => p.key === 'general' || has(p.href.slice(1, -1)))
+	.map((p) => ({ ...p, href: localize(locale, p.href) }));
 
 const order = ['algorithms', 'platforms', 'grow', 'paywall', 'deals', 'earn', 'rates', 'tools', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
 const rows = guides
 	.map((e) => {
-		const section = e.id.split('/')[0];
+		const id = idOf(e);
+		const translated = info.get(e)!.translated;
+		const section = id.split('/')[0];
 		const words = (e.body ?? '').replace(/<[^>]+>|import .*|[#*_`>|-]/g, ' ').split(/\s+/).filter(Boolean).length;
 		return {
-			id: e.id,
-			href: `/${e.id}/`,
+			id,
+			href: localize(locale, `/${id}/`),
+			translated,
 			section,
-			label: SECTION_LABELS[section],
+			label: sectionLabel(section, locale)!,
 			title: e.data.title,
 			description: e.data.description ?? '',
 			minutes: Math.max(1, Math.round(words / 220)),
@@ -64,20 +88,41 @@ const rows = guides
 	})
 	.sort((a, b) => a.rank - b.rank);
 
+// Glossary terms join instant search results, after the guides.
+const termRows = sortedTerms.map((t, i) => ({
+	id: `glossary/${t.slug}`,
+	href: termPath(t.slug),
+	title: t.term,
+	text: [t.term, t.full, ...(t.aka ?? []), t.short].join(' '),
+	description: t.short,
+	rank: 9000 + i,
+}));
 const lookup = Object.fromEntries(rows.map((r) => [r.id, [r.title, r.label, r.section, r.minutes]]));
 const totals = Object.fromEntries(liveTopics.map((t) => [t.id, t.n]));
 
-const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 'hooks'];
+const suggestions = L.suggestions;
 ---
 
-<div class="gi not-content" data-gi>
-	<form class="gi-search" role="search" action="/guides/" data-form>
+<div
+	class="gi not-content"
+	data-gi
+	data-prefix={prefix}
+	data-count-one={L.count(1, '{q}')}
+	data-count-many={L.count(2, '{q}').replace('2', '{n}')}
+	data-ask-prompt={L.askPrompt('{origin}', '{q}')}
+	data-min={L.min}
+	data-clear-label={LB.clear}
+	data-clear-confirm={LB.clearConfirm}
+	data-remove={LB.remove}
+	data-n-of-done={LB.nOfDone}
+>
+	<form class="gi-search" role="search" action={localize(locale, '/guides/')} data-form>
 		<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
 		<input
 			type="search"
 			name="q"
-			placeholder={`Search ${rows.length} guides`}
-			aria-label="Search guides"
+			placeholder={L.search(rows.length)}
+			aria-label={L.searchLabel}
 			autocomplete="off"
 			spellcheck="false"
 			enterkeyhint="search"
@@ -86,7 +131,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 		<kbd aria-hidden="true">/</kbd>
 	</form>
 	<p class="gi-try" data-try>
-		Try
+		{L.try}
 		{
 			suggestions.map((s) => (
 				<button type="button" data-suggest={s}>
@@ -100,25 +145,25 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	<div data-browse>
 		<section class="gi-block gi-mine" id="mine" aria-labelledby="gi-mine" data-mine data-rows={JSON.stringify(lookup)} data-total={rows.length} hidden>
 			<div class="gi-mine-head">
-				<h2 id="gi-mine">My guides</h2>
-				<span class="gi-local">Saved on this device only</span>
+				<h2 id="gi-mine">{LB.mine}</h2>
+				<span class="gi-local">{LB.local}</span>
 			</div>
 			<div class="gi-progress" data-progress>
-				<p><strong data-done-n>0</strong> of {rows.length} guides done</p>
+				<p><strong data-done-n>0</strong> {LB.doneOf(rows.length)}</p>
 				<span class="bar" aria-hidden="true"><span data-bar></span></span>
 			</div>
 			<a class="gi-resume" href="#" data-resume hidden>
-				<span class="eyebrow">Pick up where you left off</span>
+				<span class="eyebrow">{LB.resume}</span>
 				<strong data-resume-title></strong>
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 			</a>
-			<h3 class="gi-sub" data-saved-head>Saved</h3>
+			<h3 class="gi-sub" data-saved-head>{LB.savedHead}</h3>
 			<ul class="gi-saved" data-saved data-lib-mark></ul>
-			<p class="gi-hint" data-saved-empty hidden>Nothing saved yet. Tap <b>Save</b> under any guide’s title and it shows up here.</p>
-			<button type="button" class="gi-clear" data-clear>Clear my guides</button>
+			<p class="gi-hint" data-saved-empty hidden>{LB.empty}</p>
+			<button type="button" class="gi-clear" data-clear>{LB.clear}</button>
 		</section>
 		<section class="gi-block" aria-labelledby="gi-plat">
-			<h2 id="gi-plat">Platforms</h2>
+			<h2 id="gi-plat">{L.platforms}</h2>
 			<ul class="gi-plats">
 				{
 					platforms.map((p) => (
@@ -143,17 +188,21 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 					))
 				}
 			</ul>
-			<a class="gi-more" href="/platforms/">Threads, Pinterest, Twitch and more</a>
+			<a class="gi-more" href={localize(locale, '/platforms/')}>{L.morePlatforms}</a>
 		</section>
 
 		<section class="gi-block" aria-labelledby="gi-topics">
-			<h2 id="gi-topics">Topics</h2>
+			<h2 id="gi-topics">{L.topics}</h2>
 			<ul class="gi-topics" data-totals={JSON.stringify(totals)}>
 				{
 					liveTopics.map((t) => (
 						<li>
-							<a href={`/${t.id}/`} data-section={t.id}>
-								<span class="dot" aria-hidden="true" />
+							<a href={localize(locale, `/${t.id}/`)} data-section={t.id}>
+								<span class="ti" aria-hidden="true">
+									<svg viewBox="0 0 24 24">
+										<path d={topicIcons[t.id] ?? topicIcons.shortlist} />
+									</svg>
+								</span>
 								<span class="txt">
 									<strong>{t.title}</strong>
 									<span>{t.text}</span>
@@ -163,11 +212,25 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 						</li>
 					))
 				}
+				<li>
+					<a href="/glossary/" data-section="glossary">
+						<span class="ti" aria-hidden="true">
+							<svg viewBox="0 0 24 24">
+								<path d={topicIcons.glossary} />
+							</svg>
+						</span>
+						<span class="txt">
+							<strong>Glossary</strong>
+							<span>CPM, RPM, usage rights and every term in plain English</span>
+						</span>
+						<span class="n">{sortedTerms.length}</span>
+					</a>
+				</li>
 			</ul>
 		</section>
 
 		<details class="gi-all">
-			<summary>Browse all {rows.length} guides</summary>
+			<summary>{L.browseAll(rows.length)}</summary>
 			<ol class="gi-list" data-lib-mark>
 				{
 					rows.map((r) => (
@@ -176,7 +239,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 								<strong>{r.title}<span class="lib-tick" role="img" aria-label="done" /></strong>
 								<span class="meta">
 									<span class="dot" aria-hidden="true" />
-									{r.label} · {r.minutes} min
+									{r.label} · {r.minutes} {L.min}{!r.translated && <> · <abbr title={t(locale).grid.english}>{L.english}</abbr></>}
 								</span>
 							</a>
 						</li>
@@ -205,7 +268,22 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 							<span class="hit" data-hit hidden />
 							<span class="meta">
 								<span class="dot" aria-hidden="true" />
-								{r.label} · {r.minutes} min
+								{r.label} · {r.minutes} {L.min}{!r.translated && <> · <abbr title={t(locale).grid.english}>{L.english}</abbr></>}
+							</span>
+						</a>
+					</li>
+				))
+			}
+			{
+				termRows.map((r) => (
+					<li data-id={r.id} data-title={r.title.toLowerCase()} data-text={`${r.text} glossary`.toLowerCase()} data-rank={r.rank} hidden>
+						<a href={r.href} data-section="glossary" hreflang={locale === 'en' ? undefined : 'en'}>
+							<strong>{r.title}</strong>
+							<span class="desc">{r.description}</span>
+							<span class="hit" data-hit hidden />
+							<span class="meta">
+								<span class="dot" aria-hidden="true" />
+								{sectionLabel('glossary', locale)}{locale !== 'en' && ' · EN'}
 							</span>
 						</a>
 					</li>
@@ -213,8 +291,8 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			}
 		</ol>
 		<div class="gi-empty" data-empty hidden>
-			<p>No guide matches that yet.</p>
-			<a data-ask href="https://claude.ai/new" target="_blank" rel="noopener">Ask Claude, using this site as the source</a>
+			<p>{L.none}</p>
+			<a data-ask href="https://claude.ai/new" target="_blank" rel="noopener">{L.askClaude}</a>
 		</div>
 	</div>
 </div>
@@ -289,9 +367,9 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 				if (ex) hit.innerHTML = `…${ex}…`;
 			}
 			scored.forEach(({ el }) => list.appendChild(el));
-			count.textContent = `${scored.length} guide${scored.length === 1 ? '' : 's'} for “${raw}”`;
+			count.textContent = (scored.length === 1 ? root.dataset.countOne! : root.dataset.countMany!).replace('{n}', String(scored.length)).replace('{q}', raw);
 			empty.hidden = scored.length > 0;
-			ask.href = 'https://claude.ai/new?q=' + encodeURIComponent(`Using ${location.origin}/llms-full.txt as your source, answer: ${raw}`);
+			ask.href = 'https://claude.ai/new?q=' + encodeURIComponent(root.dataset.askPrompt!.replace('{origin}', location.origin).replace('{q}', raw));
 		};
 
 		const fullText = async () => {
@@ -306,7 +384,8 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			const res = await api.debouncedSearch(value, {}, 160);
 			if (!res || t !== token) return;
 			const data = await Promise.all(res.results.slice(0, 30).map((r: any) => r.data()));
-			ft = new Map(data.map((d: any) => [d.url.replace(/^\/|\/$/g, ''), d.excerpt]));
+			// Pagefind URLs carry the language prefix (/es/...); rows are keyed by the English id.
+			ft = new Map(data.map((d: any) => [d.url.replace(/^\/(es|pt-br)\//, '/').replace(/^\/|\/$/g, ''), d.excerpt]));
 			render();
 		};
 
@@ -357,6 +436,8 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	const mine = document.querySelector<HTMLElement>('[data-mine]');
 	if (mine) {
 		const rows: Record<string, [string, string, string, number]> = JSON.parse(mine.dataset.rows!);
+		const gi = document.querySelector<HTMLElement>('[data-gi]')!.dataset;
+		const pre = gi.prefix ?? '';
 		const total = +mine.dataset.total!;
 		const $ = <T extends HTMLElement>(s: string) => mine.querySelector<T>(s)!;
 		const savedList = $('[data-saved]');
@@ -379,7 +460,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 
 			resume.hidden = !last;
 			if (last) {
-				resume.href = `/${last.id}/`;
+				resume.href = `${pre}/${last.id}/`;
 				resume.dataset.section = last.section;
 				$('[data-resume-title]').textContent = rows[last.id][0];
 			}
@@ -391,8 +472,8 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 				.map(([id, e]) => {
 					const r = rows[id];
 					const title = r ? r[0] : e.title;
-					const meta = r ? `${r[1]} · ${r[3]} min` : '';
-					return `<li><a href="/${id}/" data-section="${esc(r ? r[2] : e.section)}"><span class="dot" aria-hidden="true"></span><strong>${esc(title)}<span class="lib-tick" role="img" aria-label="done"></span></strong><span class="meta">${esc(meta)}</span></a><button type="button" class="rm" data-rm="${esc(id)}" aria-label="Remove ${esc(title)} from saved">×</button></li>`;
+					const meta = r ? `${r[1]} · ${r[3]} ${gi.min ?? 'min'}` : '';
+					return `<li><a href="${pre}/${id}/" data-section="${esc(r ? r[2] : e.section)}"><span class="dot" aria-hidden="true"></span><strong>${esc(title)}<span class="lib-tick" role="img" aria-label="done"></span></strong><span class="meta">${esc(meta)}</span></a><button type="button" class="rm" data-rm="${esc(id)}" aria-label="${esc(gi.remove ?? 'Remove')}: ${esc(title)}">×</button></li>`;
 				})
 				.join('');
 
@@ -402,7 +483,7 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 				const n = done.filter((id) => id.startsWith(t + '/')).length;
 				el.textContent = n ? `${n}/${totals[t]}` : String(totals[t]);
 				el.classList.toggle('has-done', n > 0);
-				el.title = n ? `${n} of ${totals[t]} done` : '';
+				el.title = n ? (gi.nOfDone ?? '{n} of {t} done').replace('{n}', String(n)).replace('{t}', String(totals[t])) : '';
 			});
 			markLinks();
 		};
@@ -417,10 +498,10 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 			if ($('[data-clear]').dataset.armed) return clear();
 			const b = $('[data-clear]');
 			b.dataset.armed = '1';
-			b.textContent = 'Tap again to clear saved guides and progress';
+			b.textContent = gi.clearConfirm ?? 'Tap again to clear saved guides and progress';
 			setTimeout(() => {
 				delete b.dataset.armed;
-				b.textContent = 'Clear my guides';
+				b.textContent = gi.clearLabel ?? 'Clear my guides';
 			}, 4000);
 		});
 		onChange(render);
@@ -517,6 +598,22 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	}
 	.gi-try button:hover {
 		border-color: var(--sc-line-bright);
+	}
+	@media (max-width: 40rem) {
+		.gi-try {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			scrollbar-width: none;
+			margin-inline-end: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding-inline-end: var(--sl-content-pad-x, 1rem);
+			mask-image: linear-gradient(90deg, #000 85%, transparent);
+		}
+		.gi-try::-webkit-scrollbar {
+			display: none;
+		}
+		.gi-try button {
+			flex: none;
+		}
 	}
 
 	/* Blocks */
@@ -783,6 +880,26 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	.gi-topics a:hover {
 		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 		background: color-mix(in srgb, var(--accent) 6%, transparent);
+	}
+	.ti {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 12px;
+		color: var(--accent);
+		background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+	}
+	.ti svg {
+		width: 1.15rem;
+		height: 1.15rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
 	}
 	.gi .dot {
 		flex: none;

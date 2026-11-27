@@ -1,6 +1,17 @@
 ---
 title: "Vetting a manager"
 description: "What to ask, what to check, and the red flags to walk away from before you sign with a manager, agency or network."
+payoff: "Interview and vet a manager like someone who'll take a share of your income for years."
+moves:
+  - do: "Call two of their current clients before you sign."
+    why: "They'll tell you what the pitch won't."
+    source: "Creator-tested"
+  - do: "Read every clause about money and exit."
+    why: "Commission, who collects and post-term clauses are where it goes wrong."
+    source: "Pfeiffer Law, SAG-AFTRA"
+  - do: "Have your own lawyer review the contract."
+    why: "It costs far less than a bad contract."
+    source: "Creator-tested"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,10 +22,12 @@ sidebar:
 ---
 
 import TapChecklist from '../../../components/team/TapChecklist.astro';
+import CopyBlock from '../../../components/guide/CopyBlock.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** you're hiring someone who will take a share of your income for years. Interview them like it. Call their current clients, read every clause about money and exit, and have your own lawyer review the contract before you sign.
 
-## Before the first call
+## Check them out before the first call
 
 <figure class="sc-figure">
 <ol class="sc-steps">
@@ -29,16 +42,29 @@ import TapChecklist from '../../../components/team/TapChecklist.astro';
 
 **California agents are public record.** The Labor Commissioner licenses talent agencies, so you can ask for the license number and check it. Managers aren't licensed, which is why references matter more.
 
-## The questions to ask
+## Ask these on the first call
 
-- **"Who else do you manage, and how many clients does each manager carry?"** A manager with 40 clients can't give you the same attention as one with 8.
-- **"What will you do in the first 90 days?"** You want specifics: rate card, target brands, a plan for your next big swing.
-- **"What do you commission, and on what?"** Gross or net? Deals they didn't touch? AdSense? Your own products?
-- **"Who collects the money?"** Ideally brands pay you (or your business manager) and you pay commission. If they collect, ask how fast they pay out and whether it sits in a separate client account.
-- **"What happens if my manager leaves the company?"** Ask for a key-person clause so you can leave too.
-- **"How do I get out?"** If the answer is vague, so is your exit.
+<CopyBlock
+  label="Questions for the first call"
+  text={`- Who else do you manage, and how many clients does each manager carry?
+- What will you do in the first 90 days?
+- What do you commission, and on what?
+- Who collects the money?
+- What happens if my manager leaves the company?
+- How do I get out?`}
+  note="Copy into your notes and write their answers underneath."
+/>
 
-## The contract, clause by clause
+What good answers sound like:
+
+- **Who else do you manage, and how many clients does each manager carry?** A manager with 40 clients can't give you the same attention as one with 8.
+- **What will you do in the first 90 days?** You want specifics: rate card, target brands, a plan for your next big swing.
+- **What do you commission, and on what?** Gross or net? Deals they didn't touch? AdSense? Your own products?
+- **Who collects the money?** Ideally brands pay you (or your business manager) and you pay commission. If they collect, ask how fast they pay out and whether it sits in a separate client account.
+- **What happens if my manager leaves the company?** Ask for a key-person clause so you can leave too.
+- **How do I get out?** If the answer is vague, so is your exit.
+
+## Read the contract clause by clause
 
 | Clause | What's common | What to push for |
 | --- | --- | --- |
@@ -53,7 +79,7 @@ import TapChecklist from '../../../components/team/TapChecklist.astro';
 
 <p class="sc-figure__caption">In California, personal service contracts can't be enforced beyond seven years.</p>
 
-## Red flags
+## Walk away if you see these
 
 <TapChecklist
 	mode="flags"
@@ -76,7 +102,7 @@ import TapChecklist from '../../../components/team/TapChecklist.astro';
 	]}
 />
 
-## Networks (MCNs) are a special case
+## Treat networks (MCNs) differently
 
 Multi-channel networks were huge in YouTube's early years. YouTube's own help page says MCNs "typically take a percentage of revenue from the creator's portion before paying them," and that their contracts are legally binding. YouTube tells creators to check, before signing:
 
@@ -87,7 +113,7 @@ Multi-channel networks were huge in YouTube's early years. YouTube's own help pa
 
 That last point isn't hypothetical. When Defy Media collapsed in 2018, creators said they were owed fees, an estimated $1.7 million according to Digiday's reporting. See the [agency directory](/team/agency-directory/) for what happened to the big networks.
 
-## Sources
+<DeepDive title="Sources" hint="5 sources">
 
 - Jon Pfeiffer, [Influencer Management Agreements: Fee (Manager's Compensation)](https://www.pfeifferlaw.com/entertainment-law-blog/influencer-management-agreements-fee-managers-compensation), Pfeiffer Law, Aug 16, 2023. Norm of 15–20%, gross vs net, no admin fee, never pay upfront.
 - Christiane Cargill Kinney, [Managers, Agents & Attorneys](https://www.lexisnexis.com/community/amp-insights/119/managers-agents-attorneys), LexisNexis Practice Advisor, Nov 26, 2015. Power of attorney, three-to-five-year terms, California's seven-year limit, capping post-term payments.
@@ -96,3 +122,5 @@ That last point isn't hypothetical. When Defy Media collapsed in 2018, creators 
 - Kerry Flynn, [The deconstruction of the MCN](https://digiday.com/marketing/deconstruction-mcn-youtube-matures-middlemen-lose-ground), Digiday, April 8, 2019.
 
 *Educational, not legal advice. Have a lawyer licensed where you live review any contract.*
+
+</DeepDive>

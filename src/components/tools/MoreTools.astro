@@ -4,7 +4,8 @@
  * same group first. Reads the current page from the route, so pages just drop it in.
  */
 import { GALLERY_TOOLS as FREE_TOOLS, toolBySlug } from '../../lib/free-tools';
-const slug = Astro.locals.starlightRoute.entry.id.split('/')[1];
+import { splitId } from '../../i18n';
+const slug = splitId(Astro.locals.starlightRoute.entry.id).base.split('/')[1];
 const me = toolBySlug(slug);
 const others = FREE_TOOLS.filter((t) => t.slug !== slug)
 	.sort((a, b) => Number(b.group === me?.group) - Number(a.group === me?.group))

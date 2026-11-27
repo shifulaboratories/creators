@@ -1,6 +1,17 @@
 ---
 title: "Scams aimed at creators"
 description: "Fake brand deals, fake copyright notices, private-video phishing, SIM swaps and paid unbans: what each looks like and the tell that gives it away."
+payoff: "Spot the messages that lead to account takeovers before you click."
+moves:
+  - do: "Never log in through a link in a message."
+    why: "Almost every takeover starts with a message that looks like business."
+    source: "Platforms"
+  - do: "Never download or run a file a brand sends you."
+    why: "Fake sponsorship files are a common way in."
+    source: "Platforms"
+  - do: "Check copyright and policy notices inside the app, not in email."
+    why: "Real notices show up in the app."
+    source: "Platforms"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,12 +22,14 @@ sidebar:
 ---
 
 import ScamDeck from '../../../components/ScamDeck.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** almost every creator account takeover starts with a message that looks like business: a sponsorship, a copyright notice, a message from "the platform". The tell is nearly always the same. It wants you to **log in through its link, run a file, or hand over a code.**
 
 <ScamDeck />
 
-## The 5-second check
+## Run the 5-second check
 
 Before you tap anything in a DM or email, run through these. One "yes" means stop.
 
@@ -30,13 +43,13 @@ Before you tap anything in a DM or email, run through these. One "yes" means sto
 <figcaption>Practical checks drawn from the incidents on this page</figcaption>
 </figure>
 
-## How big is this?
+## How common this is
 
-When Google's Threat Analysis Group broke up one campaign aimed at YouTube creators in 2021, it had identified about 15,000 attacker accounts and blocked 1.6 million phishing messages. The lure was fake sponsorship offers. Stolen channels were resold for $3 to $4,000 or used to stream crypto scams. <span class="sc-tag is-platform">From the platform</span>
+When Google's Threat Analysis Group broke up one campaign aimed at YouTube creators in 2021, it had identified about 15,000 attacker accounts and blocked 1.6 million phishing messages. The lure was fake sponsorship offers. Stolen channels were resold for $3 to $4,000 or used to stream crypto scams.
 
 The pattern hasn't changed since, only the costume. In 2025, YouTube warned creators about private videos with an AI-generated version of its CEO announcing fake monetization changes. In 2026, scammers filed fake copyright claims against Instagram creators and demanded ransoms to withdraw them.
 
-## Brand deal or bait?
+## Tell a brand deal from bait
 
 <div class="sc-compare">
 <div class="sc-compare__side is-jade"><h4>Signs of a real deal</h4><ul><li>Comes from the company's own domain, and you can find that person on its site or LinkedIn</li><li>A brief and a contract you can preview without installing anything</li><li>Happy to jump on a video call</li><li>Pays through normal invoicing</li></ul></div>
@@ -45,14 +58,21 @@ The pattern hasn't changed since, only the costume. In 2025, YouTube warned crea
 
 Our [Brand deals](/deals/) section covers what a real contract should look like.
 
-## If you already clicked
+## If you already clicked, do this now
 
-1. **Change the password** of the account the link was about, and of your email, from a device you trust.
-2. **Log out every other session**: each platform's playbook in [Hacked or locked out](/protect/hacked/) shows where.
-3. **Ran a file?** Treat the computer as infected. Cookie-stealing malware takes your logged-in sessions, so a new password alone may not be enough. Sign out of all sessions, scan or reset the computer, then change passwords from a clean device. <span class="sc-tag is-practitioner">Security practice</span>
-4. **Report the message** in the app it came through, so it gets taken down for the next person.
+<QuickCheck
+  title="Damage control"
+  id="protect-clicked"
+  items={[
+    { text: "Change the password", hint: "Of the account the link was about, and of your email, from a device you trust." },
+    { text: "Log out every other session", hint: "Each platform's playbook in [Hacked or locked out](/protect/hacked/) shows where." },
+    { text: "Ran a file?", hint: "Treat the computer as infected. Cookie-stealing malware takes your logged-in sessions, so a new password alone may not be enough. Sign out of all sessions, scan or reset the computer, then change passwords from a clean device." },
+    { text: "Report the message", hint: "In the app it came through, so it gets taken down for the next person." },
+  ]}
+  done="Locked down. Watch for odd logins this week."
+/>
 
-## Sources
+<DeepDive title="Sources" hint="7 sources">
 
 - Google Threat Analysis Group, [Phishing campaign targets YouTube creators with cookie theft malware](https://blog.google/threat-analysis-group/phishing-campaign-targets-youtube-creators-cookie-theft-malware/), Oct 20, 2021.
 - Google Help, [YouTube phishing](https://support.google.com/faqs/answer/14329556).
@@ -61,3 +81,5 @@ Our [Brand deals](/deals/) section covers what a real contract should look like.
 - Sophos Naked Security, [Instagram copyright infringement scams: don't get sucked in](https://www.sophos.com/en-us/blog/instagram-copyright-infringment-scams-dont-get-sucked-in).
 - TechCrunch, [TikTok acknowledges exploit targeting high-profile accounts](https://techcrunch.com/2024/06/04/tiktok-acknowledges-exploit-targeting-high-profile-accounts), June 4, 2024.
 - FCC, [Protecting consumers from SIM swap and port-out fraud](https://www.fcc.gov/node/262577).
+
+</DeepDive>

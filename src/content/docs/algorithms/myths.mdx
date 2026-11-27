@@ -1,6 +1,17 @@
 ---
 title: "Myths vs evidence"
 description: "The algorithm claims gurus repeat, checked against what the platforms' own code and explainers say."
+payoff: "Check the algorithm advice you've heard against what the platforms actually say."
+moves:
+  - do: "Tap the myth you believe most below."
+    why: "Most algorithm advice is recycled guesswork."
+    source: "Platform code and explainers"
+  - do: "Before you change how you post, ask where a tip came from."
+    why: "If it doesn't trace to the platform's own code or explainers, treat it as a guess."
+    source: "Select Creators standard"
+  - do: "Test a claim on your own posts before adopting it."
+    why: "Your own numbers beat anyone's rule of thumb."
+    source: "Creator-tested"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,16 +22,25 @@ sidebar:
 ---
 
 import MythBuster from '../../../components/MythBuster.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** most algorithm advice is recycled guesswork. Before you change how you work, check whether the claim traces to the platform's own code or explainers. Tap a claim to see what the source says.
 
 <MythBuster />
 
-## How to spot a bad claim
+## Check a claim before you act on it
 
-- **No source, or a screenshot of a source.** Real platform statements have a link and a date.
-- **Exact numbers with no code behind them.** Only X publishes ranking weights. Anyone quoting precise weights for TikTok, Instagram or YouTube is guessing.
-- **One-size-fits-all timing rules.** Feeds are personalized per viewer, so a universal "best time to post" is a weak lever at best.
-- **A fix for sale.** If the person explaining the "secret" also sells the cure, treat it as an ad.
+<QuickCheck
+  title="Bad-claim check"
+  id="alg-myths"
+  items={[
+    { text: "It links to a dated source, not a screenshot of one", hint: "Real platform statements have a link and a date." },
+    { text: "Exact numbers come with code behind them", hint: "Only X publishes ranking weights. Anyone quoting precise weights for TikTok, Instagram or YouTube is guessing." },
+    { text: "It doesn't sell one timing rule for everyone", hint: "Feeds are personalized per viewer, so a universal \u201cbest time to post\u201d is a weak lever at best." },
+    { text: "The person explaining it isn't selling the fix", hint: "If the person explaining the \u201csecret\u201d also sells the cure, treat it as an ad." },
+  ]}
+  done="Worth testing."
+/>
 
 See [how we rank evidence](/algorithms/) for the standard every page here follows.

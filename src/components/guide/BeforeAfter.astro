@@ -16,19 +16,21 @@ interface Props {
 	caption?: string;
 	illustration?: boolean;
 }
+import { currentLocale, t } from '../../i18n';
+const G = t(currentLocale(Astro)).guide;
 const { before, after, caption, illustration = false } = Astro.props;
 ---
 
 <figure class="ba not-content">
 	<div class="ba-grid">
 		<div class="ba-side is-before">
-			<p class="ba-label">{before.label ?? 'Before'}</p>
+			<p class="ba-label">{before.label ?? G.before}</p>
 			<p class="ba-title">{before.title}</p>
 			{before.lines && <ul>{before.lines.map((l) => <li>{l}</li>)}</ul>}
 			{before.note && <p class="ba-note">{before.note}</p>}
 		</div>
 		<div class="ba-side is-after">
-			<p class="ba-label">{after.label ?? 'After'}</p>
+			<p class="ba-label">{after.label ?? G.after}</p>
 			<p class="ba-title">{after.title}</p>
 			{after.lines && <ul>{after.lines.map((l) => <li>{l}</li>)}</ul>}
 			{after.note && <p class="ba-note">{after.note}</p>}
@@ -36,7 +38,7 @@ const { before, after, caption, illustration = false } = Astro.props;
 	</div>
 	{(caption || illustration) && (
 		<figcaption>
-			{illustration && <span class="sc-tag is-illustrative">Example</span>} {caption}
+			{illustration && <span class="sc-tag is-illustrative">{G.example}</span>} {caption}
 		</figcaption>
 	)}
 </figure>

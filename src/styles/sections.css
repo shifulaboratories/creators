@@ -27,6 +27,7 @@
 [data-section='news'] { --accent: var(--sc-news); }
 [data-section='money'] { --accent: var(--sc-money); }
 [data-section='paywall'] { --accent: var(--sc-paywall); }
+[data-section='glossary'] { --accent: var(--sc-ion); }
 /* Free tools: the warm champagne of the brand's aurora gradient. */
 [data-section='tools'] { --accent: var(--sc-champagne); }
 [data-section='rates'] { --accent: var(--sc-amethyst); }

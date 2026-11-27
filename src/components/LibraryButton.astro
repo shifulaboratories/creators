@@ -9,7 +9,10 @@ interface Props {
 	title: string;
 	section: string;
 }
+import { currentLocale, t, localize } from '../i18n';
 const { kind, id, title, section } = Astro.props;
+const locale = currentLocale(Astro);
+const L = t(locale).library;
 ---
 
 {
@@ -18,8 +21,8 @@ const { kind, id, title, section } = Astro.props;
 			<svg viewBox="0 0 24 24" aria-hidden="true">
 				<path d="M6.5 3.5h11a1 1 0 0 1 1 1v16l-6.5-4.2-6.5 4.2v-16a1 1 0 0 1 1-1z" />
 			</svg>
-			<span data-off>Save</span>
-			<span data-on>Saved</span>
+			<span data-off>{L.save}</span>
+			<span data-on>{L.saved}</span>
 		</button>
 	) : (
 		<div class="lib-done not-content" data-pagefind-ignore>
@@ -29,12 +32,12 @@ const { kind, id, title, section } = Astro.props;
 						<path d="m5.5 12.5 4.2 4.2 8.8-9.4" />
 					</svg>
 				</span>
-				<strong data-off>Mark as done</strong>
-				<strong data-on>Done</strong>
+				<strong data-off>{L.markDone}</strong>
+				<strong data-on>{L.done}</strong>
 			</button>
-			<p data-off>Tick it off. Your progress stays on this device.</p>
+			<p data-off>{L.hint}</p>
 			<p data-on>
-				Nice. <a href="/guides/#mine">See your progress</a>
+				{L.nice} <a href={localize(locale, '/guides/') + '#mine'}>{L.seeProgress}</a>
 			</p>
 		</div>
 	)

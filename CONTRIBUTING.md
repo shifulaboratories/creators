@@ -4,9 +4,10 @@ Thanks for helping. This handbook is only as good as the people who check it.
 
 ## Ways to help
 
-1. **Fix something.** Every page has an "Edit page" link. Make the change and open a pull request.
-2. **Add or correct a tool.** Add a YAML file in `src/data/tools/`, copying an existing one. The `alternative` field is required: name a free or non-affiliate option.
-3. **Write a guide.** Open an issue first so the section editor can help shape it.
+1. **Report something.** [Open an issue](https://github.com/shifulaboratories/creators/issues/new/choose) and pick a template: correction, guide idea, tool suggestion or site bug. No GitHub skills needed.
+2. **Fix something.** Every page has an "Edit page" link. Make the change and open a pull request.
+3. **Add or correct a tool.** Add a YAML file in `src/data/tools/`, copying an existing one. The `alternative` field is required: name a free or non-affiliate option.
+4. **Write a guide.** Open a guide idea issue first so the section editor can help shape it.
 
 ## Rules every pull request follows
 
@@ -72,4 +73,4 @@ By opening a pull request you confirm you wrote the contribution or have the rig
 
 ## Code of conduct
 
-Be kind, be specific, and assume good faith. Harassment, doxxing or naming private individuals is not allowed and gets you removed.
+Be kind, be specific, and assume good faith. Harassment, doxxing or naming private individuals is not allowed and gets you removed. The full version is in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

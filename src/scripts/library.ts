@@ -64,10 +64,11 @@ export function onChange(fn: () => void) {
 	});
 }
 
-/** "/money/taxes/" or "https://…/money/taxes/#x" → "money/taxes" */
+/** "/money/taxes/", "/es/money/taxes/" or "https://…/money/taxes/#x" → "money/taxes" */
 export const idFromHref = (href: string) => {
 	try {
-		return new URL(href, location.href).pathname.replace(/^\/|\/$/g, '');
+		// Spanish and Portuguese pages share progress with the English guide.
+		return new URL(href, location.href).pathname.replace(/^\/(es|pt-br)\//, '/').replace(/^\/|\/$/g, '');
 	} catch {
 		return '';
 	}

@@ -1,6 +1,17 @@
 ---
 title: "LLC or S corp?"
 description: "What a sole proprietorship, an LLC and an S corp election each change for a creator, what they don't, and a calculator to see if an S corp would save you anything."
+payoff: "Whether you need an LLC or an S corp yet, in plain English, with a quick check."
+moves:
+  - do: "Don't form an LLC for tax savings alone."
+    why: "By itself, an LLC doesn't change your federal taxes at all."
+    source: "IRS"
+  - do: "Run the S corp check below with last year's profit."
+    why: "An S corp only lowers self-employment tax once profit is high enough to cover a reasonable salary."
+    source: "IRS"
+  - do: "Talk to a CPA before you elect S corp status."
+    why: "It adds payroll, filings and costs every year."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -12,14 +23,20 @@ sidebar:
 
 import ScorpCheck from '../../../components/basics/ScorpCheck.astro';
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import CopyBlock from '../../../components/guide/CopyBlock.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
-**The short version:** an **LLC** is a legal wrapper. It can help separate your business from your personal stuff, but by itself it **doesn't change your federal taxes at all**. An **S corp** is a tax election. It can lower self-employment tax once your profit is high enough, but it adds payroll, a second tax return and real costs. A common path: start as a sole proprietor, add an LLC when deals and contracts get serious, and look at an S corp only once profit is steady. <span class="sc-tag is-practitioner">Practitioner view</span>
+**The short version:** an **LLC** is a legal wrapper. It can help separate your business from your personal stuff, but by itself it **doesn't change your federal taxes at all**. An **S corp** is a tax election. It can lower self-employment tax once your profit is high enough, but it adds payroll, a second tax return and real costs. A common path: start as a sole proprietor, add an LLC when deals and contracts get serious, and look at an S corp only once profit is steady.
 
 :::caution[Not tax or legal advice]
 Entity choice depends on your state, your income and your plans. Talk to a CPA, and for liability questions a business lawyer, before you form anything or file an election.
 :::
 
-## The three setups, side by side
+## Check if an S corp would save you anything
+
+<ScorpCheck />
+
+## Compare the three setups
 
 | | Sole proprietor | Single-member LLC | LLC or corp taxed as an S corp |
 | --- | --- | --- | --- |
@@ -29,7 +46,7 @@ Entity choice depends on your state, your income and your plans. Talk to a CPA, 
 | **Paperwork** | Least | State filing and yearly state fees | Payroll, a separate business tax return, more bookkeeping |
 | **Brands see** | Your name and SSN or EIN on a W-9 | The LLC's name and EIN | The company's name and EIN |
 
-<span class="sc-tag is-platform">IRS</span> From the IRS pages on sole proprietorships, single-member LLCs and S corporation compensation.
+ From the IRS pages on sole proprietorships, single-member LLCs and S corporation compensation.
 
 ## What an LLC is good for
 
@@ -37,7 +54,7 @@ Entity choice depends on your state, your income and your plans. Talk to a CPA, 
 - **Contracts in the company's name**, so brands sign with "Your Studio LLC," not you personally.
 - **Some liability protection.** It's not a force field: it can fail if you mix personal and business money, and it doesn't protect you from your own mistakes. A lawyer can tell you how much it really covers in your state.
 
-**What it costs:** state formation and yearly fees, which vary a lot. California, for example, charges every LLC that's organized or doing business there an **$800** annual tax, plus an extra fee once California income passes $250,000. <span class="sc-tag is-platform">CA Franchise Tax Board</span>
+**What it costs:** state formation and yearly fees, which vary a lot. California, for example, charges every LLC that's organized or doing business there an **$800** annual tax, plus an extra fee once California income passes $250,000.
 
 **Get an EIN** (a business tax ID) once the LLC exists. It's free from the IRS website and takes minutes. The IRS warns: "Beware of websites that charge for an EIN. You never have to pay a fee for an EIN." Putting an EIN on your W-9s also keeps your Social Security number out of brands' inboxes.
 
@@ -47,20 +64,22 @@ As a sole proprietor or default LLC, all of your profit gets the 15.3% self-empl
 
 The catch is the word **reasonable.** The IRS says S corps "must pay reasonable compensation to a shareholder-employee in return for services... before non-wage distributions may be made." When the money comes from *your own* work, as it does for most creators, the IRS looks hard at a low salary and can reclassify distributions as wages. It lists factors like your training, duties, time spent, and what comparable businesses pay for similar work. There's no official percentage.
 
-## Would it save you anything?
+## Get the timing right
 
-<ScorpCheck />
+To have an S corp election start on January 1, a calendar-year business generally files Form 2553 **no more than 2 months and 15 days into the year** (around March 15), or any time in the year before. Late elections can sometimes be fixed within 3 years and 75 days.
 
-## Timing
+## Bring these questions to a CPA
 
-To have an S corp election start on January 1, a calendar-year business generally files Form 2553 **no more than 2 months and 15 days into the year** (around March 15), or any time in the year before. Late elections can sometimes be fixed within 3 years and 75 days. <span class="sc-tag is-platform">IRS</span>
+<CopyBlock
+  label="Questions for your CPA"
+  text={`- What would a reasonable salary be for what I do, and how would you document it?
+- What will payroll, the extra return and my state's fees cost me each year?
+- Does my state tax S corps or LLCs on top of federal tax?
+- How does this change my QBI deduction and retirement contributions?
+- If my income drops next year, how hard is it to undo?`}
+  note="Paste these into your email or notes before the call."
+/>
 
-## Questions to bring to a CPA
-
-- "What would a reasonable salary be for what I do, and how would you document it?"
-- "What will payroll, the extra return and my state's fees cost me each year?"
-- "Does my state tax S corps or LLCs on top of federal tax?"
-- "How does this change my QBI deduction and retirement contributions?"
-- "If my income drops next year, how hard is it to undo?"
-
-<TaxSources ids={['soleprop', 'smllc', 'scorp', 'f2553', 'ein', 'caftb', 'se']} />
+<DeepDive title="Sources" hint="7 sources">
+<TaxSources bare ids={['soleprop', 'smllc', 'scorp', 'f2553', 'ein', 'caftb', 'se']} />
+</DeepDive>

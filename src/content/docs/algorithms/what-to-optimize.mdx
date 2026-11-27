@@ -1,6 +1,17 @@
 ---
 title: "What to optimize for"
 description: "Watch time, sends, replies, follows: what Instagram, TikTok, YouTube and X each say they reward, side by side, with the receipts."
+payoff: "The three things every platform rewards, and the cheap signals to stop chasing."
+moves:
+  - do: "Design your next post to be watched to the end."
+    why: "Watching is rewarded on every major platform."
+    source: "Platforms"
+  - do: "Give people a reason to send it to someone."
+    why: "Sends and shares outrank likes wherever weights are published."
+    source: "Instagram, X code"
+  - do: "Stop asking for likes."
+    why: "Likes are the cheapest signal everywhere."
+    source: "Platforms"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,12 +22,29 @@ sidebar:
 ---
 
 import SignalBoard from '../../../components/SignalBoard.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** every platform rewards the same three things in slightly different proportions: people **watching**, people **sending**, and people **coming back**. Likes are the cheapest signal everywhere. Negative feedback is expensive everywhere it's published.
 
+## Check a post before it goes up
+
+<QuickCheck
+  title="Before you post"
+  id="alg-optimize"
+  items={[
+    { text: "I know what makes someone stay to the end", hint: "If you can't answer, tighten it." },
+    { text: "I can name who someone would send this to", hint: "Name the friend. If there isn't one, rethink the angle." },
+    { text: "There's a reason to reply", hint: "A question, a take, a choice. Not engagement bait." },
+    { text: "A stranger can see why to follow", hint: "Make it obvious what else you make." },
+    { text: "Nothing here invites \u201cnot interested\u201d", hint: "Misleading hooks win a click and lose the viewer." },
+  ]}
+  done="Ready to post."
+/>
+
 <SignalBoard />
 
-## The pattern, platform by platform
+## Know each platform’s top signal
 
 <figure class="sc-figure">
 <ul class="sc-bars">
@@ -33,15 +61,7 @@ import SignalBoard from '../../../components/SignalBoard.astro';
 - **YouTube:** watch time, weighted by whether viewers say they were glad they watched. <span class="sc-tag is-platform">From the platform</span>
 - **X:** a copy-link share is weighted 20, a reply or DM share 5, a like 0.708. <span class="sc-tag is-code">From the code</span>
 
-## A checklist before you post
-
-1. **What will make someone stay to the end?** If you can't answer, tighten it.
-2. **Who would someone send this to?** Name the friend. If there isn't one, rethink the angle.
-3. **Is there a reason to reply?** A question, a take, a choice. Not engagement bait.
-4. **Why would a stranger follow after this?** Make it obvious what else you make.
-5. **Could this make someone hit "not interested"?** Misleading hooks win a click and lose the viewer.
-
-## Sources
+<DeepDive title="Sources" hint="6 sources">
 
 - Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025 (Mosseri video).
 - Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
@@ -49,3 +69,5 @@ import SignalBoard from '../../../components/SignalBoard.astro';
 - TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
 - YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
 - X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026.
+
+</DeepDive>

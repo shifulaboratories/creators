@@ -1,6 +1,17 @@
 ---
 title: "Set aside and pay quarterly"
 description: "Work out what slice of every payment to save for taxes, when quarterly estimated taxes are due, the safe harbor rule, and how to pay the IRS."
+payoff: "How much of each payment to save for taxes, so April stops being scary."
+moves:
+  - do: "Use the calculator below to pick your set-aside percentage."
+    why: "A percentage you move every time money lands is the whole system."
+    source: "IRS"
+  - do: "Open a separate tax savings account today."
+    why: "Money you can't see in checking is money you won't spend."
+    source: "Creator-tested"
+  - do: "Put the four quarterly due dates in your calendar."
+    why: "Estimated taxes are due four times a year, not once."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -13,6 +24,8 @@ sidebar:
 import SetAside from '../../../components/basics/SetAside.astro';
 import Deadlines from '../../../components/basics/Deadlines.astro';
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** pick a percentage, and every time money lands, move that slice into a separate tax savings account before you spend anything. Four times a year, pay the IRS (and your state) from that account. Do that and April stops being scary.
 
@@ -26,15 +39,15 @@ The calculator is an estimate using 2026 federal rules. It can't see your deduct
 
 Update it when your income changes a lot, like after a big brand deal or a slow quarter. Overshooting is fine: whatever's left in the tax account after you file is yours.
 
-## Who has to pay quarterly
+## Check if you have to pay quarterly
 
-The IRS expects estimated payments if you expect to owe **$1,000 or more** when you file, after any withholding from a job. For most full-time creators, that's year one. <span class="sc-tag is-platform">IRS</span>
+The IRS expects estimated payments if you expect to owe **$1,000 or more** when you file, after any withholding from a job. For most full-time creators, that's year one.
 
-## The dates
+## Put the dates in your calendar
 
 <Deadlines />
 
-## The safe harbor: how to avoid the penalty
+## Avoid the underpayment penalty
 
 You won't owe an underpayment penalty if your payments (plus any withholding) add up to the **smaller** of these:
 
@@ -49,7 +62,7 @@ You won't owe an underpayment penalty if your payments (plus any withholding) ad
 
 **Why this matters for creators:** income is lumpy. If you just had a breakout year, paying 100% (or 110%) of *last* year's tax in four parts keeps you penalty-free, even if this year's bill turns out much bigger. You still owe the difference in April, so keep saving your percentage on top.
 
-## How to pay
+## Pay online
 
 <figure class="sc-figure">
 <div class="sc-compare">
@@ -61,16 +74,20 @@ You won't owe an underpayment penalty if your payments (plus any withholding) ad
 
 When you pay, choose **estimated tax (1040-ES)** and the right **tax year**. A payment filed under the wrong year is a common headache to untangle. Your state has its own estimated payments and its own website.
 
-## A routine that works
+## Set up the routine
 
-<figure class="sc-figure">
-<ol class="sc-steps">
-<li class="is-active"><strong>Money lands</strong><span>In your business checking account.</span></li>
-<li><strong>Same day</strong><span>Move your percentage to the tax savings account. Automate it if your bank allows rules.</span></li>
-<li><strong>Each due date</strong><span>Pay the IRS and your state from the tax account, and save the confirmation.</span></li>
-<li><strong>Each quarter</strong><span>Re-run the calculator with your profit so far.</span></li>
-</ol>
-<figcaption>The pay-yourself-last tax routine <span class="sc-tag is-practitioner">Creator-tested</span></figcaption>
-</figure>
+<QuickCheck
+  title="Tax routine"
+  id="money-setaside"
+  items={[
+    { text: "Money lands in business checking" },
+    { text: "Same day, your percentage goes to tax savings", hint: "Automate it if your bank allows rules." },
+    { text: "Each due date, pay the IRS and your state from tax savings", hint: "Save the confirmation." },
+    { text: "Each quarter, re-run the calculator with profit so far" },
+  ]}
+  done="Routine set."
+/>
 
-<TaxSources ids={['estimated', 'es', 'rp2532', 'se', 'ssa']} />
+<DeepDive title="Sources" hint="5 sources">
+<TaxSources bare ids={['estimated', 'es', 'rp2532', 'se', 'ssa']} />
+</DeepDive>

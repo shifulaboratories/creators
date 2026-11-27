@@ -23,6 +23,7 @@ export const SECTION_LABELS: Record<string, string> = {
 	rates: 'Creator rates',
 	about: 'About',
 	guides: 'All guides',
+	glossary: 'Glossary',
 };
 
 const C = {
@@ -56,6 +57,7 @@ export const ACCENTS: Record<string, string> = {
 	rates: C.amethyst,
 	about: C.champagne,
 	guides: C.rose,
+	glossary: C.ion,
 	youtube: C.ember,
 	tiktok: C.cyan,
 	instagram: C.rose,

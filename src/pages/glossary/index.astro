@@ -1,0 +1,303 @@
+---
+/**
+ * The glossary index: a filter box, topic chips, and every term A to Z with
+ * its one-line answer. Works without JavaScript (it is just a list); with it,
+ * typing filters instantly and ?q= makes a filtered view shareable.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { sortedTerms, CATEGORIES, termPath, letterOf, type Category } from '../../lib/glossary';
+import { SITE_NAME } from '../../site.mjs';
+
+const groups = new Map<string, typeof sortedTerms>();
+for (const t of sortedTerms) groups.set(letterOf(t), [...(groups.get(letterOf(t)) ?? []), t]);
+const letters = [...groups.keys()];
+const cats = (Object.keys(CATEGORIES) as Category[]).map((k) => ({ key: k, ...CATEGORIES[k], n: sortedTerms.filter((t) => t.category === k).length }));
+const popular = ['cpm', 'rpm', 'usage-rights', 'exclusivity', 'whitelisting', 'engagement-rate', 'commission', 'audience-retention'];
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'Creator glossary',
+		description: `${sortedTerms.length} creator economy terms in plain English, from CPM and RPM to usage rights and exclusivity, each with a worked example and sources.`,
+		head: [{ tag: 'title', content: `Creator glossary: CPM, RPM, usage rights and more | ${SITE_NAME}` }],
+		tableOfContents: false,
+		pagefind: false,
+		prev: false,
+		next: false,
+		editUrl: false,
+		status: 'draft',
+		confidence: 'verified',
+	}}
+>
+	<div class="gl not-content" data-gl>
+		<form class="gl-search" role="search" data-form>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+			<input type="search" name="q" placeholder={`Find a term, like “net 30”`} aria-label="Find a term" autocomplete="off" spellcheck="false" enterkeyhint="go" data-q />
+		</form>
+
+		<div class="gl-chips" role="group" aria-label="Filter by topic" data-chips>
+			<button type="button" aria-pressed="true" data-cat="">All <span>{sortedTerms.length}</span></button>
+			{
+				cats.map((c) => (
+					<button type="button" aria-pressed="false" data-cat={c.key} id={c.key}>
+						{c.label} <span>{c.n}</span>
+					</button>
+				))
+			}
+		</div>
+
+		<p class="gl-popular" data-popular>
+			Most looked up:{' '}
+			{popular.map((s, i) => { const t = sortedTerms.find((x) => x.slug === s)!; return <>{i > 0 && ' · '}<a href={termPath(s)}>{t.term}</a></>; })}
+		</p>
+
+		<nav class="gl-az" aria-label="Jump to letter" data-az>
+			{letters.map((l) => <a href={`#letter-${l === '#' ? 'num' : l}`}>{l}</a>)}
+		</nav>
+
+		<p class="gl-count" aria-live="polite" data-count hidden></p>
+
+		{
+			letters.map((l) => (
+				<section class="gl-group" data-group aria-labelledby={`letter-${l === '#' ? 'num' : l}`}>
+					<h2 id={`letter-${l === '#' ? 'num' : l}`}>{l}</h2>
+					<ul>
+						{groups.get(l)!.map((t) => (
+							<li data-cat={t.category} data-text={[t.term, t.full, ...(t.aka ?? []), t.short].join(' ').toLowerCase()}>
+								<a href={termPath(t.slug)}>
+									<strong>
+										{t.term}
+										{t.full && t.full.length < 40 && <span class="full"> · {t.full}</span>}
+									</strong>
+									<span class="def">{t.short}</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
+		}
+
+		<div class="gl-empty" data-empty hidden>
+			<p>No term matches that yet.</p>
+			<a href="/guides/" data-guides>Search the guides instead</a>
+		</div>
+
+		<p class="gl-foot">
+			Missing a word you keep hearing? <a href="/about/contribute/">Suggest it</a>. Every term is open source and cites where it comes from.
+		</p>
+	</div>
+</StarlightPage>
+
+<script>
+	const root = document.querySelector<HTMLElement>('[data-gl]');
+	if (root) {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-chips] button')];
+		const items = [...root.querySelectorAll<HTMLElement>('li[data-cat]')];
+		const groups = [...root.querySelectorAll<HTMLElement>('[data-group]')];
+		const count = root.querySelector<HTMLElement>('[data-count]')!;
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+		const guides = root.querySelector<HTMLAnchorElement>('[data-guides]')!;
+		const az = root.querySelector<HTMLElement>('[data-az]')!;
+		const popular = root.querySelector<HTMLElement>('[data-popular]')!;
+		let cat = '';
+		const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+
+		const render = () => {
+			const raw = q.value.trim();
+			const words = norm(raw).split(/\s+/).filter(Boolean);
+			let shown = 0;
+			for (const el of items) {
+				const ok = (!cat || el.dataset.cat === cat) && words.every((w) => el.dataset.text!.includes(w));
+				el.hidden = !ok;
+				if (ok) shown++;
+			}
+			for (const g of groups) g.hidden = !g.querySelector('li:not([hidden])');
+			const filtering = Boolean(raw || cat);
+			az.hidden = filtering;
+			popular.hidden = filtering;
+			count.hidden = !filtering;
+			count.textContent = `${shown} term${shown === 1 ? '' : 's'}`;
+			empty.hidden = shown > 0;
+			guides.href = raw ? `/guides/?q=${encodeURIComponent(raw)}` : '/guides/';
+			const p = new URLSearchParams(location.search);
+			raw ? p.set('q', raw) : p.delete('q');
+			history.replaceState(null, '', (p.toString() ? `?${p}` : location.pathname) + (cat ? `#${cat}` : ''));
+		};
+		const setCat = (c: string) => {
+			cat = c;
+			for (const b of chips) b.setAttribute('aria-pressed', String(b.dataset.cat === c));
+			render();
+		};
+		q.addEventListener('input', render);
+		root.querySelector('[data-form]')!.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const first = items.find((el) => !el.hidden);
+			if (first && q.value.trim()) location.href = first.querySelector('a')!.href;
+		});
+		chips.forEach((b) => b.addEventListener('click', () => setCat(b.dataset.cat!)));
+		const initial = new URLSearchParams(location.search).get('q');
+		if (initial) q.value = initial;
+		const hash = location.hash.slice(1);
+		if (chips.some((b) => b.dataset.cat === hash && hash)) setCat(hash);
+		else if (initial) render();
+	}
+</script>
+
+<style>
+	.gl {
+		max-width: 46rem;
+	}
+	.gl [hidden] {
+		display: none !important;
+	}
+	.gl-search {
+		position: relative;
+		margin: 0.5rem 0 1rem;
+	}
+	.gl-search svg {
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		width: 1.15rem;
+		height: 1.15rem;
+		transform: translateY(-50%);
+		fill: none;
+		stroke: var(--sc-steel);
+		stroke-width: 2;
+		pointer-events: none;
+	}
+	.gl-search input {
+		width: 100%;
+		font: inherit;
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+		background: var(--sc-fill-subtle);
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 999px;
+		padding: 0.85rem 1.1rem 0.85rem 2.8rem;
+		outline: none;
+	}
+	.gl-search input:focus {
+		border-color: var(--sc-ion);
+		box-shadow: var(--sc-ion-glow);
+	}
+	.gl-chips {
+		display: flex;
+		gap: 0.45rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		padding-bottom: 0.25rem;
+		margin: 0 -1rem;
+		padding-inline: 1rem;
+		scroll-margin-top: 6rem;
+	}
+	.gl-chips button {
+		flex: none;
+		font: inherit;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+		background: transparent;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 999px;
+		padding: 0.4rem 0.85rem;
+		cursor: pointer;
+		scroll-margin-top: 6rem;
+	}
+	.gl-chips button span {
+		color: var(--sc-steel);
+		margin-left: 0.2rem;
+	}
+	.gl-chips button[aria-pressed='true'] {
+		color: var(--sc-obsidian);
+		background: var(--sc-ivory);
+		border-color: var(--sc-ivory);
+	}
+	.gl-chips button[aria-pressed='true'] span {
+		color: var(--sc-slate);
+	}
+	.gl-popular {
+		margin: 1rem 0 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-steel);
+	}
+	.gl-popular a,
+	.gl-foot a,
+	.gl-empty a {
+		color: var(--sc-ivory);
+		text-underline-offset: 3px;
+	}
+	.gl-az {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.2rem;
+		margin: 1.5rem 0 0.5rem;
+	}
+	.gl-az a {
+		display: grid;
+		place-items: center;
+		min-width: 2rem;
+		height: 2rem;
+		border-radius: 0.6rem;
+		color: var(--sc-silver);
+		text-decoration: none;
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+	}
+	.gl-az a:hover {
+		background: var(--sc-fill-muted);
+		color: var(--sc-ivory);
+	}
+	.gl-count {
+		margin: 1.25rem 0 0;
+		color: var(--sc-steel);
+		font-size: var(--sc-text-sm);
+	}
+	.gl-group h2 {
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-xl);
+		color: var(--sc-ivory);
+		margin: 1.75rem 0 0.25rem;
+		scroll-margin-top: 5rem;
+	}
+	.gl-group ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.gl-group a {
+		display: block;
+		padding: 0.8rem 0;
+		border-bottom: 1px solid var(--sc-line);
+		text-decoration: none;
+	}
+	.gl-group strong {
+		display: block;
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.gl-group .full {
+		color: var(--sc-steel);
+		font-weight: 400;
+	}
+	.gl-group .def {
+		display: block;
+		margin-top: 0.15rem;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+		line-height: 1.5;
+	}
+	.gl-group a:hover strong {
+		color: var(--sc-ion);
+	}
+	.gl-empty {
+		margin-top: 1.5rem;
+		color: var(--sc-silver);
+	}
+	.gl-foot {
+		margin-top: 2.5rem;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-steel);
+	}
+</style>

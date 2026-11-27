@@ -1,6 +1,17 @@
 ---
 title: "Write-offs"
 description: "What counts as a business expense for a creator, the gray areas (clothes, makeup, your phone, your car), and the receipts you need to back it up."
+payoff: "What you can actually write off as a creator, and why a write-off isn't free money."
+moves:
+  - do: "Only buy things you'd buy anyway."
+    why: "A $100 expense saves roughly $25 to $40 in tax, not $100."
+    source: "IRS"
+  - do: "Start a folder for receipts today, digital or paper."
+    why: "You need proof for everything you claim."
+    source: "IRS"
+  - do: "Log business miles as you drive them."
+    why: "The standard mileage rate needs a record of each trip."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,6 +22,9 @@ sidebar:
 ---
 
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** a write-off isn't free money. A $100 expense lowers your *profit* by $100, which saves you roughly your tax rate on it, maybe $25 to $40. So only buy things you'd buy anyway, and keep proof for everything you claim.
 
@@ -18,23 +32,31 @@ import TaxSources from '../../../components/basics/TaxSources.astro';
 These are general US federal rules. An expense that's fine for one creator can be personal for another. When in doubt, ask a tax pro before you claim it.
 :::
 
-## The test every expense has to pass
+## A write-off isn't free money
 
-The IRS standard for deducting a business cost is that it's **ordinary** (common in your line of work) and **necessary** (helpful and appropriate for your business). If something is part business and part personal, you deduct only the business share. IRS Publication 334, *Tax Guide for Small Business*, is the plain-language guide. <span class="sc-tag is-platform">IRS</span>
+<BeforeAfter
+  before={{ title: "“I'll buy the $100 light. It's a write-off.”", note: "As if the $100 comes back. It doesn't." }}
+  after={{ title: "“The $100 light lowers my profit by $100, so I save maybe $25 to $40 in tax.”", note: "Still $60 to $75 out of your pocket. Buy it only if you'd buy it anyway." }}
+  caption="Savings depend on your tax rate."
+/>
 
-## What usually counts, what's gray, what doesn't
+## Run every expense through one test
+
+The IRS standard for deducting a business cost is that it's **ordinary** (common in your line of work) and **necessary** (helpful and appropriate for your business). If something is part business and part personal, you deduct only the business share. IRS Publication 334, *Tax Guide for Small Business*, is the plain-language guide.
+
+## Know what counts
 
 <figure class="sc-figure">
 <div class="sc-compare">
 <div class="sc-compare__side is-jade"><h4>Usually fine</h4><ul><li>Editors, designers, thumbnail artists, assistants (contractors you pay)</li><li>Cameras, lenses, mics, lights, a computer used for the business</li><li>Editing software, music licenses, stock footage, scheduling tools</li><li>Props and products you buy only to review or film</li><li>Platform, payment and agency fees</li><li>Business travel to shoot, attend an event or meet a brand</li><li>Accountant, lawyer and bookkeeping costs</li></ul></div>
 <div class="sc-compare__side is-champagne"><h4>Gray: depends on facts and records</h4><ul><li><strong>Phone and internet</strong>: only the business share</li><li><strong>Home office</strong>: needs a space used regularly and only for the business</li><li><strong>Car</strong>: business miles only, logged</li><li><strong>Meals</strong>: generally 50%, with a real business reason</li><li><strong>Clothes, makeup, hair</strong>: the usual line is whether you could wear or use it in everyday life. If you could, it's likely personal, even if it appears on camera</li></ul></div>
 </div>
-<figcaption>Meals limit from IRS Publication 334 (2025). Clothes and makeup line reflects how tax pros usually read the rules <span class="sc-tag is-practitioner">Practitioner view</span></figcaption>
+<figcaption>Meals limit from IRS Publication 334 (2025). Clothes and makeup line reflects how tax pros usually read the rules</figcaption>
 </figure>
 
 Things that don't count: your everyday rent, groceries, gym, a vacation with one post on it, or clothes you also wear off camera.
 
-## Three deductions with fixed numbers
+## Use the three fixed-number deductions
 
 <figure class="sc-figure">
 <div class="sc-stats">
@@ -47,13 +69,22 @@ Things that don't count: your everyday rent, groceries, gym, a vacation with one
 
 **Home office, in practice:** the space has to be used "exclusively" and "on a regular basis" for the business. A desk in the corner of your bedroom that you also game at doesn't qualify. A spare room set up as a studio, used only for filming and editing, can. You pick the simplified method or the actual-cost method each year, and can't switch for that year after choosing.
 
-## Receipts: what to keep
+## Keep the right receipts
 
-- **Every expense:** the receipt or invoice, how you paid, and one line on what it was for ("Sony mic for podcast set").
-- **Car:** a mileage log with date, where you went, why, and miles. An app that logs trips is easiest.
-- **Meals and travel:** who you met, what you discussed, where and when. The IRS says a log, diary or notebook works.
-- **Gifted products you report as income:** what it was, what it's worth and what was expected in return. See [How creators get taxed](/money/taxes-101/#gifted-products-and-pr-packages).
+<QuickCheck
+  title="Receipt check"
+  id="money-receipts"
+  items={[
+    { text: "Every expense", hint: "The receipt or invoice, how you paid, and one line on what it was for (\"Sony mic for podcast set\")." },
+    { text: "Car", hint: "A mileage log with date, where you went, why, and miles. An app that logs trips is easiest." },
+    { text: "Meals and travel", hint: "Who you met, what you discussed, where and when. The IRS says a log, diary or notebook works." },
+    { text: "Gifted products you report as income", hint: "What it was, what it's worth and what was expected in return. See [How creators get taxed](/money/taxes-101/#count-gifted-products)." },
+  ]}
+  done="Covered if you get audited."
+/>
 
-Keep it all for **at least three years** after you file, longer in some cases. See [Banking, bookkeeping and credit](/money/banking-and-bookkeeping/) for how.
+Keep it all for **at least three years** after you file, longer in some cases. See [Banking, bookkeeping and credit](/money/banking-and-bookkeeping/).
 
-<TaxSources ids={['p334', 'p463', 'mileage', 'homeoffice', 'records']} />
+<DeepDive title="Sources" hint="5 sources">
+<TaxSources bare ids={['p334', 'p463', 'mileage', 'homeoffice', 'records']} />
+</DeepDive>
