@@ -12,7 +12,8 @@
  *   Lever       https://api.lever.co/v0/postings/{slug}?mode=json
  *   Ashby       https://api.ashbyhq.com/posting-api/job-board/{slug}
  *
- * A listing keeps the date we first saw it across runs. A feed that fails on
+ * A listing keeps the date we first saw it across runs (`since` is the first
+ * run ever, so launch-day listings aren't all marked new). A feed that fails on
  * a given day keeps its previous listings for up to a week, so one bad
  * request doesn't empty a company.
  */
@@ -140,14 +141,14 @@ const prevBySource = new Map();
 for (const j of prev.jobs) prevBySource.set(j.company, [...(prevBySource.get(j.company) ?? []), j]);
 const prevSource = new Map(prev.sources.map((s) => [s.company, s]));
 
-const results = await pool(sources, 6, async (src) => {
+const todo = sources.filter((s) => (PROBE ? !s.ats : s.ats));
+const results = await pool(todo, 6, async (src) => {
 	const found = (await resolve(src)).filter(Boolean);
 	return { src, found };
 });
 
 if (PROBE) {
 	for (const { src, found } of results) {
-		if (src.ats) continue;
 		const hits = found.filter((f) => f.jobs);
 		if (!hits.length) {
 			console.log(`- ${src.company}: no public feed found`);
@@ -164,7 +165,6 @@ if (PROBE) {
 const jobs = [];
 const sourceRows = [];
 for (const { src, found } of results) {
-	if (!src.ats) continue; // unpinned: only shows up in --probe
 	const hit = found.find((f) => f?.jobs);
 	const old = prevSource.get(src.company);
 	if (!hit) {
@@ -211,6 +211,6 @@ sourceRows.sort((a, b) => a.company.localeCompare(b.company));
 console.log(`${jobs.length} listings from ${sourceRows.length} companies.`);
 
 if (!CHECK) {
-	writeFileSync(OUT, JSON.stringify({ updated: today, sources: sourceRows, jobs }, null, '\t') + '\n');
+	writeFileSync(OUT, JSON.stringify({ updated: today, since: prev.since ?? today, sources: sourceRows, jobs }, null, '\t') + '\n');
 	console.log(`Wrote ${OUT.pathname}`);
 }
