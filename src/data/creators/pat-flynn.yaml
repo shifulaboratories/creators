@@ -1,0 +1,57 @@
+name: Pat Flynn
+known: Smart Passive Income podcast and blog, plus the Deep Pocket Monster YouTube channel
+niche: business
+platforms: [podcast, youtube, newsletter]
+site: https://www.smartpassiveincome.com/
+about: Pat Flynn founded Smart Passive Income, a long-running blog and podcast about building online businesses, and later grew a Pokemon card channel, Deep Pocket Monster. He is the author of Superfans and Lean Learning.
+tools:
+  - name: Kit
+    use: SPI's only email marketing platform
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+  - name: Poppy AI
+    use: Pat records an audio note with the focus of an email, Poppy turns it into draft copy, and the team edits it
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+  - name: Frame.io
+    use: A key part of his workflow for producing, reviewing and collaborating on videos
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+  - name: Circle
+    use: Runs the SPI community
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+  - name: Fusebox
+    use: The podcast player on the SPI site
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+  - name: Wistia
+    use: Hosts SPI's core educational and marketing videos
+    source: https://smartpassiveincome.com/resources/
+    sourceTitle: SPI Resources
+    date: "May 2026"
+advice:
+  - text: "Quantity is key."
+    source: https://nathanbarry.com/?p=7111
+    sourceTitle: "From Zero To $1M From Content: My 2025 Strategy (Pat Flynn), Nathan Barry Show 090"
+    date: "Aug 2025"
+  - text: Link videos into multi-part story arcs. People subscribe to see what happens next, not because they liked the video they just watched.
+    quote: false
+    source: https://nathanbarry.com/?p=7111
+    sourceTitle: "From Zero To $1M From Content: My 2025 Strategy (Pat Flynn), Nathan Barry Show 090"
+    date: "Aug 2025"
+  - text: Use retention graphs to cut what loses viewers. Dropping his own intro and opening straight on the reveal improved retention.
+    quote: false
+    source: https://nathanbarry.com/?p=7111
+    sourceTitle: "From Zero To $1M From Content: My 2025 Strategy (Pat Flynn), Nathan Barry Show 090"
+    date: "Aug 2025"
+  - text: Spend about 20 percent of your time on experiments, and judge a new channel by whether you kept uploading, not by its early views.
+    quote: false
+    source: https://nathanbarry.com/?p=7111
+    sourceTitle: "From Zero To $1M From Content: My 2025 Strategy (Pat Flynn), Nathan Barry Show 090"
+    date: "Aug 2025"

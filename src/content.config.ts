@@ -185,7 +185,7 @@ const creators = defineCollection({
 		name: z.string(),
 		known: z.string().max(90),
 		niche: z.enum(['education', 'lifestyle', 'beauty', 'business', 'film', 'music', 'podcast', 'tech', 'gaming', 'short-form', 'entertainment', 'strategy']),
-		platforms: z.array(z.enum(['youtube', 'tiktok', 'instagram', 'podcast', 'newsletter', 'twitch', 'x'])).min(1),
+		platforms: z.array(z.enum(['youtube', 'tiktok', 'instagram', 'podcast', 'newsletter', 'twitch', 'x', 'linkedin'])).min(1),
 		site: z.url().optional(),
 		about: z.string().min(40),
 		tools: z.array(z.object({ name: z.string(), use: z.string(), ...sourced })).default([]),

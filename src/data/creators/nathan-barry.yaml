@@ -1,0 +1,48 @@
+name: Nathan Barry
+known: Founder of Kit (formerly ConvertKit) and host of The Nathan Barry Show
+niche: business
+platforms: [newsletter, podcast, youtube]
+site: https://nathanbarry.com/
+about: Nathan Barry founded Kit, the email platform for creators, after earlier selling his own design ebooks. He writes a newsletter and hosts a podcast about building creator businesses.
+tools:
+  - name: Kit
+    use: Writes his newsletter in it pretty much every day
+    source: https://nathanbarry.com/my-advice-for-creators-entrepreneurs-in-2025-qa/
+    sourceTitle: "My Advice for Creators & Entrepreneurs in 2025 (Q&A), Nathan Barry Show 066"
+    date: "Feb 2025"
+  - name: VoicePal
+    use: iPhone app that transcribes ideas he speaks on walks and rewrites them into draft text
+    source: https://nathanbarry.com/my-advice-for-creators-entrepreneurs-in-2025-qa/
+    sourceTitle: "My Advice for Creators & Entrepreneurs in 2025 (Q&A), Nathan Barry Show 066"
+    date: "Feb 2025"
+  - name: Wispr Flow
+    use: Dictation app; he says he rarely types now and mostly speaks
+    source: https://nathan.kit.com/posts/creator-gift-guide
+    sourceTitle: Creator gift guide
+    date: "Nov 2024"
+  - name: Elgato Prompter
+    use: Teleprompter he uses heavily for podcast intros
+    source: https://nathan.kit.com/posts/creator-gift-guide
+    sourceTitle: Creator gift guide
+    date: "Nov 2024"
+  - name: Moleskine dot grid notebook
+    use: Sketching ideas and brainstorming
+    source: https://nathan.kit.com/posts/creator-gift-guide
+    sourceTitle: Creator gift guide
+    date: "Nov 2024"
+advice:
+  - text: If you want to build real wealth, build one skyscraper instead of many small side businesses. Keep improving one core venture.
+    quote: false
+    source: https://nathanbarry.com/my-advice-for-creators-entrepreneurs-in-2025-qa/
+    sourceTitle: "My Advice for Creators & Entrepreneurs in 2025 (Q&A), Nathan Barry Show 066"
+    date: "Feb 2025"
+  - text: Price by niche, expertise and willingness to pay. Deep expertise in a narrow niche points to high-ticket offers; earlier creators often do better with low-ticket products.
+    quote: false
+    source: https://nathanbarry.com/my-advice-for-creators-entrepreneurs-in-2025-qa/
+    sourceTitle: "My Advice for Creators & Entrepreneurs in 2025 (Q&A), Nathan Barry Show 066"
+    date: "Feb 2025"
+  - text: Set standing rules for when and how you create, like showing up at a set time. Constraints make creative work easier to sustain.
+    quote: false
+    source: https://nathanbarry.com/my-advice-for-creators-entrepreneurs-in-2025-qa/
+    sourceTitle: "My Advice for Creators & Entrepreneurs in 2025 (Q&A), Nathan Barry Show 066"
+    date: "Feb 2025"

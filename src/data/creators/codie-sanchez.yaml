@@ -1,0 +1,48 @@
+name: Codie Sanchez
+known: Contrarian Thinking, on buying small "boring" businesses
+niche: business
+platforms: [newsletter, youtube, tiktok, x]
+site: https://www.contrarianthinking.co/
+about: A former investor who runs Contrarian Thinking, a newsletter and media brand about buying and running small, unglamorous businesses. She grew it largely through short videos and threads on social platforms.
+tools:
+  - name: ConvertKit (now Kit)
+    use: Runs the back end of her newsletter
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - name: Hypefury
+    use: Schedules and manages her X (Twitter) posts
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - name: Buffer
+    use: Schedules Instagram posts; TikToks are posted natively in the app
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - name: Notion
+    use: Tracks the content workflow from idea to script to filming and editing
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+advice:
+  - text: Use social platforms to move people onto your newsletter, the one channel you own and control distribution on. Don't rely on a single platform, because algorithms change.
+    quote: false
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - text: Batch content creation once a week, and turn each idea into 5 to 10 pieces of content so you are not starting from zero every time.
+    quote: false
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - text: Start with a simple paid product before building a community, and charge more than you think you should.
+    quote: false
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
+  - text: For TikTok ideas, study videos that went viral and ask how each one could apply to what you do.
+    quote: false
+    source: https://creatorscience.com/podcast/codie-sanchez/
+    sourceTitle: "Codie Sanchez (Creator Science, Ep 93)"
+    date: "Mar 2022"
