@@ -6,8 +6,11 @@
  */
 import { getCollection } from 'astro:content';
 import { SECTION_LABELS } from '../lib/share';
+import { termsForGuide, termPath } from '../lib/glossary';
 
-const { pagination } = Astro.locals.starlightRoute;
+const { pagination, entry } = Astro.locals.starlightRoute;
+// Glossary terms this guide uses, linked both ways for readers (and search engines).
+const words = termsForGuide(entry.id);
 const { prev, next } = pagination;
 
 const docs = await getCollection('docs');
@@ -26,6 +29,24 @@ const describe = (link: typeof prev) => {
 const p = describe(prev);
 const n = describe(next);
 ---
+
+{
+	words.length > 0 && (
+		<aside class="words print:hidden" aria-labelledby="words-h">
+			<h2 id="words-h">Words in this guide</h2>
+			<ul>
+				{words.map((t) => (
+					<li>
+						<a href={termPath(t.slug)} title={t.short}>{t.term}</a>
+					</li>
+				))}
+				<li>
+					<a class="all" href="/glossary/">Full glossary</a>
+				</li>
+			</ul>
+		</aside>
+	)
+}
 
 {
 	(p || n) && (
@@ -158,6 +179,42 @@ const n = describe(next);
 </script>
 
 <style>
+	.words {
+		margin: 2.5rem 0 1rem;
+	}
+	.words h2 {
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+		color: var(--sc-steel);
+		margin: 0 0 0.6rem;
+	}
+	.words ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+	.words li {
+		margin: 0;
+	}
+	.words a {
+		display: inline-block;
+		padding: 0.35rem 0.8rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-platinum);
+		font-size: var(--sc-text-sm);
+	}
+	.words a:hover {
+		border-color: var(--accent, var(--sc-ion));
+		color: var(--sc-ivory);
+	}
+	.words .all {
+		border-style: dashed;
+		color: var(--sc-silver);
+	}
 	.pager {
 		display: grid;
 		gap: 0.6rem;

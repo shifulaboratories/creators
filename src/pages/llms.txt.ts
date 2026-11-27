@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE, isPublic } from '../lib/markdown';
 import { SITE_NAME, SITE_DESCRIPTION } from '../site.mjs';
+import { sortedTerms } from '../lib/glossary';
 
 // https://llmstxt.org: a map of the site for AI assistants.
 export const GET: APIRoute = async () => {
@@ -16,5 +17,7 @@ export const GET: APIRoute = async () => {
 		out += `\n## ${k.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase())}\n\n`;
 		for (const d of list) out += `- [${d.data.title}](${SITE}/${d.id}.md): ${d.data.description ?? ''}\n`;
 	}
+	out += `\n## Glossary\n\nPlain-English definitions with worked examples and sources. Index: ${SITE}/glossary.md\n\n`;
+	for (const t of sortedTerms) out += `- [${t.term}](${SITE}/glossary/${t.slug}.md): ${t.short}\n`;
 	return new Response(out, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };
