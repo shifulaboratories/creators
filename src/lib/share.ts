@@ -18,6 +18,7 @@ export const SECTION_LABELS: Record<string, string> = {
 	platforms: 'Platforms',
 	shortlist: 'The Shortlist',
 	money: 'Money basics',
+	paywall: 'Paywall',
 	about: 'About',
 	guides: 'All guides',
 };
@@ -48,6 +49,7 @@ export const ACCENTS: Record<string, string> = {
 	platforms: C.cyan,
 	shortlist: C.brass,
 	money: C.jade,
+	paywall: C.rose,
 	about: C.champagne,
 	guides: C.rose,
 	youtube: C.ember,
