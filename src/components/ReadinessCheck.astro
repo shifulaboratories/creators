@@ -545,7 +545,7 @@ const results: Record<string, Result> = {
 			out.querySelectorAll<HTMLElement>('[data-r-agency]').forEach((el) => (el.hidden = el.dataset.rAgency !== r.agency));
 			out.hidden = false;
 			out.focus({ preventScroll: true });
-			out.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+			out.scrollIntoView({ block: 'nearest', behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') });
 		};
 
 		form.addEventListener('change', (e) => {

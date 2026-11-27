@@ -171,4 +171,17 @@
 		animation: none !important;
 	}
 	.sc-reveal { opacity: 1; transform: none; filter: none; }
+
+	/* Safety net for every component on the site: anything that still animates
+	   or transitions finishes instantly, so nothing slides, spins or loops. */
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		animation-delay: 0s !important;
+		transition-duration: 0.01ms !important;
+		transition-delay: 0s !important;
+		scroll-behavior: auto !important;
+	}
 }

@@ -2,6 +2,11 @@
  * The Select seal as a real 3D object (three.js), with platform icons on
  * extruded glass tiles orbiting it. Loaded lazily by Seal3D.astro so the page
  * paints first. Renders only while on screen and the tab is visible.
+ *
+ * Phone budget: setup is split into small steps that hand the main thread back
+ * between them, shaders compile in the background (compileAsync), and a frame
+ * governor lowers the resolution, then the frame rate, if the device can't keep
+ * up, so scrolling never stutters because of the hero.
  */
 import {
 	ACESFilmicToneMapping,
@@ -63,9 +68,19 @@ function iconTexture(icon: Icon) {
 	return t;
 }
 
-export function mountSeal(host: HTMLElement, outlinePath: string) {
+// Give the main thread back so taps and scrolls are handled between setup steps.
+const yieldToMain = () =>
+	new Promise<void>((r) => {
+		const s = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+		if (s?.yield) s.yield().then(r);
+		else setTimeout(r, 0);
+	});
+
+export async function mountSeal(host: HTMLElement, outlinePath: string) {
 	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-	const renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+	// Phones have dense screens, so multisampling buys little and costs a lot of GPU time.
+	const phone = host.clientWidth < 500 || matchMedia('(pointer: coarse)').matches;
+	const renderer = new WebGLRenderer({ antialias: !phone, alpha: true, powerPreference: phone ? 'default' : 'high-performance' });
 	renderer.toneMapping = ACESFilmicToneMapping;
 	renderer.toneMappingExposure = 1.05;
 	renderer.outputColorSpace = SRGBColorSpace;
@@ -76,9 +91,11 @@ export function mountSeal(host: HTMLElement, outlinePath: string) {
 	host.appendChild(canvas);
 
 	const scene = new Scene();
+	await yieldToMain();
 	const pmrem = new PMREMGenerator(renderer);
 	scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 	pmrem.dispose();
+	await yieldToMain();
 
 	// Brand-colored rim lights so the metal picks up pink and lilac.
 	const rose = new PointLight(new Color('#ff86b8'), 9000, 0, 2);
@@ -127,6 +144,7 @@ export function mountSeal(host: HTMLElement, outlinePath: string) {
 		seal.add(m);
 	}
 	scene.add(seal);
+	await yieldToMain();
 
 	// ---- Orbiting platform tiles ----
 	const tileGeo = new RoundedBoxGeometry(15, 15, 4.5, 4, 3);
@@ -142,12 +160,15 @@ export function mountSeal(host: HTMLElement, outlinePath: string) {
 		return t;
 	});
 
+	// Resolution cap; the frame governor below can lower it.
+	let maxDpr = phone ? 1.5 : 2;
+
 	// ---- Sizing: fit the whole orbit inside the box, whatever its shape ----
 	const fit = () => {
 		const w = host.clientWidth;
 		const h = host.clientHeight;
 		if (!w || !h) return;
-		renderer.setPixelRatio(Math.min(devicePixelRatio, w < 500 ? 1.75 : 2));
+		renderer.setPixelRatio(Math.min(devicePixelRatio, maxDpr));
 		renderer.setSize(w, h, false);
 		camera.aspect = w / h;
 		const needW = RING_R * 2 + 26;
@@ -227,10 +248,36 @@ export function mountSeal(host: HTMLElement, outlinePath: string) {
 		renderer.render(scene, camera);
 	}
 
+	// Frame governor: if frames take too long, first drop the resolution, then
+	// run at half rate. Judged on the median of a sample so one hiccup doesn't count.
+	let sample: number[] = [];
+	let level = 0;
+	let skip = false;
+	function govern(ms: number) {
+		if (level >= 2 || !ms) return;
+		sample.push(ms);
+		if (sample.length < 40) return;
+		sample.sort((a, b) => a - b);
+		const median = sample[20];
+		sample = [];
+		if (median < 22) return;
+		level++;
+		if (level === 1 && maxDpr > 1) {
+			maxDpr = 1;
+			fit();
+		} else level = 2;
+	}
+
 	function frame(now: number) {
 		raf = 0;
-		const dt = Math.min(0.05, (now - (last || now)) / 1000);
+		const gap = last ? now - last : 0;
+		if (level === 2 && (skip = !skip)) {
+			raf = requestAnimationFrame(frame);
+			return;
+		}
+		const dt = Math.min(0.05, gap / 1000);
 		last = now;
+		if (level < 2) govern(gap);
 		if (!dragging) {
 			spin += vel;
 			vel *= 0.94;
@@ -248,6 +295,9 @@ export function mountSeal(host: HTMLElement, outlinePath: string) {
 		}
 	}
 
+	// Compile every shader off the main thread where the browser allows it,
+	// so the first frame doesn't freeze the page.
+	await renderer.compileAsync(scene, camera);
 	new ResizeObserver(fit).observe(host);
 	new IntersectionObserver(([e]) => {
 		onScreen = e.isIntersecting;

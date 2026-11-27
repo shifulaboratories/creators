@@ -17,19 +17,37 @@ const outline = mark.match(/<path d="([^"]+)"/)?.[1] ?? '';
 </div>
 
 <script>
+	// The 3D scene is extra polish, so it waits until the page has loaded and
+	// the browser is idle, and it never starts where it would make the page
+	// worse: Save-Data on, or WebGL drawn by the CPU (no graphics chip), where
+	// every frame would freeze scrolling. The flat seal floats instead.
+	const softwareGL = (gl: WebGLRenderingContext | WebGL2RenderingContext) => {
+		const ext = gl.getExtension('WEBGL_debug_renderer_info');
+		const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+		return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+	};
+	const canRun3D = () => {
+		if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return false;
+		const probe = document.createElement('canvas');
+		const gl = (probe.getContext('webgl2') || probe.getContext('webgl')) as WebGLRenderingContext | null;
+		if (!gl) return false;
+		const ok = !softwareGL(gl);
+		gl.getExtension('WEBGL_lose_context')?.loseContext();
+		return ok;
+	};
 	const start = () =>
 		document.querySelectorAll<HTMLElement>('[data-s3d]').forEach(async (el) => {
 			try {
-				const probe = document.createElement('canvas');
-				if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) return;
+				if (!canRun3D()) return;
 				const { mountSeal } = await import('../scripts/seal-scene');
-				mountSeal(el, el.dataset.outline || '');
+				await mountSeal(el, el.dataset.outline || '');
 			} catch {
 				/* keep the flat seal */
 			}
 		});
-	if (document.readyState === 'complete') start();
-	else addEventListener('load', start, { once: true });
+	const idle = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2500 }) : setTimeout(fn, 600));
+	if (document.readyState === 'complete') idle(start);
+	else addEventListener('load', () => idle(start), { once: true });
 </script>
 
 <style>
@@ -74,6 +92,21 @@ const outline = mark.match(/<path d="([^"]+)"/)?.[1] ?? '';
 	}
 	.s3d:global(.is-3d) .s3d-poster {
 		opacity: 0;
+		animation: none;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.s3d-poster {
+			animation: s3d-bob 6s ease-in-out infinite;
+		}
+	}
+	@keyframes s3d-bob {
+		0%,
+		100% {
+			transform: translateY(0) rotate(-3deg);
+		}
+		50% {
+			transform: translateY(-8px) rotate(3deg);
+		}
 	}
 	.s3d-glow {
 		position: absolute;

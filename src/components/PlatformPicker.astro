@@ -85,7 +85,7 @@ const cards: Card[] = [
 					}
 				});
 				// On phones the cards are a swipe rail: bring the first match into view.
-				if (first && grid.scrollWidth > grid.clientWidth) grid.scrollTo({ left: grid.scrollLeft + first.getBoundingClientRect().left - grid.getBoundingClientRect().left - 16, behavior: 'smooth' });
+				if (first && grid.scrollWidth > grid.clientWidth) grid.scrollTo({ left: grid.scrollLeft + first.getBoundingClientRect().left - grid.getBoundingClientRect().left - 16, behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') });
 				count.textContent = k === 'all' ? 'All 12 platforms' : `${n} platforms fit ${chip.textContent!.toLowerCase()}`;
 			}),
 		);
