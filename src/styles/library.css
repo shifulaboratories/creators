@@ -1,0 +1,145 @@
+/* Saved guides and done checkmarks (src/scripts/library.ts). */
+
+/* Show the right label for the current state. */
+[data-lib][aria-pressed='true'] [data-off],
+[data-lib][aria-pressed='false'] [data-on],
+.lib-done:has([aria-pressed='true']) > [data-off],
+.lib-done:has([aria-pressed='false']) > [data-on] {
+	display: none;
+}
+
+/* Save, in the guide header next to Ask AI and Share */
+.lib-save[aria-pressed='true'] {
+	border-color: color-mix(in srgb, var(--accent, var(--sc-ion)) 60%, transparent);
+	background: color-mix(in srgb, var(--accent, var(--sc-ion)) 14%, transparent);
+}
+.lib-save[aria-pressed='true'] svg {
+	fill: var(--accent, var(--sc-ion));
+	stroke: var(--accent, var(--sc-ion));
+}
+
+/* Mark as done, at the end of a guide */
+.lib-done {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem 1rem;
+	margin: 2.5rem 0 0.4rem;
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--sc-line);
+	border-radius: 20px;
+	background: rgb(255 255 255 / 0.02);
+}
+.lib-done > button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	min-height: 2.75rem;
+	padding: 0.35rem 1.1rem 0.35rem 0.4rem;
+	border: 1px solid var(--sc-line-strong);
+	border-radius: 999px;
+	background: rgb(255 255 255 / 0.04);
+	color: var(--sc-ivory);
+	font: 600 0.95rem / 1 var(--sc-font-sans);
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		border-color 0.15s,
+		background 0.15s,
+		transform 0.12s;
+}
+.lib-done > button:hover {
+	border-color: var(--sc-jade);
+}
+.lib-done > button:active {
+	transform: scale(0.96);
+}
+.lib-done .box {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	border: 1.5px solid var(--sc-line-bright, var(--sc-line-strong));
+	transition:
+		background 0.2s,
+		border-color 0.2s;
+}
+.lib-done svg {
+	width: 1.05rem;
+	height: 1.05rem;
+	fill: none;
+	stroke: #06140e;
+	stroke-width: 2.6;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 24;
+	stroke-dashoffset: 24;
+	transition: stroke-dashoffset 0.35s 0.05s ease-out;
+}
+.lib-done [aria-pressed='true'] {
+	border-color: color-mix(in srgb, var(--sc-jade) 55%, transparent);
+	background: var(--sc-jade-tint);
+}
+.lib-done [aria-pressed='true'] .box {
+	background: var(--sc-jade);
+	border-color: var(--sc-jade);
+}
+.lib-done [aria-pressed='true'] svg {
+	stroke-dashoffset: 0;
+}
+.lib-done > p {
+	flex: 1 1 14rem;
+	margin: 0;
+	font-size: 0.85rem;
+	line-height: 1.45;
+	color: var(--sc-silver);
+}
+.lib-done > p a {
+	color: var(--sc-jade);
+}
+
+/* A quick press bounce */
+[data-lib].pop {
+	animation: lib-pop 0.28s ease-out;
+}
+@keyframes lib-pop {
+	40% {
+		transform: scale(1.06);
+	}
+}
+
+/* Checks on links to finished guides: sidebar, Guides page, Up next */
+nav.sidebar a[data-done]::after,
+[data-lib-mark] a[data-done] .lib-tick {
+	content: '';
+	display: inline-block;
+	flex: none;
+	width: 0.95rem;
+	height: 0.95rem;
+	margin-inline-start: 0.4rem;
+	vertical-align: -0.12em;
+	border-radius: 50%;
+	background: var(--sc-jade)
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306140e' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5.5 12.5 4.2 4.2 8.8-9.4'/%3E%3C/svg%3E")
+		center / 70% no-repeat;
+}
+nav.sidebar a[data-done] {
+	color: var(--sc-silver);
+}
+.lib-tick {
+	display: none;
+}
+[data-lib-mark] a[data-done] .lib-tick {
+	display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-lib].pop {
+		animation: none;
+	}
+	.lib-done svg,
+	.lib-done .box {
+		transition: none;
+	}
+}
