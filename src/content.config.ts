@@ -22,6 +22,23 @@ const guideFields = z.object({
 	cover: z.object({ label: z.string().optional(), tint: z.string().optional() }).optional(),
 	// "The short version": up to three points shown above the guide (or see src/data/tldr.ts).
 	tldr: z.array(z.string().max(160)).max(3).optional(),
+	// Set only on platform news update pages (src/pages/news/[platform]/[slug].astro).
+	news: z
+		.object({
+			platform: z.string(),
+			announced: z.coerce.date(),
+			published: z.coerce.date(),
+			updated: z.coerce.date().optional(),
+			confirmed: z.enum(['official', 'reported']),
+		})
+		.optional(),
+	// Action-first guides (docs/guide-format.md): what the reader walks away with,
+	// shown as the lead, and up to three "Do this today" moves that replace the short version.
+	payoff: z.string().max(140).optional(),
+	moves: z
+		.array(z.object({ do: z.string().max(140), why: z.string().max(200), source: z.string().max(60).optional() }))
+		.max(3)
+		.optional(),
 });
 
 const docs = defineCollection({
@@ -159,4 +176,50 @@ const setups = defineCollection({
 	}).refine((s) => s.from !== 'video' || s.youtubeId, { message: 'from: video needs a youtubeId' }),
 });
 
-export const collections = { docs, tools, resources, videos, setups };
+/**
+ * Platform news in src/data/news/: one Markdown file per change. The body is
+ * "What changed"; frontmatter holds the plain-language takeaways and sources.
+ * See docs/news.md for how updates are added (including the daily check).
+ */
+export const NEWS_PLATFORMS = ['instagram', 'tiktok', 'youtube', 'facebook', 'linkedin', 'x'] as const;
+const news = defineCollection({
+	loader: glob({ pattern: '**/*.md', base: './src/data/news' }),
+	schema: z
+		.object({
+			title: z.string().max(90),
+			// Shown as the lead and the meta description: 70-160 characters for search.
+			summary: z.string().min(70).max(160),
+			platform: z.enum(NEWS_PLATFORMS),
+			kind: z.enum(['algorithm', 'monetization', 'policy', 'tools', 'business']),
+			// When the platform announced it, and when we published it here.
+			announced: z.coerce.date(),
+			published: z.coerce.date(),
+			updated: z.coerce.date().optional(),
+			// When it takes effect, in words ("Feb 1, 2027"), if different from announced.
+			effective: z.string().optional(),
+			// official: the platform's own words. reported: credible reporting, not confirmed by the platform.
+			confirmed: z.enum(['official', 'reported']),
+			impact: z.enum(['high', 'medium', 'low']).default('medium'),
+			whoItAffects: z.string().max(140),
+			forYou: z.array(z.string().max(240)).min(1).max(4),
+			doThis: z.array(z.string().max(200)).max(3).default([]),
+			sources: z
+				.array(
+					z.object({
+						title: z.string(),
+						url: z.url(),
+						publisher: z.string(),
+						date: z.coerce.date().optional(),
+						official: z.boolean().default(false),
+					}),
+				)
+				.min(1),
+			// Our guide for this platform, if any (defaults to /platforms/<platform>/).
+			guide: z.string().optional(),
+		})
+		.refine((n) => n.confirmed !== 'official' || n.sources.some((s) => s.official), {
+			message: 'confirmed: official needs at least one source with official: true',
+		}),
+});
+
+export const collections = { docs, tools, resources, videos, setups, news };

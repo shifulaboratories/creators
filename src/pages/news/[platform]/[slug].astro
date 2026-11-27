@@ -1,0 +1,156 @@
+---
+// One platform update: what it means for you first, then what changed, what to
+// do, and dated sources. NewsArticle structured data comes from src/route-data.ts.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { render } from 'astro:content';
+import NewsList from '../../../components/news/NewsList.astro';
+import { getNews, newsSlug, newsPath, NEWS_PLATFORM_INFO, fmtDate, isoDate } from '../../../lib/news';
+
+export async function getStaticPaths() {
+	return (await getNews()).map((entry) => ({
+		params: { platform: entry.data.platform, slug: newsSlug(entry) },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const p = NEWS_PLATFORM_INFO[d.platform];
+const { Content } = await render(entry);
+const guide = d.guide ?? p.guide;
+---
+
+<StarlightPage
+	frontmatter={{
+		title: d.title,
+		description: d.summary,
+		status: 'draft',
+		tableOfContents: false,
+		prev: false,
+		next: false,
+		news: { platform: d.platform, announced: d.announced, published: d.published, updated: d.updated, confirmed: d.confirmed },
+	}}
+>
+	<p class="nw-who"><strong>Who it affects:</strong> {d.whoItAffects}</p>
+
+	<section class="nw-mean not-content" aria-labelledby="mean">
+		<h2 id="mean">What it means for you</h2>
+		<ul>
+			{d.forYou.map((x) => <li>{x}</li>)}
+		</ul>
+	</section>
+
+	<h2 id="what-changed">What changed</h2>
+	<Content />
+
+	{d.doThis.length > 0 && (
+		<>
+			<h2 id="what-to-do">What to do</h2>
+			<ol class="nw-do">
+				{d.doThis.map((x) => <li>{x}</li>)}
+			</ol>
+		</>
+	)}
+
+	<h2 id="sources">Sources</h2>
+	<ul class="nw-src">
+		{d.sources.map((s) => (
+			<li>
+				<a href={s.url} rel="noopener">{s.title}</a>
+				<span class="nw-src__by">
+					{s.publisher}{s.date && `, ${fmtDate(s.date)}`}
+					{s.official && <span class="nw-official">Official</span>}
+				</span>
+			</li>
+		))}
+	</ul>
+	<p class="nw-note">
+		{d.confirmed === 'official'
+			? `Confirmed by ${p.name}'s own announcement.`
+			: `Reported by the outlets above. We haven't been able to confirm it from ${p.name}'s own words yet, and will update this page when we do.`}
+		{' '}Published {fmtDate(d.published)}{d.updated && d.updated.getTime() !== d.published.getTime() ? `, updated ${fmtDate(d.updated)}` : ''}.
+		Spotted a mistake? <a href="/about/corrections/">Tell us</a>.
+	</p>
+
+	<div class="nw-next not-content">
+		<a class="nw-guide" href={guide}>
+			<span>How {p.name} works, in full</span>
+			<span aria-hidden="true">→</span>
+		</a>
+	</div>
+
+	<h2 id="more">More {p.name} news</h2>
+	<NewsList platform={d.platform} exclude={newsPath(entry)} limit={5} />
+	<p><a href={`/news/${d.platform}/`}>All {p.name} news</a> · <a href="/news/">All platforms</a></p>
+	<time hidden datetime={isoDate(d.announced)}></time>
+</StarlightPage>
+
+<style>
+	.nw-who {
+		color: var(--sc-silver);
+	}
+	.nw-mean {
+		margin: 1.5rem 0 0.5rem;
+		padding: 1.25rem 1.35rem 1.1rem;
+		border-radius: 20px;
+		border: 1px solid color-mix(in srgb, var(--sc-lime) 35%, transparent);
+		background: linear-gradient(180deg, rgb(220 255 107 / 0.07), rgb(220 255 107 / 0.02));
+	}
+	.nw-mean h2 {
+		margin: 0 0 0.6rem;
+		font-size: 1.15rem;
+		color: var(--sc-lime);
+	}
+	.nw-mean ul {
+		margin: 0;
+		padding-left: 1.15rem;
+		display: grid;
+		gap: 0.55rem;
+	}
+	.nw-mean li {
+		line-height: 1.55;
+		color: var(--sc-platinum);
+	}
+	.nw-src {
+		list-style: none;
+		padding: 0;
+	}
+	.nw-src li {
+		display: grid;
+		gap: 0.1rem;
+		margin-bottom: 0.7rem;
+	}
+	.nw-src__by {
+		font-size: 0.85rem;
+		color: var(--sc-steel);
+	}
+	.nw-official {
+		margin-left: 0.5rem;
+		padding: 0.02rem 0.45rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		color: var(--sc-sage);
+		border: 1px solid rgb(143 181 154 / 0.5);
+	}
+	.nw-note {
+		font-size: 0.88rem;
+		color: var(--sc-steel);
+	}
+	.nw-next {
+		margin: 1.5rem 0;
+	}
+	.nw-guide {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.95rem 1.1rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		text-decoration: none;
+		font-weight: 600;
+	}
+	.nw-guide:hover {
+		background: var(--sc-fill-muted);
+	}
+</style>

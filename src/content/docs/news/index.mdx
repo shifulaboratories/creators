@@ -1,19 +1,30 @@
 ---
-title: "News"
-description: "Platform changes and creator-economy news, explained in plain English: algorithm updates, monetization programs and what they mean for you."
-status: outline
+title: "Platform news"
+description: "Algorithm, payout and rule changes on Instagram, TikTok, YouTube, Facebook, LinkedIn and X, each with what it means for you in plain English."
+status: draft
+tableOfContents: false
 sidebar:
   order: 0
-  label: Overview
+  label: All platforms
 ---
 
+import NewsList from '../../../components/news/NewsList.astro';
+import NewsPlatforms from '../../../components/news/NewsPlatforms.astro';
 import NewsletterSignup from '../../../components/NewsletterSignup.astro';
 
-Platform changes and creator-economy news, explained.
+When a platform changes how it ranks, pays or polices creators, it lands here within a day, with what it means for you and what to do about it.
 
+<NewsPlatforms />
 
-## In this section
+## Latest
 
-- [Weekly roundup](/news/weekly/): The week in the creator economy.
+<NewsList />
+
+## How we cover changes
+
+- **Official first.** We start from the platform's own blog, help center, newsroom or engineering team. Anything we can only confirm through reporting is labeled **Reported**.
+- **Dated.** Every update shows when the platform announced it and when it takes effect.
+- **No rumor posts.** "My reach dropped, it must be the algorithm" isn't news. A named source with a link is.
+- **Checked every day.** Get updates in any feed reader with the [RSS feed](/news/feed.xml), and see [Corrections](/about/corrections/) if we got something wrong.
 
 <NewsletterSignup />

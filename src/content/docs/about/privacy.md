@@ -2,7 +2,7 @@
 title: "Privacy"
 description: "What happens to your data when you visit. The short answer: very little, and we never sell it."
 status: draft
-lastReviewed: 2026-11-26
+lastReviewed: 2026-11-27
 sidebar:
   order: 7
 ---
@@ -28,6 +28,7 @@ sidebar:
 <li>Video thumbnails load from YouTube</li>
 <li>Videos play from YouTube when you tap them</li>
 <li>Ask AI buttons open the AI site you pick</li>
+<li>Saved guides and checkmarks stay in your own browser</li>
 </ul>
 </div>
 </div>
@@ -49,6 +50,10 @@ Some pages include videos from YouTube.
 ## Search
 
 The site's search runs entirely in your browser. What you type isn't sent to us or anyone else, unless you tap a button to ask an AI, below.
+
+## Saved guides and progress
+
+When you tap **Save** on a guide or **Mark as done** at the end of one, the site remembers it in your browser's own storage (`localStorage`) on that device. A few interactive tools keep small settings the same way, like the platform you picked or the items you've ticked on a checklist. This isn't a cookie: it's never sent to us or anyone else, we can't see it, and it doesn't follow you to other devices or browsers. To delete it, tap **Clear my guides** on the [Guides page](/guides/#mine), or clear this site's data in your browser settings.
 
 ## Ask AI buttons
 

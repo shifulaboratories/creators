@@ -18,6 +18,7 @@ export default defineConfig({
 		'/grow/strategy': '/grow/niche/',
 		'/earn/brand-deals': '/deals/brand-deals/',
 		'/earn/pricing': '/deals/pricing/',
+		'/news/weekly': '/news/',
 	},
 	integrations: [
 		starlight({
@@ -50,7 +51,7 @@ export default defineConfig({
 			],
 			editLink: { baseUrl: `${REPO_URL}/edit/main/` },
 			lastUpdated: true,
-			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
+			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css'],
 			sidebar: [
 				section('How algorithms work', 'algorithms'),
 				section('Platforms', 'platforms'),
@@ -65,7 +66,7 @@ export default defineConfig({
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),
 				section('Underground', 'underground'),
-				section('News', 'news'),
+				section('Platform news', 'news'),
 				section('About', 'about'),
 			],
 		}),
