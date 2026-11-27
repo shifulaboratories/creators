@@ -10,17 +10,26 @@
  */
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import lockup from '../assets/logo-lockup.svg';
-import { NAV, groupFor } from '../data/nav';
+import { navFor, groupFor } from '../data/nav';
 import { SITE_NAME } from '../site.mjs';
+import { localeOfPath, basePath, localize, t, LOCALES, HTML_LANG } from '../i18n';
 
 interface Props {
 	/** Pages in the current section, shown at the top of the phone menu. */
 	section?: { label: string; links: { label: string; href: string; current: boolean }[] };
 }
 const { section } = Astro.props;
-const path = Astro.url.pathname;
+const locale = localeOfPath(Astro.url.pathname);
+const T = t(locale).nav;
+const NAV = navFor(locale);
+const L = (p: string) => localize(locale, p);
+const path = basePath(Astro.url.pathname);
 const active = groupFor(path);
 const onGuides = path.startsWith('/guides');
+// The same page in each language. Single news updates are English-only, so they
+// switch to that language's news front page instead.
+const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
+const langs = LOCALES.map((l) => ({ l, href: sameIn(l), short: l === 'pt-br' ? 'PT' : l.toUpperCase(), name: t(l).langName }));
 
 const icons: Record<string, string> = {
 	instagram: siInstagram.path,
@@ -34,12 +43,12 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 ---
 
 <div class="sn" data-sn>
-	<a class="sn-logo" href="/" aria-label={`${SITE_NAME} home`}>
+	<a class="sn-logo" href={L('/')} aria-label={`${SITE_NAME} ${T.home}`}>
 		<img src={lockup.src} width="187" height="28" alt={SITE_NAME} />
 	</a>
 
-	<nav class="sn-links" aria-label="Main">
-		<a class:list={['sn-top', { on: onGuides }]} href="/guides/" aria-current={onGuides ? 'page' : undefined}>Guides</a>
+	<nav class="sn-links" aria-label={T.main}>
+		<a class:list={['sn-top', { on: onGuides }]} href={L('/guides/')} aria-current={onGuides ? 'page' : undefined}>{T.guides}</a>
 		{
 			NAV.map((g) => (
 				<div class="sn-item" data-item>
@@ -81,31 +90,36 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 
 	<div class="sn-right">
 		<div class="sn-search"><slot name="search" /></div>
-		<button type="button" class="sn-menu" aria-label="Open menu" aria-haspopup="dialog" data-open-menu>
+		<nav class="sn-lang" aria-label={T.language}>
+			{langs.map((x) => (
+				<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} title={x.name} aria-current={x.l === locale ? 'true' : undefined}>{x.short}</a>
+			))}
+		</nav>
+		<button type="button" class="sn-menu" aria-label={T.openMenu} aria-haspopup="dialog" data-open-menu>
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
 		</button>
 	</div>
 </div>
 
-<dialog class="sm" id="site-menu" aria-label="Menu" data-site-menu>
+<dialog class="sm" id="site-menu" aria-label={T.menu} data-site-menu>
 	<div class="sm-head">
-		<a class="sn-logo" href="/" aria-label={`${SITE_NAME} home`}>
+		<a class="sn-logo" href={L('/')} aria-label={`${SITE_NAME} ${T.home}`}>
 			<img src={lockup.src} width="160" height="24" alt={SITE_NAME} />
 		</a>
-		<button type="button" class="sm-close" aria-label="Close menu" data-close-menu>
+		<button type="button" class="sm-close" aria-label={T.closeMenu} data-close-menu>
 			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
 		</button>
 	</div>
 	<div class="sm-body">
-		<a class="sm-search" href="/guides/?focus=1">
+		<a class="sm-search" href={L('/guides/') + '?focus=1'}>
 			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-			Search every guide
+			{T.searchAll}
 		</a>
 
 		{
 			section && section.links.length > 1 && (
 				<section class="sm-group">
-					<h2>In {section.label}</h2>
+					<h2>{T.inSection(section.label)}</h2>
 					<ul class="sm-list">
 						{section.links.map((l) => (
 							<li>
@@ -137,12 +151,17 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		}
 
 		<p class="sm-foot">
-			<a href="/guides/">All guides</a>
-			<a href="/glossary/">Glossary</a>
-			<a href="/about/">About</a>
-			<a href="/about/contribute/">Contribute</a>
+			<a href={L('/guides/')}>{T.allGuides}</a>
+			<a href="/glossary/" hreflang={locale === 'en' ? undefined : 'en'}>{T.glossary}</a>
+			<a href={L('/about/')}>{T.about}</a>
+			<a href={L('/about/contribute/')}>{T.contribute}</a>
 			<a href="https://www.instagram.com/selectcreators/">Instagram</a>
 		</p>
+		<nav class="sm-lang" aria-label={T.language}>
+			{langs.map((x) => (
+				<a href={x.href} hreflang={HTML_LANG[x.l]} lang={HTML_LANG[x.l]} aria-current={x.l === locale ? 'true' : undefined}>{x.name}</a>
+			))}
+		</nav>
 	</div>
 </dialog>
 
@@ -383,7 +402,8 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 	}
 
 	@media (max-width: 62rem) {
-		.sn-links {
+		.sn-links,
+		.sn-lang {
 			display: none;
 		}
 		.sn-menu {
@@ -500,6 +520,44 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 	}
 	.sm-foot a {
 		color: var(--sc-silver);
+	}
+
+	/* Language switch: EN · ES · PT on wide screens, full names in the phone menu. */
+	.sn-lang {
+		display: flex;
+		gap: 2px;
+		padding: 2px;
+		border: 1px solid var(--sc-line);
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 600;
+	}
+	.sn-lang a,
+	.sm-lang a {
+		padding: 0.25rem 0.5rem;
+		border-radius: 999px;
+		color: var(--sc-steel);
+		text-decoration: none;
+	}
+	.sn-lang a[aria-current],
+	.sm-lang a[aria-current] {
+		background: rgb(255 255 255 / 0.1);
+		color: var(--sc-ivory);
+	}
+	.sm-lang {
+		display: flex;
+		gap: 0.4rem;
+		margin: 1.25rem 0 0;
+		font-size: 0.9rem;
+	}
+	.sm-lang a {
+		padding: 0.4rem 0.8rem;
+		border: 1px solid var(--sc-line);
+	}
+	@media (max-width: 62rem) {
+		.sn-lang {
+			display: none;
+		}
 	}
 </style>
 

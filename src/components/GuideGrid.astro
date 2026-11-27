@@ -2,21 +2,27 @@
 /** Grid of guide cards with generated covers for one section. */
 import { getCollection } from 'astro:content';
 import Cover from './Cover.astro';
+import { currentLocale, t, withFallback, localize } from '../i18n';
 
 interface Props {
 	section: string;
 	kicker?: string;
 }
 const { section, kicker } = Astro.props;
-const entries = (await getCollection('docs'))
-	.filter((e) => e.id.startsWith(section + '/') && e.id !== section + '/index' && e.id !== section)
-	.sort((a, b) => (a.data.sidebar?.order ?? 99) - (b.data.sidebar?.order ?? 99));
+const locale = currentLocale(Astro);
+const L = t(locale).grid;
+// In Spanish or Portuguese, show the translation where there is one, else the English guide.
+const items = withFallback(await getCollection('docs'), locale)
+	.filter(({ base }) => base.startsWith(section + '/') && base !== section + '/index' && base !== section)
+	.sort((a, b) => (a.entry.data.sidebar?.order ?? 99) - (b.entry.data.sidebar?.order ?? 99));
+const entries = items.map((i) => i.entry);
+const baseOf = new Map(items.map((i) => [i.entry, i]));
 
 const coverMeta = (e: (typeof entries)[number]) => {
 	const d = e.data as typeof e.data & { cover?: { label?: string; tint?: string } };
 	return { label: d.cover?.label, tint: d.cover?.tint ?? section };
 };
-const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft', published: 'Reviewed' };
+const statusText = L.status;
 ---
 
 <div class="guide-grid sc-rail not-content" data-rail>
@@ -25,12 +31,13 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 			const m = coverMeta(e);
 			const status = (e.data as { status?: string }).status;
 			return (
-				<a class="guide-card" href={`/${e.id}/`} data-section={m.tint}>
+				<a class="guide-card" href={localize(locale, `/${baseOf.get(e)!.base}/`)} data-section={m.tint} lang={baseOf.get(e)!.translated ? undefined : 'en'}>
 					<Cover title={e.data.title} section={m.tint} label={m.label} kicker={kicker} />
 					<div class="body">
 						<h3>{e.data.title}</h3>
 						{e.data.description && <p>{e.data.description}</p>}
 						{status && <span class={`status s-${status}`}>{statusText[status]}</span>}
+						{!baseOf.get(e)!.translated && <span class="status s-en" lang={locale}>{L.english}</span>}
 					</div>
 				</a>
 			);
@@ -99,6 +106,9 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 	.s-draft {
 		color: var(--accent);
 		border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+	}
+	.s-en {
+		margin-left: 0.35rem;
 	}
 	.s-published {
 		color: var(--sc-jade);

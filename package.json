@@ -10,7 +10,8 @@
     "check": "astro check",
     "astro": "astro",
     "deploy": "astro build && wrangler deploy",
-    "cf-preview": "astro build && wrangler dev"
+    "cf-preview": "astro build && wrangler dev",
+    "i18n:status": "node scripts/i18n-status.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
