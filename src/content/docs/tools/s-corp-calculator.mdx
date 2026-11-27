@@ -1,0 +1,39 @@
+---
+title: "S corp tax savings calculator for creators"
+description: "Check whether electing S corp status would save you money as a creator, after a reasonable salary, payroll costs and extra filing fees. US, 2026 rules."
+payoff: "Find out in a minute if an S corp is worth it at your income."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+cover:
+  label: "S corp"
+sidebar:
+  order: 13
+  label: "S corp savings calculator"
+faq:
+  - q: "When is an S corp worth it for a creator?"
+    a: "Usually once your profit is well above what a reasonable salary for your work would be, so the payroll tax you save outweighs the cost of payroll, an extra tax return and state fees. The calculator shows the break-even for your numbers."
+  - q: "Is an LLC the same as an S corp?"
+    a: "No. An LLC is a legal structure set up with your state. An S corp is a tax election you make with the IRS on Form 2553. An LLC can choose to be taxed as an S corp."
+---
+
+import ScorpCheck from '../../../components/basics/ScorpCheck.astro';
+import TaxSources from '../../../components/basics/TaxSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** enter your profit, a reasonable salary for the work you do, and what payroll and an extra tax return would cost you. It compares self-employment tax as a sole proprietor or LLC with payroll tax as an S corp, minus the running costs.
+
+<ScorpCheck />
+
+:::caution[Not tax advice]
+An S corp election is hard to undo and has rules on salary that the IRS checks. Run the numbers with a CPA before you file Form 2553.
+:::
+
+The full trade-offs, including what an LLC does and doesn’t protect, are in [LLC or S corp?](/money/llc-vs-s-corp/).
+
+<TaxSources ids={['scorp', 'f2553', 'se', 'smllc']} />
+
+<Faq />
+
+<MoreTools />

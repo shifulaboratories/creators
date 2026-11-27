@@ -1,0 +1,196 @@
+---
+/**
+ * One caption, checked against every platform's limit at once. Limits are the
+ * ones Buffer publishes for posting (support + developer docs) and YouTube Help
+ * for titles and descriptions. Native apps can allow a little more.
+ */
+import './tools.css';
+export const LIMITS = [
+	{ key: 'x', name: 'X post', limit: 280, note: '25,000 with X Premium', weighted: true },
+	{ key: 'bluesky', name: 'Bluesky', limit: 300 },
+	{ key: 'threads', name: 'Threads', limit: 500 },
+	{ key: 'pinterest', name: 'Pinterest description', limit: 500 },
+	{ key: 'yttitle', name: 'YouTube title', limit: 100 },
+	{ key: 'ig', name: 'Instagram caption', limit: 2200 },
+	{ key: 'tiktok', name: 'TikTok caption', limit: 4000, note: 'Some scheduling tools cap video captions at 2,200' },
+	{ key: 'linkedin', name: 'LinkedIn post', limit: 3000 },
+	{ key: 'facebook', name: 'Facebook post', limit: 5000, note: 'Limit for scheduled posts; the app allows more' },
+	{ key: 'ytdesc', name: 'YouTube description', limit: 5000 },
+];
+---
+
+<div class="sc-widget ccn not-content" data-section="platforms" data-ccn data-limits={JSON.stringify(LIMITS)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Character counter</div>
+			<h4 class="sc-widget__title">Will this caption fit?</h4>
+		</div>
+	</div>
+
+	<label class="tw-field">
+		<span>Your caption <b data-out="count">0 characters</b></span>
+		<textarea rows="6" data-in="text" placeholder="Paste or type your caption, title or post…">Stop scrolling: the 3-second rule that doubled my watch time 👇
+
+Most hooks fail because they explain. Show the payoff first, then earn the rest. #creatortips #contentstrategy</textarea>
+	</label>
+
+	<div class="ccn-stats" aria-live="polite">
+		<span><b data-out="words">0</b> words</span>
+		<span><b data-out="lines">0</b> lines</span>
+		<span><b data-out="tags">0</b> hashtags</span>
+		<span><b data-out="mentions">0</b> mentions</span>
+		<span><b data-out="emoji">0</b> emoji</span>
+	</div>
+
+	<div class="ccn-hook">
+		<span class="tw-label">Your first line (what people see before “more”)</span>
+		<p data-out="hook"></p>
+	</div>
+
+	<ul class="ccn-list" data-list></ul>
+
+	<div class="tw-actions">
+		<button type="button" class="tw-btn" data-clear>Clear</button>
+		<button type="button" class="tw-btn is-primary" data-copy>Copy caption</button>
+	</div>
+	<p class="sc-widget__note">
+		Counts characters the way you see them, so an emoji counts once. X is the exception: it counts every link as 23 and most emoji and non-Latin characters as 2, and this counter does the same. Limits come from Buffer’s published posting limits and YouTube Help. Sources are below.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Your caption never leaves this page.</p>
+</div>
+
+<script>
+	type Limit = { key: string; name: string; limit: number; note?: string; weighted?: boolean };
+	const seg = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+	const graphemes = (s: string) => (seg ? [...seg.segment(s)].length : [...s].length);
+	const URL_RE = /https?:\/\/\S+/g;
+	// X's weighting (twitter-text v3): these code point ranges count 1, everything else 2; URLs are 23.
+	const light = (cp: number) => (cp >= 0 && cp <= 4351) || (cp >= 8192 && cp <= 8205) || (cp >= 8208 && cp <= 8223) || (cp >= 8242 && cp <= 8247);
+	const xCount = (s: string) => {
+		let n = 0;
+		const urls = s.match(URL_RE) ?? [];
+		const rest = s.replace(URL_RE, '');
+		const clusters = seg ? [...seg.segment(rest)].map((g) => g.segment) : [...rest];
+		for (const g of clusters) {
+			const cp = g.codePointAt(0)!;
+			n += /\p{Extended_Pictographic}/u.test(g) ? 2 : light(cp) ? 1 : 2;
+		}
+		return n + urls.length * 23;
+	};
+	document.querySelectorAll<HTMLElement>('[data-ccn]').forEach((root) => {
+		const limits: Limit[] = JSON.parse(root.dataset.limits!);
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const ta = root.querySelector<HTMLTextAreaElement>('[data-in="text"]')!;
+		const list = $('[data-list]');
+		list.innerHTML = limits
+			.map(
+				(l) => `<li data-k="${l.key}"><div class="ccn-row"><span class="ccn-name">${l.name}</span><span class="ccn-num"></span></div><div class="tw-meter"><i></i></div>${l.note ? `<small>${l.note}</small>` : ''}</li>`,
+			)
+			.join('');
+		const render = () => {
+			const t = ta.value;
+			const n = graphemes(t);
+			$('[data-out="count"]').textContent = `${n.toLocaleString('en-US')} character${n === 1 ? '' : 's'}`;
+			$('[data-out="words"]').textContent = String(t.trim() ? t.trim().split(/\s+/).length : 0);
+			$('[data-out="lines"]').textContent = String(t ? t.split('\n').length : 0);
+			$('[data-out="tags"]').textContent = String((t.match(/(^|\s)#[\p{L}\p{N}_]+/gu) ?? []).length);
+			$('[data-out="mentions"]').textContent = String((t.match(/(^|\s)@[\w.]+/g) ?? []).length);
+			$('[data-out="emoji"]').textContent = String((t.match(/\p{Extended_Pictographic}/gu) ?? []).length);
+			const first = t.split('\n').find((l) => l.trim()) ?? '';
+			$('[data-out="hook"]').textContent = first || 'Start typing to see your hook.';
+			for (const l of limits) {
+				const li = list.querySelector<HTMLElement>(`[data-k="${l.key}"]`)!;
+				const c = l.weighted ? xCount(t) : n;
+				const left = l.limit - c;
+				const over = left < 0;
+				li.classList.toggle('is-over', over);
+				li.querySelector('.ccn-num')!.textContent = over ? `${(-left).toLocaleString('en-US')} over` : `${left.toLocaleString('en-US')} left`;
+				const bar = li.querySelector<HTMLElement>('.tw-meter i')!;
+				bar.style.width = Math.min(100, (c / l.limit) * 100) + '%';
+				bar.classList.toggle('is-over', over);
+			}
+		};
+		ta.addEventListener('input', render);
+		$('[data-clear]').addEventListener('click', () => {
+			ta.value = '';
+			render();
+			ta.focus();
+		});
+		$('[data-copy]').addEventListener('click', async (e) => {
+			const b = e.currentTarget as HTMLButtonElement;
+			try {
+				await navigator.clipboard.writeText(ta.value);
+				b.textContent = 'Copied';
+			} catch {
+				b.textContent = 'Couldn’t copy';
+			}
+			setTimeout(() => (b.textContent = 'Copy caption'), 1600);
+		});
+		render();
+	});
+</script>
+
+<style>
+	.ccn-stats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1rem;
+		margin: 0.7rem 0 0.9rem;
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+	}
+	.ccn-stats b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.ccn-hook {
+		padding: 0.8rem 0.9rem;
+		border-radius: var(--sc-radius-sm);
+		background: var(--sc-fill-subtle);
+		border: 1px solid var(--sc-line);
+	}
+	.ccn-hook p {
+		margin: 0.25rem 0 0;
+		color: var(--sc-ivory);
+		font-weight: 550;
+		overflow-wrap: anywhere;
+	}
+	.ccn-list {
+		list-style: none;
+		padding: 0;
+		margin: 1rem 0 0;
+		display: grid;
+		gap: 0.85rem;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	}
+	.ccn-list :global(li) {
+		margin: 0;
+	}
+	.ccn-list :global(.ccn-row) {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-size: 0.85rem;
+	}
+	.ccn-list :global(.ccn-name) {
+		color: var(--sc-platinum);
+	}
+	.ccn-list :global(.ccn-num) {
+		color: var(--sc-silver);
+		font-variant-numeric: tabular-nums;
+	}
+	.ccn-list :global(li.is-over .ccn-num) {
+		color: var(--sc-ember);
+		font-weight: 600;
+	}
+	.ccn-list :global(.tw-meter) {
+		margin-top: 0.35rem;
+		height: 0.4rem;
+	}
+	.ccn-list :global(small) {
+		display: block;
+		margin-top: 0.25rem;
+		font-size: 0.7rem;
+		color: var(--sc-steel);
+	}
+</style>

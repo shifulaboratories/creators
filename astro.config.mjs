@@ -114,6 +114,8 @@ export default defineConfig({
 				section('paywall'),
 				section('deals'),
 				section('money'),
+				section('tools'),
+				section('rates'),
 				section('team'),
 				section('stack'),
 				section('protect'),

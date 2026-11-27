@@ -26,6 +26,7 @@ const L = (p: string) => localize(locale, p);
 const path = basePath(Astro.url.pathname);
 const active = groupFor(path);
 const onGuides = path.startsWith('/guides');
+const onTools = path.startsWith('/tools');
 // The same page in each language. Single news updates are English-only, so they
 // switch to that language's news front page instead.
 const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
@@ -86,6 +87,7 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 				</div>
 			))
 		}
+		<a class:list={['sn-top', { on: onTools }]} href="/tools/" aria-current={onTools ? 'page' : undefined}>Free tools</a>
 	</nav>
 
 	<div class="sn-right">
@@ -114,6 +116,10 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 		<a class="sm-search" href={L('/guides/') + '?focus=1'}>
 			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
 			{T.searchAll}
+		</a>
+		<a class="sm-tools" href="/tools/">
+			<span aria-hidden="true">✦</span>
+			<span><b>Free tools</b><small>Media kit, invoice, rate and engagement calculators</small></span>
 		</a>
 
 		{
@@ -152,6 +158,7 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 
 		<p class="sm-foot">
 			<a href={L('/guides/')}>{T.allGuides}</a>
+			<a href="/tools/" hreflang={locale === 'en' ? undefined : 'en'}>Free tools</a>
 			<a href="/glossary/" hreflang={locale === 'en' ? undefined : 'en'}>{T.glossary}</a>
 			<a href={L('/about/')}>{T.about}</a>
 			<a href={L('/about/contribute/')}>{T.contribute}</a>
@@ -564,5 +571,28 @@ const tint = (icon?: string) => (icon === 'general' ? 'algorithms' : icon);
 <style is:global>
 	html.sm-open {
 		overflow: hidden;
+	}
+	.sm-tools {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+		margin-top: 0.6rem;
+		padding: 0.85rem 1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid color-mix(in srgb, var(--sc-champagne) 35%, transparent);
+		background: color-mix(in srgb, var(--sc-champagne) 9%, transparent);
+		text-decoration: none;
+		color: var(--sc-ivory);
+	}
+	.sm-tools > span:first-child {
+		color: var(--sc-champagne);
+		font-size: 1.2rem;
+	}
+	.sm-tools b {
+		display: block;
+	}
+	.sm-tools small {
+		color: var(--sc-silver);
+		font-size: 0.78rem;
 	}
 </style>

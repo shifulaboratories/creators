@@ -1,0 +1,146 @@
+---
+/**
+ * Engagement rate, the two ways brands work it out: interactions per follower,
+ * and interactions per view (or reach). Typical range from Later, as cited on /deals/pricing/.
+ */
+import './tools.css';
+interface Props {
+	/** Start on this platform (per-platform landing pages). */
+	platform?: 'instagram' | 'tiktok' | 'youtube' | 'x' | 'linkedin';
+}
+const { platform = 'instagram' } = Astro.props;
+---
+
+<div class="sc-widget er not-content" data-section="grow" data-er data-platform={platform}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Engagement rate</div>
+			<h4 class="sc-widget__title">Work out your engagement rate</h4>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="Platform" data-group="platform">
+		<button type="button" class="sc-chip" data-v="instagram" aria-pressed="true">Instagram</button>
+		<button type="button" class="sc-chip" data-v="tiktok" aria-pressed="false">TikTok</button>
+		<button type="button" class="sc-chip" data-v="youtube" aria-pressed="false">YouTube</button>
+		<button type="button" class="sc-chip" data-v="x" aria-pressed="false">X</button>
+		<button type="button" class="sc-chip" data-v="linkedin" aria-pressed="false">LinkedIn</button>
+	</div>
+
+	<p class="er-hint">Use averages from your last 10 or so posts. Find them in your app’s insights.</p>
+
+	<div class="tw-grid">
+		<label class="tw-field"><span>Followers</span><input inputmode="numeric" data-in="followers" value="12,000" /></label>
+		<label class="tw-field"><span data-label="views">Average views</span><input inputmode="numeric" data-in="views" value="8,000" /></label>
+		<label class="tw-field"><span data-label="likes">Average likes</span><input inputmode="numeric" data-in="likes" value="420" /></label>
+		<label class="tw-field"><span>Average comments</span><input inputmode="numeric" data-in="comments" value="28" /></label>
+		<label class="tw-field"><span data-label="shares">Average shares</span><input inputmode="numeric" data-in="shares" value="35" /></label>
+		<label class="tw-field"><span data-label="saves">Average saves</span><input inputmode="numeric" data-in="saves" value="40" /></label>
+	</div>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label">Engagement rate by followers</span>
+		<b class="tw-big" data-out="byFollowers">0%</b>
+		<p class="tw-sub" data-out="verdict"></p>
+		<div class="tw-meter" aria-hidden="true"><i data-meter></i></div>
+		<div class="er-scale" aria-hidden="true"><span>0%</span><span class="er-band">Typical 1–5%</span><span>10%+</span></div>
+		<div class="tw-split">
+			<div><span>By views</span><b data-out="byViews">0%</b></div>
+			<div><span>Interactions per post</span><b data-out="total">0</b></div>
+			<div><span>Views per follower</span><b data-out="reach">0%</b></div>
+		</div>
+		<div class="tw-actions">
+			<button type="button" class="tw-btn is-primary" data-copy>Copy for my media kit</button>
+		</div>
+	</div>
+	<p class="sc-widget__note">
+		By followers = (likes + comments + shares + saves) ÷ followers. By views = the same total ÷ average views, which is fairer when most of your views come from people who don’t follow you, as on TikTok and Reels. Brands use either, so it helps to know both. “Typical 1–5%” is the range Later gives for engagement in its 2026 pricing guide. No platform publishes an official benchmark.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	const LABELS: Record<string, { views: string; likes: string; shares: string; saves: string }> = {
+		instagram: { views: 'Average views', likes: 'Average likes', shares: 'Average shares', saves: 'Average saves' },
+		tiktok: { views: 'Average views', likes: 'Average likes', shares: 'Average shares', saves: 'Average favorites' },
+		youtube: { views: 'Average views', likes: 'Average likes', shares: 'Average shares', saves: 'New subscribers per video' },
+		x: { views: 'Average views', likes: 'Average likes', shares: 'Average reposts', saves: 'Average bookmarks' },
+		linkedin: { views: 'Average impressions', likes: 'Average reactions', shares: 'Average reposts', saves: 'Average saves' },
+	};
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const pct = (x: number) => (isFinite(x) ? (x >= 10 ? x.toFixed(1) : x.toFixed(2)).replace(/\.?0+$/, '') + '%' : '–');
+	document.querySelectorAll<HTMLElement>('[data-er]').forEach((root) => {
+		const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const inputs = [...root.querySelectorAll<HTMLInputElement>('[data-in]')];
+		const val = (k: string) => num(inputs.find((i) => i.dataset.in === k)!.value);
+		let platform = 'instagram';
+		let summary = '';
+		const render = () => {
+			const f = val('followers');
+			const v = val('views');
+			const total = val('likes') + val('comments') + val('shares') + val('saves');
+			const byF = f ? (total / f) * 100 : NaN;
+			const byV = v ? (total / v) * 100 : NaN;
+			$('[data-out="byFollowers"]').textContent = pct(byF);
+			$('[data-out="byViews"]').textContent = pct(byV);
+			$('[data-out="total"]').textContent = Math.round(total).toLocaleString('en-US');
+			$('[data-out="reach"]').textContent = f ? pct((v / f) * 100) : '–';
+			const meter = $('[data-meter]');
+			meter.style.width = Math.min(100, (isFinite(byF) ? byF : 0) * 10) + '%';
+			$('[data-out="verdict"]').textContent = !f
+				? 'Add your follower count to see your rate.'
+				: byF < 1
+					? 'Below the typical range. Compare by views too: on discovery feeds it’s often the fairer number.'
+					: byF <= 5
+						? 'Inside the typical 1–5% range most brands expect.'
+						: 'Above the typical range. Put this number in your media kit.';
+			summary = `Engagement rate (${platform === 'x' ? 'X' : platform[0].toUpperCase() + platform.slice(1)}): ${pct(byF)} by followers, ${pct(byV)} by views. Average ${Math.round(total).toLocaleString('en-US')} interactions per post across ${f.toLocaleString('en-US')} followers.`;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-group="platform"] .sc-chip').forEach((b) =>
+			b.addEventListener('click', () => {
+				platform = b.dataset.v!;
+				root.querySelectorAll('[data-group="platform"] .sc-chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				const l = LABELS[platform];
+				for (const k of ['views', 'likes', 'shares', 'saves'] as const) $(`[data-label="${k}"]`).textContent = l[k];
+				render();
+			}),
+		);
+		inputs.forEach((i) => {
+			i.addEventListener('input', render);
+			i.addEventListener('blur', () => {
+				const n = num(i.value);
+				i.value = n ? n.toLocaleString('en-US') : '';
+			});
+		});
+		$('[data-copy]').addEventListener('click', async (e) => {
+			const b = e.currentTarget as HTMLButtonElement;
+			try {
+				await navigator.clipboard.writeText(summary);
+				b.textContent = 'Copied';
+			} catch {
+				b.textContent = 'Couldn’t copy';
+			}
+			setTimeout(() => (b.textContent = 'Copy for my media kit'), 1600);
+		});
+		root.querySelector<HTMLButtonElement>(`[data-group="platform"] [data-v="${root.dataset.platform}"]`)?.click();
+		render();
+	});
+</script>
+
+<style>
+	.er-hint {
+		font-size: 0.82rem;
+		color: var(--sc-steel);
+		margin: 0.7rem 0 0.8rem;
+	}
+	.er-scale {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.68rem;
+		color: var(--sc-steel);
+		margin-top: 0.3rem;
+	}
+	.er-band {
+		color: var(--sc-silver);
+	}
+</style>

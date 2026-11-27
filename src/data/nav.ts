@@ -43,6 +43,8 @@ export const NAV: NavGroup[] = [
 			{ label: 'Paywall', href: '/paywall/', text: 'Fanfix, OnlyFans, Patreon, Fanvue' },
 			{ label: 'Every income stream', href: '/earn/', text: 'Affiliate, payouts, products' },
 			{ label: 'Price your rates', href: '/deals/pricing/', text: 'Check a quote against benchmarks' },
+			{ label: 'Rates by platform and size', href: '/rates/', text: 'What Instagram, TikTok and YouTube creators charge' },
+			{ label: 'Free media kit builder', href: '/tools/media-kit-builder/', text: 'One page, PDF or link, no signup' },
 		],
 	},
 	{
@@ -65,7 +67,7 @@ export const groupFor = (path: string): string | undefined => {
 	const p = path.replace(/\/?$/, '/');
 	if (p.startsWith('/platforms/')) return 'platforms';
 	if (/^\/(grow|algorithms|case-studies|shortlist)\//.test(p)) return 'grow';
-	if (/^\/(deals|paywall|earn)\//.test(p)) return 'paid';
+	if (/^\/(deals|paywall|earn|rates)\//.test(p)) return 'paid';
 	if (/^\/(money|team|stack|protect|underground)\//.test(p)) return 'business';
 	return undefined;
 };

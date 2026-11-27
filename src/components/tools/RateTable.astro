@@ -1,0 +1,87 @@
+---
+/** The published rate ranges for one platform and follower tier, as a table. Data: src/lib/rate-tiers.ts. */
+import { RATE_PLATFORMS, TIERS, ratesFor, middle, rangeText, mainFormat } from '../../lib/rate-tiers';
+import type { Platform } from '../../lib/money-data';
+import './tools.css';
+interface Props {
+	platform: Platform;
+	tier: string;
+}
+const { platform, tier: tierKey } = Astro.props;
+const tier = TIERS.find((t) => t.key === tierKey)!;
+const pname = RATE_PLATFORMS.find((p) => p.key === platform)!.name;
+const rows = ratesFor(platform, tier);
+const mid = middle(rows);
+const nMain = rows.filter((r) => r.primary).length;
+const fmt = mainFormat(platform);
+---
+
+<div class="rt not-content" data-section="deals">
+	<div class="tw-result rt-head">
+		<span class="tw-label">{pname} {fmt.toLowerCase()} · {tier.range} followers · middle of {nMain} published range{nMain === 1 ? '' : 's'}</span>
+		<b class="tw-big">{mid ? rangeText(mid[0], mid[1]) : 'No published range'}</b>
+		<p class="tw-sub">per {fmt.toLowerCase()}, before usage rights, paid ads or exclusivity</p>
+	</div>
+	<div class="rt-scroll">
+		<table>
+			<thead><tr><th>Source</th><th>Their tier and format</th><th>Range per post</th></tr></thead>
+			<tbody>
+				{rows.map((r) => (
+					<tr>
+						<td><a href={r.url} rel="noopener">{r.source}</a></td>
+						<td>{r.label}</td>
+						<td class="rt-num">{rangeText(r.lo, r.hi)}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+	<p class="rt-note">Each publisher defines its tiers a little differently, so some ranges cover more than this tier. None publish how they got their numbers. Treat the spread as the real answer: there’s room to ask.</p>
+</div>
+
+<style>
+	.rt {
+		margin: 1.2rem 0;
+	}
+	.rt-scroll {
+		overflow-x: auto;
+		margin-top: 0.8rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+	}
+	th,
+	td {
+		padding: 0.6rem 0.7rem;
+		vertical-align: top;
+		border-bottom: 1px solid var(--sc-line);
+		text-align: left;
+		color: var(--sc-platinum);
+	}
+	th {
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+		font-weight: 600;
+	}
+	tr:last-child td {
+		border-bottom: 0;
+	}
+	td:first-child {
+		min-width: 7.5rem;
+	}
+	.rt-num {
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.rt-note {
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+		margin: 0.6rem 0 0;
+	}
+</style>

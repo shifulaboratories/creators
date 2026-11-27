@@ -1,0 +1,101 @@
+---
+/**
+ * Bottom of every tool page: the guide behind it, then other free tools from the
+ * same group first. Reads the current page from the route, so pages just drop it in.
+ */
+import { GALLERY_TOOLS as FREE_TOOLS, toolBySlug } from '../../lib/free-tools';
+import { splitId } from '../../i18n';
+const slug = splitId(Astro.locals.starlightRoute.entry.id).base.split('/')[1];
+const me = toolBySlug(slug);
+const others = FREE_TOOLS.filter((t) => t.slug !== slug)
+	.sort((a, b) => Number(b.group === me?.group) - Number(a.group === me?.group))
+	.slice(0, 4);
+---
+
+<aside class="mt not-content" aria-label="More free tools">
+	{me?.guide && (
+		<a class="mt-guide" href={me.guide.href}>
+			<span>The thinking behind this tool</span>
+			<b>{me.guide.label} →</b>
+		</a>
+	)}
+	<h2>More free tools</h2>
+	<ul>
+		{others.map((t) => (
+			<li>
+				<a href={`/tools/${t.slug}/`} data-section={t.tint}>
+					<i aria-hidden="true">{t.glyph}</i>
+					<span>{t.name}</span>
+				</a>
+			</li>
+		))}
+	</ul>
+	<a class="mt-all" href="/tools/">See all {FREE_TOOLS.length} free tools</a>
+</aside>
+
+<style>
+	.mt {
+		margin-top: 2.5rem;
+		display: grid;
+		gap: 0.8rem;
+	}
+	.mt h2 {
+		margin: 0.6rem 0 0;
+		font-size: 1.2rem;
+	}
+	.mt-guide {
+		display: grid;
+		gap: 0.15rem;
+		padding: 1rem 1.1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line-strong);
+		text-decoration: none;
+	}
+	.mt-guide span {
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.mt-guide b {
+		color: var(--sc-ivory);
+	}
+	.mt ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+		gap: 0.5rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.mt li {
+		margin: 0;
+	}
+	.mt li a {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.7rem 0.8rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line);
+		text-decoration: none;
+		color: var(--sc-platinum);
+		font-size: 0.88rem;
+	}
+	.mt li a:hover {
+		border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+	}
+	.mt li i {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 10px;
+		font-style: normal;
+		font-weight: 700;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
+	}
+	.mt-all {
+		font-size: 0.88rem;
+	}
+</style>

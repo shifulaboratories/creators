@@ -26,6 +26,8 @@ const en = {
 		shortlist: 'The Shortlist',
 		about: 'About',
 		glossary: 'Glossary',
+		tools: 'Free tools',
+		rates: 'Creator rates',
 		guides: 'All guides',
 	} as Record<string, string>,
 	page: {
@@ -199,6 +201,8 @@ const es: UI = {
 		shortlist: 'La Selección',
 		about: 'Acerca de',
 		glossary: 'Glosario',
+		tools: 'Herramientas gratis',
+		rates: 'Tarifas de creadores',
 		guides: 'Todas las guías',
 	},
 	page: {
@@ -265,6 +269,8 @@ const es: UI = {
 		askPrompt: (origin, q) => `Usando ${origin}/llms-full.txt como fuente, responde en español: ${q}`,
 		english: 'EN',
 		topicText: {
+			rates: ['Tarifas de creadores', 'Lo que cobran los creadores, por plataforma y seguidores'],
+			tools: ['Herramientas gratis', 'Media kit, factura y calculadoras de tarifas, engagement e impuestos'],
 			algorithms: ['Cómo funcionan los algoritmos', 'Qué premian los feeds, según la investigación de las propias plataformas'],
 			grow: ['Crecer', 'Nicho, hooks, formatos, frecuencia y analíticas'],
 			paywall: ['Paywall', 'Fanfix, OnlyFans, Patreon, Fanvue y agencias de chat'],
@@ -367,6 +373,8 @@ const pt: UI = {
 		shortlist: 'A Seleção',
 		about: 'Sobre',
 		glossary: 'Glossário',
+		tools: 'Ferramentas grátis',
+		rates: 'Preços de criadores',
 		guides: 'Todos os guias',
 	},
 	page: {
@@ -433,6 +441,8 @@ const pt: UI = {
 		askPrompt: (origin, q) => `Usando ${origin}/llms-full.txt como fonte, responda em português do Brasil: ${q}`,
 		english: 'EN',
 		topicText: {
+			rates: ['Preços de criadores', 'Quanto os criadores cobram, por plataforma e seguidores'],
+			tools: ['Ferramentas grátis', 'Mídia kit, fatura e calculadoras de preço, engajamento e impostos'],
 			algorithms: ['Como os algoritmos funcionam', 'O que os feeds premiam, segundo as pesquisas das próprias plataformas'],
 			grow: ['Crescer', 'Nicho, hooks, formatos, frequência e métricas'],
 			paywall: ['Paywall', 'Fanfix, OnlyFans, Patreon, Fanvue e agências de chat'],

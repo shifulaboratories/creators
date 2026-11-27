@@ -10,6 +10,7 @@ import { personName, CONTRIBUTORS_PATH } from './data/people';
 import { getTerm, sortedTerms, termPath } from './lib/glossary';
 import { SEO } from './data/seo';
 import { NEWS_PLATFORM_INFO } from './lib/news';
+import { toolBySlug } from './lib/free-tools';
 import { getCollection } from 'astro:content';
 import { splitId, localize, sectionLabel, HTML_LANG, OG_LOCALE, LOCALES, type Locale } from './i18n';
 
@@ -98,6 +99,7 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 		lastReviewed?: Date;
 		status?: string;
 		news?: { platform: string; announced: Date; published: Date; updated?: Date };
+		faq?: { q: string; a: string }[];
 	};
 	const news = data.news;
 	if (base.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: sectionLabel(section, locale)!, url: `${SITE_ORIGIN}${localize(locale, `/${section}/`)}` });
@@ -148,7 +150,7 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 				]
 			: [];
 
-	const graph = [
+	const graph: Record<string, unknown>[] = [
 		...glossaryNodes,
 		{
 			'@type': term ? 'WebPage' : news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
@@ -181,6 +183,30 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 			sameAs: ['https://www.instagram.com/selectcreators/', 'https://github.com/shifulaboratories/creators'],
 		},
 	];
+	// Free tools are web apps: free, no signup, in the browser. Search engines show
+	// these as tools, and the FAQ answers the questions people type.
+	const tool = section === 'tools' ? toolBySlug(base.split('/')[1] ?? '') : undefined;
+	if (tool) {
+		graph.push({
+			'@type': 'WebApplication',
+			name: tool.name,
+			description: entry.data.description,
+			url,
+			image,
+			applicationCategory: 'BusinessApplication',
+			operatingSystem: 'Any (runs in the browser)',
+			browserRequirements: 'Requires JavaScript',
+			isAccessibleForFree: true,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+			publisher: { '@id': `${SITE_ORIGIN}/#org` },
+		});
+	}
+	if (data.faq?.length) {
+		graph.push({
+			'@type': 'FAQPage',
+			mainEntity: data.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+		});
+	}
 	head.push({
 		tag: 'script',
 		attrs: { type: 'application/ld+json' },
