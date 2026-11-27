@@ -30,7 +30,14 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** you don't have to guess how feeds work. YouTube, Meta, ByteDance, LinkedIn and Twitter have all published papers and engineering write-ups about their own systems. Below is what each one built, what it found, and the one thing it means for you. Every card links to the original.
 
-## Every feed, the same three moves
+## Use what the papers agree on
+
+- **Finishing beats clicking.** YouTube moved off click-through ranking because it promoted videos people didn't finish. <span class="sc-tag is-research">From the research</span>
+- **Negative reactions cost you.** Instagram subtracts "see less," and Facebook demotes topics people mark "not interested." <span class="sc-tag is-research">From the research</span>
+- **Your first viewers train the model.** ByteDance built its system to learn from reactions in real time, and LinkedIn tests new posts on a small group first. <span class="sc-tag is-research">From the research</span>
+- **Ranking changes outcomes.** Twitter's randomized test showed a ranked feed and a time-ordered feed give the same posts different reach. <span class="sc-tag is-research">From the research</span>
+
+## See the three steps every feed runs
 
 <figure class="sc-figure">
 <ol class="sc-steps">
@@ -55,24 +62,19 @@ Instagram's engineers wrote the Explore score out in plain terms in 2023:
 
 That one line explains most good advice: earn the actions with plus signs, and never give people a reason for the minus sign. <span class="sc-tag is-research">From the research</span>
 
-## The papers, card by card
+## Read the papers, card by card
 
 Swipe on a phone. Tap a title to read the original.
 
 <ResearchCards />
 
-## What all of it adds up to
-
-- **Finishing beats clicking.** YouTube moved off click-through ranking because it promoted videos people didn't finish. <span class="sc-tag is-research">From the research</span>
-- **Negative reactions cost you.** Instagram subtracts "see less," and Facebook demotes topics people mark "not interested." <span class="sc-tag is-research">From the research</span>
-- **Your first viewers train the model.** ByteDance built its system to learn from reactions in real time, and LinkedIn tests new posts on a small group first. <span class="sc-tag is-research">From the research</span>
-- **Ranking changes outcomes.** Twitter's randomized test showed a ranked feed and a time-ordered feed give the same posts different reach. <span class="sc-tag is-research">From the research</span>
-
-## How to read a paper like this
+<DeepDive title="How to read a paper like this" hint="What papers can and can’t tell you">
 
 - **Papers describe a system at one moment.** The 2016 YouTube paper is the foundation, not today's exact model. We pair each one with the platform's current explainer in its [platform guide](/platforms/).
 - **Weights are rarely published.** Only X publishes its ranking code and weights. See [Inside X's open-source algorithm](/algorithms/x-open-source/).
 - **A finding is not a hack.** These papers say what the system tries to predict. The move is to make things people genuinely watch, like and share, not to game a number.
+
+</DeepDive>
 
 <DeepDive title="Sources" hint="8 sources">
 

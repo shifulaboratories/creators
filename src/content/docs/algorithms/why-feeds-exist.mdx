@@ -23,9 +23,24 @@ sidebar:
 
 import MoneyLoop from '../../../components/MoneyLoop.astro';
 import SnowballFlow from '../../../components/SnowballFlow.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** an ad-funded feed makes money when people spend time in the app and come back tomorrow. Every ranking decision serves that. So the posts that win are the ones that keep someone watching, and the ones that pull other people in. That's why a send is worth more than a like.
+
+## Make posts the feed wants to spread
+
+<QuickCheck
+  title="Post check"
+  id="alg-why"
+  items={[
+    { text: "Design for the send", hint: "Ask \u201cwho would someone send this to, and why?\u201d before you post. Useful, relatable and surprising are the usual answers." },
+    { text: "Earn the full watch", hint: "Cut the intro, put the payoff early, and give a reason to stay." },
+    { text: "Give people a reason to come back", hint: "Series, recurring formats and replies to comments give viewers a reason to return to you specifically." },
+    { text: "Treat a flop as data", hint: "One weak first ring stops that post, not your account. Change the hook or the packaging and try again." },
+  ]}
+  done="Ready to post."
+/>
 
 ## Follow the money
 
@@ -35,7 +50,7 @@ Meta is the clearest example because it reports the numbers to investors every q
 
 You don't have to like this to use it. The feed isn't judging your art. It's predicting whether showing your post makes someone more likely to stay and return.
 
-## What that means for what wins
+## Know what the feed values
 
 <figure class="sc-figure">
 <div class="sc-compare">
@@ -49,20 +64,13 @@ You don't have to like this to use it. The feed isn't judging your art. It's pre
 - **Long-term users matter more than one session.** YouTube surveys viewers and counts time on videos they rate 4 or 5 stars as more valuable, because regret drives people away. <span class="sc-tag is-platform">From the platform</span>
 - **Rage is capped by penalties.** X's code gives a report a weight of −234 against 0.708 for a like. Content that makes people leave or mute you is expensive. <span class="sc-tag is-code">From the code</span>
 
-## How a post snowballs
+## Read your first ring
 
 No feed shows a new post to everyone at once. It's shown to some people, the system watches what they do, and if they react better than expected it's shown to more. Think of it as rings.
 
 <SnowballFlow />
 
 Instagram turned the first ring into a feature: **Trial Reels** are shown to non-followers first, and after about 24 hours you can see their views, likes, comments and shares before deciding whether to show the Reel to your followers. You can also have a Trial Reel shared automatically if it performs well in its first 72 hours. <span class="sc-tag is-platform">From the platform</span>
-
-## What to do with this
-
-- **Design for the send.** Ask "who would someone send this to, and why?" before you post. Useful, relatable and surprising are the usual answers.
-- **Earn the full watch.** Cut the intro, put the payoff early, and give a reason to stay.
-- **Make people want to come back.** Series, recurring formats and replies to comments give viewers a reason to return to you specifically.
-- **Use a flop as data.** One weak first ring stops that post, not your account. Change the hook or the packaging and try again.
 
 <DeepDive title="Sources" hint="7 sources">
 
