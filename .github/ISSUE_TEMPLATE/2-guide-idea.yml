@@ -1,0 +1,43 @@
+name: Guide idea
+description: Suggest a new guide or a section we should cover.
+title: "Guide idea: "
+labels: [guide-idea]
+body:
+  - type: dropdown
+    id: section
+    attributes:
+      label: Section
+      options:
+        - The algorithm
+        - Platforms
+        - Grow
+        - Brand deals
+        - Earn
+        - Paywall platforms
+        - Money basics
+        - Team
+        - Protect
+        - Case studies
+        - Platform news
+        - Stack
+        - Something new
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: What question should the guide answer?
+      placeholder: "How do I price a usage-rights extension on a brand deal?"
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources you'd start from
+      description: Platform docs, research, reporting or your own first-hand experience.
+  - type: checkboxes
+    id: write
+    attributes:
+      label: Want to write it?
+      options:
+        - label: I'd like to write or help write this guide.
