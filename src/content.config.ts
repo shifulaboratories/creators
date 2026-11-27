@@ -32,6 +32,13 @@ const guideFields = z.object({
 			confirmed: z.enum(['official', 'reported']),
 		})
 		.optional(),
+	// Action-first guides (docs/guide-format.md): what the reader walks away with,
+	// shown as the lead, and up to three "Do this today" moves that replace the short version.
+	payoff: z.string().max(140).optional(),
+	moves: z
+		.array(z.object({ do: z.string().max(140), why: z.string().max(200), source: z.string().max(60).optional() }))
+		.max(3)
+		.optional(),
 });
 
 const docs = defineCollection({

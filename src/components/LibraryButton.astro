@@ -1,0 +1,68 @@
+---
+/**
+ * Save a guide for later (in the guide header) or mark it done (at the end of
+ * the guide). Both are stored on this device only (src/scripts/library.ts).
+ */
+interface Props {
+	kind: 'save' | 'done';
+	id: string;
+	title: string;
+	section: string;
+}
+const { kind, id, title, section } = Astro.props;
+---
+
+{
+	kind === 'save' ? (
+		<button type="button" class="ga-btn lib-save" data-pagefind-ignore data-lib="saved" data-id={id} data-title={title} data-section={section} aria-pressed="false">
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M6.5 3.5h11a1 1 0 0 1 1 1v16l-6.5-4.2-6.5 4.2v-16a1 1 0 0 1 1-1z" />
+			</svg>
+			<span data-off>Save</span>
+			<span data-on>Saved</span>
+		</button>
+	) : (
+		<div class="lib-done not-content" data-pagefind-ignore>
+			<button type="button" data-lib="done" data-id={id} data-title={title} data-section={section} aria-pressed="false">
+				<span class="box" aria-hidden="true">
+					<svg viewBox="0 0 24 24">
+						<path d="m5.5 12.5 4.2 4.2 8.8-9.4" />
+					</svg>
+				</span>
+				<strong data-off>Mark as done</strong>
+				<strong data-on>Done</strong>
+			</button>
+			<p data-off>Tick it off. Your progress stays on this device.</p>
+			<p data-on>
+				Nice. <a href="/guides/#mine">See your progress</a>
+			</p>
+		</div>
+	)
+}
+
+<script>
+	import { read, toggle, onChange, opened } from '../scripts/library';
+
+	const buttons = () => [...document.querySelectorAll<HTMLButtonElement>('[data-lib]')];
+	const sync = () => {
+		const lib = read();
+		for (const b of buttons()) {
+			const on = !!lib[b.dataset.lib as 'saved' | 'done'][b.dataset.id!];
+			b.setAttribute('aria-pressed', String(on));
+		}
+	};
+
+	for (const b of buttons()) {
+		b.addEventListener('click', () => {
+			const meta = { title: b.dataset.title!, section: b.dataset.section! };
+			toggle(b.dataset.lib as 'saved' | 'done', b.dataset.id!, meta);
+			b.classList.remove('pop');
+			void b.offsetWidth;
+			b.classList.add('pop');
+		});
+	}
+	const first = buttons()[0];
+	if (first) opened(first.dataset.id!, { title: first.dataset.title!, section: first.dataset.section! });
+	onChange(sync);
+	sync();
+</script>

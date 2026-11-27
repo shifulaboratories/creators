@@ -1,0 +1,120 @@
+---
+/**
+ * Two numbers from your own analytics in, one rate out. For metrics a platform
+ * names but publishes no benchmark for: the point is comparing your own posts.
+ */
+interface Props {
+	title: string;
+	top: string;
+	bottom: string;
+	result: string;
+	note?: string;
+	topDefault?: number;
+	bottomDefault?: number;
+}
+const { title, top, bottom, result, note, topDefault = 120, bottomDefault = 8000 } = Astro.props;
+---
+
+<section class="rc not-content" data-rc aria-label={title}>
+	<p class="rc-title">{title}</p>
+	<div class="rc-grid">
+		<label>
+			<span>{top}</span>
+			<input type="number" inputmode="numeric" min="0" value={topDefault} data-rc-top />
+		</label>
+		<span class="rc-div" aria-hidden="true">÷</span>
+		<label>
+			<span>{bottom}</span>
+			<input type="number" inputmode="numeric" min="1" value={bottomDefault} data-rc-bottom />
+		</label>
+	</div>
+	<p class="rc-out" aria-live="polite"><strong data-rc-out></strong> {result}</p>
+	{note && <p class="rc-note">{note}</p>}
+</section>
+
+<script>
+	for (const root of document.querySelectorAll<HTMLElement>('[data-rc]')) {
+		const t = root.querySelector<HTMLInputElement>('[data-rc-top]')!;
+		const b = root.querySelector<HTMLInputElement>('[data-rc-bottom]')!;
+		const out = root.querySelector<HTMLElement>('[data-rc-out]')!;
+		const update = () => {
+			const top = Number(t.value);
+			const bottom = Number(b.value);
+			if (!(bottom > 0) || !(top >= 0)) {
+				out.textContent = '—';
+				return;
+			}
+			const pct = (top / bottom) * 100;
+			out.textContent = `${pct < 10 ? pct.toFixed(2) : pct.toFixed(1)}%`;
+		};
+		t.addEventListener('input', update);
+		b.addEventListener('input', update);
+		update();
+	}
+</script>
+
+<style>
+	.rc {
+		margin: 1.75rem 0;
+		padding: 1.1rem;
+		border-radius: 20px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.025);
+	}
+	.rc-title {
+		margin: 0 0 0.8rem;
+		font-family: var(--sc-font-display);
+		font-size: 1.1rem;
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.rc-grid {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: end;
+		gap: 0.6rem;
+	}
+	label {
+		display: grid;
+		gap: 0.35rem;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	input {
+		width: 100%;
+		padding: 0.6rem 0.75rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-carbon);
+		color: var(--sc-ivory);
+		font: 600 1.05rem / 1.2 var(--sc-font-sans);
+		font-variant-numeric: tabular-nums;
+	}
+	input:focus-visible {
+		outline: 2px solid var(--sc-ion);
+		outline-offset: 1px;
+	}
+	.rc-div {
+		padding-bottom: 0.6rem;
+		color: var(--sc-steel);
+		font-size: 1.1rem;
+	}
+	.rc-out {
+		margin: 0.9rem 0 0;
+		font-size: 0.95rem;
+		color: var(--sc-silver);
+	}
+	.rc-out strong {
+		font-family: var(--sc-font-display);
+		font-size: 1.7rem;
+		color: var(--sc-jade);
+		font-variant-numeric: tabular-nums;
+		margin-right: 0.3rem;
+	}
+	.rc-note {
+		margin: 0.5rem 0 0;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--sc-steel);
+	}
+</style>

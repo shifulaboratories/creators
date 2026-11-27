@@ -5,6 +5,9 @@ import AskAI from './AskAI.astro';
 import ShareBar from './ShareBar.astro';
 import { personName, CONTRIBUTORS_PATH } from '../data/people';
 import Tldr from './Tldr.astro';
+import DoThis from './guide/DoThis.astro';
+import LibraryButton from './LibraryButton.astro';
+import { isGuideId } from '../lib/library';
 import { tldrFor } from '../data/tldr';
 import { NEWS_PLATFORM_INFO, getNews, newsPath, fmtDate, isoDate } from '../lib/news';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
@@ -18,6 +21,8 @@ const data = entry.data as typeof entry.data & {
 	lastReviewed?: Date;
 	tldr?: string[];
 	news?: { platform: string; announced: Date; published: Date; updated?: Date; confirmed: 'official' | 'reported' };
+	payoff?: string;
+	moves?: { do: string; why: string; source?: string }[];
 };
 const news = data.news;
 const newsPlatform = news ? NEWS_PLATFORM_INFO[news.platform] : undefined;
@@ -43,7 +48,19 @@ const labels: Record<string, string> = {
 	shortlist: 'The Shortlist',
 	about: 'About',
 };
-const tldr = tldrFor(entry.id, data.tldr);
+const isGuide = isGuideId(entry.id);
+const moves = data.moves ?? [];
+const tldr = moves.length > 0 ? [] : tldrFor(entry.id, data.tldr);
+// Read time covers the main read only: imports, tags and the folded-away
+// details (<DeepDive>) don't count. 220 words a minute.
+const mainText = (entry.body ?? '')
+	.split(/<DeepDive[\s>]/)[0]
+	.replace(/^import .*$/gm, '')
+	.replace(/<[^>]+>/g, ' ')
+	.replace(/[#*_`|>\-]+/g, ' ');
+const words = mainText.split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(words / 220));
+const showTime = data.status !== 'outline' && !['guides', '404'].includes(entry.id) && words > 120;
 const statusText: Record<string, string> = { outline: 'Coming soon', draft: 'In progress', published: 'Fact-checked' };
 const confidenceText: Record<string, string> = {
 	verified: 'Sourced',
@@ -55,13 +72,14 @@ const confidenceText: Record<string, string> = {
 <header class="guide-head" data-section={section}>
 	{labels[section] && <p class="kicker"><span class="swatch"></span>{news && newsPlatform ? <><a href="/news/">News</a><span aria-hidden="true">·</span><a href={`/news/${news.platform}/`}>{newsPlatform.name}</a></> : labels[section]}</p>}
 	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
-	{data.description && <p class="lead">{data.description}</p>}
+	{(data.payoff || data.description) && <p class={data.payoff ? 'lead payoff' : 'lead'}>{data.payoff ?? data.description}</p>}
 	{news && <ul class="chips">
 		<li class="chip">Announced <time datetime={isoDate(news.announced)}>{fmtDate(news.announced)}</time></li>
 		{news.confirmed === 'official' ? <li class="chip status-published">Official</li> : <li class="chip brass">Reported</li>}
 		{news.updated && news.updated.getTime() !== news.published.getTime() && <li class="chip">Updated {fmtDate(news.updated)}</li>}
 	</ul>}
 	{entry.id !== 'guides' && !news && section !== 'news' && <ul class="chips">
+		{showTime && <li class="chip time">{minutes} min read</li>}
 		{data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
 		{data.authors && data.authors.length > 0 && (
@@ -80,8 +98,10 @@ const confidenceText: Record<string, string> = {
 		<div class="actions">
 			{entry.id !== 'guides' && <AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />}
 			<ShareBar title={data.title} description={data.description} section={section} />
+			{isGuide && <LibraryButton kind="save" id={entry.id} title={data.title} section={section} />}
 		</div>
 	)}
+	{moves.length > 0 && <DoThis moves={moves} />}
 	{tldr.length > 0 && <Tldr points={tldr} />}
 	{latest && (
 		<a class="latest" href={newsPath(latest)}>
@@ -89,12 +109,18 @@ const confidenceText: Record<string, string> = {
 			<span class="latest__t">{latest.data.title}</span>
 		</a>
 	)}
-	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 }}>
+	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 || moves.length > 0 }}>
 		// Tint the whole page with the section color, without :root:has() (slow on long pages).
 		const r = document.documentElement;
 		r.dataset.section = section;
 		if (hasTldr) r.dataset.tldr = '';
 		else delete r.dataset.tldr;
+	</script>
+	<script>
+		// Check off finished guides in the sidebar (stored on this device only).
+		import { markLinks, onChange } from '../scripts/library';
+		markLinks();
+		onChange(() => markLinks());
 	</script>
 </header>
 
@@ -156,6 +182,13 @@ const confidenceText: Record<string, string> = {
 		font-weight: 500;
 		letter-spacing: 0;
 		color: var(--sc-silver);
+	}
+	.payoff {
+		color: var(--sc-platinum);
+	}
+	.time {
+		color: var(--sc-ivory);
+		border-color: var(--sc-line-bright);
 	}
 	.status-published {
 		color: var(--sc-jade);

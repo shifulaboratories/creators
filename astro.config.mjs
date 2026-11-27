@@ -49,7 +49,7 @@ export default defineConfig({
 			],
 			editLink: { baseUrl: `${REPO_URL}/edit/main/` },
 			lastUpdated: true,
-			customCss: ['./src/styles/custom.css', './src/styles/docs.css'],
+			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css'],
 			sidebar: [
 				{ label: 'Start here', link: '/' },
 				{ label: 'All guides: search and browse', link: '/guides/' },

@@ -1,0 +1,122 @@
+---
+/**
+ * A concrete before/after: the same thing done the usual way and the better way.
+ * Each side is a short title plus a few lines. Mark made-up examples with
+ * `illustration` so nobody mistakes them for a real case.
+ */
+interface Side {
+	label?: string;
+	title: string;
+	lines?: string[];
+	note?: string;
+}
+interface Props {
+	before: Side;
+	after: Side;
+	caption?: string;
+	illustration?: boolean;
+}
+const { before, after, caption, illustration = false } = Astro.props;
+---
+
+<figure class="ba not-content">
+	<div class="ba-grid">
+		<div class="ba-side is-before">
+			<p class="ba-label">{before.label ?? 'Before'}</p>
+			<p class="ba-title">{before.title}</p>
+			{before.lines && <ul>{before.lines.map((l) => <li>{l}</li>)}</ul>}
+			{before.note && <p class="ba-note">{before.note}</p>}
+		</div>
+		<div class="ba-side is-after">
+			<p class="ba-label">{after.label ?? 'After'}</p>
+			<p class="ba-title">{after.title}</p>
+			{after.lines && <ul>{after.lines.map((l) => <li>{l}</li>)}</ul>}
+			{after.note && <p class="ba-note">{after.note}</p>}
+		</div>
+	</div>
+	{(caption || illustration) && (
+		<figcaption>
+			{illustration && <span class="sc-tag is-illustrative">Example</span>} {caption}
+		</figcaption>
+	)}
+</figure>
+
+<style>
+	.ba {
+		margin: 1.75rem 0;
+	}
+	.ba-grid {
+		display: grid;
+		gap: 0.6rem;
+	}
+	@media (min-width: 48rem) {
+		.ba-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 0.9rem;
+		}
+	}
+	.ba-side {
+		padding: 1rem 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.02);
+	}
+	.is-after {
+		border-color: color-mix(in srgb, var(--sc-jade) 40%, transparent);
+		background: linear-gradient(180deg, var(--sc-jade-tint), rgb(255 255 255 / 0.01));
+	}
+	.ba-label {
+		margin: 0 0 0.45rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--sc-steel);
+	}
+	.is-before .ba-label::before {
+		content: '✕ ';
+		color: var(--sc-ember);
+	}
+	.is-after .ba-label {
+		color: var(--sc-jade);
+	}
+	.is-after .ba-label::before {
+		content: '✓ ';
+	}
+	.ba-title {
+		margin: 0;
+		font-size: 1.02rem;
+		line-height: 1.4;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.is-before .ba-title {
+		color: var(--sc-silver);
+	}
+	ul {
+		margin: 0.6rem 0 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.3rem;
+	}
+	li {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.45;
+		color: var(--sc-platinum);
+		font-variant-numeric: tabular-nums;
+	}
+	.is-before li {
+		color: var(--sc-silver);
+	}
+	.ba-note {
+		margin: 0.6rem 0 0;
+		font-size: 0.85rem;
+		line-height: 1.45;
+		color: var(--sc-steel);
+	}
+	figcaption {
+		margin-top: 0.6rem;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+</style>
