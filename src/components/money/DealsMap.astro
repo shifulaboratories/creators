@@ -1,0 +1,347 @@
+---
+/**
+ * Visual hub for the Brand Deals section: "where are you right now?" chips plus
+ * the six stages of a deal as big tappable cards, each linking to its guides.
+ */
+const stages = [
+	{
+		key: 'find',
+		n: '01',
+		title: 'Get found',
+		line: 'Pitch brands you love and make a media kit they’ll actually read.',
+		tint: 'var(--sc-rose)',
+		icon: 'M4 10v4h3l6 4V6L7 10H4Zm13-1a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12',
+		links: [
+			['Pitching brands', '/deals/pitching-brands/'],
+			['Brand deals 101', '/deals/brand-deals/'],
+		],
+	},
+	{
+		key: 'price',
+		n: '02',
+		title: 'Price it',
+		line: 'Check every published rate for your size and price rights separately.',
+		tint: 'var(--sc-champagne)',
+		icon: 'M12 3v18M17 7.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 2.8 5 3.5 5 1.6 5 3.5-2.2 3-5 3-5-1.1-5-3',
+		links: [['Rate check', '/deals/pricing/']],
+	},
+	{
+		key: 'negotiate',
+		n: '03',
+		title: 'Negotiate',
+		line: 'Anchor high, trade instead of discounting, copy the scripts.',
+		tint: 'var(--sc-ion)',
+		icon: 'M4 6h11a3 3 0 0 1 3 3v2H8l-4 3V6Zm16 4v8l-3-2H9a3 3 0 0 1-3-3',
+		links: [['Negotiation playbook', '/deals/negotiation/']],
+	},
+	{
+		key: 'contract',
+		n: '04',
+		title: 'Fix the contract',
+		line: 'Redline the clauses that carry the money and the risk.',
+		tint: 'var(--sc-amethyst)',
+		icon: 'M6 3h9l4 4v14H6V3Zm3 7h7M9 14h7M9 18h4',
+		links: [
+			['Redline a contract', '/deals/redline-a-contract/'],
+			['Clause library', '/deals/clause-library/'],
+		],
+	},
+	{
+		key: 'post',
+		n: '05',
+		title: 'Post it right',
+		line: 'Disclose the ad clearly, the way the FTC expects.',
+		tint: 'var(--sc-cyan)',
+		icon: 'M4 5h16v11H8l-4 4V5Zm5 5h6',
+		links: [['Disclosing sponsored posts', '/deals/disclosure/']],
+	},
+	{
+		key: 'paid',
+		n: '06',
+		title: 'Get paid',
+		line: 'Invoice the day it goes live and chase late money without drama.',
+		tint: 'var(--sc-jade)',
+		icon: 'M3 7h18v10H3V7Zm0 4h18M7 15h3',
+		links: [['Getting paid', '/deals/getting-paid/']],
+	},
+];
+const situations = [
+	{ q: 'A brand just emailed me', to: 'negotiate', href: '/deals/negotiation/' },
+	{ q: 'I want brands to find me', to: 'find', href: '/deals/pitching-brands/' },
+	{ q: 'What should I charge?', to: 'price', href: '/deals/pricing/' },
+	{ q: 'I got a contract', to: 'contract', href: '/deals/redline-a-contract/' },
+	{ q: 'They haven’t paid me', to: 'paid', href: '/deals/getting-paid/' },
+	{ q: 'Should I get a manager?', to: 'team', href: '/deals/agencies-and-commissions/' },
+];
+---
+
+<div class="dm not-content" data-section="deals" data-dm>
+	<div class="dm-ask">
+		<p class="dm-q">Where are you right now?</p>
+		<div class="dm-chips">
+			{
+				situations.map((s) => (
+					<a class="dm-chip" href={s.href} data-to={s.to}>
+						{s.q}
+						<span aria-hidden="true">→</span>
+					</a>
+				))
+			}
+		</div>
+	</div>
+
+	<ol class="dm-path">
+		{
+			stages.map((s) => (
+				<li class="dm-stage" data-stage={s.key} style={`--t:${s.tint}`}>
+					<a class="dm-cover" href={s.links[0][1]} aria-label={`${s.title}: ${s.links[0][0]}`}>
+						<span class="dm-n">{s.n}</span>
+						<svg class="dm-icon" viewBox="0 0 24 24" aria-hidden="true">
+							<path d={s.icon} />
+						</svg>
+					</a>
+					<div class="dm-body">
+						<h3>{s.title}</h3>
+						<p>{s.line}</p>
+						<div class="dm-links">
+							{s.links.map(([label, href]) => (
+								<a href={href}>{label}</a>
+							))}
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+
+	<a class="dm-team" href="/deals/agencies-and-commissions/" data-stage="team">
+		<span class="dm-team__k">Your team</span>
+		<b>Agencies, managers and who takes a cut</b>
+		<span>Follow a $10,000 deal from the brand’s budget to your bank account.</span>
+		<span class="dm-team__go" aria-hidden="true">→</span>
+	</a>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-dm]').forEach((root) => {
+		const hi = (key: string | null) =>
+			root.querySelectorAll<HTMLElement>('[data-stage]').forEach((el) => el.classList.toggle('is-hot', el.dataset.stage === key));
+		root.querySelectorAll<HTMLElement>('[data-to]').forEach((c) => {
+			c.addEventListener('mouseenter', () => hi(c.dataset.to!));
+			c.addEventListener('focus', () => hi(c.dataset.to!));
+			c.addEventListener('mouseleave', () => hi(null));
+			c.addEventListener('blur', () => hi(null));
+		});
+	});
+</script>
+
+<style>
+	.dm {
+		margin-block: 1.5rem 2.5rem;
+	}
+	.dm-ask {
+		padding: 1rem;
+		border-radius: 18px;
+		background:
+			radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--sc-amethyst) 22%, transparent), transparent 60%),
+			radial-gradient(120% 120% at 100% 100%, color-mix(in srgb, var(--sc-rose) 18%, transparent), transparent 60%),
+			rgb(255 255 255 / 0.02);
+		border: 1px solid var(--sc-line);
+	}
+	.dm-q {
+		margin: 0 0 0.7rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: 1.15rem;
+		color: var(--sc-ivory);
+	}
+	.dm-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+	.dm-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.5rem 0.85rem;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.06);
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		font-size: 0.85rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: background 0.2s, border-color 0.2s, transform 0.2s;
+	}
+	.dm-chip:hover,
+	.dm-chip:focus-visible {
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+		border-color: var(--sc-ivory);
+	}
+	.dm-chip span {
+		transition: transform 0.2s;
+	}
+	.dm-chip:hover span {
+		transform: translateX(2px);
+	}
+	.dm-path {
+		list-style: none;
+		margin: 1.25rem 0 0;
+		padding: 0;
+		display: grid;
+		gap: 0.75rem;
+		position: relative;
+	}
+	@media (min-width: 48rem) {
+		.dm-path {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+	.dm-stage {
+		display: grid;
+		grid-template-columns: 4.5rem 1fr;
+		gap: 0.9rem;
+		align-items: start;
+		align-content: start;
+		padding: 0.85rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(150deg, color-mix(in srgb, var(--t) 14%, transparent), rgb(255 255 255 / 0.015) 60%);
+		transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+	}
+	@media (min-width: 48rem) {
+		.dm-stage {
+			grid-template-columns: 1fr;
+		}
+	}
+	.dm-stage:hover,
+	.dm-stage.is-hot {
+		border-color: color-mix(in srgb, var(--t) 60%, transparent);
+		transform: translateY(-2px);
+		box-shadow: 0 14px 40px -20px var(--t);
+	}
+	.dm-cover {
+		position: relative;
+		display: grid;
+		place-items: center;
+		aspect-ratio: 1;
+		border-radius: 14px;
+		background:
+			radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--t) 55%, transparent), transparent 65%),
+			color-mix(in srgb, var(--t) 14%, #0b0b0b);
+		text-decoration: none;
+		overflow: hidden;
+	}
+	@media (min-width: 48rem) {
+		.dm-cover {
+			aspect-ratio: 16 / 9;
+		}
+	}
+	.dm-n {
+		position: absolute;
+		top: 0.4rem;
+		left: 0.55rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: 0.75rem;
+		color: rgb(255 255 255 / 0.75);
+	}
+	.dm-icon {
+		width: 42%;
+		height: 42%;
+		fill: none;
+		stroke: var(--sc-ivory);
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		filter: drop-shadow(0 0 10px var(--t));
+		transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	@media (min-width: 48rem) {
+		.dm-icon {
+			width: 26%;
+			height: 50%;
+		}
+	}
+	.dm-stage:hover .dm-icon,
+	.dm-stage.is-hot .dm-icon {
+		transform: scale(1.12) rotate(-4deg);
+	}
+	.dm-body h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.1rem;
+		color: var(--sc-ivory);
+	}
+	.dm-body p {
+		margin: 0.2rem 0 0.55rem;
+		font-size: 0.84rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+	}
+	.dm-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.dm-links a {
+		white-space: nowrap;
+		font-size: 0.76rem;
+		font-weight: 600;
+		padding: 0.25rem 0.6rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--t) 22%, transparent);
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	.dm-links a:hover {
+		background: var(--t);
+		color: #111;
+	}
+	.dm-team {
+		position: relative;
+		display: grid;
+		gap: 0.2rem;
+		margin-top: 0.75rem;
+		padding: 1rem 3rem 1rem 1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(110deg, color-mix(in srgb, var(--sc-champagne) 18%, transparent), color-mix(in srgb, var(--sc-ion) 14%, transparent));
+		text-decoration: none;
+		transition: border-color 0.25s;
+	}
+	.dm-team:hover,
+	.dm-team.is-hot {
+		border-color: var(--sc-champagne);
+	}
+	.dm-team__k {
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--sc-champagne);
+	}
+	.dm-team b {
+		font-family: var(--sc-font-display);
+		font-size: 1.1rem;
+		color: var(--sc-ivory);
+	}
+	.dm-team span:not(.dm-team__k):not(.dm-team__go) {
+		font-size: 0.84rem;
+		color: var(--sc-silver);
+	}
+	.dm-team__go {
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.3rem;
+		color: var(--sc-ivory);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.dm-stage,
+		.dm-icon {
+			transition: none;
+		}
+	}
+</style>

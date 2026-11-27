@@ -57,7 +57,7 @@ Twitch made big changes in May 2026: subs, Bits, emotes, badges and Channel Poin
 - **Bits:** viewers Cheer with Bits, and Partners earn 1 cent per Bit. *(From the platform.)*
 - **Ads:** a share of ad revenue on your channel, and you control mid-roll length and frequency. *(From the platform.)*
 - **Plus Program:** a bigger sub split for consistent streamers, open to Affiliates and Partners. 60/40 if you hold 100 Plus Points for three months in a row, 70/30 at 300 points. A Tier 1 sub is 1 point, Tier 2 is 2, Tier 3 is 6. *(Reporting, TechCrunch, Jan 2024.)*
-- **Sponsorships** are where established streamers earn most. See [Brand deals](/earn/brand-deals/). *(Creator-tested.)*
+- **Sponsorships** are where established streamers earn most. See [Brand deals](/deals/brand-deals/). *(Creator-tested.)*
 
 ## The path to Partner
 
