@@ -8,7 +8,7 @@ cover:
   label: Twitch
   tint: twitch
 sidebar:
-  order: 9
+  order: 10
 ---
 
 **The short version:** Twitch is where people hang out with you live. Unlike TikTok or YouTube, Twitch hasn't published an explainer of how it recommends channels, so most growth comes from bringing people in from other platforms. The money is the most direct of any platform: fans pay you, in real time.

@@ -8,7 +8,7 @@ cover:
   label: Pinterest
   tint: pinterest
 sidebar:
-  order: 7
+  order: 8
 ---
 
 **The short version:** People come to Pinterest to plan something: a kitchen, a wedding, a weeknight dinner. They search, save, and click through to buy or learn. Your Pins don't expire after a day, so Pinterest is the slow, compounding platform, and it sends traffic off the app better than almost any other.

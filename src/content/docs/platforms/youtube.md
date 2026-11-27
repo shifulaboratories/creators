@@ -8,7 +8,7 @@ cover:
   label: YouTube
   tint: youtube
 sidebar:
-  order: 1
+  order: 3
 ---
 
 **The short version:** YouTube recommends videos people click, keep watching, and later say they were glad they watched. Recommendations drive more viewing than subscriptions or search, so this is the system to design for. It's also the platform with the clearest path to getting paid.

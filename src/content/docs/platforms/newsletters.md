@@ -8,7 +8,7 @@ cover:
   label: Newsletters
   tint: newsletters
 sidebar:
-  order: 10
+  order: 11
 ---
 
 **The short version:** Every other guide here is about renting attention from an algorithm. A newsletter is the audience you own: if a platform bans you or changes the rules, your list still works. The newer twist is that newsletter platforms now have their own discovery networks, so you don't have to grow from zero.

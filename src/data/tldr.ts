@@ -21,6 +21,11 @@ export const TLDR: Record<string, string[]> = {
 		'Reels and Explore mostly show accounts people don’t follow yet. That’s where new reach comes from.',
 		'For Reels, Instagram names reshares and watching to the end first. Post clean, original files.',
 	],
+	'platforms/facebook': [
+		'Facebook ranks from thousands of signals, led by what people like, comment on and watch.',
+		'Original posts win. Reposts and light edits lose reach and pay across your whole account.',
+		'Pay comes through Content Monetization (invite-only). Creator Fast Track guarantees 3 months if you have 100K followers elsewhere.',
+	],
 	'platforms/x': [
 		'X gathers candidate posts from people you follow and people you don’t, then ranks them by predicted engagement.',
 		'Roughly half of the 2023 feed came from accounts people didn’t follow, so a strong post can travel.',

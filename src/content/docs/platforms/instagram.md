@@ -8,7 +8,7 @@ cover:
   label: Instagram
   tint: instagram
 sidebar:
-  order: 3
+  order: 1
 ---
 
 **The short version:** Instagram has no single algorithm. Feed, Explore, Reels, Stories and Search each rank differently, and Reels and Explore are mostly content from accounts people don't follow yet. That's where new reach comes from.

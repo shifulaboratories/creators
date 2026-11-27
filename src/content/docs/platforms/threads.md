@@ -8,7 +8,7 @@ cover:
   label: Threads
   tint: threads
 sidebar:
-  order: 6
+  order: 7
 ---
 
 **The short version:** Threads ranks posts by predicting whether you'll like them, open the replies, tap the profile, follow the author, or scroll right past. It's a conversation app tied to your Instagram account. Over 400 million people use it monthly, but Meta doesn't pay creators for Threads posts directly right now.

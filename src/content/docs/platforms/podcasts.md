@@ -8,7 +8,7 @@ cover:
   label: Podcasts
   tint: podcasts
 sidebar:
-  order: 11
+  order: 12
 ---
 
 **The short version:** The biggest podcast app is YouTube, and a lot of that listening happens on a TV. Spotify now pays for video podcasts too. Plan your show as something people watch, then cut it into clips to get found.
