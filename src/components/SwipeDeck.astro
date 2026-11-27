@@ -3,11 +3,14 @@
  * "The briefing": story-style swipeable cards, one sourced fact each.
  * Phones: swipe or tap the edges. Desktop: arrows or trackpad. No library.
  */
+import { localeOfPath, localize, t } from '../i18n';
 interface Props {
 	title?: string;
 }
-const { title = 'The 60-second briefing' } = Astro.props;
-const cards = [
+const locale = localeOfPath(Astro.url.pathname);
+const L = t(locale).briefing;
+const { title = L.title } = Astro.props;
+const source = [
 	{ tint: 'youtube', kicker: 'YouTube', big: '2012', text: 'YouTube added watch time because clicks alone rewarded misleading videos.', src: 'YouTube', href: '/platforms/youtube/' },
 	{ tint: 'x', kicker: 'X · from the code', big: '7×', text: 'The chance of a reply is weighted about seven times the chance of a like. A copy-link share, about 28 times.', src: 'X source code, 2026', href: '/algorithms/x-open-source/' },
 	{ tint: 'tiktok', kicker: 'TikTok', big: '0', text: 'Follower count is not a direct factor in For You. Neither are your past hits. Every video gets its own shot.', src: 'TikTok, 2020', href: '/platforms/tiktok/' },
@@ -17,17 +20,19 @@ const cards = [
 	{ tint: 'algorithms', kicker: 'Myth', big: '≠', text: '“One report cancels 468 likes” is wrong. Weights multiply predicted chances, not counts. X’s own code says so.', src: 'X source code, 2026', href: '/algorithms/myths/' },
 	{ tint: 'case-studies', kicker: 'MrBeast', big: '100', text: '“Make 100 videos and improve one thing each video.”', src: 'TechCrunch, VidCon 2022', href: '/case-studies/mrbeast/' },
 ];
+// Same cards in the reader's language (src/i18n/ui.ts, same order).
+const cards = source.map((c, i) => ({ ...c, ...(L.cards[i] ?? {}), href: localize(locale, c.href) }));
 ---
 
 <section class="sd not-content" data-sd aria-roledescription="carousel" aria-label={title}>
 	<div class="sd-head">
 		<div>
-			<p class="sd-kicker">Swipe</p>
+			<p class="sd-kicker">{L.swipe}</p>
 			<h2 class="sd-title">{title}</h2>
 		</div>
 		<div class="sd-arrows">
-			<button type="button" data-dir="-1" aria-label="Previous card">‹</button>
-			<button type="button" data-dir="1" aria-label="Next card">›</button>
+			<button type="button" data-dir="-1" aria-label={L.prev}>‹</button>
+			<button type="button" data-dir="1" aria-label={L.next}>›</button>
 		</div>
 	</div>
 	<div class="sd-progress" aria-hidden="true">
@@ -43,7 +48,7 @@ const cards = [
 					<span class="sd-text">{c.text}</span>
 					<span class="sd-foot">
 						<span class="sd-src">{c.src}</span>
-						<span class="sd-go">Read →</span>
+						<span class="sd-go">{L.read}</span>
 					</span>
 				</a>
 			))

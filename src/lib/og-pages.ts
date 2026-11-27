@@ -1,9 +1,10 @@
 import { getCollection } from 'astro:content';
 import { SECTION_LABELS, accentFor } from './share';
-import { getNews, newsId, NEWS_PLATFORM_INFO } from './news';
 import { terms, seoTitle } from './glossary';
+import { splitId, sectionLabel } from '../i18n';
+import { getNews, newsId, NEWS_PLATFORM_INFO } from './news';
 
-// Every page that gets a preview image (and animated preview): guides, news, home, gallery.
+// Every page that gets a preview image (and animated preview): guides, news, glossary, homes, gallery.
 export async function ogPages() {
 	const docs = await getCollection('docs');
 	const news = (await getNews()).map((n) => ({
@@ -14,6 +15,15 @@ export async function ogPages() {
 		{
 			params: { slug: 'home' },
 			props: { title: 'The creator playbook, minus the gurus.', description: 'How the algorithm picks what gets seen, what deals should pay, and the setups real creators use. Every claim sourced.', kicker: undefined, accent: '#ff86b8' },
+		},
+		// Home page previews in Spanish and Portuguese.
+		{
+			params: { slug: 'es/home' },
+			props: { title: 'El manual del creador, sin gurús.', description: 'Cómo elige el algoritmo lo que se ve, cuánto deberían pagar las marcas y cómo manejar el negocio. Todo con fuentes.', kicker: undefined, accent: '#ff86b8' },
+		},
+		{
+			params: { slug: 'pt-br/home' },
+			props: { title: 'O manual do criador, sem gurus.', description: 'Como o algoritmo escolhe o que aparece, quanto as publis deveriam pagar e como cuidar do negócio. Tudo com fonte.', kicker: undefined, accent: '#ff86b8' },
 		},
 		{
 			params: { slug: 'guides' },
@@ -31,13 +41,14 @@ export async function ogPages() {
 			.filter((d) => d.id !== 'guides')
 			.map((d) => {
 				const data = d.data as typeof d.data & { cover?: { tint?: string } };
+				const { locale, base } = splitId(d.id);
 				return {
 					params: { slug: d.id },
 					props: {
 						title: d.data.title,
 						description: d.data.description,
-						kicker: SECTION_LABELS[d.id.split('/')[0]],
-						accent: accentFor(d.id, data.cover?.tint),
+						kicker: sectionLabel(base.split('/')[0], locale),
+						accent: accentFor(base, data.cover?.tint),
 					},
 				};
 			}),

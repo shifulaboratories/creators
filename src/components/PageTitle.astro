@@ -8,8 +8,10 @@ import Tldr from './Tldr.astro';
 import DoThis from './guide/DoThis.astro';
 import LibraryButton from './LibraryButton.astro';
 import { isGuideId } from '../lib/library';
+import { toolBySlug } from '../lib/free-tools';
 import { tldrFor } from '../data/tldr';
 import { NEWS_PLATFORM_INFO, getNews, newsPath, fmtDate, isoDate } from '../lib/news';
+import { splitId, t, localize, currentLocale } from '../i18n';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
 const { entry } = Astro.locals.starlightRoute;
@@ -23,33 +25,26 @@ const data = entry.data as typeof entry.data & {
 	news?: { platform: string; announced: Date; published: Date; updated?: Date; confirmed: 'official' | 'reported' };
 	payoff?: string;
 	moves?: { do: string; why: string; source?: string }[];
+	translation?: { review: 'machine' | 'native' };
 };
+const locale = currentLocale(Astro);
+const L = t(locale);
+// Translated pages ("es/paywall/fanfix") work from the English id for sections, saving and progress.
+const { base, locale: entryLocale } = splitId(entry.id);
+const contributors = localize(locale, CONTRIBUTORS_PATH);
+// Translated pages say how they were translated and link the English original.
+const translated = entryLocale !== 'en' ? (data.translation?.review ?? 'machine') : undefined;
 const news = data.news;
 const newsPlatform = news ? NEWS_PLATFORM_INFO[news.platform] : undefined;
 // Platform guides and platform news pages link to that platform's latest update.
-const [s0, s1] = entry.id.split('/');
-const latestFor = !news && ((s0 === 'platforms' || s0 === 'news') && s1 && NEWS_PLATFORM_INFO[s1] && !entry.id.split('/')[2]) ? s1 : undefined;
+const [s0, s1] = base.split('/');
+const latestFor = !news && ((s0 === 'platforms' || s0 === 'news') && s1 && NEWS_PLATFORM_INFO[s1] && !base.split('/')[2]) ? s1 : undefined;
 const latest = s0 === 'platforms' && latestFor ? (await getNews(latestFor))[0] : undefined;
-const section = entry.id.split('/')[0];
-const labels: Record<string, string> = {
-	grow: 'Grow',
-	earn: 'Earn',
-	deals: 'Brand deals',
-	money: 'Money basics',
-	paywall: 'Paywall',
-	team: 'Team',
-	stack: 'Stack',
-	protect: 'Protect',
-	underground: 'Underground',
-	news: 'News',
-	algorithms: 'The algorithm',
-	'case-studies': 'Case studies',
-	platforms: 'Platforms',
-	shortlist: 'The Shortlist',
-	about: 'About',
-	glossary: 'Glossary',
-};
-const isGuide = isGuideId(entry.id);
+const section = base.split('/')[0];
+// Tool pages keep a long, searchable <title> but show the tool's short name as the heading.
+const tool = section === 'tools' ? toolBySlug(base.split('/')[1] ?? '') : undefined;
+const labels = L.sections;
+const isGuide = isGuideId(base);
 const moves = data.moves ?? [];
 const tldr = moves.length > 0 ? [] : tldrFor(entry.id, data.tldr);
 // Read time covers the main read only: imports, tags and the folded-away
@@ -61,52 +56,54 @@ const mainText = (entry.body ?? '')
 	.replace(/[#*_`|>\-]+/g, ' ');
 const words = mainText.split(/\s+/).filter(Boolean).length;
 const minutes = Math.max(1, Math.round(words / 220));
-const showTime = data.status !== 'outline' && !['guides', '404'].includes(entry.id) && words > 120;
-const statusText: Record<string, string> = { outline: 'Coming soon', draft: 'In progress', published: 'Fact-checked' };
-const confidenceText: Record<string, string> = {
-	verified: 'Sourced',
-	'practitioner-view': 'Creator-tested',
-	speculative: 'Unconfirmed',
-};
+const showTime = data.status !== 'outline' && !['guides', '404'].includes(base) && words > 120;
+const statusText = L.page.status;
+const confidenceText = L.page.confidence;
 ---
 
 <header class="guide-head" data-section={section}>
 	{labels[section] && <p class="kicker"><span class="swatch"></span>{news && newsPlatform ? <><a href="/news/">News</a><span aria-hidden="true">·</span><a href={`/news/${news.platform}/`}>{newsPlatform.name}</a></> : labels[section]}</p>}
-	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
+	<h1 id={PAGE_TITLE_ID}>{tool?.name ?? data.title}</h1>
 	{(data.payoff || data.description) && <p class={data.payoff ? 'lead payoff' : 'lead'}>{data.payoff ?? data.description}</p>}
 	{news && <ul class="chips">
 		<li class="chip">Announced <time datetime={isoDate(news.announced)}>{fmtDate(news.announced)}</time></li>
 		{news.confirmed === 'official' ? <li class="chip status-published">Official</li> : <li class="chip brass">Reported</li>}
 		{news.updated && news.updated.getTime() !== news.published.getTime() && <li class="chip">Updated {fmtDate(news.updated)}</li>}
 	</ul>}
-	{entry.id !== 'guides' && !news && section !== 'news' && <ul class="chips">
-		{showTime && <li class="chip time">{minutes} min read</li>}
-		{data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
-		{data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
+	{base !== 'guides' && !news && section !== 'news' && <ul class="chips">
+		{!tool && showTime && <li class="chip time">{L.page.minRead(minutes)}</li>}
+		{!tool && data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
+		{!tool && data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
 		{data.authors && data.authors.length > 0 && (
 			<li class="chip byline">
-				By {data.authors.map((id, i) => <>{i > 0 && ', '}<a href={`${CONTRIBUTORS_PATH}#${id}`}>{personName(id)}</a></>)}
+				{L.page.by} {data.authors.map((id, i) => <>{i > 0 && ', '}<a href={`${contributors}#${id}`}>{personName(id)}</a></>)}
 			</li>
 		)}
 		{data.reviewers && data.reviewers.length > 0 && (
 			<li class="chip byline">
-				Reviewed by {data.reviewers.map((id, i) => <>{i > 0 && ', '}<a href={`${CONTRIBUTORS_PATH}#${id}`}>{personName(id)}</a></>)}
+				{L.page.reviewedBy} {data.reviewers.map((id, i) => <>{i > 0 && ', '}<a href={`${contributors}#${id}`}>{personName(id)}</a></>)}
 			</li>
 		)}
-		{section === 'underground' && <li class="chip ember">No affiliate links</li>}
+		{section === 'underground' && <li class="chip ember">{L.page.noAffiliates}</li>}
+		{section === 'tools' && base !== 'tools' && <><li class="chip status-published">Free</li><li class="chip">No signup</li><li class="chip">Private</li></>}
 	</ul>}
-	{entry.id !== '404' && entry.id !== 'guides' && (
+	{translated && (
+		<p class="tr-note" data-review={translated}>
+			{translated === 'native' ? L.page.reviewed : L.page.machine} <a href={`/${base}/`} hreflang="en">{L.page.readOriginal}</a>
+		</p>
+	)}
+	{base !== '404' && base !== 'guides' && (
 		<div class="actions">
-			{entry.id !== 'guides' && <AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />}
+			<AskAI variant="sheet" mdPath={`/${entry.id}.md`} title={data.title} />
 			<ShareBar title={data.title} description={data.description} section={section} />
-			{isGuide && <LibraryButton kind="save" id={entry.id} title={data.title} section={section} />}
+			{isGuide && <LibraryButton kind="save" id={base} title={data.title} section={section} />}
 		</div>
 	)}
 	{moves.length > 0 && <DoThis moves={moves} />}
 	{tldr.length > 0 && <Tldr points={tldr} />}
 	{latest && (
 		<a class="latest" href={newsPath(latest)}>
-			<span class="latest__k">Latest change · {fmtDate(latest.data.announced)}</span>
+			<span class="latest__k">{L.page.latest} · {fmtDate(latest.data.announced)}</span>
 			<span class="latest__t">{latest.data.title}</span>
 		</a>
 	)}
@@ -126,6 +123,16 @@ const confidenceText: Record<string, string> = {
 </header>
 
 <style>
+	.tr-note {
+		margin: 0.75rem 0 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-steel);
+	}
+	.tr-note a {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
 	.guide-head {
 		position: relative;
 		padding-top: 0.5rem;
@@ -205,6 +212,7 @@ const confidenceText: Record<string, string> = {
 	}
 	.actions {
 		display: flex;
+		flex-wrap: wrap; /* longer Spanish and Portuguese labels wrap instead of getting cut off */
 		gap: 0.5rem;
 		margin-top: 1.1rem;
 	}

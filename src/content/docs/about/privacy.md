@@ -55,6 +55,12 @@ The site's search runs entirely in your browser. What you type isn't sent to us 
 
 When you tap **Save** on a guide or **Mark as done** at the end of one, the site remembers it in your browser's own storage (`localStorage`) on that device. A few interactive tools keep small settings the same way, like the platform you picked or the items you've ticked on a checklist. This isn't a cookie: it's never sent to us or anyone else, we can't see it, and it doesn't follow you to other devices or browsers. To delete it, tap **Clear my guides** on the [Guides page](/guides/#mine), or clear this site's data in your browser settings.
 
+## Free tools: media kit, invoice and calculators
+
+The [free tools](/tools/) run entirely in your browser. What you type into them, including an invoice's payment details or a photo you add to a media kit, is never uploaded. The media kit builder and invoice generator keep your latest draft in your browser's storage on that device so you don't lose it; **Start over** or **Clear** deletes it, as does clearing this site's data. **Save as PDF** uses your browser's own print dialog.
+
+A media kit **share link** carries the kit itself, compressed, after the `#` in the address. Browsers don't send that part of a link to any server, so we never receive it, but anyone you give the link to can read the kit. Your photo is never included in a link.
+
 ## Ask AI buttons
 
 Pages have buttons to open Claude, ChatGPT or Perplexity. When you tap one, your browser opens that site with a prompt that includes the page's address and title, or the question you typed into our search box. What happens next is covered by that company's privacy policy. Nothing is sent until you tap.

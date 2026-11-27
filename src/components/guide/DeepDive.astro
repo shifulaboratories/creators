@@ -8,7 +8,9 @@ interface Props {
 	title?: string;
 	hint?: string;
 }
-const { title = 'The details', hint } = Astro.props;
+import { currentLocale, t } from '../../i18n';
+const G = t(currentLocale(Astro)).guide;
+const { title = G.details, hint } = Astro.props;
 ---
 
 <details class="dd" data-dd>

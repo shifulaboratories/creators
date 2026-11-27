@@ -1,0 +1,43 @@
+---
+title: "Talent agency and manager commission calculator"
+description: "See where a brand’s dollar goes before it reaches you: brand-side agency, manager, agent, lawyer and business manager cuts, with sourced typical rates."
+payoff: "See exactly what you keep after every agent, manager and agency takes their cut."
+status: draft
+confidence: practitioner-view
+lastReviewed: 2026-11-27
+cover:
+  label: "Commission"
+sidebar:
+  order: 4
+  label: "Agency commission calculator"
+faq:
+  - q: "What percentage does a talent manager take?"
+    a: "Entertainment lawyers Pfeiffer Law put manager fees at 10% to 20% or more, with 15% to 20% the norm, usually on gross. It is negotiable and should be in writing, including whether it is on gross or net and what happens when the contract ends."
+  - q: "What is the difference between an agent and a manager?"
+    a: "In California, anyone who procures work for an artist must be licensed as a talent agency, and SAG-AFTRA caps its franchised agents at 10%. Managers run your business day to day and usually take more, often 15% to 20%. Many creators have one or the other, not both."
+  - q: "Do I pay the brand’s agency?"
+    a: "No. A brand-side agency is paid by the brand, but its fee comes out of the same budget, which is why the amount offered to you can be lower than the brand’s total spend."
+---
+
+import CutCalculator from '../../../components/money/CutCalculator.astro';
+import Sources from '../../../components/money/Sources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** set the deal size, switch on the people on your team, and adjust each percentage. The chart follows the money from the brand’s budget to your account.
+
+<CutCalculator />
+
+## What to check before you sign anyone
+
+- **Is the commission on gross or net?** 20% of the full fee and 20% of what’s left after other cuts are different numbers.
+- **Does it apply to deals they didn’t bring?** Some contracts take a cut of every deal, including ones that came to you directly.
+- **What happens after you leave?** A “sunset” clause can keep paying them for months or years on deals they set up.
+
+More in [Agencies and commissions](/deals/agencies-and-commissions/) and the [Team](/team/) section.
+
+<Sources ids={['later26', 'ana', 'pfeiffer', 'lexis', 'sagComm', 'armanino', 'caLaw', 'caTalent', 'makeinf']} />
+
+<Faq />
+
+<MoreTools />

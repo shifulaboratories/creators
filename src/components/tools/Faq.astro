@@ -1,0 +1,59 @@
+---
+/**
+ * Questions people search for, answered in two or three sentences. Reads `faq:`
+ * from the page's frontmatter; src/route-data.ts turns the same list into FAQPage data.
+ */
+const faq = (Astro.locals.starlightRoute.entry.data as { faq?: { q: string; a: string }[] }).faq ?? [];
+---
+
+{faq.length > 0 && (
+	<section class="fq not-content" aria-labelledby="faq">
+		<h2 id="faq">Questions people ask</h2>
+		{faq.map((f) => (
+			<details>
+				<summary>{f.q}</summary>
+				<p>{f.a}</p>
+			</details>
+		))}
+	</section>
+)}
+
+<style>
+	.fq {
+		margin-top: 2.5rem;
+	}
+	.fq h2 {
+		font-size: 1.35rem;
+		margin: 0 0 0.6rem;
+	}
+	.fq details {
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.fq summary {
+		cursor: pointer;
+		list-style: none;
+		padding: 0.95rem 2rem 0.95rem 0;
+		position: relative;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.fq summary::-webkit-details-marker {
+		display: none;
+	}
+	.fq summary::after {
+		content: '+';
+		position: absolute;
+		right: 0.2rem;
+		top: 0.8rem;
+		font-size: 1.2rem;
+		color: var(--sc-steel);
+	}
+	.fq details[open] summary::after {
+		content: '–';
+	}
+	.fq p {
+		margin: 0 0 1rem;
+		color: var(--sc-silver);
+		line-height: 1.6;
+	}
+</style>

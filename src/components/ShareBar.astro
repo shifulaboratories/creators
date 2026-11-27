@@ -6,7 +6,7 @@
  * element with data-story-value (see src/scripts/story.ts and CONTRIBUTING.md).
  */
 import { Icon } from '@astrojs/starlight/components';
-import { SECTION_LABELS } from '../lib/share';
+import { currentLocale, t as tr, sectionLabel } from '../i18n';
 interface Props {
 	title: string;
 	description?: string;
@@ -15,7 +15,10 @@ interface Props {
 const { title, description, section } = Astro.props;
 const site = (Astro.site ?? new URL('https://creators.select')).origin;
 const url = new URL(Astro.url.pathname, site).href;
-const text = `${title}: free and sourced, on Select Creators`;
+const locale = currentLocale(Astro);
+const L = tr(locale).share;
+const close = tr(locale).ai.close;
+const text = L.text(title);
 const u = encodeURIComponent(url);
 const t = encodeURIComponent(text);
 const links = [
@@ -28,7 +31,7 @@ const links = [
 
 <button type="button" class="ga-btn" data-sheet-open="share-sheet" aria-haspopup="dialog">
 	<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>
-	Share
+	{L.button}
 </button>
 <dialog
 	id="share-sheet"
@@ -39,30 +42,34 @@ const links = [
 	data-text={text}
 	data-url={url}
 	data-description={description}
-	data-kicker={section ? SECTION_LABELS[section] : undefined}
+	data-kicker={section ? sectionLabel(section, locale) : undefined}
+	data-copied={tr(locale).ai.copied}
+	data-failed={tr(locale).ai.copyFailed}
+	data-share-label={L.button}
+	data-to-story={L.toStory('{v}')}
 >
-	<button type="button" class="sc-sheet__grab" data-sheet-grab data-sheet-close aria-label="Close"></button>
-	<button type="button" class="sc-sheet__close" data-sheet-close aria-label="Close">×</button>
+	<button type="button" class="sc-sheet__grab" data-sheet-grab data-sheet-close aria-label={close}></button>
+	<button type="button" class="sc-sheet__close" data-sheet-close aria-label={close}>×</button>
 	<div class="sc-sheet__body">
-		<p class="sc-sheet__title" id="share-sheet-title">Share this guide</p>
+		<p class="sc-sheet__title" id="share-sheet-title">{L.title}</p>
 		<p class="sc-sheet__sub">{title}</p>
 		<ul class="sc-sheet__list">
 			<li>
 				<button type="button" class="sc-sheet__row is-primary" data-story-page>
 					<span class="sc-sheet__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3" /><path d="M10 6.5h4" /></svg></span>
-					<span>Make a Story card<small>A 1080×1920 image for Instagram or TikTok</small></span>
+					<span>{L.story}<small>{L.storySmall}</small></span>
 				</button>
 			</li>
 			<li>
 				<button type="button" class="sc-sheet__row" data-share-copy>
 					<span class="sc-sheet__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg></span>
-					<span data-label>Copy link</span>
+					<span data-label>{L.copyLink}</span>
 				</button>
 			</li>
 			<li>
 				<button type="button" class="sc-sheet__row" data-share-native hidden>
 					<span class="sc-sheet__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg></span>
-					<span>More apps<small>Messages, WhatsApp, Instagram and the rest</small></span>
+					<span>{L.more}<small>{L.moreSmall}</small></span>
 				</button>
 			</li>
 		</ul>
@@ -98,9 +105,9 @@ const links = [
 	async function copy(b: HTMLElement, text: string) {
 		try {
 			await navigator.clipboard.writeText(text);
-			flash(b, 'Copied ✓');
+			flash(b, meta.copied ?? 'Copied ✓');
 		} catch {
-			flash(b, 'Couldn’t copy');
+			flash(b, meta.failed ?? 'Couldn’t copy');
 		}
 	}
 
@@ -134,8 +141,8 @@ const links = [
 		b.dataset.storyValue = value;
 		if (label) b.dataset.storyLabel = label;
 		if (tile.dataset.storySource) b.dataset.storySource = tile.dataset.storySource;
-		b.innerHTML = `${icon}<span>Share</span>`;
-		b.setAttribute('aria-label', `Share “${value}” to your Story`);
+		b.innerHTML = `${icon}<span>${meta.shareLabel ?? 'Share'}</span>`;
+		b.setAttribute('aria-label', (meta.toStory ?? 'Share “{v}” to your Story').replace('{v}', value));
 		tile.append(b);
 	}
 	document.addEventListener('click', async (e) => {

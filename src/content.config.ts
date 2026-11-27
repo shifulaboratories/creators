@@ -1,8 +1,8 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
+import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 import { people } from './data/people';
 
 /**
@@ -35,9 +35,22 @@ const guideFields = z.object({
 	// Action-first guides (docs/guide-format.md): what the reader walks away with,
 	// shown as the lead, and up to three "Do this today" moves that replace the short version.
 	payoff: z.string().max(140).optional(),
+	// Free tool pages (src/content/docs/tools/): questions people search for, shown by
+	// <Faq /> and published as FAQPage structured data (src/route-data.ts).
+	faq: z.array(z.object({ q: z.string().max(120), a: z.string().max(600) })).max(8).optional(),
 	moves: z
 		.array(z.object({ do: z.string().max(140), why: z.string().max(200), source: z.string().max(60).optional() }))
 		.max(3)
+		.optional(),
+	// Translated pages only (src/content/docs/es/, pt-br/). `source` is the short git
+	// commit of the English file this was translated from; `npm run i18n:status`
+	// flags translations whose English original changed since. See docs/translating.md.
+	translation: z
+		.object({
+			source: z.string().min(7),
+			review: z.enum(['machine', 'native']).default('machine'),
+			reviewer: z.string().optional(),
+		})
 		.optional(),
 });
 
@@ -222,4 +235,7 @@ const news = defineCollection({
 		}),
 });
 
-export const collections = { docs, tools, resources, videos, setups, news };
+// Overrides for Starlight's own UI strings per language (src/content/i18n/*.json).
+const i18n = defineCollection({ loader: i18nLoader(), schema: i18nSchema() });
+
+export const collections = { docs, i18n, tools, resources, videos, setups, news };

@@ -1,0 +1,47 @@
+---
+title: "Caption character counter for Instagram, TikTok, X and YouTube"
+description: "Paste a caption and see instantly whether it fits every platform: Instagram, TikTok, X, Threads, LinkedIn, Facebook, Pinterest, Bluesky and YouTube titles."
+payoff: "Write one caption and know where it fits before you hit post."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-27
+cover:
+  label: "Characters"
+sidebar:
+  order: 9
+  label: "Caption character counter"
+faq:
+  - q: "What is the Instagram caption character limit?"
+    a: "Instagram captions can be up to 2,200 characters. Only the first line or two show before “more”, so put your hook first."
+  - q: "How many characters can a TikTok caption have?"
+    a: "TikTok captions can be up to 4,000 characters in the app. Some scheduling tools still cap video captions at 2,200 when posting through TikTok’s API."
+  - q: "What is the character limit on X?"
+    a: "280 characters for free accounts and 25,000 with X Premium. X counts every link as 23 characters and most emoji as 2, and this counter does the same."
+  - q: "How long can a YouTube title and description be?"
+    a: "YouTube Help sets titles at 100 characters and descriptions at 5,000. Titles get cut off well before 100 in search and on phones, so front-load the words that matter."
+  - q: "What is the LinkedIn post character limit?"
+    a: "LinkedIn posts can be up to 3,000 characters, and comments up to 1,250, according to Buffer’s published limits."
+---
+
+import CaptionCounter from '../../../components/tools/CaptionCounter.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** paste your caption. Every platform’s limit updates as you type, along with words, hashtags, mentions and the first line people see before they tap “more”.
+
+<CaptionCounter />
+
+## The first line is the one that counts
+
+Most apps cut a caption after a line or two. Whatever comes before “more” is your hook, so the counter shows it on its own. Lead with the payoff, not the setup. [Hooks that hold](/grow/hooks/) has patterns to borrow.
+
+<ToolSources items={[
+  { title: 'Character limits for each social network', publisher: 'Buffer Help Center', url: 'https://support.buffer.com/article/588-character-limits-for-each-social-network' },
+  { title: 'Character limits (developer guide)', publisher: 'Buffer', url: 'https://developers.buffer.com/guides/character-limits.md' },
+  { title: 'Edit video settings: title and description limits', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/57404' },
+]} />
+
+<Faq />
+
+<MoreTools />

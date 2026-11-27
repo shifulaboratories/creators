@@ -1,0 +1,118 @@
+---
+/**
+ * YouTube ad income from views × RPM, long videos and Shorts apart. RPM is
+ * YouTube's own "revenue per 1,000 views" figure, which is already after YouTube's cut,
+ * so there is no revenue share to apply here. Sources are listed on /tools/youtube-money-calculator/.
+ */
+import './tools.css';
+---
+
+<div class="sc-widget ym not-content" data-section="youtube" data-ym>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · YouTube money</div>
+			<h4 class="sc-widget__title">What your views pay each month</h4>
+		</div>
+	</div>
+
+	<div class="ym-rows">
+		<fieldset class="ym-row">
+			<legend>Long videos</legend>
+			<div class="tw-grid">
+				<label class="tw-field"><span>Views a month</span><input inputmode="numeric" data-in="lv" value="100,000" /></label>
+				<label class="tw-field"><span>Your RPM ($)</span><input inputmode="decimal" data-in="lr" value="4" /><small>Example only. Use yours.</small></label>
+			</div>
+		</fieldset>
+		<fieldset class="ym-row">
+			<legend>Shorts</legend>
+			<div class="tw-grid">
+				<label class="tw-field"><span>Views a month</span><input inputmode="numeric" data-in="sv" value="500,000" /></label>
+				<label class="tw-field"><span>Your Shorts RPM ($)</span><input inputmode="decimal" data-in="sr" value="0.05" /><small>Example only. Use yours.</small></label>
+			</div>
+		</fieldset>
+	</div>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label">Ad income a month</span>
+		<b class="tw-big" data-out="month">$0</b>
+		<p class="tw-sub" data-out="year"></p>
+		<div class="ym-bar" aria-hidden="true"><i class="is-long" data-seg="long"></i><i class="is-shorts" data-seg="shorts"></i></div>
+		<div class="tw-split">
+			<div><span>From long videos</span><b data-out="long">$0</b></div>
+			<div><span>From Shorts</span><b data-out="shorts">$0</b></div>
+			<div><span>Views for $1,000 a month</span><b data-out="need">–</b></div>
+		</div>
+	</div>
+	<p class="sc-widget__note">
+		Income = views ÷ 1,000 × RPM. RPM is the number YouTube Studio shows under Analytics → Revenue: what you earned per 1,000 views after YouTube’s share, across all your revenue sources, so nothing else gets taken off here. Shorts usually earn far less per view than long videos, which is why they have their own RPM. The defaults are illustrations, not benchmarks: RPM swings a lot by niche, country and season. Before tax.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const usd = (n: number) => '$' + (n >= 100 ? Math.round(n).toLocaleString('en-US') : n.toFixed(2));
+	const short = (n: number) => (n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(Math.round(n)));
+	document.querySelectorAll<HTMLElement>('[data-ym]').forEach((root) => {
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const inputs = [...root.querySelectorAll<HTMLInputElement>('[data-in]')];
+		const v = (k: string) => num(inputs.find((i) => i.dataset.in === k)!.value);
+		const render = () => {
+			const long = (v('lv') / 1000) * v('lr');
+			const shorts = (v('sv') / 1000) * v('sr');
+			const total = long + shorts;
+			$('[data-out="month"]').textContent = usd(total);
+			$('[data-out="year"]').textContent = `About ${usd(total * 12)} a year at this pace.`;
+			$('[data-out="long"]').textContent = usd(long);
+			$('[data-out="shorts"]').textContent = usd(shorts);
+			$('[data-out="need"]').textContent = v('lr') ? short((1000 / v('lr')) * 1000) + ' long' : '–';
+			$('[data-seg="long"]').style.width = total ? (long / total) * 100 + '%' : '0';
+			$('[data-seg="shorts"]').style.width = total ? (shorts / total) * 100 + '%' : '0';
+		};
+		inputs.forEach((i) => {
+			i.addEventListener('input', render);
+			i.addEventListener('blur', () => {
+				if (i.dataset.in === 'lv' || i.dataset.in === 'sv') i.value = num(i.value).toLocaleString('en-US');
+			});
+		});
+		render();
+	});
+</script>
+
+<style>
+	.ym-rows {
+		display: grid;
+		gap: 0.8rem;
+	}
+	.ym-row {
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		padding: 0.6rem 0.9rem 0.9rem;
+		margin: 0;
+	}
+	.ym-row legend {
+		padding: 0 0.35rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--sc-platinum);
+	}
+	.ym-bar {
+		display: flex;
+		height: 0.55rem;
+		border-radius: 99px;
+		overflow: hidden;
+		background: var(--sc-fill-muted);
+		margin-top: 0.8rem;
+	}
+	.ym-bar i {
+		display: block;
+		height: 100%;
+		transition: width 0.25s ease;
+	}
+	.ym-bar .is-long {
+		background: var(--accent);
+	}
+	.ym-bar .is-shorts {
+		background: var(--sc-champagne);
+	}
+</style>

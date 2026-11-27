@@ -22,13 +22,29 @@ sidebar:
 ---
 
 import SignalBoard from '../../../components/SignalBoard.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** every platform rewards the same three things in slightly different proportions: people **watching**, people **sending**, and people **coming back**. Likes are the cheapest signal everywhere. Negative feedback is expensive everywhere it's published.
 
+## Check a post before it goes up
+
+<QuickCheck
+  title="Before you post"
+  id="alg-optimize"
+  items={[
+    { text: "I know what makes someone stay to the end", hint: "If you can't answer, tighten it." },
+    { text: "I can name who someone would send this to", hint: "Name the friend. If there isn't one, rethink the angle." },
+    { text: "There's a reason to reply", hint: "A question, a take, a choice. Not engagement bait." },
+    { text: "A stranger can see why to follow", hint: "Make it obvious what else you make." },
+    { text: "Nothing here invites \u201cnot interested\u201d", hint: "Misleading hooks win a click and lose the viewer." },
+  ]}
+  done="Ready to post."
+/>
+
 <SignalBoard />
 
-## The pattern, platform by platform
+## Know each platform’s top signal
 
 <figure class="sc-figure">
 <ul class="sc-bars">
@@ -44,14 +60,6 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 - **TikTok:** its strongest example signal is whether someone finishes a longer video. Follower count and past hits aren't direct factors. <span class="sc-tag is-platform">From the platform</span>
 - **YouTube:** watch time, weighted by whether viewers say they were glad they watched. <span class="sc-tag is-platform">From the platform</span>
 - **X:** a copy-link share is weighted 20, a reply or DM share 5, a like 0.708. <span class="sc-tag is-code">From the code</span>
-
-## A checklist before you post
-
-1. **What will make someone stay to the end?** If you can't answer, tighten it.
-2. **Who would someone send this to?** Name the friend. If there isn't one, rethink the angle.
-3. **Is there a reason to reply?** A question, a take, a choice. Not engagement bait.
-4. **Why would a stranger follow after this?** Make it obvious what else you make.
-5. **Could this make someone hit "not interested"?** Misleading hooks win a click and lose the viewer.
 
 <DeepDive title="Sources" hint="6 sources">
 

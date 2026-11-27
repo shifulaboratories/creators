@@ -1,0 +1,862 @@
+---
+/**
+ * Media kit builder. No signup and no server: the kit is drawn in the browser,
+ * saved on this device (localStorage), exported with the browser's own
+ * "Save as PDF", and shared as a link whose #hash holds the kit itself
+ * (compressed). A photo stays on this device and is never put in the link.
+ */
+import './tools.css';
+const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'X', 'LinkedIn', 'Facebook', 'Threads', 'Pinterest', 'Twitch', 'Snapchat', 'Newsletter', 'Podcast'];
+const ACCENTS = [
+	{ key: 'rose', hex: '#ff86b8' },
+	{ key: 'champagne', hex: '#ffb47e' },
+	{ key: 'ion', hex: '#c3a6ff' },
+	{ key: 'jade', hex: '#5fe3b0' },
+	{ key: 'cyan', hex: '#7cc8ff' },
+	{ key: 'ivory', hex: '#e9e4da' },
+];
+---
+
+<div class="mk not-content" data-section="deals" data-mk data-platforms={JSON.stringify(PLATFORMS)} data-accents={JSON.stringify(ACCENTS)}>
+	<div class="mk-view-bar" data-viewbar hidden>
+		<p>Someone shared this media kit with you.</p>
+		<div class="tw-actions">
+			<button type="button" class="tw-btn" data-print>Save as PDF</button>
+			<button type="button" class="tw-btn is-primary" data-remix>Make your own, free</button>
+		</div>
+	</div>
+
+	<div class="mk-tabs" role="tablist" aria-label="Media kit" data-tabs>
+		<button type="button" role="tab" aria-selected="true" data-tab="edit">Edit</button>
+		<button type="button" role="tab" aria-selected="false" data-tab="preview">Preview</button>
+	</div>
+
+	<div class="mk-layout">
+		<form class="mk-form" data-form autocomplete="off" onsubmit="return false">
+			<fieldset>
+				<legend>You</legend>
+				<div class="mk-photo">
+					<div class="mk-photo__img" data-photo-preview aria-hidden="true"></div>
+					<div>
+						<label class="tw-btn mk-file">Add a photo<input type="file" accept="image/*" data-photo /></label>
+						<button type="button" class="tw-btn" data-photo-clear hidden>Remove</button>
+						<small>Stays on this device. Not included in share links.</small>
+					</div>
+				</div>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Name</span><input data-k="name" maxlength="60" /></label>
+					<label class="tw-field"><span>Main handle</span><input data-k="handle" maxlength="40" placeholder="@yourname" /></label>
+				</div>
+				<label class="tw-field"><span>One line about you</span><input data-k="tagline" maxlength="110" placeholder="Fitness and recipes for busy people" /></label>
+				<label class="tw-field"><span>Bio</span><textarea data-k="bio" maxlength="420" rows="3"></textarea></label>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Niche</span><input data-k="niche" maxlength="40" /></label>
+					<label class="tw-field"><span>Based in</span><input data-k="location" maxlength="40" /></label>
+					<label class="tw-field"><span>Email for brands</span><input data-k="email" type="email" maxlength="80" /></label>
+					<label class="tw-field"><span>Website or link in bio</span><input data-k="link" maxlength="80" /></label>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Platforms</legend>
+				<div class="mk-rows" data-plat-rows></div>
+				<button type="button" class="tw-btn" data-add-plat>Add a platform</button>
+			</fieldset>
+
+			<fieldset>
+				<legend>Audience</legend>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Top countries or cities</span><input data-k="geo" maxlength="80" placeholder="US 62%, UK 11%, Canada 8%" /></label>
+					<label class="tw-field"><span>Main age group</span><input data-k="age" maxlength="40" placeholder="25–34 (48%)" /></label>
+					<label class="tw-field"><span>Gender split</span><input data-k="gender" maxlength="40" placeholder="Women 71%" /></label>
+				</div>
+				<small class="mk-help">Copy these from your app’s audience insights. Brands check.</small>
+			</fieldset>
+
+			<fieldset>
+				<legend>Brands and results</legend>
+				<label class="tw-field"><span>Brands you’ve worked with</span><input data-k="brands" maxlength="200" placeholder="Glossier, Notion, Gymshark" /><small>Separate with commas</small></label>
+				<label class="tw-field"><span>A result to brag about</span><input data-k="proof" maxlength="140" placeholder="Drove 1,200 sign-ups for a skincare launch in 48 hours" /></label>
+			</fieldset>
+
+			<fieldset>
+				<legend>Packages <small>(optional)</small></legend>
+				<div class="mk-rows" data-pkg-rows></div>
+				<button type="button" class="tw-btn" data-add-pkg>Add a package</button>
+				<small class="mk-help">Not sure what to charge? Try the <a href="/tools/brand-deal-rate-calculator/">rate calculator</a>. Many creators leave prices off and send them on request.</small>
+			</fieldset>
+
+			<fieldset>
+				<legend>Look</legend>
+				<div class="mk-swatches" role="radiogroup" aria-label="Accent color" data-swatches></div>
+				<div class="sc-chip-row" role="group" aria-label="Theme" data-theme-row>
+					<button type="button" class="sc-chip" data-theme="dark" aria-pressed="true">Dark</button>
+					<button type="button" class="sc-chip" data-theme="light" aria-pressed="false">Light</button>
+				</div>
+			</fieldset>
+		</form>
+
+		<div class="mk-side">
+			<div class="mk-sticky">
+				<div class="mk-sheet" data-sheet></div>
+				<div class="tw-actions mk-actions">
+					<button type="button" class="tw-btn is-primary" data-print>Save as PDF</button>
+					<button type="button" class="tw-btn" data-mkshare>Copy share link</button>
+					<button type="button" class="tw-btn" data-reset>Start over</button>
+				</div>
+				<p class="mk-status" aria-live="polite" data-status></p>
+				<p class="tw-privacy">Saved on this device only. We never see your kit: a share link carries the kit inside the link itself.</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	import { printSheet } from './print';
+	type Plat = { p: string; handle: string; followers: string; views: string; er: string };
+	type Pkg = { name: string; price: string };
+	type Kit = {
+		v: 1;
+		name: string; handle: string; tagline: string; bio: string; niche: string; location: string; email: string; link: string;
+		geo: string; age: string; gender: string; brands: string; proof: string;
+		plats: Plat[]; pkgs: Pkg[]; accent: string; theme: 'dark' | 'light';
+	};
+	const KEY = 'sc-media-kit';
+	const PHOTO_KEY = 'sc-media-kit-photo';
+	const SAMPLE: Kit = {
+		v: 1,
+		name: 'Maya Reyes',
+		handle: '@mayamakes',
+		tagline: 'Easy weeknight recipes and the gear that makes them easier',
+		bio: 'I test kitchen gear and turn it into 30-second recipes for people with no time. My audience is mostly women 25 to 34 who cook at home four or more nights a week and buy what I recommend.',
+		niche: 'Food and home',
+		location: 'Austin, TX',
+		email: 'hello@example.com',
+		link: 'mayamakes.co',
+		geo: 'US 64%, Canada 9%, UK 7%',
+		age: '25–34 (51%)',
+		gender: 'Women 78%',
+		brands: 'HexClad, Our Place, Trader Joe’s, Instacart',
+		proof: 'Sold out a 500-unit cookware drop in 36 hours with one Reel and two Stories',
+		plats: [
+			{ p: 'Instagram', handle: '@mayamakes', followers: '84K', views: '41K', er: '4.8%' },
+			{ p: 'TikTok', handle: '@mayamakes', followers: '126K', views: '58K', er: '6.1%' },
+			{ p: 'YouTube', handle: 'Maya Makes', followers: '22K', views: '15K', er: '' },
+		],
+		pkgs: [
+			{ name: '1 Reel + 3 Stories', price: '$1,800' },
+			{ name: '1 TikTok video', price: '$1,500' },
+			{ name: '30 days of usage rights', price: '+35%' },
+		],
+		accent: 'rose',
+		theme: 'dark',
+	};
+	const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+	const store = {
+		get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
+		set: (k: string, v: string) => { try { localStorage.setItem(k, v); return true; } catch { return false; } },
+		del: (k: string) => { try { localStorage.removeItem(k); } catch { /* private mode */ } },
+	};
+	// Share links: JSON → deflate → base64url in the #hash, so the kit never touches a server.
+	const b64u = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+	const unb64u = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+	const pipe = async (bytes: Uint8Array, stream: CompressionStream | DecompressionStream) =>
+		new Uint8Array(await new Response(new Blob([bytes as BlobPart]).stream().pipeThrough(stream)).arrayBuffer());
+	const encode = async (kit: Kit) => {
+		const raw = new TextEncoder().encode(JSON.stringify(kit));
+		if ('CompressionStream' in window) return 'z' + b64u(await pipe(raw, new CompressionStream('deflate-raw')));
+		return 'j' + b64u(raw);
+	};
+	const decode = async (s: string): Promise<Kit | null> => {
+		try {
+			const bytes = unb64u(s.slice(1));
+			const raw = s[0] === 'z' ? await pipe(bytes, new DecompressionStream('deflate-raw')) : bytes;
+			const k = JSON.parse(new TextDecoder().decode(raw));
+			return k && k.v === 1 ? { ...SAMPLE, ...k } : null;
+		} catch {
+			return null;
+		}
+	};
+
+	document.querySelectorAll<HTMLElement>('[data-mk]').forEach(async (root) => {
+		const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const PLATFORMS: string[] = JSON.parse(root.dataset.platforms!);
+		const ACCENTS: { key: string; hex: string }[] = JSON.parse(root.dataset.accents!);
+		const sheet = $('[data-sheet]');
+		const status = $('[data-status]');
+		const say = (t: string) => {
+			status.textContent = t;
+			setTimeout(() => status.textContent === t && (status.textContent = ''), 2600);
+		};
+
+		let kit: Kit = structuredClone(SAMPLE);
+		let photo = store.get(PHOTO_KEY) ?? '';
+		let shared = false;
+		const fromHash = location.hash.startsWith('#kit=') ? await decode(location.hash.slice(5)) : null;
+		if (fromHash) {
+			kit = fromHash;
+			shared = true;
+			photo = '';
+		} else {
+			try {
+				const saved = store.get(KEY);
+				if (saved) kit = { ...SAMPLE, ...JSON.parse(saved) };
+			} catch { /* ignore a broken draft */ }
+		}
+
+		const save = () => { if (!shared) store.set(KEY, JSON.stringify(kit)); };
+
+		// ---------- form ----------
+		const fillFields = () => {
+			root.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-k]').forEach((el) => {
+				el.value = (kit as any)[el.dataset.k!] ?? '';
+			});
+			renderRows();
+			renderSwatches();
+			root.querySelectorAll('[data-theme]').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.theme === kit.theme)));
+			renderPhoto();
+		};
+		const renderRows = () => {
+			$('[data-plat-rows]').innerHTML = kit.plats
+				.map(
+					(r, i) => `<div class="mk-row" data-i="${i}">
+						<label class="tw-field"><span>Platform</span><select data-pk="p">${PLATFORMS.map((p) => `<option${p === r.p ? ' selected' : ''}>${p}</option>`).join('')}</select></label>
+						<label class="tw-field"><span>Handle</span><input data-pk="handle" maxlength="40" value="${esc(r.handle)}" /></label>
+						<label class="tw-field"><span>Followers</span><input data-pk="followers" maxlength="12" value="${esc(r.followers)}" placeholder="84K" /></label>
+						<label class="tw-field"><span>Avg views</span><input data-pk="views" maxlength="12" value="${esc(r.views)}" placeholder="41K" /></label>
+						<label class="tw-field"><span>Engagement</span><input data-pk="er" maxlength="8" value="${esc(r.er)}" placeholder="4.8%" /></label>
+						<button type="button" class="mk-x" data-del-plat="${i}" aria-label="Remove ${esc(r.p)}">×</button>
+					</div>`,
+				)
+				.join('');
+			$('[data-pkg-rows]').innerHTML = kit.pkgs
+				.map(
+					(r, i) => `<div class="mk-row is-pkg" data-j="${i}">
+						<label class="tw-field"><span>What you deliver</span><input data-gk="name" maxlength="60" value="${esc(r.name)}" /></label>
+						<label class="tw-field"><span>Price</span><input data-gk="price" maxlength="16" value="${esc(r.price)}" placeholder="$1,500 or On request" /></label>
+						<button type="button" class="mk-x" data-del-pkg="${i}" aria-label="Remove package">×</button>
+					</div>`,
+				)
+				.join('');
+		};
+		const renderSwatches = () => {
+			$('[data-swatches]').innerHTML = ACCENTS.map(
+				(a) => `<button type="button" role="radio" aria-checked="${a.key === kit.accent}" aria-label="${a.key}" data-accent="${a.key}" style="--sw:${a.hex}"></button>`,
+			).join('');
+		};
+		const renderPhoto = () => {
+			const p = $('[data-photo-preview]');
+			p.style.backgroundImage = photo ? `url(${photo})` : '';
+			p.textContent = photo ? '' : (kit.name || '?').trim().charAt(0).toUpperCase();
+			$('[data-photo-clear]').hidden = !photo;
+		};
+
+		// ---------- the kit ----------
+		const draw = () => {
+			const accent = ACCENTS.find((a) => a.key === kit.accent)?.hex ?? ACCENTS[0].hex;
+			const brands = kit.brands.split(',').map((b) => b.trim()).filter(Boolean);
+			const facts = [
+				['Niche', kit.niche],
+				['Based in', kit.location],
+				['Top locations', kit.geo],
+				['Main age group', kit.age],
+				['Audience', kit.gender],
+			].filter(([, v]) => v);
+			const plats = kit.plats.filter((p) => p.followers || p.handle);
+			const initial = esc((kit.name || '?').trim().charAt(0).toUpperCase());
+			sheet.className = `mk-sheet is-${kit.theme}`;
+			sheet.style.setProperty('--mk-accent', accent);
+			sheet.innerHTML = `
+				<header class="k-head">
+					<div class="k-avatar" ${photo ? `style="background-image:url(${photo})"` : ''}>${photo ? '' : initial}</div>
+					<div class="k-id">
+						<p class="k-kicker">Media kit${kit.niche ? ' · ' + esc(kit.niche) : ''}</p>
+						<h2>${esc(kit.name || 'Your name')}</h2>
+						${kit.handle ? `<p class="k-handle">${esc(kit.handle)}</p>` : ''}
+					</div>
+				</header>
+				${kit.tagline ? `<p class="k-tagline">${esc(kit.tagline)}</p>` : ''}
+				${plats.length ? `<div class="k-plats">${plats
+					.map(
+						(p) => `<div class="k-plat"><span class="k-plat__name">${esc(p.p)}</span><b>${esc(p.followers || '–')}</b><span class="k-plat__sub">followers</span>
+						<div class="k-plat__meta">${p.views ? `<span><b>${esc(p.views)}</b> avg views</span>` : ''}${p.er ? `<span><b>${esc(p.er)}</b> engagement</span>` : ''}</div></div>`,
+					)
+					.join('')}</div>` : ''}
+				${kit.bio ? `<section class="k-sec"><h3>About</h3><p>${esc(kit.bio)}</p></section>` : ''}
+				${facts.length ? `<section class="k-sec"><h3>Audience</h3><dl class="k-facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}
+				${kit.proof ? `<section class="k-proof"><span>Result</span><p>${esc(kit.proof)}</p></section>` : ''}
+				${brands.length ? `<section class="k-sec"><h3>Worked with</h3><ul class="k-brands">${brands.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></section>` : ''}
+				${kit.pkgs.some((p) => p.name) ? `<section class="k-sec"><h3>Packages</h3><ul class="k-pkgs">${kit.pkgs.filter((p) => p.name).map((p) => `<li><span>${esc(p.name)}</span><b>${esc(p.price || 'On request')}</b></li>`).join('')}</ul></section>` : ''}
+				<footer class="k-foot">
+					<div>${kit.email ? `<span>${esc(kit.email)}</span>` : ''}${kit.link ? `<span>${esc(kit.link)}</span>` : ''}</div>
+					<span class="k-made">Made free at creators.select</span>
+				</footer>`;
+		};
+
+		const update = () => {
+			draw();
+			save();
+		};
+
+		// ---------- events ----------
+		root.querySelector('[data-form]')!.addEventListener('input', (e) => {
+			const el = e.target as HTMLInputElement;
+			if (el.dataset.k) (kit as any)[el.dataset.k] = el.value;
+			const row = el.closest<HTMLElement>('.mk-row');
+			if (row?.dataset.i && el.dataset.pk) (kit.plats[+row.dataset.i] as any)[el.dataset.pk] = el.value;
+			if (row?.dataset.j && el.dataset.gk) (kit.pkgs[+row.dataset.j] as any)[el.dataset.gk] = el.value;
+			if (el.dataset.k === 'name') renderPhoto();
+			update();
+		});
+		root.addEventListener('click', async (e) => {
+			const t = (e.target as HTMLElement).closest<HTMLElement>('button');
+			if (!t) return;
+			if (t.dataset.delPlat) { kit.plats.splice(+t.dataset.delPlat, 1); renderRows(); update(); }
+			else if (t.dataset.delPkg) { kit.pkgs.splice(+t.dataset.delPkg, 1); renderRows(); update(); }
+			else if (t.matches('[data-add-plat]')) {
+				if (kit.plats.length >= 6) return say('Six platforms is plenty for one page.');
+				const used = new Set(kit.plats.map((p) => p.p));
+				kit.plats.push({ p: PLATFORMS.find((p) => !used.has(p)) ?? 'Instagram', handle: kit.handle, followers: '', views: '', er: '' });
+				renderRows(); update();
+			} else if (t.matches('[data-add-pkg]')) {
+				if (kit.pkgs.length >= 6) return say('Keep it to six packages or fewer.');
+				kit.pkgs.push({ name: '', price: '' }); renderRows(); update();
+			} else if (t.dataset.accent) { kit.accent = t.dataset.accent; renderSwatches(); update(); }
+			else if (t.dataset.theme) {
+				kit.theme = t.dataset.theme as Kit['theme'];
+				root.querySelectorAll('[data-theme]').forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
+				update();
+			} else if (t.dataset.tab) setTab(t.dataset.tab);
+			else if (t.matches('[data-print]')) {
+				setTab('preview');
+				printSheet($('[data-sheet]'), 'mk-printing');
+			} else if (t.matches('[data-mkshare]')) {
+				const url = `${location.origin}${location.pathname}#kit=${await encode(kit)}`;
+				try {
+					if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: `${kit.name} · Media kit`, url });
+					else { await navigator.clipboard.writeText(url); say(photo ? 'Link copied. Your photo stays off the link, so it shows your initial.' : 'Link copied.'); }
+				} catch (err) {
+					if ((err as Error).name !== 'AbortError') say('Couldn’t copy. Long-press to copy from the address bar instead.');
+				}
+			} else if (t.matches('[data-reset]')) {
+				kit = structuredClone(SAMPLE);
+				kit.name = kit.handle = kit.tagline = kit.bio = kit.niche = kit.location = kit.email = kit.link = kit.geo = kit.age = kit.gender = kit.brands = kit.proof = '';
+				kit.plats = [{ p: 'Instagram', handle: '', followers: '', views: '', er: '' }];
+				kit.pkgs = [];
+				photo = '';
+				store.del(PHOTO_KEY);
+				fillFields(); update();
+				say('Cleared. Start typing on the left.');
+			} else if (t.matches('[data-photo-clear]')) { photo = ''; store.del(PHOTO_KEY); renderPhoto(); draw(); }
+			else if (t.matches('[data-remix]')) {
+				history.replaceState(null, '', location.pathname);
+				shared = false;
+				root.classList.remove('is-shared');
+				$('[data-viewbar]').hidden = true;
+				setTab('edit');
+				save();
+			}
+		});
+		
+
+		// Photo: shrink to 320px on this device before saving, so it fits in storage and the PDF stays small.
+		root.querySelector<HTMLInputElement>('[data-photo]')!.addEventListener('change', async (e) => {
+			const f = (e.target as HTMLInputElement).files?.[0];
+			if (!f) return;
+			try {
+				const bmp = await createImageBitmap(f);
+				const s = Math.min(bmp.width, bmp.height);
+				const c = document.createElement('canvas');
+				c.width = c.height = 320;
+				c.getContext('2d')!.drawImage(bmp, (bmp.width - s) / 2, (bmp.height - s) / 2, s, s, 0, 0, 320, 320);
+				photo = c.toDataURL('image/jpeg', 0.85);
+				if (!store.set(PHOTO_KEY, photo)) say('Photo added for now. Your browser won’t let us keep it after you leave.');
+				renderPhoto(); draw();
+			} catch {
+				say('That file didn’t open as an image. Try a JPG or PNG.');
+			}
+		});
+
+		const tabs = $('[data-tabs]');
+		const setTab = (tab: string) => {
+			root.dataset.tab = tab;
+			tabs.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String((b as HTMLElement).dataset.tab === tab)));
+		};
+
+		fillFields();
+		draw();
+		if (shared) {
+			root.classList.add('is-shared');
+			$('[data-viewbar]').hidden = false;
+			setTab('preview');
+		} else setTab('edit');
+	});
+</script>
+
+<style>
+	.mk {
+		margin-top: 1.5rem;
+	}
+	.mk [hidden] {
+		display: none !important;
+	}
+	.mk-view-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+		padding: 0.9rem 1rem;
+		margin-bottom: 1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+	.mk-view-bar p {
+		margin: 0;
+		color: var(--sc-ivory);
+	}
+	.mk-view-bar .tw-actions {
+		margin: 0;
+	}
+	.mk-tabs {
+		display: none;
+		position: sticky;
+		top: calc(var(--sl-nav-height, 3.5rem) + 0.5rem);
+		z-index: 5;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		margin-bottom: 1rem;
+		border-radius: 99px;
+		background: color-mix(in srgb, var(--sc-obsidian) 85%, transparent);
+		backdrop-filter: blur(12px);
+		border: 1px solid var(--sc-line-strong);
+	}
+	.mk-tabs button {
+		flex: 1;
+		min-height: 2.6rem;
+		border: 0;
+		border-radius: 99px;
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.mk-tabs button[aria-selected='true'] {
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+	}
+	.mk-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+	.mk-form {
+		display: grid;
+		gap: 1rem;
+	}
+	.mk-form fieldset {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 1rem;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		background: var(--sc-fill-subtle);
+	}
+	.mk-form legend {
+		padding: 0 0.35rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.mk-form legend small,
+	.mk-help {
+		font-family: var(--sc-font-sans);
+		font-weight: 400;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.mk-photo {
+		display: flex;
+		gap: 0.9rem;
+		align-items: center;
+	}
+	.mk-photo > div:last-child {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		align-items: center;
+	}
+	.mk-photo small {
+		flex-basis: 100%;
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.mk-photo__img {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 3.8rem;
+		height: 3.8rem;
+		border-radius: 50%;
+		background: var(--sc-fill-muted) center / cover;
+		border: 1px solid var(--sc-line-strong);
+		font-family: var(--sc-font-display);
+		font-size: 1.4rem;
+		color: var(--sc-silver);
+	}
+	.mk-file {
+		position: relative;
+		overflow: hidden;
+	}
+	.mk-file input {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.mk-rows {
+		display: grid;
+		gap: 0.7rem;
+	}
+	.mk-rows :global(.mk-row) {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.5rem;
+		padding: 0.75rem 2.4rem 0.75rem 0.75rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line);
+	}
+	.mk-rows :global(.mk-row.is-pkg) {
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	}
+	.mk-rows :global(.mk-x) {
+		position: absolute;
+		top: 0.4rem;
+		right: 0.4rem;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-silver);
+		font-size: 1.1rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.mk-swatches {
+		display: flex;
+		gap: 0.55rem;
+	}
+	.mk-swatches :global(button) {
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 50%;
+		border: 2px solid transparent;
+		background: var(--sw);
+		box-shadow: inset 0 0 0 3px var(--sc-obsidian);
+		cursor: pointer;
+	}
+	.mk-swatches :global(button[aria-checked='true']) {
+		border-color: var(--sc-ivory);
+	}
+	.mk-sticky {
+		position: sticky;
+		top: calc(var(--sl-nav-height, 3.5rem) + 1rem);
+	}
+	.mk-actions {
+		justify-content: flex-start;
+	}
+	.mk-status {
+		min-height: 1.2em;
+		margin: 0.5rem 0 0;
+		font-size: 0.8rem;
+		color: var(--sc-jade);
+	}
+
+	/* ---------- The kit itself (also what prints) ---------- */
+	.mk-sheet {
+		--ink: #f5f3ef;
+		--ink-2: rgb(245 243 239 / 0.66);
+		--ink-3: rgb(245 243 239 / 0.42);
+		--paper: #0c0b0d;
+		--card: rgb(255 255 255 / 0.05);
+		--rule: rgb(255 255 255 / 0.1);
+		position: relative;
+		overflow: hidden;
+		padding: clamp(1.25rem, 4vw, 2.2rem);
+		border-radius: 22px;
+		background:
+			radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--mk-accent) 26%, transparent), transparent 60%),
+			var(--paper);
+		color: var(--ink);
+		border: 1px solid var(--rule);
+		font-family: var(--sc-font-sans);
+		min-height: 36rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.05rem;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+	.mk-sheet.is-light {
+		--ink: #141215;
+		--ink-2: rgb(20 18 21 / 0.68);
+		--ink-3: rgb(20 18 21 / 0.45);
+		--paper: #fbf9f6;
+		--card: rgb(20 18 21 / 0.04);
+		--rule: rgb(20 18 21 / 0.1);
+	}
+	.mk-sheet :global(.k-head) {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+	.mk-sheet :global(.k-avatar) {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 4.6rem;
+		height: 4.6rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--mk-accent) 30%, var(--paper)) center / cover;
+		box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--mk-accent);
+		font-family: var(--sc-font-display);
+		font-size: 1.9rem;
+		font-weight: 700;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-kicker) {
+		margin: 0;
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--mk-accent);
+		font-weight: 600;
+	}
+	.mk-sheet.is-light :global(.k-kicker) {
+		color: color-mix(in srgb, var(--mk-accent) 55%, #000);
+	}
+	.mk-sheet :global(h2) {
+		border: 0;
+		padding: 0;
+		margin: 0.1rem 0 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.6rem, 5vw, 2.3rem);
+		line-height: 1;
+		letter-spacing: -0.035em;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-handle) {
+		margin: 0.25rem 0 0;
+		color: var(--ink-2);
+		font-size: 0.9rem;
+	}
+	.mk-sheet :global(.k-tagline) {
+		margin: 0;
+		font-size: clamp(1rem, 2.6vw, 1.2rem);
+		line-height: 1.35;
+		color: var(--ink);
+		font-weight: 500;
+	}
+	.mk-sheet :global(.k-plats) {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+		gap: 0.55rem;
+	}
+	.mk-sheet :global(.k-plat) {
+		padding: 0.8rem 0.85rem;
+		border-radius: 14px;
+		background: var(--card);
+		border: 1px solid var(--rule);
+	}
+	.mk-sheet :global(.k-plat__name) {
+		display: block;
+		font-size: 0.72rem;
+		color: var(--ink-2);
+	}
+	.mk-sheet :global(.k-plat > b) {
+		display: inline-block;
+		margin-top: 0.15rem;
+		font-family: var(--sc-font-display);
+		font-size: 1.55rem;
+		letter-spacing: -0.03em;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-plat__sub) {
+		display: block;
+		margin-top: -0.2rem;
+		font-size: 0.7rem;
+		color: var(--ink-3);
+	}
+	.mk-sheet :global(.k-plat__meta) {
+		display: grid;
+		gap: 0.1rem;
+		margin-top: 0.35rem;
+		font-size: 0.72rem;
+		color: var(--ink-2);
+	}
+	.mk-sheet :global(.k-plat__meta b) {
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-sec h3) {
+		margin: 0 0 0.35rem;
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink-3);
+		font-family: var(--sc-font-sans);
+		font-weight: 600;
+	}
+	.mk-sheet :global(.k-sec p) {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--ink-2);
+	}
+	.mk-sheet :global(.k-facts) {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+		gap: 0.5rem 1rem;
+		margin: 0;
+	}
+	.mk-sheet :global(.k-facts dt) {
+		font-size: 0.7rem;
+		color: var(--ink-3);
+	}
+	.mk-sheet :global(.k-facts dd) {
+		margin: 0;
+		font-size: 0.88rem;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-proof) {
+		padding: 0.8rem 0.95rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--mk-accent) 16%, transparent);
+		border: 1px solid color-mix(in srgb, var(--mk-accent) 40%, transparent);
+	}
+	.mk-sheet :global(.k-proof span) {
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		font-weight: 600;
+	}
+	.mk-sheet :global(.k-proof p) {
+		margin: 0.2rem 0 0;
+		font-weight: 600;
+		color: var(--ink);
+		line-height: 1.4;
+	}
+	.mk-sheet :global(.k-brands) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.mk-sheet :global(.k-brands li) {
+		margin: 0;
+		padding: 0.3rem 0.7rem;
+		border-radius: 99px;
+		border: 1px solid var(--rule);
+		font-size: 0.82rem;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-pkgs) {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.mk-sheet :global(.k-pkgs li) {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		margin: 0;
+		padding: 0.45rem 0;
+		border-bottom: 1px solid var(--rule);
+		font-size: 0.88rem;
+		color: var(--ink-2);
+	}
+	.mk-sheet :global(.k-pkgs b) {
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+	.mk-sheet :global(.k-foot) {
+		margin-top: auto;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 0.5rem;
+		padding-top: 0.8rem;
+		border-top: 1px solid var(--rule);
+		font-size: 0.82rem;
+		color: var(--ink);
+	}
+	.mk-sheet :global(.k-foot div) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 1rem;
+	}
+	.mk-sheet :global(.k-made) {
+		font-size: 0.68rem;
+		color: var(--ink-3);
+	}
+
+	/* Phones: one pane at a time, switched by the Edit / Preview pill. */
+	@media (max-width: 52rem) {
+		.mk-tabs {
+			display: flex;
+		}
+		.mk-layout {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.mk[data-tab='edit'] .mk-side,
+		.mk[data-tab='preview'] .mk-form {
+			display: none;
+		}
+		.mk-sticky {
+			position: static;
+		}
+		.mk-sheet {
+			min-height: 30rem;
+		}
+	}
+	.mk.is-shared .mk-tabs,
+	.mk.is-shared .mk-form,
+	.mk.is-shared .mk-actions,
+	.mk.is-shared .tw-privacy {
+		display: none;
+	}
+	.mk.is-shared .mk-layout {
+		grid-template-columns: minmax(0, 40rem);
+		justify-content: center;
+	}
+	.mk.is-shared .mk-side {
+		display: block;
+	}
+
+	/* Save as PDF: print the kit alone, one US Letter page, edge to edge. */
+	@media print {
+		@page {
+			size: letter;
+			margin: 0;
+		}
+		:global(#sc-print-root) .mk-sheet {
+			width: 8.5in;
+			height: 11in;
+			min-height: 0;
+			box-sizing: border-box;
+			border-radius: 0;
+			border: 0;
+			padding: 0.6in;
+			font-size: 13px;
+		}
+	}
+</style>

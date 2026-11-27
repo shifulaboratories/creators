@@ -11,12 +11,50 @@ import { personName, CONTRIBUTORS_PATH } from './data/people';
 import { getTerm, sortedTerms, termPath } from './lib/glossary';
 import { SEO } from './data/seo';
 import { NEWS_PLATFORM_INFO } from './lib/news';
+import { toolBySlug } from './lib/free-tools';
+import { getCollection } from 'astro:content';
+import { splitId, localize, sectionLabel, HTML_LANG, OG_LOCALE, LOCALES, type Locale } from './i18n';
 
-export const onRequest = defineRouteMiddleware((context) => {
+// Which base ids have a real translation, per locale (for hreflang).
+let translations: Promise<Map<string, Set<Locale>>> | undefined;
+const loadTranslations = () =>
+	(translations ??= getCollection('docs').then((docs) => {
+		const m = new Map<string, Set<Locale>>();
+		for (const d of docs) {
+			const { locale, base } = splitId(d.id);
+			if (!m.has(base)) m.set(base, new Set());
+			m.get(base)!.add(locale);
+		}
+		return m;
+	}));
+
+export const onRequest = defineRouteMiddleware(async (context) => {
 	const route = context.locals.starlightRoute;
-	const { entry, head } = route;
+	const { entry } = route;
+	const { base, locale: entryLocale } = splitId(entry.id);
+	const locale = (route.locale ?? 'en') as Locale;
 	const id = entry.id;
-	if (id === '404') return;
+	if (base === '404') return;
+
+	// hreflang: Starlight links every locale; keep only languages this page is really in.
+	// The Guides gallery (src/pages/) is translated in code, so it exists in every language.
+	const langs = base === 'guides' ? new Set<Locale>(LOCALES) : ((await loadTranslations()).get(base) ?? new Set<Locale>(['en']));
+	const keepLang = new Set([...langs].map((l) => HTML_LANG[l]).concat('x-default'));
+	const isAlt = (h: (typeof route.head)[number]) => h.tag === 'link' && h.attrs?.rel === 'alternate' && !!h.attrs.hreflang;
+	route.head = route.head.filter((h) => !isAlt(h) || (langs.size > 1 && keepLang.has(String(h.attrs!.hreflang))));
+
+	// An untranslated page under /es/ or /pt-br/ shows the English text: point
+	// search engines at the English original and keep the copy out of the index.
+	const isFallback = locale !== 'en' && entryLocale === 'en';
+	if (isFallback) {
+		const english = new URL(context.url.pathname.replace(`/${locale}/`, '/'), SITE_ORIGIN).href;
+		for (const h of route.head) if (h.tag === 'link' && h.attrs?.rel === 'canonical') h.attrs.href = english;
+	}
+	// Starlight sets og:locale to the bare language; use the full Open Graph code.
+	route.head = route.head.filter((h) => !(h.tag === 'meta' && h.attrs?.property === 'og:locale'));
+	route.head.push({ tag: 'meta', attrs: { property: 'og:locale', content: OG_LOCALE[isFallback ? 'en' : locale] } });
+	if (!isFallback) for (const l of langs) if (l !== locale) route.head.push({ tag: 'meta', attrs: { property: 'og:locale:alternate', content: OG_LOCALE[l] } });
+	const head = route.head;
 
 	// The sidebar shows only the section you're in. The top nav covers the rest.
 	type SB = (typeof route.sidebar)[number];
@@ -25,7 +63,8 @@ export const onRequest = defineRouteMiddleware((context) => {
 	if (current.length) {
 		route.sidebar = current.map((g) => (g.type === 'group' ? { ...g, collapsed: false } : g));
 	}
-	const image = `${SITE_ORIGIN}${ogPath(id)}`;
+	const ogId = base === 'guides' ? base : id;
+	const image = `${SITE_ORIGIN}${ogPath(ogId)}`;
 	const url = new URL(context.url.pathname, SITE_ORIGIN).href;
 	const title = entry.data.title;
 
@@ -39,12 +78,13 @@ export const onRequest = defineRouteMiddleware((context) => {
 	if (HAS_VIDEO) {
 		const ogType = head.find((t) => t.tag === 'meta' && t.attrs?.property === 'og:type');
 		if (ogType?.attrs) ogType.attrs.content = 'video.other';
-		for (const attrs of ogVideoTags(`${SITE_ORIGIN}${ogVideoPath(id)}`)) head.push({ tag: 'meta', attrs });
+		for (const attrs of ogVideoTags(`${SITE_ORIGIN}${ogVideoPath(ogId)}`)) head.push({ tag: 'meta', attrs });
 	}
 
 	// Search titles: apply overrides (src/data/seo.ts), and drop the site name
 	// when it would push the title past what Google shows (~60 characters).
-	const seo = SEO[id];
+	// Overrides are written in English, so they apply to English pages only.
+	const seo = locale === 'en' ? SEO[id] : undefined;
 	const set = (match: (h: (typeof head)[number]) => boolean, value: string, attr = 'content') => {
 		for (const h of head) if (match(h)) (attr === 'text' ? (h.content = value) : ((h.attrs ??= {})[attr] = value));
 	};
@@ -59,16 +99,17 @@ export const onRequest = defineRouteMiddleware((context) => {
 		set((h) => h.attrs?.property === 'og:description', seo.description);
 	}
 
-	const section = id.split('/')[0];
-	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}/` }];
+	const section = base.split('/')[0];
+	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}${localize(locale, '/')}` }];
 	const data = entry.data as typeof entry.data & {
 		authors?: string[];
 		lastReviewed?: Date;
 		status?: string;
 		news?: { platform: string; announced: Date; published: Date; updated?: Date };
+		faq?: { q: string; a: string }[];
 	};
 	const news = data.news;
-	if (id.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: SECTION_LABELS[section], url: `${SITE_ORIGIN}/${section}/` });
+	if (base.includes('/') && SECTION_LABELS[section]) crumbs.push({ name: sectionLabel(section, locale)!, url: `${SITE_ORIGIN}${localize(locale, `/${section}/`)}` });
 	if (news) crumbs.push({ name: NEWS_PLATFORM_INFO[news.platform]?.name ?? news.platform, url: `${SITE_ORIGIN}/news/${news.platform}/` });
 	crumbs.push({ name: title, url });
 
@@ -80,12 +121,15 @@ export const onRequest = defineRouteMiddleware((context) => {
 	// Outline pages are placeholders: keep them out of search results until written.
 	head.push({
 		tag: 'meta',
-		attrs: { name: 'robots', content: data.status === 'outline' && id !== 'guides' ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1' },
+		attrs: {
+			name: 'robots',
+			content: isFallback || (data.status === 'outline' && base !== 'guides') ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1',
+		},
 	});
 
 	// Section front pages and the Guides index are collections, not articles.
 	// Per-platform news pages (news/instagram) are collections too.
-	const isCollection = id === 'guides' || (!id.includes('/') && id !== 'index') || (section === 'news' && id.split('/').length === 2 && !news);
+	const isCollection = base === 'guides' || (!base.includes('/') && base !== 'index') || (section === 'news' && base.split('/').length === 2 && !news);
 	const modified = news ? (news.updated ?? news.published) : (route.lastUpdated ?? data.lastReviewed);
 	// Glossary: each term page is about one DefinedTerm in the site's DefinedTermSet.
 	const termSet = { '@type': 'DefinedTermSet', '@id': `${SITE_ORIGIN}/glossary/#set`, name: `${SITE_NAME} creator glossary`, url: `${SITE_ORIGIN}/glossary/` };
@@ -113,7 +157,7 @@ export const onRequest = defineRouteMiddleware((context) => {
 				]
 			: [];
 
-	const graph = [
+	const graph: Record<string, unknown>[] = [
 		...glossaryNodes,
 		{
 			'@type': term ? 'WebPage' : news ? 'NewsArticle' : isCollection ? 'CollectionPage' : 'Article',
@@ -124,7 +168,8 @@ export const onRequest = defineRouteMiddleware((context) => {
 			image,
 			url,
 			mainEntityOfPage: url,
-			inLanguage: 'en',
+			inLanguage: HTML_LANG[entryLocale],
+			...(entryLocale !== 'en' ? { isBasedOn: new URL(`/${base}/`, SITE_ORIGIN).href } : {}),
 			...(modified ? { dateModified: modified.toISOString() } : {}),
 			author: data.authors?.length
 				? data.authors.map((a) => ({ '@type': 'Person', name: personName(a), url: `${SITE_ORIGIN}${CONTRIBUTORS_PATH}#${a}` }))
@@ -145,6 +190,30 @@ export const onRequest = defineRouteMiddleware((context) => {
 			sameAs: ['https://www.instagram.com/selectcreators/', 'https://github.com/shifulaboratories/creators'],
 		},
 	];
+	// Free tools are web apps: free, no signup, in the browser. Search engines show
+	// these as tools, and the FAQ answers the questions people type.
+	const tool = section === 'tools' ? toolBySlug(base.split('/')[1] ?? '') : undefined;
+	if (tool) {
+		graph.push({
+			'@type': 'WebApplication',
+			name: tool.name,
+			description: entry.data.description,
+			url,
+			image,
+			applicationCategory: 'BusinessApplication',
+			operatingSystem: 'Any (runs in the browser)',
+			browserRequirements: 'Requires JavaScript',
+			isAccessibleForFree: true,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+			publisher: { '@id': `${SITE_ORIGIN}/#org` },
+		});
+	}
+	if (data.faq?.length) {
+		graph.push({
+			'@type': 'FAQPage',
+			mainEntity: data.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+		});
+	}
 	head.push({
 		tag: 'script',
 		attrs: { type: 'application/ld+json' },
