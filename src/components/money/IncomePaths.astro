@@ -97,7 +97,7 @@ const dims = [
 				c.querySelectorAll<HTMLElement>('[data-m]').forEach((m) => m.classList.toggle('is-hot', m.dataset.m === dim));
 				c.querySelector('[data-rank]')!.textContent = c.classList.contains('is-top') ? 'Top pick' : '';
 			});
-			grid.scrollTo?.({ left: 0, behavior: 'smooth' });
+			grid.scrollTo?.({ left: 0, behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') });
 		};
 		root.querySelector('[role="group"]')!.addEventListener('click', (e) => {
 			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-dim]');

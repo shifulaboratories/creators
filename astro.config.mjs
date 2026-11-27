@@ -51,6 +51,14 @@ export default defineConfig({
 	site: 'https://creators.select',
 	// Render pages in parallel; the animated previews (src/lib/og-video.ts) dominate build time.
 	build: { concurrency: 4 },
+	vite: {
+		build: {
+			// Small stylesheets go inline in the page instead of costing a separate
+			// render-blocking request on a phone connection. The big shared
+			// Starlight sheet stays a cached file. Other assets keep Vite's default.
+			assetsInlineLimit: (file, content) => (file.endsWith('.css') ? content.length < 20_000 : undefined),
+		},
+	},
 	// Start loading a page as soon as a finger touches its link, and the next
 	// guide as soon as its link scrolls into view (src/components/Pagination.astro).
 	prefetch: { prefetchAll: true, defaultStrategy: 'tap' },

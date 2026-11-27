@@ -213,8 +213,8 @@ import { platforms, playbooks, situations } from '../lib/protect-playbooks';
 				e.preventDefault();
 				s = a.dataset.s!;
 				show();
-				if (p) stage(3).scrollIntoView({ behavior: 'smooth', block: 'start' });
-				else stage(2).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+				if (p) stage(3).scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'start' });
+				else stage(2).scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'nearest' });
 			}),
 		);
 		root.querySelectorAll<HTMLButtonElement>('.pt-plat').forEach((b) =>
@@ -224,13 +224,13 @@ import { platforms, playbooks, situations } from '../lib/protect-playbooks';
 					localStorage.setItem('sc-protect-platform', p);
 				} catch {}
 				show();
-				stage(3).scrollIntoView({ behavior: 'smooth', block: 'start' });
+				stage(3).scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'start' });
 			}),
 		);
 		root.querySelector('.pt-reset')!.addEventListener('click', () => {
 			s = p = '';
 			show();
-			stage(1).scrollIntoView({ behavior: 'smooth', block: 'start' });
+			stage(1).scrollIntoView({ behavior: (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'), block: 'start' });
 		});
 	});
 </script>
