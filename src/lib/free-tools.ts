@@ -17,6 +17,8 @@ export type FreeTool = {
 	/** The guide that explains the thinking behind it. */
 	guide?: { label: string; href: string };
 	isNew?: boolean;
+	/** A per-platform version of another tool: own page, but not a separate card in the gallery. */
+	variantOf?: string;
 };
 
 export const TOOL_GROUPS: { id: ToolGroup; label: string; text: string }[] = [
@@ -92,6 +94,18 @@ export const FREE_TOOLS: FreeTool[] = [
 		guide: { label: 'Read your analytics', href: '/grow/analytics/' },
 		isNew: true,
 	},
+	...(['Instagram', 'TikTok', 'YouTube'] as const).map(
+		(p): FreeTool => ({
+			slug: `${p.toLowerCase()}-engagement-rate-calculator`,
+			name: `${p} engagement rate calculator`,
+			blurb: `Your ${p} engagement rate by followers and by views.`,
+			group: 'grow',
+			tint: p.toLowerCase(),
+			glyph: '↗',
+			guide: { label: `${p} guide`, href: `/platforms/${p.toLowerCase()}/` },
+			variantOf: 'engagement-rate-calculator',
+		}),
+	),
 	{
 		slug: 'youtube-money-calculator',
 		name: 'YouTube money calculator',
@@ -149,5 +163,8 @@ export const FREE_TOOLS: FreeTool[] = [
 		guide: { label: 'LLC or S corp?', href: '/money/llc-vs-s-corp/' },
 	},
 ];
+
+/** Tools that get their own card (per-platform variants are linked from their main tool). */
+export const GALLERY_TOOLS = FREE_TOOLS.filter((t) => !t.variantOf);
 
 export const toolBySlug = (slug: string) => FREE_TOOLS.find((t) => t.slug === slug);

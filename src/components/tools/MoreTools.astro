@@ -3,7 +3,7 @@
  * Bottom of every tool page: the guide behind it, then other free tools from the
  * same group first. Reads the current page from the route, so pages just drop it in.
  */
-import { FREE_TOOLS, toolBySlug } from '../../lib/free-tools';
+import { GALLERY_TOOLS as FREE_TOOLS, toolBySlug } from '../../lib/free-tools';
 const slug = Astro.locals.starlightRoute.entry.id.split('/')[1];
 const me = toolBySlug(slug);
 const others = FREE_TOOLS.filter((t) => t.slug !== slug)

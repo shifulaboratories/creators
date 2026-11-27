@@ -20,6 +20,7 @@ const topics: Topic[] = [
 	{ id: 'paywall', title: 'Paywall', text: 'Fanfix, OnlyFans, Patreon, Fanvue and chatting agencies' },
 	{ id: 'deals', title: 'Brand deals', text: 'Agencies, commissions, pricing, negotiating, contracts' },
 	{ id: 'earn', title: 'Earn', text: 'Every income stream and what it really pays' },
+	{ id: 'rates', title: 'Creator rates', text: 'What creators charge, by platform and follower count' },
 	{ id: 'tools', title: 'Free tools', text: 'Media kit, invoice, rate, engagement and tax calculators' },
 	{ id: 'money', title: 'Money basics', text: 'Taxes, set-asides, LLC vs S corp, banking' },
 	{ id: 'team', title: 'Team', text: 'Managers, agents, lawyers and first hires' },
@@ -45,7 +46,7 @@ const platforms: Plat[] = [
 	{ key: 'x', name: 'X', path: siX.path, href: '/platforms/x/' },
 ].filter((p) => p.key === 'general' || has(p.href.slice(1, -1)));
 
-const order = ['algorithms', 'platforms', 'grow', 'paywall', 'deals', 'earn', 'tools', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
+const order = ['algorithms', 'platforms', 'grow', 'paywall', 'deals', 'earn', 'rates', 'tools', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
 const rows = guides
 	.map((e) => {
 		const section = e.id.split('/')[0];

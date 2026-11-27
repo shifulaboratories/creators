@@ -1,0 +1,105 @@
+---
+/** Every rate page as a platform × tier grid. Highlights the current one if given. */
+import { RATE_PLATFORMS, TIERS, ratesFor, middle, rangeText, rateSlug } from '../../lib/rate-tiers';
+interface Props {
+	current?: string;
+	title?: string;
+}
+const { current, title = 'Rates by platform and size' } = Astro.props;
+---
+
+<section class="rg not-content" aria-label={title}>
+	<h2>{title}</h2>
+	<div class="rg-scroll">
+		<table>
+			<thead>
+				<tr><th></th>{RATE_PLATFORMS.map((p) => <th>{p.name}</th>)}</tr>
+			</thead>
+			<tbody>
+				{TIERS.map((t) => (
+					<tr>
+						<th scope="row">{t.name}<small>{t.range}</small></th>
+						{RATE_PLATFORMS.map((p) => {
+							const m = middle(ratesFor(p.key, t));
+							const slug = rateSlug(p.key, t.key);
+							return (
+								<td>
+									<a href={`/rates/${slug}/`} aria-current={slug === current ? 'page' : undefined}>
+										{m ? rangeText(m[0], m[1]) : '–'}
+									</a>
+								</td>
+							);
+						})}
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+	<p>Middle of the published ranges for a Reel, TikTok video or sponsored YouTube video. Tap a cell for the full breakdown and sources.</p>
+</section>
+
+<style>
+	.rg {
+		margin: 2rem 0 1rem;
+	}
+	.rg h2 {
+		font-size: 1.25rem;
+		margin: 0 0 0.6rem;
+	}
+	.rg-scroll {
+		overflow-x: auto;
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+	}
+	th,
+	td {
+		padding: 0.55rem 0.7rem;
+		border-bottom: 1px solid var(--sc-line);
+		text-align: left;
+		white-space: nowrap;
+	}
+	thead th {
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+		font-weight: 600;
+	}
+	tbody th {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	tbody th small {
+		display: block;
+		font-weight: 400;
+		color: var(--sc-steel);
+		font-size: 0.7rem;
+	}
+	tr:last-child > * {
+		border-bottom: 0;
+	}
+	td a {
+		display: inline-block;
+		padding: 0.3rem 0.55rem;
+		border-radius: 8px;
+		color: var(--sc-platinum);
+		text-decoration: none;
+		font-variant-numeric: tabular-nums;
+	}
+	td a:hover {
+		background: var(--sc-fill-muted);
+	}
+	td a[aria-current='page'] {
+		background: color-mix(in srgb, var(--sc-amethyst) 22%, transparent);
+		color: var(--sc-ivory);
+		font-weight: 650;
+	}
+	.rg p {
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+		margin: 0.5rem 0 0;
+	}
+</style>

@@ -63,6 +63,7 @@ export default defineConfig({
 				section('Brand deals', 'deals'),
 				section('Money basics', 'money'),
 				section('Free tools', 'tools'),
+				section('Creator rates', 'rates'),
 				section('Team', 'team'),
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),

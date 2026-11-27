@@ -5,11 +5,19 @@
  * Only uses figures in src/lib/money-data.ts (bands, marketAverage, addOns).
  */
 import { bands, formats, marketAverage, addOns, sources } from '../../lib/money-data';
+interface Props {
+	/** Start on this platform and follower count (rate pages preset these). */
+	platform?: 'instagram' | 'tiktok' | 'youtube';
+	followers?: number;
+}
+const { platform = 'instagram', followers = 25000 } = Astro.props;
+// Inverse of toFollowers() in the script: 1K…5M on a log slider of 0…1000.
+const sliderPos = Math.round(((Math.log10(followers) - 3) / Math.log10(5000)) * 1000);
 const srcShort: Record<string, string> = { imh: 'Influencer Marketing Hub, 2026', later26: 'Later, 2026', later25: 'Later creator survey, 2025', collabstr: 'Collabstr, deals in 2025' };
 const payload = { bands, formats, marketAverage, addOns, srcShort, srcUrl: Object.fromEntries(Object.values(sources).map((s) => [s.id, s.url])) };
 ---
 
-<div class="sc-widget rc not-content" data-section="earn" data-rc data-payload={JSON.stringify(payload)}>
+<div class="sc-widget rc not-content" data-section="earn" data-rc data-payload={JSON.stringify(payload)} data-platform={platform} data-followers={followers}>
 	<div class="sc-widget__head">
 		<div>
 			<div class="sc-widget__kicker">Interactive · Rate check</div>
@@ -26,7 +34,7 @@ const payload = { bands, formats, marketAverage, addOns, srcShort, srcUrl: Objec
 		<div class="sc-chip-row" role="group" aria-label="Format" data-group="format"></div>
 		<label class="rc-field">
 			<span>Followers <b data-out="followers">25K</b></span>
-			<input class="sc-range" type="range" min="0" max="1000" value="378" data-in="followers" aria-label="Followers" />
+			<input class="sc-range" type="range" min="0" max="1000" value={sliderPos} data-in="followers" aria-label="Followers" />
 			<span class="rc-ticks" aria-hidden="true"><i>1K</i><i>10K</i><i>100K</i><i>1M</i><i>5M</i></span>
 		</label>
 	</div>
@@ -84,7 +92,7 @@ const payload = { bands, formats, marketAverage, addOns, srcShort, srcUrl: Objec
 
 	document.querySelectorAll<HTMLElement>('[data-rc]').forEach((root) => {
 		const P: Payload = JSON.parse(root.dataset.payload!);
-		const st = { platform: 'instagram', format: 'reel', followers: 25000, adds: new Set<string>(), excl: 0 };
+		const st = { platform: root.dataset.platform || 'instagram', format: 'reel', followers: Number(root.dataset.followers) || 25000, adds: new Set<string>(), excl: 0 };
 		const fmtRow = root.querySelector<HTMLElement>('[data-group="format"]')!;
 		const chart = root.querySelector<HTMLElement>('[data-chart]')!;
 		const out = (k: string) => root.querySelector<HTMLElement>(`[data-out="${k}"]`)!;

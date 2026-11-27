@@ -4,9 +4,14 @@
  * and interactions per view (or reach). Typical range from Later, as cited on /deals/pricing/.
  */
 import './tools.css';
+interface Props {
+	/** Start on this platform (per-platform landing pages). */
+	platform?: 'instagram' | 'tiktok' | 'youtube' | 'x' | 'linkedin';
+}
+const { platform = 'instagram' } = Astro.props;
 ---
 
-<div class="sc-widget er not-content" data-section="grow" data-er>
+<div class="sc-widget er not-content" data-section="grow" data-er data-platform={platform}>
 	<div class="sc-widget__head">
 		<div>
 			<div class="sc-widget__kicker">Free tool · Engagement rate</div>
@@ -117,6 +122,7 @@ import './tools.css';
 			}
 			setTimeout(() => (b.textContent = 'Copy for my media kit'), 1600);
 		});
+		root.querySelector<HTMLButtonElement>(`[data-group="platform"] [data-v="${root.dataset.platform}"]`)?.click();
 		render();
 	});
 </script>
