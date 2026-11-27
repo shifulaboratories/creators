@@ -1,6 +1,17 @@
 ---
 title: "Why the algorithm exists"
 description: "Feeds are built to keep people coming back, because that's what sells ads. Once you see the loop, it's obvious why sends and watch time beat likes, and how a post snowballs."
+payoff: "Why feeds reward what they reward: follow the money, and the rules make sense."
+moves:
+  - do: "Ask of every post: will this keep someone in the app longer?"
+    why: "Ad-funded feeds make money when people spend time and come back tomorrow."
+    source: "Meta earnings calls"
+  - do: "Make posts that pull other people in, like sends and shares."
+    why: "A send brings a new person into the app, which is why it's worth more than a like."
+    source: "Meta, applied"
+  - do: "Give people a reason to come back tomorrow: a series, a next part."
+    why: "Return visits are what the business is built on."
+    source: "Meta earnings calls"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -12,6 +23,7 @@ sidebar:
 
 import MoneyLoop from '../../../components/MoneyLoop.astro';
 import SnowballFlow from '../../../components/SnowballFlow.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** an ad-funded feed makes money when people spend time in the app and come back tomorrow. Every ranking decision serves that. So the posts that win are the ones that keep someone watching, and the ones that pull other people in. That's why a send is worth more than a like.
 
@@ -52,7 +64,7 @@ Instagram turned the first ring into a feature: **Trial Reels** are shown to non
 - **Make people want to come back.** Series, recurring formats and replies to comments give viewers a reason to return to you specifically.
 - **Use a flop as data.** One weak first ring stops that post, not your account. Change the hook or the packaging and try again.
 
-## Sources
+<DeepDive title="Sources" hint="7 sources">
 
 - Meta, [Q3 2025 earnings call transcript](https://s21.q4cdn.com/399680738/files/doc_financials/2025/q3/META-Q3-2025-Earnings-Call-Transcript.pdf), Oct 29, 2025.
 - Meta, [Fourth quarter and full year 2024 results](https://investor.atmeta.com/investor-news/press-release-details/2025/Meta-Reports-Fourth-Quarter-and-Full-Year-2024-Results/default.aspx), Jan 29, 2025.
@@ -61,3 +73,5 @@ Instagram turned the first ring into a feature: **Trial Reels** are shown to non
 - Instagram, [Trial reels: try content with non-followers first](https://creators.instagram.com/blog/instagram-trial-reels), Dec 10, 2024.
 - YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
 - X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026.
+
+</DeepDive>
