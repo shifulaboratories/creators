@@ -1,6 +1,17 @@
 ---
 title: "Getting paid across borders"
 description: "For creators outside the US earning from YouTube and US brands (W-8 forms, withholding, treaties), and for US creators paid by brands abroad."
+payoff: "How cross-border creator income is taxed, and the forms that stop platforms holding back your money."
+moves:
+  - do: "If you're outside the US, fill in the tax form in each US platform's payout settings."
+    why: "Without it, platforms may hold back part of your US earnings for the IRS."
+    source: "IRS, YouTube"
+  - do: "Check whether your country has a tax treaty with the US."
+    why: "A treaty can shrink the amount withheld."
+    source: "IRS"
+  - do: "Keep records of US earnings for your home tax return."
+    why: "You still owe tax at home, under your own country's rules."
+    source: "IRS"
 status: draft
 confidence: verified
 lastReviewed: 2026-11-26
@@ -11,6 +22,7 @@ sidebar:
 ---
 
 import TaxSources from '../../../components/basics/TaxSources.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** if you live outside the US, US platforms may hold back part of your US earnings for the IRS unless you fill in their tax form, and a tax treaty can shrink that. You still owe tax at home, under your own country's rules. If you're in the US and a foreign brand pays you, it's taxed like any other income, and the real cost is usually currency fees.
 
@@ -51,4 +63,6 @@ A US brand will usually ask for a **W-8BEN** (individuals) or **W-8BEN-E** (comp
 
 Paying a contractor who lives and works outside the US is common. Ask them for a W-8BEN for your records instead of a W-9, and confirm with your CPA what (if anything) you need to file. Their local taxes are their own responsibility. See [Hiring your team](/team/hiring/).
 
-<TaxSources ids={['ytTax']} />
+<DeepDive title="Sources" hint="1 sources">
+<TaxSources bare ids={['ytTax']} />
+</DeepDive>
