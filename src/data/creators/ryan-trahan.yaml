@@ -17,3 +17,10 @@ advice:
     source: https://blog.youtube/creator-and-artist-stories/ryan-trahan-50-states-50-days/
     sourceTitle: "YouTube Official Blog"
     date: "Aug 2025"
+videos:
+  - platform: youtube
+    id: KTYbvU-aSf4
+    title: "I Visited 50 States in 50 Days"
+    channel: Ryan Trahan
+    date: Jun 2025
+    why: "The opener of the series that raised more than $11 million for St. Jude."

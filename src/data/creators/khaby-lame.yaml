@@ -10,3 +10,30 @@ advice:
     source: https://en.wikipedia.org/wiki/Khaby_Lame
     sourceTitle: "Khaby Lame (Wikipedia, citing Quartz Africa, 2021)"
     date: "Aug 2021"
+videos:
+  - platform: tiktok
+    id: "6979606181463526661"
+    handle: khaby.lame
+    title: "“Cm on bro” #learnfromkhaby"
+    date: Jun 2021
+    stat: 361M views by Nov 2026
+    why: "One of his most-viewed TikToks, from the height of the life-hack reactions."
+  - platform: tiktok
+    id: "6961405079870115077"
+    handle: khaby.lame
+    title: "“Bro why you ruined a T-shirt? It was so easy”"
+    date: May 2021
+    stat: 287M views by Nov 2026
+    why: "The format in one clip: someone's complicated hack, then the obvious way, then the shrug."
+  - platform: youtube
+    id: S2fYjYTpcxM
+    title: "I Don't Have a Strategy | Khaby Lame"
+    channel: 1 Billion Followers Summit
+    date: Nov 2026
+    why: "On stage in Dubai, he tells how he went from losing his factory job to TikTok's most-followed creator."
+  - platform: youtube
+    id: tVdiCDSVAlQ
+    title: "The Million Dollar Mime: How Khaby Lame Became TikTok's Biggest Star"
+    channel: Forbes
+    date: Sep 2023
+    why: "Forbes on how staying silent became a business."

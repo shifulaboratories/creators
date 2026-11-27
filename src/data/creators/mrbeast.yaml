@@ -18,3 +18,22 @@ advice:
     source: https://techcrunch.com/2022/06/24/mrbeast-explain-algorithm-youtube-vidcon/
     sourceTitle: "MrBeast explains YouTube's algorithm (TechCrunch)"
     date: "Jun 2022"
+videos:
+  - platform: youtube
+    id: fQPUH2Ylb88
+    title: "YouTube's Algorithm Explained with Mr. Beast"
+    channel: VidCon
+    date: Aug 2022
+    why: "The full VidCon 2022 session with YouTube's Todd Beaupré, where the quotes in his case study come from."
+  - platform: youtube
+    id: 0e3GPea1Tyg
+    title: "$456,000 Squid Game In Real Life!"
+    channel: MrBeast
+    date: Nov 2021
+    why: "His most-watched upload, at about 988 million views by Nov 2026. The premise fits in the title and the thumbnail."
+  - platform: youtube
+    id: 9IQ_ldV9z_A
+    title: "A Brutally Honest Conversation with MrBeast"
+    channel: Colin and Samir
+    date: Jun 2023
+    why: "A two-hour, on-the-record interview about how he makes videos and runs the business."
