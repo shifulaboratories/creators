@@ -93,9 +93,7 @@ h1#_top {
 	color: var(--sl-color-gray-3);
 }
 .sidebar-content a[aria-current='page'] {
-	background: rgb(255 255 255 / 0.06);
 	color: var(--sl-color-white);
-	border: 1px solid var(--sc-border);
 	font-weight: 500;
 }
 
