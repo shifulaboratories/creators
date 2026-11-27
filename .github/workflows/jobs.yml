@@ -1,0 +1,55 @@
+# Refreshes the open roles on /jobs/ every day from public job-board feeds
+# (scripts/fetch-jobs.mjs). It commits src/data/jobs.json to main, and that push runs the normal Cloudflare build.
+# No secrets needed. On pull requests that touch the job sources it only
+# reports what each feed returns, so new companies can be checked before merge.
+name: Jobs refresh
+
+on:
+  schedule:
+    - cron: '17 11 * * *' # every day, 11:17 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/fetch-jobs.mjs'
+      - 'scripts/jobs/**'
+      - '.github/workflows/jobs.yml'
+
+concurrency:
+  group: jobs-refresh-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Companies without a pinned feed
+        run: node scripts/fetch-jobs.mjs --probe
+      - name: Pinned feeds
+        run: node scripts/fetch-jobs.mjs --check
+
+  refresh:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/fetch-jobs.mjs
+      - name: Commit the refreshed listings
+        run: |
+          if git diff --quiet -- src/data/jobs.json; then echo "Nothing changed."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/jobs.json
+          git commit -m "Refresh job listings ($(date -u +%F))"
+          git push origin HEAD:main
