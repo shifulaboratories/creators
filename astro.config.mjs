@@ -56,6 +56,7 @@ export default defineConfig({
 				section('The Shortlist', 'shortlist'),
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
+				section('Paywall platforms', 'paywall'),
 				section('Deals and contracts', 'deals'),
 				section('Money basics', 'money'),
 				section('Team', 'team'),
