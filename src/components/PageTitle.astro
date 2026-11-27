@@ -5,6 +5,7 @@ import AskAI from './AskAI.astro';
 import ShareBar from './ShareBar.astro';
 import { personName, CONTRIBUTORS_PATH } from '../data/people';
 import Tldr from './Tldr.astro';
+import DoThis from './guide/DoThis.astro';
 import { tldrFor } from '../data/tldr';
 const PAGE_TITLE_ID = '_top'; // Starlight's page title anchor
 
@@ -16,6 +17,8 @@ const data = entry.data as typeof entry.data & {
 	reviewers?: string[];
 	lastReviewed?: Date;
 	tldr?: string[];
+	payoff?: string;
+	moves?: { do: string; why: string; source?: string }[];
 };
 const section = entry.id.split('/')[0];
 const labels: Record<string, string> = {
@@ -35,7 +38,18 @@ const labels: Record<string, string> = {
 	shortlist: 'The Shortlist',
 	about: 'About',
 };
-const tldr = tldrFor(entry.id, data.tldr);
+const moves = data.moves ?? [];
+const tldr = moves.length > 0 ? [] : tldrFor(entry.id, data.tldr);
+// Read time covers the main read only: imports, tags and the folded-away
+// details (<DeepDive>) don't count. 220 words a minute.
+const mainText = (entry.body ?? '')
+	.split(/<DeepDive[\s>]/)[0]
+	.replace(/^import .*$/gm, '')
+	.replace(/<[^>]+>/g, ' ')
+	.replace(/[#*_`|>\-]+/g, ' ');
+const words = mainText.split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(words / 220));
+const showTime = data.status !== 'outline' && !['guides', '404'].includes(entry.id) && words > 120;
 const statusText: Record<string, string> = { outline: 'Coming soon', draft: 'In progress', published: 'Fact-checked' };
 const confidenceText: Record<string, string> = {
 	verified: 'Sourced',
@@ -47,8 +61,9 @@ const confidenceText: Record<string, string> = {
 <header class="guide-head" data-section={section}>
 	{labels[section] && <p class="kicker"><span class="swatch"></span>{labels[section]}</p>}
 	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
-	{data.description && <p class="lead">{data.description}</p>}
+	{(data.payoff || data.description) && <p class={data.payoff ? 'lead payoff' : 'lead'}>{data.payoff ?? data.description}</p>}
 	{entry.id !== 'guides' && <ul class="chips">
+		{showTime && <li class="chip time">{minutes} min read</li>}
 		{data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
 		{data.authors && data.authors.length > 0 && (
@@ -69,8 +84,9 @@ const confidenceText: Record<string, string> = {
 			<ShareBar title={data.title} description={data.description} section={section} />
 		</div>
 	)}
+	{moves.length > 0 && <DoThis moves={moves} />}
 	{tldr.length > 0 && <Tldr points={tldr} />}
-	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 }}>
+	<script is:inline define:vars={{ section, hasTldr: tldr.length > 0 || moves.length > 0 }}>
 		// Tint the whole page with the section color, without :root:has() (slow on long pages).
 		const r = document.documentElement;
 		r.dataset.section = section;
@@ -137,6 +153,13 @@ const confidenceText: Record<string, string> = {
 		font-weight: 500;
 		letter-spacing: 0;
 		color: var(--sc-silver);
+	}
+	.payoff {
+		color: var(--sc-platinum);
+	}
+	.time {
+		color: var(--sc-ivory);
+		border-color: var(--sc-line-bright);
 	}
 	.status-published {
 		color: var(--sc-jade);

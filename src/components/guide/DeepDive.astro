@@ -1,0 +1,105 @@
+---
+/**
+ * The reference material and research behind a guide, folded away so the page
+ * reads fast. It's all still on the page for search engines, AI assistants and
+ * anyone who wants the detail; it opens when a link points inside it.
+ */
+interface Props {
+	title?: string;
+	hint?: string;
+}
+const { title = 'The details', hint } = Astro.props;
+---
+
+<details class="dd" data-dd>
+	<summary>
+		<span class="dd-title">{title}</span>
+		{hint && <span class="dd-hint">{hint}</span>}
+		<span class="dd-icon" aria-hidden="true"></span>
+	</summary>
+	<div class="dd-body">
+		<slot />
+	</div>
+</details>
+
+<script>
+	const openFor = () => {
+		const id = decodeURIComponent(location.hash.slice(1));
+		const el = id && document.getElementById(id);
+		const dd = el && el.closest<HTMLDetailsElement>('details[data-dd]');
+		if (dd && !dd.open) {
+			dd.open = true;
+			el.scrollIntoView();
+		}
+	};
+	addEventListener('hashchange', openFor);
+	openFor();
+</script>
+
+<style>
+	.dd {
+		margin: 1.25rem 0;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.015);
+	}
+	.dd + .dd {
+		margin-top: 0.6rem;
+	}
+	summary {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: 0.1rem 1rem;
+		padding: 1rem 1.1rem;
+		cursor: pointer;
+		list-style: none;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	.dd-title {
+		font-family: var(--sc-font-display);
+		font-size: 1.05rem;
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	.dd-hint {
+		grid-row: 2;
+		font-size: 0.82rem;
+		color: var(--sc-steel);
+	}
+	.dd-icon {
+		grid-row: 1 / span 2;
+		grid-column: 2;
+		width: 1.9rem;
+		height: 1.9rem;
+		border-radius: 50%;
+		border: 1px solid var(--sc-line-strong);
+		position: relative;
+	}
+	.dd-icon::before,
+	.dd-icon::after {
+		content: '';
+		position: absolute;
+		inset: 50% auto auto 50%;
+		width: 0.7rem;
+		height: 1.5px;
+		background: var(--sc-silver);
+		transform: translate(-50%, -50%);
+		transition: transform 0.2s ease;
+	}
+	.dd-icon::after {
+		transform: translate(-50%, -50%) rotate(90deg);
+	}
+	.dd[open] .dd-icon::after {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	.dd-body {
+		padding: 0 1.1rem 1.1rem;
+		border-top: 1px solid var(--sc-line);
+	}
+	.dd-body :global(> :first-child) {
+		margin-top: 1rem;
+	}
+</style>
