@@ -1,0 +1,118 @@
+---
+/** Software picks from src/data/tools/ as cards: what it's for, price, and the free alternative. */
+import { getCollection } from 'astro:content';
+
+const tools = (await getCollection('tools')).map((t) => t.data).sort((a, b) => a.name.localeCompare(b.name));
+const price = (p: { free: boolean; fromUsdPerMonth?: number; oneTimeUsd?: number }) =>
+	[p.free ? (p.fromUsdPerMonth || p.oneTimeUsd ? 'Free tier' : 'Free') : '', p.fromUsdPerMonth ? `from $${p.fromUsdPerMonth}/mo` : '', p.oneTimeUsd ? `$${p.oneTimeUsd} one-time` : '']
+		.filter(Boolean)
+		.join(', ');
+const slot = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).replace(/-/g, ' ');
+---
+
+<div class="tc sc-rail not-content" data-rail>
+	{
+		tools.map((t) => (
+			<article>
+				<header>
+					<span class="tc-mono" aria-hidden="true">{t.name[0]}</span>
+					<div>
+						<h3>
+							<a href={t.affiliate && t.affiliateUrl ? t.affiliateUrl : t.url} target="_blank" rel={t.affiliate ? 'sponsored noopener' : 'noopener'}>
+								{t.name} ↗
+							</a>
+						</h3>
+						<p>{slot(t.slot)}</p>
+					</div>
+					<span class="tc-price">{price(t.pricing)}</span>
+				</header>
+				<p class="tc-best">{t.bestFor}</p>
+				<p class="tc-alt">
+					<span>Instead, try</span> {t.alternative}
+				</p>
+				{t.affiliate && <p class="tc-aff">Affiliate link</p>}
+			</article>
+		))
+	}
+</div>
+
+<script>
+	import '../scripts/rail';
+</script>
+
+<style>
+	.tc {
+		display: grid;
+		gap: 0.75rem;
+		margin: 1rem 0 2rem;
+	}
+	@media (min-width: 44rem) {
+		.tc {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.tc article {
+		display: grid;
+		gap: 0.7rem;
+		align-content: start;
+		padding: 1.1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.tc header {
+		display: grid;
+		grid-template-columns: 2.5rem 1fr auto;
+		gap: 0.75rem;
+		align-items: center;
+	}
+	.tc-mono {
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 12px;
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
+		color: var(--accent);
+		font: 700 1.05rem / 1 var(--sc-font-display);
+	}
+	.tc h3 {
+		margin: 0;
+		font-size: 1.05rem;
+	}
+	.tc h3 a {
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	.tc header p {
+		margin: 0.1rem 0 0;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.tc-price {
+		font-size: var(--sc-text-xs);
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-silver);
+		white-space: nowrap;
+	}
+	.tc-best {
+		margin: 0;
+		color: var(--sc-ivory);
+		line-height: 1.45;
+	}
+	.tc-alt {
+		margin: 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.tc-alt span {
+		color: var(--sc-steel);
+	}
+	.tc-aff {
+		margin: 0;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-brass);
+	}
+</style>

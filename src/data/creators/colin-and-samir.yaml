@@ -1,0 +1,25 @@
+name: Colin and Samir
+known: Interviews and analysis about the creator economy
+niche: strategy
+platforms: [youtube, podcast, newsletter]
+site: https://www.colinandsamir.com/
+about: Colin Rosenblum and Samir Chaudry have worked together since 2012. Their show interviews the biggest creators about how they work, and The Publish Press newsletter covers creator economy news twice a week.
+tools:
+  - name: beehiiv
+    use: Runs The Publish Press newsletter (they moved from Substack)
+    source: https://www.beehiiv.com/case-studies/the-publish-press
+    sourceTitle: "The Publish Press case study (beehiiv)"
+    date: "Apr 2025"
+advice:
+  - text: "The most important role for a creator is to bring in someone who has an operational mind"
+    source: https://digiday.com/future-of-tv/how-youtube-stars-colin-and-samir-went-from-nearly-quitting-to-creating-their-own-media-company/
+    sourceTitle: "Digiday, Samir Chaudry"
+    date: "Apr 2022"
+  - text: "How we define burnout is creative output without direction."
+    source: https://digiday.com/future-of-tv/how-youtube-stars-colin-and-samir-went-from-nearly-quitting-to-creating-their-own-media-company/
+    sourceTitle: "Digiday, Colin Rosenblum"
+    date: "Apr 2022"
+  - text: "Focus on your content before you think about growth."
+    source: https://www.beehiiv.com/blog/creator-spotlight-colin-samir
+    sourceTitle: "Creator Spotlight: Colin & Samir (beehiiv)"
+    date: "Nov 2022"

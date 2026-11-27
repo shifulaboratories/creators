@@ -1,0 +1,105 @@
+---
+/** One creator in the directory grid: monogram, name, what they make, what's on file. */
+import { NICHES, NICHE_TINT, PLATFORMS, initials, creatorPath, type DirectoryEntry } from '../lib/creators';
+
+interface Props {
+	c: DirectoryEntry;
+}
+const { c } = Astro.props;
+const bits = [
+	c.advice.length && `${c.advice.length} ${c.advice.length === 1 ? 'tip' : 'tips'}`,
+	c.tools.length && `${c.tools.length} ${c.tools.length === 1 ? 'app' : 'apps'}`,
+	c.gearCount && `${c.gearCount} gear`,
+	c.caseStudy && 'case study',
+].filter(Boolean);
+const search = [c.name, c.known, NICHES[c.niche], ...c.platforms.map((p) => PLATFORMS[p]), ...c.tools.map((t) => t.name), ...c.setups.flatMap((s) => Object.values(s.gear).flat())]
+	.join(' ')
+	.toLowerCase();
+---
+
+<a class="cc" href={creatorPath(c.id)} data-section={NICHE_TINT[c.niche]} data-niche={c.niche} data-search={search}>
+	<span class="cc-mono" aria-hidden="true">{initials(c.name)}</span>
+	<span class="cc-body">
+		<span class="cc-name">{c.name}</span>
+		<span class="cc-known">{c.known}</span>
+		<span class="cc-meta">
+			<span class="cc-niche">{NICHES[c.niche]}</span>
+			{bits.length > 0 && <span class="cc-bits">{bits.join(' · ')}</span>}
+		</span>
+	</span>
+</a>
+
+<style>
+	.cc {
+		display: grid;
+		grid-template-columns: 3.25rem 1fr;
+		gap: 0.9rem;
+		align-items: start;
+		padding: 1rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
+			var(--sc-fill-subtle);
+		text-decoration: none;
+		color: inherit;
+		transition:
+			border-color var(--sc-dur-quick) var(--sc-ease-settle),
+			transform var(--sc-dur-quick) var(--sc-ease-settle);
+	}
+	.cc:hover {
+		border-color: color-mix(in srgb, var(--accent) 45%, var(--sc-line));
+		transform: translateY(-2px);
+	}
+	.cc:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.cc-mono {
+		display: grid;
+		place-items: center;
+		width: 3.25rem;
+		height: 3.25rem;
+		border-radius: 999px;
+		background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 80%, #fff 0%), color-mix(in srgb, var(--accent) 35%, var(--sc-obsidian)));
+		color: var(--sc-obsidian);
+		font: 700 1.05rem / 1 var(--sc-font-display);
+		letter-spacing: -0.02em;
+	}
+	.cc-body {
+		display: grid;
+		gap: 0.2rem;
+		min-width: 0;
+	}
+	.cc-name {
+		font: 600 1.05rem / 1.25 var(--sc-font-display);
+		color: var(--sc-ivory);
+	}
+	.cc-known {
+		font-size: var(--sc-text-sm);
+		line-height: 1.4;
+		color: var(--sc-silver);
+	}
+	.cc-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.6rem;
+		margin-top: 0.35rem;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.cc-niche {
+		padding: 0.12rem 0.55rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
+		color: var(--sc-ivory);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cc,
+		.cc:hover {
+			transition: none;
+			transform: none;
+		}
+	}
+</style>

@@ -1,0 +1,41 @@
+name: Ali Abdaal
+known: Productivity and evidence-based self-improvement on YouTube
+niche: education
+platforms: [youtube, podcast, newsletter]
+site: https://aliabdaal.com/
+about: A former doctor who built a YouTube business around productivity. He publishes his gear, his apps and even his income, which makes him one of the most transparent creators to learn from.
+caseStudy: case-studies/ali-abdaal
+tools:
+  - name: Notion
+    use: Runs his life, his businesses and his YouTube channel
+    source: https://aliabdaal.com/tech/
+    sourceTitle: Tools & Tech
+    date: "2026"
+  - name: Final Cut Pro
+    use: Video editing
+    source: https://aliabdaal.com/my-gear/
+    sourceTitle: "YouTube Studio Gear (2021)"
+    date: "2021"
+  - name: PluralEyes
+    use: Syncing audio from the mic with the camera footage
+    source: https://aliabdaal.com/my-gear/
+    sourceTitle: "YouTube Studio Gear (2021)"
+    date: "2021"
+  - name: Audible
+    use: Audiobooks, his one must-keep subscription
+    source: https://aliabdaal.com/tech/
+    sourceTitle: Tools & Tech
+    date: "2026"
+advice:
+  - text: "you might as well sign up for Amazon Associates from day one"
+    source: https://www.youtube.com/watch?v=KvDHMeJJ_cY
+    sourceTitle: "How Much Money I Made as a YouTuber & Entrepreneur (2022)"
+    date: "Jan 2023"
+  - text: "I don't get sponsored by companies that I don't use"
+    source: https://www.youtube.com/watch?v=KvDHMeJJ_cY
+    sourceTitle: "How Much Money I Made as a YouTuber & Entrepreneur (2022)"
+    date: "Jan 2023"
+  - text: "If I could only ever have one subscription in my life, it would be Audible."
+    source: https://aliabdaal.com/tech/
+    sourceTitle: Tools & Tech
+    date: "2026"

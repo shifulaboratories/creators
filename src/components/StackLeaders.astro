@@ -1,0 +1,162 @@
+---
+/**
+ * "What shows up again and again": gear and software named by more than one
+ * creator, counted from their own setups (src/data/setups/) and the apps in
+ * their directory profiles (src/data/creators/). One creator counts once.
+ */
+import { getCollection } from 'astro:content';
+import { creatorPath } from '../lib/creators';
+
+interface Props {
+	limit?: number;
+}
+const { limit = 10 } = Astro.props;
+
+const [setups, creators] = await Promise.all([getCollection('setups'), getCollection('creators')]);
+const profile = new Map(creators.map((c) => [c.id, c.data.name]));
+// A setup file is <creator id>-<year>.yaml.
+const ownerOf = (setupId: string) => setupId.replace(/-\d{4}$/, '');
+
+const ALIAS: Record<string, string> = { 'final cut': 'final cut pro', 'final cut pro x': 'final cut pro', 'imovie or final': 'final cut pro' };
+const key = (s: string) => {
+	const k = s.toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9+ -]/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
+	return ALIAS[k] ?? k;
+};
+type Row = { label: string; kind: 'Gear' | 'Software'; who: Map<string, string> };
+const rows = new Map<string, Row>();
+const add = (name: string, kind: Row['kind'], id: string, who: string) => {
+	const k = key(name);
+	const r = rows.get(k) ?? { label: name.replace(/\s*\(.*?\)/g, ''), kind, who: new Map() };
+	if (r.label.length < name.replace(/\s*\(.*?\)/g, '').length) r.label = name.replace(/\s*\(.*?\)/g, '');
+	r.who.set(id, who);
+	rows.set(k, r);
+};
+for (const s of setups) {
+	const id = ownerOf(s.id);
+	for (const [cat, items] of Object.entries(s.data.gear)) for (const g of items) add(g, cat === 'editing' ? 'Software' : 'Gear', id, s.data.creator);
+}
+for (const c of creators) for (const t of c.data.tools) add(t.name, 'Software', c.id, c.data.name);
+
+const top = [...rows.values()]
+	.filter((r) => r.who.size > 1)
+	.sort((a, b) => b.who.size - a.who.size || a.label.localeCompare(b.label))
+	.slice(0, limit);
+const max = Math.max(...top.map((r) => r.who.size), 1);
+---
+
+<ol class="sl not-content">
+	{
+		top.map((r, i) => (
+			<li style={`--v:${(r.who.size / max) * 100}`}>
+				<span class="sl-rank">{i + 1}</span>
+				<div class="sl-body">
+					<p class="sl-head">
+						<strong>{r.label}</strong>
+						<span class="sl-kind">{r.kind}</span>
+						<b>{r.who.size} creators</b>
+					</p>
+					<span class="sl-track" aria-hidden="true">
+						<span />
+					</span>
+					<p class="sl-who">
+						{[...r.who].map(([id, name], j) => (
+							<>
+								{j > 0 && ', '}
+								{profile.has(id) ? <a href={creatorPath(id)}>{name.replace(/\s*\(.*?\)/, '')}</a> : name}
+							</>
+						))}
+					</p>
+				</div>
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.sl {
+		list-style: none;
+		margin: 1rem 0 0;
+		padding: 0;
+		display: grid;
+		gap: 0.2rem;
+		border-radius: 20px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		padding: 0.5rem;
+	}
+	.sl li {
+		display: grid;
+		grid-template-columns: 2rem 1fr;
+		gap: 0.75rem;
+		padding: 0.7rem 0.6rem;
+		border-radius: 14px;
+	}
+	.sl li:hover {
+		background: rgb(255 255 255 / 0.03);
+	}
+	.sl-rank {
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		font: 600 0.85rem / 1 var(--sc-font-display);
+		color: var(--sc-silver);
+	}
+	.sl li:first-child .sl-rank {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: var(--sc-obsidian);
+	}
+	.sl-body {
+		min-width: 0;
+	}
+	.sl-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.5rem;
+		margin: 0;
+	}
+	.sl-head strong {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.sl-kind {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.sl-head b {
+		margin-left: auto;
+		font-size: var(--sc-text-xs);
+		font-weight: 500;
+		color: var(--accent);
+		white-space: nowrap;
+	}
+	.sl-track {
+		display: block;
+		height: 4px;
+		margin: 0.45rem 0 0.4rem;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.06);
+		overflow: hidden;
+	}
+	.sl-track span {
+		display: block;
+		height: 100%;
+		width: calc(var(--v) * 1%);
+		border-radius: inherit;
+		background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, transparent), var(--accent));
+	}
+	.sl-who {
+		margin: 0;
+		font-size: var(--sc-text-xs);
+		line-height: 1.5;
+		color: var(--sc-steel);
+	}
+	.sl-who a {
+		color: var(--sc-silver);
+		text-underline-offset: 2px;
+	}
+</style>

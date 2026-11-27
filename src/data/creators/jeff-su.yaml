@@ -1,0 +1,68 @@
+name: Jeff Su
+known: Productivity, AI and career explainers on YouTube
+niche: education
+platforms: [youtube, newsletter]
+site: https://www.jeffsu.org/
+about: A former Google marketer who makes short, practical videos on productivity and AI tools. He publishes both his filming gear and the full software stack behind his channel.
+tools:
+  - name: Final Cut Pro
+    use: Video editing, with the Emphasizer and MotionVFX plugins
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: Canva Pro
+    use: Thumbnails
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: CleanShot X
+    use: Screen recordings and screenshots
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: Ghost
+    use: Website, newsletter and paid community
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: Epidemic Sound
+    use: Licensed music
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: Testimonials.to
+    use: Collecting and showing testimonials
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"
+  - name: Notion
+    use: Organizing his life and business
+    source: https://www.jeffsu.org/tech-stack/
+    sourceTitle: Tech Stack
+    date: "Nov 2026"
+  - name: Wispr Flow
+    use: Voice dictation instead of typing
+    source: https://www.jeffsu.org/tech-stack/
+    sourceTitle: Tech Stack
+    date: "Nov 2026"
+  - name: Claude
+    use: Writing and analysis
+    source: https://www.jeffsu.org/tech-stack/
+    sourceTitle: Tech Stack
+    date: "Nov 2026"
+  - name: Readwise
+    use: Daily email of highlights from his book notes
+    source: https://www.jeffsu.org/tech-stack/
+    sourceTitle: Tech Stack
+    date: "Nov 2026"
+advice:
+  - text: Only pay for an app if it "decreases friction in a productive activity."
+    quote: false
+    source: https://www.jeffsu.org/tech-stack/
+    sourceTitle: Tech Stack
+    date: "Nov 2026"
+  - text: 'Every creator "serious about making money online" should use a testimonial tool like Testimonials.to.'
+    quote: false
+    source: https://www.jeffsu.org/creator-essentials/
+    sourceTitle: Creator Essentials
+    date: "Nov 2026"

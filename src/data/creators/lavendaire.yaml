@@ -1,0 +1,23 @@
+name: Aileen Xu (Lavendaire)
+known: Personal growth and lifestyle on YouTube
+niche: lifestyle
+platforms: [youtube, podcast]
+site: https://www.lavendaire.com/
+about: Makes calm, aesthetic videos and a podcast about personal growth. Her setup page from 2016 includes a starter kit for people with almost no budget.
+tools:
+  - name: Adobe Premiere Pro
+    use: Editing
+    source: https://www.lavendaire.com/camera-setup-youtube/
+    sourceTitle: "My Camera Setup for YouTube"
+    date: "May 2016"
+  - name: iMovie or Final Cut Pro X
+    use: Her picks for beginners
+    source: https://www.lavendaire.com/camera-setup-youtube/
+    sourceTitle: "My Camera Setup for YouTube"
+    date: "May 2016"
+advice:
+  - text: To start, use natural window light, white paper lanterns and the iPhone Voice Memos app for audio. Upgrade later.
+    quote: false
+    source: https://www.lavendaire.com/camera-setup-youtube/
+    sourceTitle: "My Camera Setup for YouTube"
+    date: "May 2016"

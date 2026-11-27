@@ -1,0 +1,250 @@
+---
+/**
+ * The creator directory: search and filter creators, then open one to see the
+ * advice they've given, the software and gear they use, with a source for each.
+ * Works without JavaScript (it is a list of links); with it, filtering is instant
+ * and ?q= or ?niche= makes a filtered view shareable.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import CreatorCard from '../../components/CreatorCard.astro';
+import { loadDirectory, NICHES } from '../../lib/creators';
+import { SITE_NAME, REPO_URL } from '../../site.mjs';
+
+const all = await loadDirectory();
+const niches = Object.keys(NICHES)
+	.map((k) => ({ k, label: NICHES[k], n: all.filter((c) => c.niche === k).length }))
+	.filter((x) => x.n > 0);
+const tips = all.reduce((n, c) => n + c.advice.length, 0);
+const apps = all.reduce((n, c) => n + c.tools.length, 0);
+const gear = all.reduce((n, c) => n + c.gearCount, 0);
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'Creator directory',
+		description: `What ${all.length} creators actually use and recommend, from MrBeast to Alix Earle: their apps, gear and advice, taken only from their own pages, videos and interviews.`,
+		head: [{ tag: 'title', content: `Creator directory: the tools, gear and advice of top creators | ${SITE_NAME}` }],
+		tableOfContents: false,
+		prev: false,
+		next: false,
+		editUrl: false,
+		status: 'draft',
+		confidence: 'verified',
+	}}
+>
+	<div class="cd not-content" data-cd>
+		<dl class="cd-stats">
+			<div><dt>Creators</dt><dd>{all.length}</dd></div>
+			<div><dt>Pieces of advice</dt><dd>{tips}</dd></div>
+			<div><dt>Apps and software</dt><dd>{apps}</dd></div>
+			<div><dt>Gear items</dt><dd>{gear}</dd></div>
+		</dl>
+
+		<form class="cd-search" role="search" data-form onsubmit="return false">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+			<input type="search" name="q" placeholder="Search a creator, an app or a camera" aria-label="Search creators" autocomplete="off" spellcheck="false" enterkeyhint="search" data-q />
+		</form>
+
+		<div class="cd-chips" role="group" aria-label="Filter by niche" data-chips>
+			<button type="button" aria-pressed="true" data-niche="">All <span>{all.length}</span></button>
+			{
+				niches.map((x) => (
+					<button type="button" aria-pressed="false" data-niche={x.k}>
+						{x.label} <span>{x.n}</span>
+					</button>
+				))
+			}
+		</div>
+
+		<div class="cd-grid" data-grid>
+			{all.map((c) => <CreatorCard c={c} />)}
+		</div>
+		<p class="cd-empty" hidden data-empty>No creator matches that yet. <a href={REPO_URL}>Suggest one on GitHub</a>.</p>
+
+		<aside class="cd-foot">
+			<h2>How we pick what goes here</h2>
+			<p>Only things a creator published or said on the record: their own gear page, a setup video, their website, or an interview with a named outlet. Lists of "what X uses" written by other sites don't count, because most are guesses. Exact quotes are marked as quotes; everything else is our summary, with the link. To add a creator, add a file to <code>src/data/creators/</code> on <a href={REPO_URL}>GitHub</a>.</p>
+		</aside>
+	</div>
+</StarlightPage>
+
+<script>
+	const root = document.querySelector<HTMLElement>('[data-cd]');
+	if (root) {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-chips] button')];
+		const cards = [...root.querySelectorAll<HTMLElement>('[data-grid] > a')];
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+		let niche = '';
+		const apply = (push = true) => {
+			const words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+			let shown = 0;
+			for (const c of cards) {
+				const ok = (!niche || c.dataset.niche === niche) && words.every((w) => c.dataset.search!.includes(w));
+				c.hidden = !ok;
+				if (ok) shown++;
+			}
+			empty.hidden = shown > 0;
+			chips.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.niche === niche)));
+			if (push) {
+				const u = new URL(location.href);
+				q.value ? u.searchParams.set('q', q.value) : u.searchParams.delete('q');
+				niche ? u.searchParams.set('niche', niche) : u.searchParams.delete('niche');
+				history.replaceState(null, '', u);
+			}
+		};
+		const params = new URLSearchParams(location.search);
+		q.value = params.get('q') ?? '';
+		niche = params.get('niche') ?? '';
+		if (q.value || niche) apply(false);
+		q.addEventListener('input', () => apply());
+		chips.forEach((b) =>
+			b.addEventListener('click', () => {
+				niche = b.dataset.niche ?? '';
+				apply();
+			}),
+		);
+	}
+</script>
+
+<style>
+	.cd [hidden] {
+		display: none !important;
+	}
+	.cd-lead {
+		max-width: 40rem;
+		font-size: var(--sc-text-lg);
+		line-height: 1.5;
+		color: var(--sc-silver);
+		margin: 0 0 1.25rem;
+	}
+	.cd-stats {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.5rem;
+		margin: 0 0 1.5rem;
+	}
+	.cd-stats div {
+		padding: 0.75rem 0.8rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.cd-stats dt {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.cd-stats dd {
+		margin: 0.15rem 0 0;
+		font: 600 1.6rem / 1 var(--sc-font-display);
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	@media (max-width: 34rem) {
+		.cd-stats {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.cd-search {
+		position: relative;
+		margin: 0 0 0.9rem;
+	}
+	.cd-search svg {
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		width: 1.15rem;
+		height: 1.15rem;
+		transform: translateY(-50%);
+		fill: none;
+		stroke: var(--sc-steel);
+		stroke-width: 2;
+		pointer-events: none;
+	}
+	.cd-search input {
+		width: 100%;
+		font: inherit;
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+		background: var(--sc-fill-subtle);
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 999px;
+		padding: 0.85rem 1.1rem 0.85rem 2.8rem;
+		outline: none;
+	}
+	.cd-search input:focus {
+		border-color: var(--sc-ion);
+		box-shadow: var(--sc-ion-glow);
+	}
+	.cd-chips {
+		display: flex;
+		gap: 0.45rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		margin: 0 -1rem 1.25rem;
+		padding: 0 1rem 0.25rem;
+	}
+	.cd-chips button {
+		flex: none;
+		font: inherit;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+		background: transparent;
+		border: 1px solid var(--sc-line-strong);
+		border-radius: 999px;
+		padding: 0.4rem 0.85rem;
+		cursor: pointer;
+	}
+	.cd-chips button span {
+		color: var(--sc-steel);
+		margin-left: 0.2rem;
+	}
+	.cd-chips button[aria-pressed='true'] {
+		color: var(--sc-obsidian);
+		background: var(--sc-ivory);
+		border-color: var(--sc-ivory);
+	}
+	.cd-chips button[aria-pressed='true'] span {
+		color: var(--sc-slate);
+	}
+	.cd-grid {
+		display: grid;
+		gap: 0.75rem;
+	}
+	@media (min-width: 44rem) {
+		.cd-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	@media (min-width: 72rem) {
+		.cd-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+	.cd-empty {
+		color: var(--sc-silver);
+	}
+	.cd-empty a,
+	.cd-foot a {
+		color: var(--sc-ivory);
+		text-underline-offset: 3px;
+	}
+	.cd-foot {
+		margin-top: 2.5rem;
+		padding: 1.1rem 1.2rem;
+		border-radius: 18px;
+		border: 1px dashed var(--sc-line-strong);
+		max-width: 46rem;
+	}
+	.cd-foot h2 {
+		margin: 0 0 0.4rem;
+		font-size: var(--sc-text-lg);
+		color: var(--sc-ivory);
+	}
+	.cd-foot p {
+		margin: 0;
+		font-size: var(--sc-text-sm);
+		line-height: 1.55;
+		color: var(--sc-silver);
+	}
+</style>
