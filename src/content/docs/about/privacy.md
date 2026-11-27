@@ -48,6 +48,10 @@ Some pages include videos from YouTube.
 - **Before you tap play:** the preview image loads from YouTube's image server (`i.ytimg.com`), which means YouTube receives your IP address and browser details, as with any image request.
 - **When you tap play:** the video loads from `youtube-nocookie.com`, YouTube's privacy-enhanced mode. From then on, [Google's privacy policy](https://policies.google.com/privacy) applies to that video.
 
+## App icons
+
+The small app and website icons in tool lists and creator setups are served from creators.select. When an icon isn't cached yet, our server fetches it once from an icon service and keeps a copy. Your browser never contacts that service, so it doesn't see your visit.
+
 ## Search
 
 The site's search runs entirely in your browser. What you type isn't sent to us or anyone else, unless you tap a button to ask an AI, below.

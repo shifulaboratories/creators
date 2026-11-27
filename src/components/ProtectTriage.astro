@@ -21,7 +21,7 @@ import { platforms, playbooks, situations } from '../lib/protect-playbooks';
 			<div class="pt-sits">
 				{
 					situations.map((s) => (
-						<a class="pt-sit" href={s.href} data-s={s.key} aria-pressed="false">
+						<a class="pt-sit" href={s.href} data-s={s.key}>
 							<span class="pt-emoji" aria-hidden="true">{s.emoji}</span>
 							<strong>{s.label}</strong>
 							<small>{s.short}</small>
@@ -140,7 +140,7 @@ import { platforms, playbooks, situations } from '../lib/protect-playbooks';
 	.pt-sit:active {
 		transform: scale(0.98);
 	}
-	.pt-sit[aria-pressed='true'] {
+	.pt-sit[aria-current='true'] {
 		border-color: var(--accent);
 		background: color-mix(in srgb, var(--accent) 14%, transparent);
 	}
@@ -202,7 +202,8 @@ import { platforms, playbooks, situations } from '../lib/protect-playbooks';
 		let s = '';
 		let p = '';
 		const show = () => {
-			root.querySelectorAll<HTMLElement>('.pt-sit[data-s]').forEach((a) => a.setAttribute('aria-pressed', String(a.dataset.s === s)));
+			// Situations are links (they work without JavaScript), so the picked one is marked aria-current, not aria-pressed.
+			root.querySelectorAll<HTMLElement>('.pt-sit[data-s]').forEach((a) => (a.dataset.s === s ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
 			root.querySelectorAll<HTMLElement>('.pt-plat').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === p)));
 			stage(2).hidden = !s;
 			stage(3).hidden = !(s && p);

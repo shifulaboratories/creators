@@ -51,7 +51,7 @@ const niches = [...new Set(setups.map((s) => s.niche))].sort((a, b) => nicheText
 		setups.map((s) => (
 			<article class="cs-card" data-niche={s.niche}>
 				<header class="cs-head">
-					<img src={`https://twenty-icons.com/${host(s.site)}/64`} onerror="this.style.visibility='hidden'" alt="" width="40" height="40" loading="lazy" decoding="async" />
+					<img src={`/icons/${host(s.site)}`} onerror="this.style.visibility='hidden'" alt="" width="40" height="40" loading="lazy" decoding="async" />
 					<div>
 						<h3>{s.creator}</h3>
 						<p>{s.known}</p>

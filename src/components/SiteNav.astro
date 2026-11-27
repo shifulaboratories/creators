@@ -28,8 +28,11 @@ const L = (p: string) => localize(locale, p);
 const path = basePath(Astro.url.pathname);
 const active = groupFor(path);
 // The same page in each language. Single news updates are English-only, so they
-// switch to that language's news front page instead.
-const sameIn = (l: (typeof LOCALES)[number]) => localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : path);
+// switch to that language's news front page instead. Pages that only exist in
+// English (src/pages/ routes that aren't translated) switch to that language's home.
+const ENGLISH_ONLY = /^\/(creators|glossary|changelog|roadmap|rate-check|stack\/directory|404)\//;
+const sameIn = (l: (typeof LOCALES)[number]) =>
+	l === 'en' ? localize(l, path) : localize(l, /^\/news\/[^/]+\/[^/]+\//.test(path) ? '/news/' : ENGLISH_ONLY.test(path) ? '/' : path);
 const langs = LOCALES.map((l) => ({ l, href: sameIn(l), short: l === 'pt-br' ? 'PT' : l.toUpperCase(), name: t(l).langName }));
 
 const icons: Record<string, string> = {
@@ -120,7 +123,7 @@ const linkIcon = (href: string) => {
 	<div class="sn-right">
 		<div class="sn-search"><slot name="search" /></div>
 		<div class="sn-item sn-lang" data-item>
-			<button type="button" class="sn-top" aria-expanded="false" aria-label={T.language} data-trigger>
+			<button type="button" class="sn-top" aria-expanded="false" aria-label={`${langs.find((x) => x.l === locale)?.short} · ${T.language}`} data-trigger>
 				{langs.find((x) => x.l === locale)?.short}
 				<svg viewBox="0 0 12 12" aria-hidden="true">
 					<path d="M3 4.5 6 7.5 9 4.5" />
