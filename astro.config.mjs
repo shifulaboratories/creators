@@ -47,6 +47,7 @@ export default defineConfig({
 				section('Grow', 'grow'),
 				section('Earn', 'earn'),
 				section('Deals and contracts', 'deals'),
+				section('Money basics', 'money'),
 				section('Team', 'team'),
 				section('Stack', 'stack'),
 				section('Protect', 'protect'),

@@ -1,0 +1,170 @@
+---
+/** Rough check: does an S corp election save more in payroll tax than it costs to run? Math in src/lib/tax-data.ts. */
+import { TAX_YEAR } from '../../lib/tax-data';
+---
+
+<div class="sc-widget sx not-content" data-section="money" data-sx>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · S corp check</div>
+			<h4 class="sc-widget__title">Would an S corp actually save you money?</h4>
+		</div>
+	</div>
+
+	<div class="sx-inputs">
+		<label>
+			<span>Yearly profit <b data-out="profit"></b></span>
+			<input class="sc-range" type="range" min="10000" max="500000" step="5000" value="90000" data-in="profit" aria-label="Yearly business profit" />
+		</label>
+		<label>
+			<span>Salary you’d pay yourself <b data-out="salary"></b></span>
+			<input class="sc-range" type="range" min="0" max="100" step="5" value="50" data-in="salary" aria-label="Salary as a percent of profit" />
+			<small><span data-out="salaryPct"></span> of profit. It has to be “reasonable” for the work you do</small>
+		</label>
+		<label>
+			<span>Extra yearly cost of running it <b data-out="costs"></b></span>
+			<input class="sc-range" type="range" min="0" max="10000" step="250" value="3000" data-in="costs" aria-label="Extra yearly costs: payroll, accounting, state fees" />
+			<small>Payroll service, a second tax return, state fees</small>
+		</label>
+	</div>
+
+	<div class="sx-compare" aria-live="polite">
+		<div class="sx-col">
+			<span class="sx-col__label">As you are now</span>
+			<b data-out="sole"></b>
+			<small>self-employment tax on all profit</small>
+		</div>
+		<div class="sx-col">
+			<span class="sx-col__label">As an S corp</span>
+			<b data-out="scorp"></b>
+			<small>payroll tax on salary + extra costs</small>
+		</div>
+	</div>
+	<div class="sx-verdict" data-verdict>
+		<span class="sx-verdict__value" data-out="net"></span>
+		<span class="sx-verdict__text" data-out="verdict"></span>
+	</div>
+
+	<p class="sc-widget__note">
+		Tax year {TAX_YEAR} rates. Compares only Social Security and Medicare taxes plus the running costs you enter. It leaves out income tax effects, the QBI deduction, state taxes and fees on S corps (some states, like California, charge their own), retirement contributions, and unemployment tax on the salary. A CPA should run your real numbers before you file anything.
+	</p>
+</div>
+
+<script>
+	import { scorpCheck, fmtUsd } from '../../lib/tax-data';
+	document.querySelectorAll<HTMLElement>('[data-sx]').forEach((root) => {
+		const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const out = (k: string, v: string) => ($(`[data-out="${k}"]`).textContent = v);
+		const ins = ['profit', 'salary', 'costs'].map((k) => $<HTMLInputElement>(`[data-in="${k}"]`));
+		const render = () => {
+			ins.forEach((el) => el.style.setProperty('--fill', ((+el.value - +el.min) / (+el.max - +el.min)) * 100 + '%'));
+			const [profit, pct, costs] = ins.map((el) => +el.value);
+			const salary = (profit * pct) / 100;
+			const r = scorpCheck(profit, salary, costs, 'single');
+			out('profit', fmtUsd(profit));
+			out('salary', fmtUsd(salary));
+			out('salaryPct', pct + '%');
+			out('costs', fmtUsd(costs));
+			out('sole', fmtUsd(r.soleSe));
+			out('scorp', fmtUsd(r.payroll + costs));
+			const v = $('[data-verdict]');
+			v.dataset.tone = r.net > 5000 ? 'good' : r.net > 0 ? 'maybe' : 'no';
+			out('net', (r.net >= 0 ? '+' : '−') + fmtUsd(Math.abs(r.net)) + '/yr');
+			out(
+				'verdict',
+				r.net > 5000
+					? 'Worth a real conversation with a CPA.'
+					: r.net > 0
+						? 'A small saving. Paperwork and risk may eat it.'
+						: 'Costs more than it saves. Not yet.',
+			);
+		};
+		ins.forEach((el) => el.addEventListener('input', render));
+		render();
+	});
+</script>
+
+<style>
+	.sx-inputs {
+		display: grid;
+		gap: 0.9rem;
+		margin-bottom: 1.25rem;
+	}
+	@media (min-width: 48rem) {
+		.sx-inputs {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.25rem;
+		}
+	}
+	.sx-inputs label {
+		display: grid;
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+	}
+	.sx-inputs label > span {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+	.sx-inputs b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.sx-inputs small {
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.sx-compare {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+	}
+	.sx-col {
+		display: grid;
+		gap: 0.2rem;
+		padding: 0.85rem 0.9rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 12px;
+		background: var(--sc-fill-subtle);
+	}
+	.sx-col__label {
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.sx-col b {
+		font: 600 1.4rem / 1.1 var(--sc-font-display);
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.sx-col small {
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.sx-verdict {
+		margin-top: 0.9rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.3rem 0.75rem;
+		padding: 0.9rem 1rem;
+		border-radius: 14px;
+		--c: var(--sc-jade);
+		border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+		background: color-mix(in srgb, var(--c) 10%, transparent);
+	}
+	.sx-verdict[data-tone='maybe'] {
+		--c: var(--sc-champagne);
+	}
+	.sx-verdict[data-tone='no'] {
+		--c: var(--sc-rose);
+	}
+	.sx-verdict__value {
+		font: 700 1.6rem / 1 var(--sc-font-display);
+		color: var(--c);
+		font-variant-numeric: tabular-nums;
+	}
+	.sx-verdict__text {
+		font-size: 0.9rem;
+		color: var(--sc-platinum);
+	}
+</style>

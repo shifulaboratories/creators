@@ -1,0 +1,121 @@
+---
+/** Quarterly estimated-tax due dates with a live "next up" countdown. Dates from Form 1040-ES in src/lib/tax-data.ts. */
+import { estimates, TAX_YEAR } from '../../lib/tax-data';
+---
+
+<figure class="sc-figure dl not-content" data-section="money" data-dl>
+	<ol class="dl-list">
+		{
+			estimates.due.map((d, i) => (
+				<li data-date={d.date}>
+					<span class="dl-q">Q{i + 1}</span>
+					<span class="dl-date">{d.label}</span>
+					<span class="dl-covers">Income from {d.covers}</span>
+					<span class="dl-badge" data-badge />
+				</li>
+			))
+		}
+	</ol>
+	<p class="dl-next" data-next aria-live="polite"></p>
+	<figcaption>
+		Estimated tax due dates for tax year {TAX_YEAR}, from IRS Form 1040-ES. A due date on a weekend or holiday moves to the next business day. You can skip the January payment if you file your return by Feb 1, 2027 and pay everything you owe with it.
+	</figcaption>
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-dl]').forEach((root) => {
+		const now = new Date();
+		const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+		let next: HTMLElement | null = null;
+		root.querySelectorAll<HTMLElement>('li[data-date]').forEach((li) => {
+			const [y, m, d] = li.dataset.date!.split('-').map(Number);
+			const due = Date.UTC(y, m - 1, d);
+			const badge = li.querySelector('[data-badge]')!;
+			if (due < today) {
+				li.classList.add('is-past');
+				badge.textContent = 'Passed';
+			} else if (!next) {
+				next = li;
+				li.classList.add('is-next');
+				const days = Math.round((due - today) / 864e5);
+				badge.textContent = days === 0 ? 'Due today' : `In ${days} day${days === 1 ? '' : 's'}`;
+			}
+		});
+		const p = root.querySelector('[data-next]')!;
+		p.textContent = next
+			? ''
+			: 'All of this year’s dates have passed. The next year’s dates come out with the new Form 1040-ES; the first payment is normally due in mid-April.';
+	});
+</script>
+
+<style>
+	.dl-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.6rem;
+	}
+	@media (min-width: 48rem) {
+		.dl-list {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+	.dl-list li {
+		position: relative;
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.85rem 0.9rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		transition: opacity 0.2s;
+	}
+	.dl-list li.is-past {
+		opacity: 0.5;
+	}
+	.dl-list li.is-next {
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+		box-shadow: 0 0 28px -10px var(--accent);
+	}
+	.dl-q {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+	.dl-date {
+		font: 600 1.15rem / 1.15 var(--sc-font-display);
+		color: var(--sc-ivory);
+	}
+	.dl-covers {
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+	.dl-badge:empty {
+		display: none;
+	}
+	.dl-badge {
+		justify-self: start;
+		margin-top: 0.35rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.15rem 0.55rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-silver);
+	}
+	.is-next .dl-badge {
+		color: #0a0a0a;
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+	.dl-next:empty {
+		display: none;
+	}
+	.dl-next {
+		margin: 0.9rem 0 0;
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+	}
+</style>

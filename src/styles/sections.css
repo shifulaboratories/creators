@@ -11,6 +11,8 @@
 	--sc-protect: var(--sc-rose);
 	--sc-underground: var(--sc-ember);
 	--sc-news: var(--sc-silver);
+	/* Money basics: a minty money green, between jade and the lime sticker. */
+	--sc-money: color-mix(in srgb, var(--sc-jade) 60%, var(--sc-lime));
 }
 
 [data-section='grow'] { --accent: var(--sc-grow); }
@@ -21,6 +23,7 @@
 [data-section='protect'] { --accent: var(--sc-protect); }
 [data-section='underground'] { --accent: var(--sc-underground); }
 [data-section='news'] { --accent: var(--sc-news); }
+[data-section='money'] { --accent: var(--sc-money); }
 
 :root {
 	/* Platforms blend ion and cyan; the Shortlist uses brass, the disclosure gold. */
