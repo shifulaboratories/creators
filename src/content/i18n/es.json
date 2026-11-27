@@ -1,1 +1,4 @@
-{ "i18n.untranslatedContent": "Esta guía todavía no está traducida, así que la mostramos en inglés. Puedes pedirle a la IA que te la explique en español con el botón de abajo." }
+{
+	"i18n.untranslatedContent": "Esta guía todavía no está traducida, así que la mostramos en inglés. Puedes pedirle a la IA que te la explique en español con el botón de abajo.",
+	"tableOfContents.overview": "Resumen"
+}

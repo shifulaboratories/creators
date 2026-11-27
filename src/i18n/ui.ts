@@ -216,7 +216,7 @@ const es: UI = {
 	grid: { status: { outline: 'Esquema', draft: 'Borrador', published: 'Revisado' }, english: 'En inglés' },
 	tabs: { home: 'Inicio', guides: 'Guías', menu: 'Menú', learn: 'Aprende', platforms: 'Plataformas', shortlist: 'Selección', search: 'Buscar', nav: 'Navegación rápida' },
 	ai: {
-		button: 'Pregúntale a la IA',
+		button: 'Abrir en IA',
 		sheetTitle: 'Pregúntale a la IA sobre esta guía',
 		sheetSub: 'Abre tu asistente con esta guía ya cargada, para que preguntes cómo aplica a tu caso.',
 		copyGuide: 'Copiar la guía para cualquier IA',
@@ -383,7 +383,7 @@ const pt: UI = {
 	grid: { status: { outline: 'Esboço', draft: 'Rascunho', published: 'Revisado' }, english: 'Em inglês' },
 	tabs: { home: 'Início', guides: 'Guias', menu: 'Menu', learn: 'Aprenda', platforms: 'Plataformas', shortlist: 'Seleção', search: 'Buscar', nav: 'Navegação rápida' },
 	ai: {
-		button: 'Pergunte à IA',
+		button: 'Abrir na IA',
 		sheetTitle: 'Pergunte à IA sobre este guia',
 		sheetSub: 'Abre seu assistente com este guia já carregado, para você perguntar como ele se aplica ao seu caso.',
 		copyGuide: 'Copiar o guia para qualquer IA',
