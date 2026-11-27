@@ -101,7 +101,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 				>
 					<Cover title={e.title} section={e.tint} label={e.coverLabel ?? e.title} kicker={e.sectionLabel} />
 					<div class="gg-body">
-						<h3>{e.title}</h3>
+						<h2>{e.title}</h2>
 						<p>{e.description}</p>
 						<div class="gg-meta">
 							<span class={`gg-st s-${e.status}`}>{statusText[e.status]}</span>
@@ -346,7 +346,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 		flex: none;
 	}
 	.gg-chips .sc-chip span {
-		opacity: 0.6;
+		opacity: 0.8;
 		margin-left: 0.2rem;
 	}
 	.gg-ready {
@@ -449,7 +449,7 @@ const statusText: Record<string, string> = { outline: 'Outline', draft: 'Draft',
 		padding: 0.85rem 0.95rem 1rem;
 		flex: 1;
 	}
-	.gg-body h3 {
+	.gg-body h2 {
 		margin: 0;
 		font-size: 1rem;
 		line-height: 1.3;
