@@ -4,14 +4,23 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "creators",
 	"compatibility_date": "2026-11-01",
+	// Only /api/* runs this Worker (Rate Check); every other request is a static file.
+	"main": "./worker/index.ts",
 	"assets": {
 		"directory": "./dist",
+		"binding": "ASSETS",
+		"run_worker_first": ["/api/*"],
 		"not_found_handling": "404-page",
 		"html_handling": "auto-trailing-slash"
 	},
 	// Attaches the domain on deploy (the zone is on this Cloudflare account).
 	"routes": [{ "pattern": "creators.select", "custom_domain": true }],
 	"observability": { "enabled": true },
+	// Rate Check storage. Schema: migrations/0001_rates.sql.
+	"d1_databases": [{ "binding": "DB", "database_name": "creators-rate-check", "database_id": "3e5879dd-3faf-4e8d-be79-a3a816399bdf" }],
+	// 5 submissions a minute per visitor. Turnstile keys are set in the dashboard:
+	// TURNSTILE_SITE_KEY (variable) and TURNSTILE_SECRET (secret).
+	"ratelimits": [{ "name": "SUBMIT_LIMIT", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } }],
 	// Branch builds run `wrangler preview`, which needs this block (it can stay empty).
 	"previews": {}
 }

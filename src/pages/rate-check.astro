@@ -1,0 +1,279 @@
+---
+/**
+ * Rate Check: see what creators were actually paid, and anonymously share a rate.
+ * Unlisted (noindex, not in search, menus or sitemap) until it has enough rates.
+ * API: worker/index.ts. Rules shared with the API: src/lib/rate-check.ts.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { RC_MIN_BUCKET, RC_NICHES, RC_PLATFORMS, RC_REGIONS, RC_TIERS } from '../lib/rate-check';
+import '../components/tools/tools.css';
+const cfg = { platforms: RC_PLATFORMS, tiers: RC_TIERS, min: RC_MIN_BUCKET };
+---
+
+<StarlightPage
+	frontmatter={{
+		title: 'Rate Check',
+		description: 'What creators were actually paid for brand deals, shared anonymously by creators. Share yours in 30 seconds, no signup.',
+		tableOfContents: false,
+		pagefind: false,
+		prev: false,
+		next: false,
+		head: [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex' } }],
+	}}
+>
+	<div class="rc not-content" data-section="rates" data-rc data-cfg={JSON.stringify(cfg)}>
+		<p class="rc-lede">Real rates from real deals, shared anonymously by creators. No names, no handles, no brands. A group only shows once it has {RC_MIN_BUCKET} rates, so no single deal can be picked out.</p>
+
+		<div class="rc-tabs" role="tablist">
+			<button role="tab" aria-selected="true" data-tab="see">See rates</button>
+			<button role="tab" aria-selected="false" data-tab="share">Share a rate</button>
+		</div>
+
+		<section class="sc-widget" data-panel="see">
+			<div class="tw-grid">
+				<label class="tw-field"><span>Platform</span><select data-q="platform">{RC_PLATFORMS.map((p) => <option value={p.key}>{p.name}</option>)}</select></label>
+				<label class="tw-field"><span>Format</span><select data-q="format"></select></label>
+			</div>
+			<ol class="rc-tiers" data-tiers aria-live="polite"></ol>
+			<p class="sc-widget__note">Middle 50% of shared rates (25th to 75th percentile) per sponsored post, rounded. Self-reported and not verified, so read it next to the <a href="/rates/">published benchmarks</a>.</p>
+		</section>
+
+		<section class="sc-widget" data-panel="share" hidden>
+			<form data-form novalidate>
+				<div class="tw-grid">
+					<label class="tw-field"><span>Platform</span><select name="platform">{RC_PLATFORMS.map((p) => <option value={p.key}>{p.name}</option>)}</select></label>
+					<label class="tw-field"><span>Format</span><select name="format"></select></label>
+					<label class="tw-field"><span>Followers</span><input name="followers" inputmode="numeric" placeholder="25,000" required /><small>On the platform you posted to.</small></label>
+					<label class="tw-field"><span>Paid per post (USD)</span><input name="rate" inputmode="numeric" placeholder="600" required /><small>Before any agency or manager cut.</small></label>
+					<label class="tw-field"><span>Niche, optional</span><select name="niche"><option value="">Skip</option>{RC_NICHES.map((n) => <option>{n}</option>)}</select></label>
+					<label class="tw-field"><span>Region, optional</span><select name="region"><option value="">Skip</option>{RC_REGIONS.map((n) => <option>{n}</option>)}</select></label>
+				</div>
+				<label class="rc-check"><input type="checkbox" name="usage" /> The fee included usage rights (the brand could run it as an ad)</label>
+				<label class="rc-hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off" /></label>
+				<div class="rc-ts" data-ts></div>
+				<div class="tw-actions">
+					<button class="tw-btn is-primary" type="submit" data-submit>Share my rate</button>
+				</div>
+				<p class="rc-msg" data-msg role="status"></p>
+			</form>
+			<p class="tw-privacy">We store only what’s in this form and the month. No name, handle, email or IP. <a href="/about/privacy/#rate-check-sharing-a-rate">Privacy</a></p>
+		</section>
+	</div>
+</StarlightPage>
+
+<script>
+	type Cfg = { platforms: { key: string; name: string; formats: [string, string][] }[]; tiers: { key: string; name: string; range: string }[]; min: number };
+	type Tier = { tier: string; n: number; shown: boolean; p25?: number; median?: number; p75?: number };
+	const root = document.querySelector<HTMLElement>('[data-rc]')!;
+	const cfg: Cfg = JSON.parse(root.dataset.cfg!);
+	const usd = (n: number) => '$' + n.toLocaleString('en-US');
+	const num = (s: string) => Number(String(s).replace(/[^0-9.]/g, ''));
+	let siteKey: string | null = null;
+
+	const fillFormats = (platformSel: HTMLSelectElement, formatSel: HTMLSelectElement) => {
+		const p = cfg.platforms.find((x) => x.key === platformSel.value)!;
+		formatSel.innerHTML = p.formats.map(([k, l]) => `<option value="${k}">${l}</option>`).join('');
+	};
+
+	// Tabs
+	root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach((b) =>
+		b.addEventListener('click', () => {
+			root.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+			root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
+			if (b.dataset.tab === 'share') loadTurnstile();
+		}),
+	);
+
+	// See rates
+	const qp = root.querySelector<HTMLSelectElement>('[data-q="platform"]')!;
+	const qf = root.querySelector<HTMLSelectElement>('[data-q="format"]')!;
+	const list = root.querySelector('[data-tiers]')!;
+	const load = async () => {
+		list.innerHTML = '<li class="rc-loading">Loading…</li>';
+		try {
+			const r = await fetch(`/api/rate-check?platform=${qp.value}&format=${qf.value}`);
+			const d = await r.json();
+			if (!r.ok) throw new Error(d.error);
+			siteKey = d.siteKey;
+			list.innerHTML = (d.tiers as Tier[])
+				.map((t) => {
+					const tier = cfg.tiers.find((x) => x.key === t.tier)!;
+					const head = `<span class="rc-tier">${tier.name}<small>${tier.range} followers</small></span>`;
+					if (!t.shown) return `<li class="is-empty">${head}<span class="rc-need">${t.n ? `${cfg.min - t.n} more to show` : 'No rates yet'}</span></li>`;
+					return `<li>${head}<span class="rc-range"><b>${usd(t.p25!)}–${usd(t.p75!)}</b><small>median ${usd(t.median!)} · ${t.n} rates</small></span></li>`;
+				})
+				.join('');
+		} catch {
+			list.innerHTML = '<li class="rc-loading">Rates can’t load right now. Try again later.</li>';
+		}
+	};
+	qp.addEventListener('change', () => (fillFormats(qp, qf), load()));
+	qf.addEventListener('change', load);
+	fillFormats(qp, qf);
+	load();
+
+	// Share a rate
+	const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+	const fp = form.elements.namedItem('platform') as HTMLSelectElement;
+	const ff = form.elements.namedItem('format') as HTMLSelectElement;
+	const msg = root.querySelector<HTMLElement>('[data-msg]')!;
+	fp.addEventListener('change', () => fillFormats(fp, ff));
+	fillFormats(fp, ff);
+	form.querySelectorAll<HTMLInputElement>('input[inputmode="numeric"]').forEach((i) => i.addEventListener('blur', () => i.value && (i.value = num(i.value).toLocaleString('en-US'))));
+
+	let tsLoaded = false;
+	function loadTurnstile() {
+		if (tsLoaded || !siteKey) return;
+		tsLoaded = true;
+		const s = document.createElement('script');
+		s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+		s.async = true;
+		s.onload = () => (window as any).turnstile.render(root.querySelector('[data-ts]'), { sitekey: siteKey, theme: 'auto', size: 'flexible' });
+		document.head.appendChild(s);
+	}
+
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const f = new FormData(form);
+		const body = {
+			platform: f.get('platform'),
+			format: f.get('format'),
+			followers: num(String(f.get('followers') ?? '')),
+			rate: num(String(f.get('rate') ?? '')),
+			usage: f.get('usage') === 'on',
+			niche: f.get('niche') || null,
+			region: f.get('region') || null,
+			website: f.get('website') || '',
+			token: f.get('cf-turnstile-response') || '',
+		};
+		const btn = root.querySelector<HTMLButtonElement>('[data-submit]')!;
+		btn.disabled = true;
+		msg.className = 'rc-msg';
+		msg.textContent = 'Sharing…';
+		try {
+			const r = await fetch('/api/rate-check', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+			const d = await r.json();
+			if (!r.ok) throw new Error(d.error || 'Something went wrong. Try again.');
+			msg.className = 'rc-msg is-ok';
+			msg.textContent = d.counted ? 'Thanks. Your rate is in, anonymously.' : 'Thanks. Your rate is in, and will count once it’s reviewed.';
+			form.reset();
+			fillFormats(fp, ff);
+			(window as any).turnstile?.reset();
+		} catch (err) {
+			msg.className = 'rc-msg is-err';
+			msg.textContent = (err as Error).message;
+		} finally {
+			btn.disabled = false;
+		}
+	});
+</script>
+
+<style>
+	.rc-lede {
+		color: var(--sc-silver);
+		max-width: 40rem;
+		line-height: 1.55;
+	}
+	.rc-tabs {
+		display: inline-flex;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		margin: 1rem 0 0.9rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.rc-tabs button {
+		border: 0;
+		background: none;
+		color: var(--sc-silver);
+		font: inherit;
+		font-weight: 600;
+		font-size: 0.88rem;
+		padding: 0.5rem 1rem;
+		min-height: 2.4rem;
+		border-radius: 999px;
+		cursor: pointer;
+	}
+	.rc-tabs button[aria-selected='true'] {
+		background: color-mix(in srgb, var(--accent) 22%, transparent);
+		color: var(--sc-ivory);
+	}
+	.rc [hidden] {
+		display: none !important;
+	}
+	.rc-tiers {
+		list-style: none;
+		padding: 0;
+		margin: 1.1rem 0 0;
+		display: grid;
+		gap: 0.6rem;
+	}
+	.rc-tiers :global(li) {
+		margin: 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.8rem;
+		padding: 0.75rem 0.9rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+	}
+	.rc-tiers :global(li.is-empty) {
+		border-style: dashed;
+	}
+	.rc-tiers :global(.rc-tier) {
+		font-weight: 650;
+		color: var(--sc-ivory);
+	}
+	.rc-tiers :global(small) {
+		display: block;
+		font-weight: 400;
+		font-size: 0.74rem;
+		color: var(--sc-steel);
+	}
+	.rc-tiers :global(.rc-range) {
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+	.rc-tiers :global(.rc-range b) {
+		color: var(--sc-ivory);
+		font-size: 1.05rem;
+	}
+	.rc-tiers :global(.rc-need),
+	.rc-tiers :global(.rc-loading) {
+		color: var(--sc-steel);
+		font-size: 0.85rem;
+	}
+	.rc-check {
+		display: flex;
+		gap: 0.55rem;
+		align-items: flex-start;
+		margin: 1rem 0 0;
+		font-size: 0.9rem;
+		color: var(--sc-platinum);
+	}
+	.rc-check input {
+		margin-top: 0.2rem;
+		accent-color: var(--accent);
+	}
+	.rc-hp {
+		position: absolute;
+		left: -9999px;
+	}
+	.rc-ts {
+		margin-top: 1rem;
+	}
+	.rc-msg {
+		margin: 0.7rem 0 0;
+		font-size: 0.9rem;
+		color: var(--sc-silver);
+		min-height: 1.3em;
+	}
+	.rc-msg.is-ok {
+		color: var(--sc-jade);
+	}
+	.rc-msg.is-err {
+		color: var(--sc-rose);
+	}
+</style>

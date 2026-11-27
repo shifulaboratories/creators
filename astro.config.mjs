@@ -25,6 +25,8 @@ const noindex = new Set(
 		.filter((p) => p !== '/guides/'),
 );
 noindex.add('/404/');
+// Rate Check stays unlisted until it has enough rates to show (see worker/index.ts).
+noindex.add('/rate-check/');
 
 // Sidebar groups, labeled in every language (src/i18n/ui-sidebar.mjs).
 const section = (key, directory = key) => ({
