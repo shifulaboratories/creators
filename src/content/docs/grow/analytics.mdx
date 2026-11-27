@@ -22,15 +22,31 @@ sidebar:
 ---
 
 import MetricDoctor from '../../../components/grow/MetricDoctor.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** views tell you *what* happened; the numbers underneath tell you *why*. Learn four of them: how often people tap (click-through), how long they stay (retention), whether they pass it on (sends and shares), and whether they come back (follows and returning viewers). Compare each post with your own recent posts, not with someone else's account.
 
-## What's going wrong?
+## Diagnose a post that flopped
 
 <MetricDoctor />
 
-## The four numbers that matter
+## Do a 15-minute review every week
+
+<QuickCheck
+  title="Weekly review"
+  id="grow-weekly"
+  items={[
+    { text: "Sort this week's posts against your median, not your best" },
+    { text: "Open the best one's retention", hint: "What happened in the first five seconds? What was the spike?" },
+    { text: "Open the worst one's retention", hint: "Where did people leave? The hook, a slow middle, or the topic?" },
+    { text: "Read 20 comments", hint: "The questions people ask are your next topics." },
+    { text: "Write one change for next week", hint: "Turn it into an [experiment](/grow/experiments/)." },
+  ]}
+  done="Done for the week."
+/>
+
+## Watch four numbers
 
 <div class="sc-stats">
 <div class="sc-stat is-champagne"><span class="sc-stat__value">Tap</span><span class="sc-stat__label">Click-through rate: of the people shown your thumbnail or cover, how many tapped</span></div>
@@ -39,32 +55,22 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 <div class="sc-stat is-cyan"><span class="sc-stat__value">Return</span><span class="sc-stat__label">Follows per view and returning viewers: do they want the next one</span></div>
 </div>
 
-These line up with what platforms say they rank on. Mosseri told creators in January 2025 to "pay close attention to average watch time, likes per reach, and sends per reach," and added that likes matter slightly more for reaching followers while sends matter slightly more for reaching new people. YouTube describes clicks, watch time, satisfaction surveys, shares, likes and dislikes. <span class="sc-tag is-platform">From the platform</span> [What each platform optimizes for →](/algorithms/what-to-optimize/)
+These line up with what platforms say they rank on. Mosseri told creators in January 2025 to "pay close attention to average watch time, likes per reach, and sends per reach," and added that likes matter slightly more for reaching followers while sends matter slightly more for reaching new people. YouTube describes clicks, watch time, satisfaction surveys, shares, likes and dislikes. [What each platform optimizes for →](/algorithms/what-to-optimize/)
 
-## Platform by platform
-
-**YouTube.** Start with *impressions click-through rate* and *average view duration*, then open the retention graph. YouTube says half of all channels and videos have a CTR between 2% and 10%, that CTR naturally drops when a video starts getting shown widely (on Home, for example), and that differences often come from traffic sources rather than the thumbnail. So a falling CTR on a video that's taking off is usually good news. Use the *Intro* number (still watching after 30 seconds) and key moments to fix openings. [Read the curve →](/grow/hooks/) <span class="sc-tag is-platform">From the platform</span>
-
-**Instagram.** Since August 2024, *Views* is the main number across Reels, posts, carousels, Stories and Live, and it counts repeat views. Look at views from non-followers to see whether a post is reaching new people, and at sends and saves relative to reach. If you're new, Mosseri has said sends per reach is "probably one of the most important metrics you could follow."
-
-**TikTok.** Watch *average watch time*, *watched full video*, and the *traffic source* split (For You vs. Following vs. search). Since TikTok doesn't weigh follower count directly in For You, the share of views from For You tells you whether the feed is testing you with new people.
-
-## Numbers to stop staring at
+## Stop staring at these
 
 - **Follower count, day to day.** It lags. It's the result of the four numbers above, not a lever.
 - **One post's views.** In Buffer's TikTok data, the typical post's views barely changed with posting volume while the top 10% swung wildly. Judge an idea by your median over ten posts.
 - **Other people's "good" CTR or retention.** A tutorial and a vlog have different normal curves. Your own last ten posts are the only fair benchmark.
 - **Likes on their own.** Likes count, but a post people send to a friend or watch to the end is telling you more.
 
-## A 15-minute weekly review
+## Where to find them in each app
 
-<ol class="sc-steps">
-<li class="is-active"><strong>Sort by your median, not your best</strong><span>Which posts beat your typical numbers this week, and which fell short?</span></li>
-<li><strong>Open the best one's retention</strong><span>What happened in the first five seconds? What was the spike?</span></li>
-<li><strong>Open the worst one's retention</strong><span>Where did people leave? Was it the hook, a slow middle or the topic?</span></li>
-<li><strong>Read 20 comments</strong><span>The questions people ask are your next topics.</span></li>
-<li><strong>Write one change</strong><span>Turn it into an <a href="/grow/experiments/">experiment</a> for next week.</span></li>
-</ol>
+**YouTube.** Start with *impressions click-through rate* and *average view duration*, then open the retention graph. YouTube says half of all channels and videos have a CTR between 2% and 10%, that CTR naturally drops when a video starts getting shown widely (on Home, for example), and that differences often come from traffic sources rather than the thumbnail. So a falling CTR on a video that's taking off is usually good news. Use the *Intro* number (still watching after 30 seconds) and key moments to fix openings. [Read the curve →](/grow/hooks/)
+
+**Instagram.** Since August 2024, *Views* is the main number across Reels, posts, carousels, Stories and Live, and it counts repeat views. Look at views from non-followers to see whether a post is reaching new people, and at sends and saves relative to reach. If you're new, Mosseri has said sends per reach is "probably one of the most important metrics you could follow."
+
+**TikTok.** Watch *average watch time*, *watched full video*, and the *traffic source* split (For You vs. Following vs. search). Since TikTok doesn't weigh follower count directly in For You, the share of views from For You tells you whether the feed is testing you with new people.
 
 <DeepDive title="Sources" hint="7 sources">
 

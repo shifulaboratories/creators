@@ -23,24 +23,32 @@ sidebar:
 
 import HookLab from '../../../components/grow/HookLab.astro';
 import RetentionCurve from '../../../components/grow/RetentionCurve.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** the hook is the first line, first frame and first sound of your post. Its only job is to make the right person decide to keep watching. A good hook is a promise the rest of the post keeps. A hook that lies wins the first second and loses everything the feed measures after it.
 
-## Eight patterns that work
+## Steal one of eight openings
 
 <HookLab />
 
 They overlap, and the best hooks often combine two: a specific person plus a visible result, or stakes plus a story. Notice what none of them do: say hello, introduce yourself, or explain what the video is about before showing it.
 
-## Four rules under every hook
+## Check every hook
 
-1. **Match the packaging.** The first frame should look like the thumbnail or cover. If someone tapped for the finished room, show the finished room.
-2. **Say it and show it.** Put the hook on screen as text too. Plenty of people scroll with sound off, and text on screen catches the eye before the voice does.
-3. **Earn the next ten seconds, too.** A hook buys a few seconds. Then you need a reason to stay: the first step, the first reveal, the next question.
-4. **Pay it off.** The fastest way to teach a feed your posts disappoint is to never answer the question you opened with.
+<QuickCheck
+  title="Hook check"
+  id="grow-hook"
+  items={[
+    { text: "The first frame matches the thumbnail or cover", hint: "If they tapped for the finished room, show the finished room." },
+    { text: "The hook is on screen as text too", hint: "Plenty of people scroll with sound off." },
+    { text: "There's a reason to stay past ten seconds", hint: "The first step, the first reveal, the next question." },
+    { text: "The post answers the question it opened with", hint: "Never paying it off teaches the feed your posts disappoint." },
+  ]}
+  done="Hook ready."
+/>
 
-## Read your retention curve
+## Find where people leave
 
 Your retention graph tells you, second by second, whether the hook and the rest of the video worked. YouTube Studio shows one for every long video; Instagram and TikTok show average watch time and how many people watched to the end. Pick a shape to see what it means.
 
@@ -48,7 +56,7 @@ Your retention graph tells you, second by second, whether the hook and the rest 
 
 Compare videos to each other, not to some "good" number from the internet. A tutorial and a vlog will never have the same curve. What matters is whether your openings are getting better over time. When one video has a much flatter start than usual, rewatch its first five seconds and write down what you did differently.
 
-## When a strong hook isn't enough
+## When the hook isn't the problem
 
 Sometimes the curve is fine but the post still stalls. That usually means the hook is right but the topic is too narrow for the platform, or it's good to watch but nobody would send it. Check the [analytics doctor](/grow/analytics/) for which number to look at next.
 
@@ -56,7 +64,7 @@ And beware hooks that work too well. A shocking opening that gets people in and 
 
 <DeepDive title="Why the first seconds carry so much weight" hint="">
 
-Every platform measures whether people stayed. Instagram's Adam Mosseri said in January 2025 that the top three ranking signals are watch time, likes and sends. TikTok says finishing a video is a strong signal. YouTube shows creators an "Intro" number: the share of viewers still watching after the first 30 seconds. <span class="sc-tag is-platform">From the platform</span>
+Every platform measures whether people stayed. Instagram's Adam Mosseri said in January 2025 that the top three ranking signals are watch time, likes and sends. TikTok says finishing a video is a strong signal. YouTube shows creators an "Intro" number: the share of viewers still watching after the first 30 seconds.
 
 The biggest drop in almost any video happens at the start. MrBeast's team, per coverage of their handbook, considered losing about a third of viewers in the first minute a *good* result. If you lose people early, the rest of your video doesn't get a chance. [MrBeast case study →](/case-studies/mrbeast/)
 
