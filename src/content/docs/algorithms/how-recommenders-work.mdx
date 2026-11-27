@@ -23,17 +23,32 @@ sidebar:
 
 import RecPipeline from '../../../components/RecPipeline.astro';
 import FeedSimulator from '../../../components/FeedSimulator.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** a feed is a prediction machine. For every viewer, it guesses how likely they are to take each action on each post, adds those guesses up using weights the platform chooses, and shows the highest scores. You don't need to beat "the algorithm." You need to cause the actions it's weighting, in the people you want to reach.
 
-## The pipeline
+## Design for the action you want
+
+<QuickCheck
+  title="Before you post"
+  id="alg-recs"
+  items={[
+    { text: "Pick the action you want, then design for it", hint: "A tutorial should earn watch time and saves. A take should earn replies without making people mute you. A sketch should earn sends." },
+    { text: "Package honestly", hint: "A misleading hook wins the click and loses everything the feed measures next." },
+    { text: "Read your retention and feedback, not just views", hint: "Where people leave and what they say \u201cnot interested\u201d to is the model\u2019s training data." },
+    { text: "Compare platforms before cross-posting", hint: "See [what each platform optimizes for](/algorithms/compare-platforms/)." },
+  ]}
+  done="Built for the feed, honestly."
+/>
+
+## See how a feed picks posts
 
 YouTube, TikTok, Instagram and X describe different details, but they share the same basic shape. X publishes its code, so we use it as the worked example.
 
 <RecPipeline />
 
-## What the feed rewards decides what wins
+## Watch the weights change the winner
 
 The ranking step is a weighted sum. The weights are a choice the platform makes, and that choice shapes what kind of content thrives. Change the weights below and watch the same six posts trade places.
 
@@ -45,18 +60,11 @@ Three things to notice:
 - **Rewarding replies without a penalty rewards rage.** Every platform we cover subtracts negative signals like "not interested," mutes, blocks or reports. X's published weights for those are large and negative. <span class="sc-tag is-code">From the code</span>
 - **Deep value wins when the feed measures it.** YouTube's own researchers found click-based ranking "often promotes deceptive videos that the user does not complete," so they rank on expected watch time. Instagram subtracts the chance someone taps "see less." Both push up posts that actually deliver. <span class="sc-tag is-research">From the research</span> See [the research behind feeds](/algorithms/the-research/).
 
-## It's personal, not global
+## Stop chasing universal rules
 
 There is no single score for your post. The same post gets a different predicted probability for every viewer, because the model reads each viewer's own history. X's model takes the viewer's recent engagement history as its main input. YouTube says how much each signal counts depends on the viewer. <span class="sc-tag is-platform">From the platform</span>
 
 That's why "post at 9 a.m." or "use exactly 5 hashtags" rarely survives contact with reality. The system is matching posts to people. The lever you control is making something a specific audience will act on.
-
-## What to do with this
-
-- **Pick the action you want, then design for it.** A tutorial should earn watch time and saves. A take should earn replies without making people mute you. A sketch should earn sends.
-- **Package honestly.** A misleading hook wins the click and loses everything the feed measures next.
-- **Read your retention and feedback, not just views.** Where people leave and what they say "not interested" to is the model's training data.
-- **Compare platforms before cross-posting.** See [what each platform optimizes for](/algorithms/compare-platforms/).
 
 <DeepDive title="Sources" hint="7 sources">
 

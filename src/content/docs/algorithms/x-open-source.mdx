@@ -27,17 +27,16 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** X is the only major platform that publishes the code behind its main feed. It predicts how likely you are to take each of dozens of actions on a post, multiplies each prediction by a published weight, and adds them up. In the current code, the predicted chance of a reply, quote or DM share is weighted about 7 times as heavily as the chance of a like, sharing via copied link about 28 times, and "not interested," mute, block and report all carry heavy penalties. Those weights apply to predictions, not counts, which the calculator below makes concrete. <span class="sc-tag is-code">From the code</span>
 
-## Two releases
+## Post for the weights
 
-<figure class="sc-figure">
-<div class="sc-compare">
-<div class="sc-compare__side is-cyan"><h4>2023: twitter/the-algorithm</h4><ul><li>About 1,500 candidates per request, roughly half from accounts you follow</li><li>A neural network of about 48M parameters predicts 10 kinds of engagement</li><li>Weights published as of April 5, 2023</li></ul></div>
-<div class="sc-compare__side is-ion"><h4>2026: xai-org/x-algorithm</h4><ul><li>A Grok-based transformer called Phoenix ranks posts from the viewer's recent engagement history</li><li>Predicts many more actions, including dwell time, shares by DM and copy link, and follows</li><li>Filtering and visibility code published, with dated updates</li></ul></div>
-</div>
-<figcaption>What each public release covers</figcaption>
-</figure>
+- **Write for replies, quotes and sends, not likes.** Those weights are several times higher than a like. <span class="sc-tag is-code">Code, applied</span>
+- **Make posts people want to share outside X.** Sharing via copied link is the single highest positive weight in the 2026 code. <span class="sc-tag is-code">Code, applied</span>
+- **Don't get muted.** Predicted mutes and "not interested" carry large negative weights, and mutes also filter you out of that person's feed entirely. <span class="sc-tag is-code">Code, applied</span>
+- **Post consistently, not in bursts.** Author diversity discounts your second and third post in the same feed, and posts older than 48 hours drop out of For You. <span class="sc-tag is-code">From the code</span>
+- **New accounts get a lift.** The new-author boost exists so low-impression accounts get seen. Your early posts matter. <span class="sc-tag is-code">From the code</span>
+- **Don't treat weights as permanent.** The reply weight went from 13.5 to 5 between releases. Build for the audience, and use the code to understand direction, not to game a number.
 
-## The pipeline, step by step
+## See the pipeline, step by step
 
 What happens every time someone opens For You, in the order the 2026 README lays out. <span class="sc-tag is-code">From the code</span>
 
@@ -54,13 +53,25 @@ What happens every time someone opens For You, in the order the 2026 README lays
 <figcaption>After this, a separate step mixes in ads and "Who to follow." Source: xai-org/x-algorithm README.</figcaption>
 </figure>
 
-## The weights
+## Try the weights
 
 These are the numbers the ranker multiplies each predicted action by. Toggle between the two releases to see how much changed.
 
 <XWeights />
 
-## What the 2026 code shows
+<DeepDive title="What the code shows" hint="Two releases, where posts come from, filters and labels">
+
+### Two releases
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-cyan"><h4>2023: twitter/the-algorithm</h4><ul><li>About 1,500 candidates per request, roughly half from accounts you follow</li><li>A neural network of about 48M parameters predicts 10 kinds of engagement</li><li>Weights published as of April 5, 2023</li></ul></div>
+<div class="sc-compare__side is-ion"><h4>2026: xai-org/x-algorithm</h4><ul><li>A Grok-based transformer called Phoenix ranks posts from the viewer's recent engagement history</li><li>Predicts many more actions, including dwell time, shares by DM and copy link, and follows</li><li>Filtering and visibility code published, with dated updates</li></ul></div>
+</div>
+<figcaption>What each public release covers</figcaption>
+</figure>
+
+### What the 2026 code shows
 
 **Where posts come from.** Posts from accounts you follow come from a service called Thunder. Posts from accounts you don't follow come from Phoenix retrieval and SimClusters, plus a shared list of popular recent posts. Both kinds are ranked by the same model. <span class="sc-tag is-code">From the code</span>
 
@@ -76,16 +87,9 @@ These are the numbers the ranker multiplies each predicted action by. Toggle bet
 
 **You can check your labels.** X's "Under the Hood" tool shows visibility-limiting labels on your account and posts. Use it before believing you're "shadowbanned." <span class="sc-tag is-code">From the code</span>
 
-## What to post, based on the code
+</DeepDive>
 
-- **Write for replies, quotes and sends, not likes.** Those weights are several times higher than a like. <span class="sc-tag is-code">Code, applied</span>
-- **Make posts people want to share outside X.** Sharing via copied link is the single highest positive weight in the 2026 code. <span class="sc-tag is-code">Code, applied</span>
-- **Don't get muted.** Predicted mutes and "not interested" carry large negative weights, and mutes also filter you out of that person's feed entirely. <span class="sc-tag is-code">Code, applied</span>
-- **Post consistently, not in bursts.** Author diversity discounts your second and third post in the same feed, and posts older than 48 hours drop out of For You. <span class="sc-tag is-code">From the code</span>
-- **New accounts get a lift.** The new-author boost exists so low-impression accounts get seen. Your early posts matter. <span class="sc-tag is-code">From the code</span>
-- **Don't treat weights as permanent.** The reply weight went from 13.5 to 5 between releases. Build for the audience, and use the code to understand direction, not to game a number.
-
-## Visual breakdowns by others
+<DeepDive title="Visual breakdowns by others" hint="Explainers worth your time, with caveats">
 
 People have drawn this system out in more detail. These are the ones worth your time, with caveats:
 
@@ -93,6 +97,8 @@ People have drawn this system out in more detail. These are the ones worth your 
 - **[ByteByteGo: The Algorithm That Powers Your X Post](https://blog.bytebytego.com/p/the-algorithm-that-powers-your-x)** (Feb 25, 2026): clean diagrams for a general audience. It oversimplifies in places, for example saying hand-written rules were almost entirely replaced, when the README still lists rule-based filters and visibility checks.
 
 Skip summaries that claim there are "no hand-engineered features." The published filters and visibility rules say otherwise.
+
+</DeepDive>
 
 <DeepDive title="Sources" hint="4 sources">
 
