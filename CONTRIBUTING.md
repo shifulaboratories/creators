@@ -39,8 +39,16 @@ authors: [your-github-handle]
 reviewers: []
 lastReviewed: 2026-11-26
 confidence: practitioner-view
+tldr:                    # optional: "The short version", three points max
+  - First thing to know, in one sentence.
+  - Second thing.
+  - Third thing.
 ---
 ```
+
+`tldr` shows as a numbered card under the title, so phone readers get the gist before they scroll. Every point must be something the page itself says and sources. Pages that already open with a bold **The short version:** paragraph can skip `tldr:` here and use `src/data/tldr.ts` instead; when a page has a short-version card, that opening paragraph is hidden on the web page (the Markdown copy for AI keeps it).
+
+On phones, readers can swipe sideways to the next or previous guide. Widgets that scroll sideways are left alone automatically; if a widget handles its own drags some other way, put `data-no-swipe` on it.
 
 ## Shareable stats and link previews
 

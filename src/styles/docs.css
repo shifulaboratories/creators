@@ -4,15 +4,9 @@
  */
 @import './sections.css';
 @import './widgets.css';
+@import './sheet.css';
 
-:root:has(.guide-head[data-section='grow']) { --accent: var(--sc-grow); }
-:root:has(.guide-head[data-section='earn']) { --accent: var(--sc-earn); }
-:root:has(.guide-head[data-section='deals']) { --accent: var(--sc-deals); }
-:root:has(.guide-head[data-section='team']) { --accent: var(--sc-team); }
-:root:has(.guide-head[data-section='stack']) { --accent: var(--sc-stack); }
-:root:has(.guide-head[data-section='protect']) { --accent: var(--sc-protect); }
-:root:has(.guide-head[data-section='underground']) { --accent: var(--sc-underground); }
-:root:has(.guide-head[data-section='news']) { --accent: var(--sc-news); }
+/* The section color comes from <html data-section>, set by PageTitle.astro (see sections.css). */
 
 /* A soft glow of the section color behind the page header. */
 .main-frame {
@@ -50,14 +44,19 @@
 	margin-block: 2rem;
 }
 
-/* Gentle entrance for each page's content. */
-@media (prefers-reduced-motion: no-preference) {
-	.sl-markdown-content > * {
-		animation: sc-doc-in 600ms var(--sc-ease-settle) both;
+/*
+ * Gentle entrance for the top of the page, only in browsers without page
+ * transitions (those get the transition below instead). Only the first few
+ * blocks animate: animating every block on a long guide made scrolling janky.
+ */
+@supports not (view-transition-name: a) {
+	@media (prefers-reduced-motion: no-preference) {
+		.sl-markdown-content > :nth-child(-n + 5) {
+			animation: sc-doc-in 450ms var(--sc-ease-settle) both;
+		}
+		.sl-markdown-content > :nth-child(2) { animation-delay: 30ms; }
+		.sl-markdown-content > :nth-child(n + 3) { animation-delay: 60ms; }
 	}
-	.sl-markdown-content > :nth-child(2) { animation-delay: 40ms; }
-	.sl-markdown-content > :nth-child(3) { animation-delay: 80ms; }
-	.sl-markdown-content > :nth-child(n + 4) { animation-delay: 120ms; }
 }
 @keyframes sc-doc-in {
 	from {
@@ -65,7 +64,130 @@
 		transform: translateY(8px);
 	}
 }
-:root:has(.guide-head[data-section='algorithms']) { --accent: var(--sc-algorithms); }
-:root:has(.guide-head[data-section='case-studies']) { --accent: var(--sc-case-studies); }
-:root:has(.guide-head[data-section='platforms']) { --accent: var(--sc-platforms); }
-:root:has(.guide-head[data-section='shortlist']) { --accent: var(--sc-shortlist); }
+
+/*
+ * Guides open with a bold "The short version:" paragraph. When the header
+ * already shows the three-point short version, skip the repeat. (The Markdown
+ * copies for AI assistants keep it.)
+ */
+:root[data-tldr] .sl-markdown-content > p:first-child:has(> strong:first-child) {
+	display: none;
+}
+
+/*
+ * Page-to-page transitions, app style: the header and tab bar stay put while
+ * the page slides. Swipes and the Up next / Back cards slide in their direction
+ * (the type comes from the script in astro.config.mjs). Browsers without
+ * cross-document view transitions just load the page as usual.
+ */
+@view-transition {
+	navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+	@view-transition {
+		navigation: none;
+	}
+}
+header.header {
+	view-transition-name: sc-header;
+}
+.tabbar {
+	view-transition-name: sc-tabbar;
+}
+::view-transition-group(root) {
+	animation-duration: 280ms;
+}
+::view-transition-old(root) {
+	animation: sc-vt-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+	animation: sc-vt-in 280ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+html:active-view-transition-type(forward)::view-transition-old(root) {
+	animation-name: sc-vt-out-left;
+}
+html:active-view-transition-type(forward)::view-transition-new(root) {
+	animation-name: sc-vt-in-right;
+}
+html:active-view-transition-type(back)::view-transition-old(root) {
+	animation-name: sc-vt-out-right;
+}
+html:active-view-transition-type(back)::view-transition-new(root) {
+	animation-name: sc-vt-in-left;
+}
+@keyframes sc-vt-out {
+	to {
+		opacity: 0;
+	}
+}
+@keyframes sc-vt-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+@keyframes sc-vt-out-left {
+	to {
+		opacity: 0;
+		transform: translateX(-40px);
+	}
+}
+@keyframes sc-vt-out-right {
+	to {
+		opacity: 0;
+		transform: translateX(40px);
+	}
+}
+@keyframes sc-vt-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(48px);
+	}
+}
+@keyframes sc-vt-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-48px);
+	}
+}
+
+/* Reading progress: a thin line under the header that fills as you scroll a guide. */
+@supports (animation-timeline: scroll()) {
+	@media (prefers-reduced-motion: no-preference) {
+		:root[data-section] header.header::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: -1px;
+			height: 2px;
+			background: var(--accent, var(--sc-ion));
+			transform-origin: 0 50%;
+			animation-name: sc-progress;
+			animation-duration: auto;
+			animation-timing-function: linear;
+			animation-fill-mode: both;
+			animation-timeline: scroll(root block);
+		}
+	}
+}
+@keyframes sc-progress {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/*
+ * Phones: a frosted header has to re-blur everything under it on every scroll
+ * frame, which is where much of the scroll jank came from. Use a solid bar.
+ */
+@media (pointer: coarse) {
+	header.header {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgb(8 7 10 / 0.97);
+	}
+}
