@@ -21,6 +21,7 @@ sidebar:
   order: 7
 ---
 
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** if you made it, you own the copyright, and every platform has a free takedown form. File it yourself, one link per item, with a link to your original. For intimate images shared without consent, use StopNCII.org (adults) or Take It Down (under 18) first: they stop the image spreading across many platforms at once.
@@ -38,13 +39,13 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 <figcaption>The same four moves work on every platform</figcaption>
 </figure>
 
-## Urgent: intimate images
+## Intimate images: do this first
 
-- **StopNCII.org** creates a digital fingerprint (a hash) of the image on your own device; the image itself isn't uploaded. Participating platforms, including Meta's, use the hash to block it. <span class="sc-tag is-platform">From the platform</span>
+- **StopNCII.org** creates a digital fingerprint (a hash) of the image on your own device; the image itself isn't uploaded. Participating platforms, including Meta's, use the hash to block it.
 - **Take It Down** from NCMEC does the same for images taken when you were under 18. Its site lists the participating platforms.
 - Also report the post on the platform itself, and keep evidence. In many places this is a crime: you can go to the police.
 
-## Copyright takedowns, by platform
+## File a takedown on each platform
 
 | Platform | Where to file | Who can file |
 | --- | --- | --- |
@@ -58,11 +59,18 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 
 ## Before you file
 
-- **Is it fair use?** Commentary, criticism, reaction and parody can be legal even if they use your clips. A false takedown can come back on you: US law (17 U.S.C. § 512(f)) makes you liable for knowingly misrepresenting infringement.
-- **Would a credit do?** For fan reposts, a DM asking for credit or removal often works faster and keeps the goodwill. <span class="sc-tag is-practitioner">Creator-tested</span>
-- **Are you on YouTube at scale?** YouTube's [Copyright Match Tool](https://support.google.com/youtube/answer/7648743) finds full reuploads of your videos for eligible channels, so you don't have to search by hand.
+<QuickCheck
+  title="Before you file"
+  id="protect-file"
+  items={[
+    { text: "Is it fair use?", hint: "Commentary, criticism, reaction and parody can be legal even if they use your clips. A false takedown can come back on you: US law (17 U.S.C. \u00a7 512(f)) makes you liable for knowingly misrepresenting infringement." },
+    { text: "Would a credit do?", hint: "For fan reposts, a DM asking for credit or removal often works faster and keeps the goodwill." },
+    { text: "Are you on YouTube at scale?", hint: "YouTube's [Copyright Match Tool](https://support.google.com/youtube/answer/7648743) finds full reuploads of your videos for eligible channels, so you don't have to search by hand." },
+  ]}
+  done="File it."
+/>
 
-## Leaks of paid content
+## If paid content leaks
 
 If your paid or subscriber-only content is reposted on piracy sites, the same DMCA route applies: file with the site's host, and with Google to drop the page from search results. Paid takedown services exist; check our [Stack](/stack/) for tools listed with free alternatives before you pay.
 
