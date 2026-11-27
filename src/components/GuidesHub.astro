@@ -1,0 +1,960 @@
+---
+/**
+ * The visual front door of /guides/: a tappable route map, the seven focus
+ * platforms as big swipeable tiles, then every section as an illustrated tile
+ * grouped by where you are (learn, grow, get paid, run it, stay safe).
+ * Counts come from the docs collection, so new guides show up on their own.
+ * The searchable gallery (GuideGallery.astro) sits below at #all.
+ */
+import { getCollection } from 'astro:content';
+import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
+
+const docs = await getCollection('docs');
+const guides = docs.filter((e) => e.id.includes('/') && !e.id.endsWith('/index'));
+const count = (dir: string) => guides.filter((e) => e.id.startsWith(dir + '/')).length;
+const has = (id: string) => docs.some((e) => e.id === id);
+
+// The Paywall section is being built in its own folder; until it lands, the
+// tile points at the existing memberships guide.
+const paywallLive = has('paywall') || docs.some((e) => e.id.startsWith('paywall/'));
+
+type Platform = { key: string; name: string; path?: string; mono?: string; href: string; rewards: string; paid: string };
+const platforms: Platform[] = [
+	{ key: 'general', name: 'General', mono: 'all', href: '/algorithms/', rewards: 'How every feed picks what people see', paid: 'Start here before you pick a platform' },
+	{ key: 'instagram', name: 'Instagram', path: siInstagram.path, href: '/platforms/instagram/', rewards: 'Sends, watch time and likes', paid: 'Brand deals, subscriptions, gifts' },
+	{ key: 'tiktok', name: 'TikTok', path: siTiktok.path, href: '/platforms/tiktok/', rewards: 'Watching to the end, shares', paid: '10K followers for Creator Rewards' },
+	{ key: 'youtube', name: 'YouTube', path: siYoutube.path, href: '/platforms/youtube/', rewards: 'Clicks, watch time, satisfaction', paid: '1,000 subs for ad revenue' },
+	{ key: 'facebook', name: 'Facebook', path: siFacebook.path, href: '/platforms/facebook/', rewards: 'Original posts people share', paid: 'Content Monetization, by invite' },
+	{ key: 'linkedin', name: 'LinkedIn', mono: 'in', href: '/platforms/linkedin/', rewards: 'Real expertise, not bait', paid: 'Clients and B2B brand deals' },
+	{ key: 'x', name: 'X', path: siX.path, href: '/platforms/x/', rewards: 'Replies, quotes and shares', paid: 'Original Content Rewards' },
+].filter((p) => p.key === 'general' || has(p.href.slice(1, -1)));
+
+const more = [
+	['threads', 'Threads'],
+	['pinterest', 'Pinterest'],
+	['snapchat', 'Snapchat'],
+	['twitch', 'Twitch'],
+	['newsletters', 'Newsletters'],
+	['podcasts', 'Podcasts'],
+].filter(([k]) => has(`platforms/${k}`));
+
+type Tile = { id: string; tint: string; title: string; text: string; href: string; n: number; art: string; big?: boolean; soon?: boolean };
+type Stage = { n: string; id: string; title: string; text: string; tiles: Tile[] };
+const stages: Stage[] = [
+	{
+		n: '01',
+		id: 'learn',
+		title: 'Learn the game',
+		text: 'How feeds work, and how the biggest creators think.',
+		tiles: [
+			{ id: 'algorithms', tint: 'algorithms', title: 'How algorithms work', text: 'What every feed is actually optimizing for, in plain English.', href: '/algorithms/', n: count('algorithms'), art: 'feed' },
+			{ id: 'case-studies', tint: 'case-studies', title: 'Case studies', text: 'MrBeast, Alex Cooper, Alix Earle and more, in their own words.', href: '/case-studies/', n: count('case-studies'), art: 'star' },
+			{ id: 'shortlist', tint: 'shortlist', title: 'The Shortlist', text: 'The few resources we would send a friend.', href: '/shortlist/', n: count('shortlist'), art: 'bookmark' },
+		],
+	},
+	{
+		n: '02',
+		id: 'grow',
+		title: 'Grow',
+		text: 'Hooks, formats, cadence and the numbers that matter.',
+		tiles: [{ id: 'grow', tint: 'grow', title: 'Grow your audience', text: 'Niche, hooks, formats, posting pace, analytics and testing.', href: '/grow/', n: count('grow'), art: 'chart', big: true }],
+	},
+	{
+		n: '03',
+		id: 'paid',
+		title: 'Get paid',
+		text: 'Fans who pay you directly, and brands who pay to reach them.',
+		tiles: [
+			{
+				id: 'paywall',
+				tint: 'paywall',
+				title: 'Paywall',
+				text: 'Fanfix, OnlyFans, Patreon, Fanvue and more, plus how chatting agencies work.',
+				href: paywallLive ? '/paywall/' : '/earn/paywalls-and-memberships/',
+				n: count('paywall') || (has('earn/paywalls-and-memberships') ? 1 : 0),
+				art: 'lock',
+				big: true,
+				soon: !paywallLive,
+			},
+			{ id: 'deals', tint: 'deals', title: 'Brand deals', text: 'Agencies and managers, commissions, negotiating and redlining contracts.', href: '/deals/', n: count('deals'), art: 'contract', big: true },
+			{ id: 'earn', tint: 'earn', title: 'Every income stream', text: 'Affiliate, payouts, products and pricing, in the right order.', href: '/earn/', n: count('earn'), art: 'streams' },
+		],
+	},
+	{
+		n: '04',
+		id: 'run',
+		title: 'Run it like a business',
+		text: 'Taxes, a team, and the tools behind it.',
+		tiles: [
+			{ id: 'money', tint: 'money', title: 'Money basics', text: 'Taxes, what to set aside, LLC vs S corp, banking.', href: '/money/', n: count('money'), art: 'coin' },
+			{ id: 'team', tint: 'team', title: 'Team', text: 'Managers, agents, lawyers and your first hires.', href: '/team/', n: count('team'), art: 'people' },
+			{ id: 'stack', tint: 'stack', title: 'Stack', text: 'Gear and software at every budget, plus real creator setups.', href: '/stack/', n: count('stack'), art: 'layers' },
+		],
+	},
+	{
+		n: '05',
+		id: 'safe',
+		title: 'Stay safe',
+		text: 'Hacks, bans, scams, and what the industry won’t tell you.',
+		tiles: [
+			{ id: 'protect', tint: 'protect', title: 'Protect', text: 'Hacked, banned or impersonated? Your next move in two taps.', href: '/protect/', n: count('protect'), art: 'shield' },
+			{ id: 'underground', tint: 'underground', title: 'Underground', text: 'Fake followers, engagement pods and other gray markets, reported.', href: '/underground/', n: count('underground'), art: 'eye' },
+			{ id: 'news', tint: 'news', title: 'News', text: 'Platform changes, explained the week they happen.', href: '/news/', n: count('news'), art: 'spark' },
+		],
+	},
+];
+for (const s of stages) s.tiles = s.tiles.filter((t) => t.n > 0 || t.soon);
+const live = stages.filter((s) => s.tiles.length);
+---
+
+<div class="gh not-content">
+	<!-- Route map: five stops, tap one to jump -->
+	<nav class="gh-map" aria-label="Jump to a stage">
+		<svg class="gh-map__line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true">
+			<path d="M40 80 C 180 10, 300 110, 500 60 S 820 10, 960 70" />
+			<path class="flow" d="M40 80 C 180 10, 300 110, 500 60 S 820 10, 960 70" />
+		</svg>
+		<ol>
+			{
+				live.map((s, i) => (
+					<li style={`--i:${i}`}>
+						<a href={`#${s.id}`}>
+							<span class="dot">{s.n}</span>
+							<span class="label">{s.title}</span>
+						</a>
+					</li>
+				))
+			}
+		</ol>
+	</nav>
+
+	<!-- Platforms -->
+	<section class="gh-block" aria-labelledby="gh-platforms">
+		<div class="gh-head">
+			<h2 id="gh-platforms">Pick your platform</h2>
+			<a class="gh-more" href="/algorithms/compare-platforms/">Compare two <span aria-hidden="true">→</span></a>
+		</div>
+		<div class="gh-rail gh-plats" data-no-swipe>
+			{
+				platforms.map((p, i) => (
+					<a class="gh-plat" href={p.href} data-section={p.key === 'general' ? 'algorithms' : p.key} style={`--i:${i}`}>
+						<span class="glyph" aria-hidden="true">
+							{p.path ? (
+								<svg viewBox="0 0 24 24">
+									<path d={p.path} />
+								</svg>
+							) : (
+								p.mono === 'all' ? (
+								<svg viewBox="0 0 24 24">
+									<path d="M12 2c.6 4.6 2.9 7 7.5 7.6-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5C9.1 9 11.4 6.6 12 2zm6.5 12c.3 2 1.3 3 3.3 3.3-2 .3-3 1.3-3.3 3.3-.3-2-1.3-3-3.3-3.3 2-.3 3-1.3 3.3-3.3z" />
+								</svg>
+							) : (
+								<span class="mono">{p.mono}</span>
+							)
+							)}
+						</span>
+						<span class="name">{p.name}</span>
+						<span class="line">{p.rewards}</span>
+						<span class="paid">{p.paid}</span>
+					</a>
+				))
+			}
+		</div>
+		{
+			more.length > 0 && (
+				<p class="gh-also">
+					<span>Also covered</span>
+					{more.map(([k, n]) => (
+						<a href={`/platforms/${k}/`} data-section={k}>
+							{n}
+						</a>
+					))}
+				</p>
+			)
+		}
+	</section>
+
+	<!-- Stages -->
+	{
+		live.map((s) => (
+			<section class="gh-block gh-stage" id={s.id} aria-labelledby={`gh-${s.id}`}>
+				<div class="gh-head">
+					<div>
+						<p class="gh-step">{s.n}</p>
+						<h2 id={`gh-${s.id}`}>{s.title}</h2>
+						<p class="gh-sub">{s.text}</p>
+					</div>
+				</div>
+				<div class={`gh-tiles n${s.tiles.length}`}>
+					{s.tiles.map((t, i) => (
+						<a class={`gh-tile${t.big ? ' big' : ''}`} href={t.href} data-section={t.tint} style={`--i:${i}`}>
+							<div class="art" aria-hidden="true">
+								{t.art === 'feed' && (
+									<svg viewBox="0 0 160 100">
+										{[0, 1, 2].map((r) => (
+											<rect class="fcard" x={18 + r * 44} y={18 + (r % 2) * 10} width="36" height="56" rx="7" style={`--r:${r}`} />
+										))}
+										<path class="pick" d="M58 88 l6 -6 l6 6" />
+									</svg>
+								)}
+								{t.art === 'star' && (
+									<svg viewBox="0 0 160 100">
+										<circle cx="80" cy="50" r="30" class="ring" />
+										<circle cx="80" cy="50" r="42" class="ring faint" />
+										<path class="fill" d="M80 32 l5.5 11.5 12.5 1.6 -9.2 8.6 2.4 12.4 -11.2 -6.1 -11.2 6.1 2.4 -12.4 -9.2 -8.6 12.5 -1.6 z" />
+									</svg>
+								)}
+								{t.art === 'bookmark' && (
+									<svg viewBox="0 0 160 100">
+										<rect x="46" y="22" width="44" height="60" rx="6" class="ring faint" />
+										<rect x="58" y="16" width="44" height="60" rx="6" class="ring" />
+										<path class="fill" d="M90 16 v26 l-7 -5 -7 5 v-26 z" />
+									</svg>
+								)}
+								{t.art === 'chart' && (
+									<svg class="full" viewBox="0 0 320 110" preserveAspectRatio="none">
+										<path class="area" d="M0 100 L40 92 L80 96 L120 78 L160 82 L200 56 L240 50 L280 24 L320 10 L320 110 L0 110 Z" />
+										<path class="draw" d="M0 100 L40 92 L80 96 L120 78 L160 82 L200 56 L240 50 L280 24 L320 10" />
+									</svg>
+								)}
+								{t.art === 'lock' && (
+									<svg viewBox="0 0 200 110">
+										<g class="coins">
+											<circle cx="38" cy="78" r="11" />
+											<circle cx="164" cy="34" r="8" />
+											<circle cx="158" cy="86" r="6" />
+										</g>
+										<rect x="74" y="46" width="52" height="44" rx="10" class="fill" />
+										<path class="ring shackle" d="M86 46 v-10 a14 14 0 0 1 28 0 v10" />
+										<circle cx="100" cy="66" r="5" class="hole" />
+										<rect x="98" y="68" width="4" height="10" rx="2" class="hole" />
+									</svg>
+								)}
+								{t.art === 'contract' && (
+									<div class="redline">
+										<p><span>Usage</span> <s>forever</s> <ins>12 months</ins></p>
+										<p><span>Exclusivity</span> <s>all brands</s> <ins>direct rivals</ins></p>
+										<p><span>Paid</span> <s>net 90</s> <ins>net 30</ins></p>
+									</div>
+								)}
+								{t.art === 'streams' && (
+									<div class="streams">
+										{[78, 56, 40, 28].map((w, k) => (
+											<span style={`--w:${w}%;--k:${k}`} />
+										))}
+									</div>
+								)}
+								{t.art === 'coin' && (
+									<svg viewBox="0 0 160 100">
+										<ellipse cx="80" cy="70" rx="34" ry="10" class="ring faint" />
+										<ellipse cx="80" cy="58" rx="34" ry="10" class="ring" />
+										<ellipse class="fill bob" cx="80" cy="40" rx="34" ry="10" />
+									</svg>
+								)}
+								{t.art === 'people' && (
+									<svg viewBox="0 0 160 100">
+										<circle cx="80" cy="38" r="12" class="fill" />
+										<path class="fill" d="M58 80 a22 20 0 0 1 44 0 z" />
+										<circle cx="44" cy="46" r="9" class="ring" />
+										<circle cx="116" cy="46" r="9" class="ring" />
+										<path class="ring" d="M28 80 a16 15 0 0 1 28 -6 M132 80 a16 15 0 0 0 -28 -6" />
+									</svg>
+								)}
+								{t.art === 'layers' && (
+									<svg viewBox="0 0 160 100">
+										<path class="ring faint" d="M80 70 l40 -16 -40 -16 -40 16 z" transform="translate(0 14)" />
+										<path class="ring" d="M80 70 l40 -16 -40 -16 -40 16 z" />
+										<path class="fill bob" d="M80 56 l40 -16 -40 -16 -40 16 z" transform="translate(0 -12)" />
+									</svg>
+								)}
+								{t.art === 'shield' && (
+									<svg viewBox="0 0 160 100">
+										<path class="fill" d="M80 14 l28 10 v20 c0 20 -12 34 -28 42 c-16 -8 -28 -22 -28 -42 v-20 z" />
+										<path class="tick" d="M68 50 l8 8 l16 -18" />
+									</svg>
+								)}
+								{t.art === 'eye' && (
+									<svg viewBox="0 0 160 100">
+										<path class="ring" d="M30 50 C 50 22, 110 22, 130 50 C 110 78, 50 78, 30 50 z" />
+										<circle class="fill blink" cx="80" cy="50" r="12" />
+									</svg>
+								)}
+								{t.art === 'spark' && (
+									<svg viewBox="0 0 160 100">
+										<path class="fill spin" d="M80 20 c3 18 12 27 30 30 c-18 3 -27 12 -30 30 c-3 -18 -12 -27 -30 -30 c18 -3 27 -12 30 -30 z" />
+									</svg>
+								)}
+							</div>
+							<div class="body">
+								<h3>{t.title}</h3>
+								<p>{t.text}</p>
+								<span class="meta">
+									{t.soon ? 'New section landing soon' : `${t.n} guide${t.n === 1 ? '' : 's'}`}
+									<span class="go" aria-hidden="true">→</span>
+								</span>
+							</div>
+						</a>
+					))}
+				</div>
+			</section>
+		))
+	}
+
+	<a class="gh-all" href="#all">
+		<span>Or search every guide</span>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+	</a>
+</div>
+
+<style>
+	.gh {
+		--gh-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2.75rem;
+		margin-top: 0.5rem;
+	}
+	.gh > * {
+		min-width: 0;
+	}
+	/* Sections that ship later still get a color. */
+	.gh [data-section='paywall'] {
+		--accent: var(--sc-paywall, var(--sc-rose));
+	}
+	.gh [data-section='facebook'] {
+		--accent: var(--sc-facebook, var(--sc-cyan));
+	}
+
+	/* ---------- Route map ---------- */
+	.gh-map {
+		position: relative;
+		padding: 1.1rem 0.5rem 0.6rem;
+		border: 1px solid var(--sc-line);
+		border-radius: 24px;
+		background:
+			radial-gradient(120% 140% at 0% 0%, rgb(255 180 126 / 0.1), transparent 55%),
+			radial-gradient(120% 140% at 100% 100%, rgb(195 166 255 / 0.12), transparent 55%),
+			rgb(255 255 255 / 0.015);
+		overflow: hidden;
+	}
+	.gh-map__line {
+		position: absolute;
+		inset: 0.9rem 4% auto;
+		width: 92%;
+		height: 4.25rem;
+		fill: none;
+		pointer-events: none;
+	}
+	.gh-map__line path {
+		stroke: rgb(255 255 255 / 0.12);
+		stroke-width: 2;
+		vector-effect: non-scaling-stroke;
+	}
+	.gh-map__line .flow {
+		stroke: url(#none);
+		stroke: var(--sc-ion);
+		stroke-dasharray: 2 14;
+		stroke-linecap: round;
+		stroke-width: 3;
+		animation: gh-flow 1.6s linear infinite;
+	}
+	@keyframes gh-flow {
+		to {
+			stroke-dashoffset: -32;
+		}
+	}
+	.gh-map ol {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.gh-map li {
+		margin: 0;
+		display: flex;
+		justify-content: center;
+		animation: gh-pop 0.5s var(--gh-ease) both;
+		animation-delay: calc(var(--i) * 70ms);
+	}
+	.gh-map li:nth-child(odd) {
+		padding-top: 1.6rem;
+	}
+	.gh-map a {
+		display: grid;
+		justify-items: center;
+		gap: 0.4rem;
+		text-decoration: none;
+		color: var(--sc-ivory);
+		text-align: center;
+	}
+	.gh-map .dot {
+		display: grid;
+		place-items: center;
+		width: 2.7rem;
+		height: 2.7rem;
+		border-radius: 50%;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: 0.85rem;
+		color: #0b0a0d;
+		background: var(--sc-aurora);
+		box-shadow:
+			0 0 0 5px rgb(8 7 10 / 0.9),
+			0 8px 24px -6px rgb(255 134 184 / 0.6);
+		transition: transform 0.25s var(--gh-ease);
+	}
+	.gh-map a:hover .dot,
+	.gh-map a:focus-visible .dot {
+		transform: scale(1.12) rotate(-6deg);
+	}
+	.gh-map .label {
+		font-size: 0.78rem;
+		font-weight: 600;
+		line-height: 1.2;
+		max-width: 7rem;
+	}
+	@keyframes gh-pop {
+		from {
+			opacity: 0;
+			transform: translateY(10px) scale(0.9);
+		}
+	}
+
+	/* ---------- Blocks ---------- */
+	.gh-block {
+		scroll-margin-top: calc(var(--sl-nav-height, 3.5rem) + 1rem);
+	}
+	.gh-head {
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+	.gh-head h2 {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.45rem, 4.5vw, 1.9rem);
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+		color: var(--sc-ivory);
+	}
+	.gh-step {
+		margin: 0 0 0.35rem;
+		width: fit-content;
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: #0b0a0d;
+		background: var(--sc-aurora);
+	}
+	.gh-sub {
+		margin: 0.35rem 0 0;
+		color: var(--sc-silver);
+		font-size: 0.95rem;
+	}
+	.gh-more {
+		flex: none;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--sc-ion);
+		text-decoration: none;
+	}
+
+	/* ---------- Platform tiles ---------- */
+	.gh-rail {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.gh-plats {
+		grid-template-columns: repeat(7, minmax(0, 1fr));
+	}
+	.gh-plat {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		min-height: 12.5rem;
+		padding: 1rem 0.9rem;
+		border-radius: 22px;
+		border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--sc-line));
+		background:
+			radial-gradient(130% 90% at 50% 0%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 62%),
+			linear-gradient(180deg, rgb(255 255 255 / 0.04), rgb(255 255 255 / 0.01));
+		color: inherit;
+		text-decoration: none;
+		overflow: hidden;
+		isolation: isolate;
+		animation: gh-pop 0.5s var(--gh-ease) both;
+		animation-delay: calc(var(--i) * 50ms);
+		transition:
+			transform 0.3s var(--gh-ease),
+			border-color 0.2s,
+			box-shadow 0.3s;
+	}
+	.gh-plat:hover,
+	.gh-plat:focus-visible {
+		transform: translateY(-4px);
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+		box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--accent) 70%, transparent);
+	}
+	.gh-plat:active {
+		transform: scale(0.97);
+	}
+	.gh-plat .glyph {
+		display: grid;
+		place-items: center;
+		width: 3.1rem;
+		height: 3.1rem;
+		margin-bottom: auto;
+		border-radius: 16px;
+		background: rgb(8 7 10 / 0.6);
+		border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+		box-shadow: 0 0 28px -6px color-mix(in srgb, var(--accent) 80%, transparent);
+		transition: transform 0.4s var(--gh-ease);
+	}
+	.gh-plat:hover .glyph {
+		transform: rotate(-8deg) scale(1.08);
+	}
+	.gh-plat .glyph svg {
+		width: 1.45rem;
+		height: 1.45rem;
+		fill: var(--sc-ivory);
+	}
+	.gh-plat .mono {
+		font-family: var(--sc-font-display);
+		font-weight: 800;
+		font-size: 1.05rem;
+		letter-spacing: -0.03em;
+		color: var(--sc-ivory);
+	}
+	.gh-plat .name {
+		margin-top: 1rem;
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: 1.15rem;
+		letter-spacing: -0.01em;
+		color: var(--sc-ivory);
+	}
+	.gh-plat .line {
+		font-size: 0.8rem;
+		line-height: 1.35;
+		color: var(--sc-silver);
+	}
+	.gh-plat .paid {
+		margin-top: 0.35rem;
+		width: fit-content;
+		padding: 0.15rem 0.5rem;
+		border-radius: 999px;
+		font-size: 0.68rem;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 13%, transparent);
+	}
+	.gh-also {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		margin: 0.9rem 0 0;
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.gh-also span {
+		margin-right: 0.2rem;
+	}
+	.gh-also a {
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		text-decoration: none;
+		transition:
+			border-color 0.2s,
+			color 0.2s;
+	}
+	.gh-also a:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	/* ---------- Section tiles ---------- */
+	.gh-tiles {
+		display: grid;
+		gap: 0.85rem;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.gh-tiles.n1 {
+		grid-template-columns: 1fr;
+	}
+	.gh-tiles .big {
+		grid-column: span 1;
+	}
+	#paid .gh-tiles {
+		grid-template-columns: 1.25fr 1.25fr 1fr;
+	}
+	.gh-tile {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		border-radius: 22px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.01));
+		color: inherit;
+		text-decoration: none;
+		overflow: hidden;
+		animation: gh-pop 0.5s var(--gh-ease) both;
+		animation-delay: calc(var(--i) * 60ms);
+		transition:
+			transform 0.3s var(--gh-ease),
+			border-color 0.2s,
+			box-shadow 0.3s;
+	}
+	.gh-tile:hover,
+	.gh-tile:focus-visible {
+		transform: translateY(-4px);
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+		box-shadow: 0 22px 50px -24px color-mix(in srgb, var(--accent) 75%, transparent);
+	}
+	.gh-tile:active {
+		transform: scale(0.98);
+	}
+	.gh-tile .art {
+		position: relative;
+		display: grid;
+		place-items: center;
+		height: 8.5rem;
+		background: radial-gradient(90% 120% at 50% 0%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 70%), #0b0a0d;
+		border-bottom: 1px solid var(--sc-line);
+	}
+	.gh-tile.big .art {
+		height: 10.5rem;
+	}
+	.gh-tiles.n1 .art {
+		height: 9rem;
+	}
+	.gh-tile .art {
+		overflow: hidden;
+	}
+	.gh-tile .art svg {
+		position: absolute;
+		inset: 0.9rem;
+		width: calc(100% - 1.8rem);
+		height: calc(100% - 1.8rem);
+		overflow: visible;
+	}
+	.gh-tile .art svg.full {
+		inset: 1.2rem 0 0;
+		width: 100%;
+		height: calc(100% - 1.2rem);
+	}
+	.art .ring {
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.art .faint {
+		stroke-opacity: 0.35;
+	}
+	.art .fill {
+		fill: var(--accent);
+		filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 70%, transparent));
+	}
+	.art .hole {
+		fill: #0b0a0d;
+	}
+	.art .tick,
+	.art .pick {
+		fill: none;
+		stroke: #0b0a0d;
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.art .pick {
+		stroke: var(--accent);
+		stroke-width: 3;
+	}
+	.art .fcard {
+		fill: color-mix(in srgb, var(--accent) 35%, #0b0a0d);
+		stroke: var(--accent);
+		stroke-width: 1.5;
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: gh-card 3.6s var(--gh-ease) infinite;
+		animation-delay: calc(var(--r) * -1.2s);
+	}
+	@keyframes gh-card {
+		0%,
+		100% {
+			transform: translateY(0);
+			opacity: 0.55;
+		}
+		30% {
+			transform: translateY(-8px);
+			opacity: 1;
+		}
+	}
+	.art .area {
+		fill: color-mix(in srgb, var(--accent) 20%, transparent);
+	}
+	.art .draw {
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 2.5;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+		stroke-dasharray: 600;
+		stroke-dashoffset: 600;
+		animation: gh-draw 1.6s 0.2s var(--gh-ease) forwards;
+	}
+	@keyframes gh-draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+	.art .coins circle {
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 2;
+		animation: gh-bob 3s ease-in-out infinite;
+	}
+	.art .coins circle:nth-child(2) {
+		animation-delay: -1s;
+	}
+	.art .coins circle:nth-child(3) {
+		animation-delay: -2s;
+	}
+	.art .shackle {
+		stroke-width: 6;
+		transition: transform 0.4s var(--gh-ease);
+	}
+	.gh-tile:hover .shackle {
+		transform: translateY(-6px);
+	}
+	.art .bob {
+		animation: gh-bob 3s ease-in-out infinite;
+	}
+	.art .blink {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: gh-blink 4s infinite;
+	}
+	.art .spin {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: gh-spin 9s linear infinite;
+	}
+	@keyframes gh-bob {
+		50% {
+			transform: translateY(-5px);
+		}
+	}
+	@keyframes gh-blink {
+		0%,
+		92%,
+		100% {
+			transform: scaleY(1);
+		}
+		96% {
+			transform: scaleY(0.1);
+		}
+	}
+	@keyframes gh-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	.redline {
+		display: grid;
+		gap: 0.45rem;
+		width: min(88%, 20rem);
+		font-size: 0.8rem;
+	}
+	.redline p {
+		display: flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0.35rem 0.6rem;
+		border-radius: 10px;
+		background: rgb(255 255 255 / 0.04);
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.redline span {
+		flex: none;
+		width: 5.2rem;
+		color: var(--sc-silver);
+	}
+	.redline s {
+		color: var(--sc-ember);
+		opacity: 0.85;
+	}
+	.redline ins {
+		text-decoration: none;
+		color: var(--accent);
+		font-weight: 600;
+	}
+	.streams {
+		display: grid;
+		gap: 0.5rem;
+		width: 78%;
+	}
+	.streams span {
+		height: 0.7rem;
+		width: var(--w);
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 25%, transparent));
+		transform-origin: left;
+		animation: gh-grow 0.9s var(--gh-ease) both;
+		animation-delay: calc(0.2s + var(--k) * 0.1s);
+	}
+	@keyframes gh-grow {
+		from {
+			transform: scaleX(0);
+		}
+	}
+	.gh-tile .body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		flex: 1;
+		padding: 0.95rem 1.05rem 1.05rem;
+	}
+	.gh-tile h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.15rem;
+		letter-spacing: -0.01em;
+		color: var(--sc-ivory);
+	}
+	.gh-tile.big h3 {
+		font-size: 1.35rem;
+	}
+	.gh-tile p {
+		margin: 0;
+		font-size: 0.86rem;
+		line-height: 1.5;
+		color: var(--sc-silver);
+	}
+	.gh-tile .meta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: auto;
+		padding-top: 0.6rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+	.gh-tile .go {
+		display: grid;
+		place-items: center;
+		width: 1.9rem;
+		height: 1.9rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--accent) 16%, transparent);
+		transition: transform 0.3s var(--gh-ease);
+	}
+	.gh-tile:hover .go {
+		transform: translateX(3px);
+	}
+
+	.gh-all {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		margin: -0.5rem auto 0;
+		padding: 0.7rem 1.2rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		font-weight: 600;
+		font-size: 0.9rem;
+		text-decoration: none;
+	}
+	.gh-all svg {
+		width: 1rem;
+		height: 1rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		animation: gh-bob 2s ease-in-out infinite;
+	}
+
+	/* ---------- Tablet ---------- */
+	@media (max-width: 72rem) {
+		.gh-plats {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	/* ---------- Phone: swipe rails like a social app ---------- */
+	@media (max-width: 50rem) {
+		.gh {
+			gap: 2.25rem;
+		}
+		.gh-rail,
+		.gh-tiles:not(.n1) {
+			display: flex;
+			gap: 0.7rem;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding: 0.25rem var(--sl-content-pad-x, 1rem) 0.75rem;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+			scrollbar-width: none;
+			overscroll-behavior-x: contain;
+		}
+		.gh-rail::-webkit-scrollbar,
+		.gh-tiles::-webkit-scrollbar {
+			display: none;
+		}
+		.gh-plat {
+			flex: 0 0 9.5rem;
+			min-height: 12rem;
+			scroll-snap-align: start;
+		}
+		.gh-tiles:not(.n1) .gh-tile {
+			flex: 0 0 78%;
+			scroll-snap-align: start;
+		}
+		.gh-map {
+			padding: 0.9rem 0.25rem 0.5rem;
+		}
+		.gh-map .dot {
+			width: 2.3rem;
+			height: 2.3rem;
+			font-size: 0.75rem;
+		}
+		.gh-map .label {
+			font-size: 0.68rem;
+		}
+		.gh-map li:nth-child(odd) {
+			padding-top: 1.2rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.gh *,
+		.gh *::before {
+			animation: none !important;
+			transition: none !important;
+		}
+		.art .draw {
+			stroke-dashoffset: 0;
+		}
+	}
+</style>

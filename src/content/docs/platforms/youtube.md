@@ -8,7 +8,7 @@ cover:
   label: YouTube
   tint: youtube
 sidebar:
-  order: 1
+  order: 3
 ---
 
 **The short version:** YouTube recommends videos people click, keep watching, and later say they were glad they watched. Recommendations drive more viewing than subscriptions or search, so this is the system to design for. It's also the platform with the clearest path to getting paid.
@@ -85,7 +85,7 @@ The YouTube Partner Program has two doors. The first unlocks fan money and shopp
 - **Ads and Premium:** a share of ad revenue on long videos and the Shorts feed, plus a share of what Premium members pay to watch you. *(From the platform.)*
 - **Stay active.** YouTube may turn off monetization for channels with no uploads or Posts activity for six months or more. *(From the platform.)*
 - **Heads up:** YouTube is updating Partner Program terms on February 1, 2027. You'll need to accept them in YouTube Studio by January 31, 2027. *(From the platform.)*
-- **Brand deals usually beat ads.** Most full-time YouTubers earn more from sponsorships than from AdSense. See [Brand deals](/earn/brand-deals/). *(Creator-tested.)*
+- **Brand deals usually beat ads.** Most full-time YouTubers earn more from sponsorships than from AdSense. See [Brand deals](/deals/brand-deals/). *(Creator-tested.)*
 
 ## Who to follow for YouTube changes
 

@@ -1,8 +1,9 @@
 ---
 title: "Editorial standards"
 description: "How we decide what's true, how we label what we're not sure about, and how a guide gets from idea to published."
-status: draft
-lastReviewed: 2026-11-26
+status: published
+lastReviewed: 2026-11-27
+reviewers: [william-lee]
 sidebar:
   order: 2
 ---

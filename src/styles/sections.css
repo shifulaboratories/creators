@@ -46,6 +46,7 @@
 	--sc-twitch: var(--sc-amethyst);
 	--sc-newsletters: var(--sc-jade);
 	--sc-podcasts: var(--sc-champagne);
+	--sc-facebook: color-mix(in srgb, var(--sc-cyan) 70%, var(--sc-ion));
 }
 [data-section='algorithms'] { --accent: var(--sc-algorithms); }
 [data-section='case-studies'] { --accent: var(--sc-case-studies); }
@@ -62,3 +63,4 @@
 [data-section='twitch'] { --accent: var(--sc-twitch); }
 [data-section='newsletters'] { --accent: var(--sc-newsletters); }
 [data-section='podcasts'] { --accent: var(--sc-podcasts); }
+[data-section='facebook'] { --accent: var(--sc-facebook); }

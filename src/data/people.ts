@@ -9,7 +9,7 @@
  * No numbers they have not given us, and no rounding up.
  */
 export interface PersonLink {
-	kind: 'github' | 'linkedin' | 'instagram' | 'website';
+	kind: 'github' | 'linkedin' | 'instagram' | 'x' | 'website';
 	label: string;
 	href: string;
 }
@@ -38,8 +38,11 @@ export const people: Record<string, Person> = {
 			'He started Select Creators.',
 		],
 		links: [
+			{ kind: 'website', label: 'bywilliaml.com', href: 'https://bywilliaml.com' },
+			{ kind: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/bywilliaml' },
+			{ kind: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/bywilliaml/' },
+			{ kind: 'x', label: 'X', href: 'https://x.com/bywilliaml' },
 			{ kind: 'github', label: 'GitHub', href: 'https://github.com/byw1' },
-			// LinkedIn, Instagram and website go here once William confirms the URLs.
 		],
 	},
 };

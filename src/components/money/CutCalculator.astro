@@ -1,0 +1,271 @@
+---
+/**
+ * Where a brand's dollar goes: brand budget → brand-side agency → your fee →
+ * manager / agent / lawyer / business manager → you. Rates from src/lib/money-data.ts (cuts).
+ */
+import { cuts, sources } from '../../lib/money-data';
+const payload = cuts.map((c) => ({ ...c, links: c.src.map((s) => ({ name: sources[s].publisher, url: sources[s].url })) }));
+const colors: Record<string, string> = { agency: 'var(--sc-cyan)', manager: 'var(--sc-ion)', agent: 'var(--sc-champagne)', lawyer: 'var(--sc-rose)', bizmgr: 'var(--sc-amethyst)' };
+---
+
+<div class="sc-widget cc not-content" data-section="deals" data-cc data-cuts={JSON.stringify(payload)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Who takes a cut</div>
+			<h4 class="sc-widget__title">Follow a brand’s budget to your bank account</h4>
+		</div>
+	</div>
+
+	<label class="cc-budget">
+		<span>The brand spends <b data-out="budget">$10,000</b></span>
+		<input class="sc-range" type="range" min="0" max="1000" value="565" data-budget aria-label="Brand budget in dollars" />
+	</label>
+
+	<div class="cc-bar" data-bar aria-hidden="true"></div>
+	<div class="cc-keep" aria-live="polite">
+		<span>You keep</span>
+		<b data-out="keep">$6,400</b>
+		<small data-out="keeppct">64% of what the brand spent</small>
+	</div>
+
+	<ul class="cc-list">
+		{
+			cuts.map((c) => (
+				<li class="cc-item" data-key={c.key} style={`--c:${colors[c.key]}`}>
+					<label class="cc-toggle">
+						<input type="checkbox" checked={c.on} data-on={c.key} />
+						<span class="cc-swatch" />
+						<span class="cc-name">
+							<b>{c.name}</b>
+							<small>{c.who}</small>
+						</span>
+						<span class="cc-amt" data-amt={c.key} />
+					</label>
+					<div class="cc-rate">
+						<input class="sc-range" type="range" min={Math.round(c.min * 100)} max={Math.round(c.max * 100)} value={Math.round(c.def * 100)} data-rate={c.key} aria-label={`${c.name} percent`} />
+						<span class="cc-pct" data-pct={c.key}>{Math.round(c.def * 100)}%</span>
+					</div>
+					<p class="cc-note">
+						{c.note}{' '}
+						{c.src.map((s, i) => (
+							<>
+								{i > 0 && ' · '}
+								<a href={sources[s].url} rel="noopener">
+									{sources[s].publisher.split(' (')[0]}
+								</a>
+							</>
+						))}
+					</p>
+				</li>
+			))
+		}
+	</ul>
+	<p class="sc-widget__note">
+		Commissions here are taken on your gross fee, which is the most common setup; some contracts stack them differently, so check yours. Taxes, editors and expenses come out after this. A cut is worth paying when that person brings in more than they cost: see <a href="/team/when-to-get-a-manager/">when to get a manager</a>.
+	</p>
+</div>
+
+<script>
+	type C = { key: string; name: string; side: 'brand' | 'you'; def: number; on: boolean };
+	const usd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+	const toBudget = (x: number) => Math.round(Math.pow(10, 2.7 + (x / 1000) * 2.3) / 50) * 50; // ~$500 … $100K
+	document.querySelectorAll<HTMLElement>('[data-cc]').forEach((root) => {
+		const cuts: C[] = JSON.parse(root.dataset.cuts!);
+		const st: Record<string, { on: boolean; r: number }> = Object.fromEntries(cuts.map((c) => [c.key, { on: c.on, r: c.def }]));
+		const slider = root.querySelector<HTMLInputElement>('[data-budget]')!;
+		const out = (k: string) => root.querySelector<HTMLElement>(`[data-out="${k}"]`)!;
+		const colors: Record<string, string> = { agency: 'var(--sc-cyan)', manager: 'var(--sc-ion)', agent: 'var(--sc-champagne)', lawyer: 'var(--sc-rose)', bizmgr: 'var(--sc-amethyst)' };
+		const short: Record<string, string> = { manager: 'Manager', agent: 'Agent', lawyer: 'Lawyer', bizmgr: 'Biz mgr' };
+		const render = () => {
+			const B = toBudget(+slider.value);
+			slider.style.setProperty('--fill', +slider.value / 10 + '%');
+			out('budget').textContent = usd(B);
+			const agency = st.agency.on ? st.agency.r : 0;
+			const fee = B * (1 - agency);
+			const parts: { key: string; v: number; label: string }[] = [];
+			if (agency) parts.push({ key: 'agency', v: B * agency, label: 'Agency' });
+			let keep = fee;
+			cuts.filter((c) => c.side === 'you').forEach((c) => {
+				if (!st[c.key].on) return;
+				const v = fee * st[c.key].r;
+				keep -= v;
+				parts.push({ key: c.key, v, label: short[c.key] ?? c.name });
+			});
+			keep = Math.max(0, keep);
+			cuts.forEach((c) => {
+				const v = c.side === 'brand' ? B * st[c.key].r : fee * st[c.key].r;
+				const el = root.querySelector<HTMLElement>(`[data-amt="${c.key}"]`)!;
+				el.textContent = st[c.key].on ? '−' + usd(v) : 'off';
+				root.querySelector<HTMLElement>(`[data-pct="${c.key}"]`)!.textContent = Math.round(st[c.key].r * 100) + '%';
+				const r = root.querySelector<HTMLInputElement>(`[data-rate="${c.key}"]`)!;
+				r.disabled = !st[c.key].on;
+				r.style.setProperty('--fill', ((+r.value - +r.min) / (+r.max - +r.min)) * 100 + '%');
+				root.querySelector<HTMLElement>(`.cc-item[data-key="${c.key}"]`)!.classList.toggle('is-off', !st[c.key].on);
+			});
+			root.querySelector<HTMLElement>('[data-bar]')!.innerHTML =
+				parts.map((p) => `<span style="flex:${p.v};--c:${colors[p.key]}"><i>${p.label}</i></span>`).join('') +
+				`<span class="is-you" style="flex:${keep}"><i>You</i></span>`;
+			out('keep').textContent = usd(keep);
+			out('keeppct').textContent = `${Math.round((keep / B) * 100)}% of what the brand spent · ${Math.round((keep / fee) * 100)}% of your fee`;
+		};
+		slider.addEventListener('input', render);
+		root.addEventListener('change', (e) => {
+			const t = e.target as HTMLInputElement;
+			if (t.dataset.on) {
+				st[t.dataset.on].on = t.checked;
+				render();
+			}
+		});
+		root.addEventListener('input', (e) => {
+			const t = e.target as HTMLInputElement;
+			if (t.dataset.rate) {
+				st[t.dataset.rate].r = +t.value / 100;
+				render();
+			}
+		});
+		render();
+	});
+</script>
+
+<style>
+	.cc-budget {
+		display: grid;
+		font-size: 0.9rem;
+		color: var(--sc-silver);
+	}
+	.cc-budget b {
+		font-family: var(--sc-font-display);
+		font-size: 1.3rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.cc-bar {
+		display: flex;
+		height: 44px;
+		margin: 1rem 0 0.75rem;
+		border-radius: 12px;
+		overflow: hidden;
+		gap: 2px;
+	}
+	:global(.cc-bar span) {
+		position: relative;
+		min-width: 0;
+		overflow: hidden;
+		background: var(--c);
+		transition: flex 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+		display: grid;
+		place-items: center;
+	}
+	:global(.cc-bar span.is-you) {
+		background: linear-gradient(90deg, var(--sc-jade), var(--sc-lime));
+	}
+	:global(.cc-bar i) {
+		font-style: normal;
+		font-size: 0.68rem;
+		font-weight: 600;
+		color: #111;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: clip;
+		padding: 0 4px;
+	}
+	.cc-keep {
+		display: grid;
+		gap: 0.1rem;
+		margin-bottom: 1rem;
+	}
+	.cc-keep span {
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+	}
+	.cc-keep b {
+		font-family: var(--sc-font-display);
+		font-size: clamp(2rem, 9vw, 2.8rem);
+		line-height: 1.05;
+		color: var(--sc-jade);
+		font-variant-numeric: tabular-nums;
+	}
+	.cc-keep small {
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.cc-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.5rem;
+	}
+	.cc-item {
+		padding: 0.75rem 0.85rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.02);
+		transition: opacity 0.2s;
+	}
+	.cc-item.is-off {
+		opacity: 0.6;
+	}
+	.cc-toggle {
+		display: grid;
+		grid-template-columns: auto auto 1fr auto;
+		align-items: center;
+		gap: 0.6rem;
+		cursor: pointer;
+	}
+	.cc-toggle input {
+		width: 1.1rem;
+		height: 1.1rem;
+		accent-color: var(--sc-jade);
+	}
+	.cc-swatch {
+		width: 10px;
+		height: 10px;
+		border-radius: 3px;
+		background: var(--c);
+	}
+	.cc-name {
+		display: grid;
+		min-width: 0;
+	}
+	.cc-name b {
+		color: var(--sc-ivory);
+		font-size: 0.9rem;
+	}
+	.cc-name small {
+		color: var(--sc-silver);
+		font-size: 0.74rem;
+	}
+	.cc-amt {
+		font-size: 0.85rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.cc-rate {
+		display: grid;
+		grid-template-columns: 1fr 3rem;
+		align-items: center;
+		gap: 0.6rem;
+		--accent: var(--c);
+	}
+	.cc-pct {
+		font-size: 0.8rem;
+		color: var(--sc-ivory);
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+	.cc-note {
+		margin: 0.2rem 0 0;
+		font-size: 0.74rem;
+		line-height: 1.45;
+		color: var(--sc-steel);
+	}
+	.cc-note a {
+		color: var(--sc-silver);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		:global(.cc-bar span) {
+			transition: none;
+		}
+	}
+</style>

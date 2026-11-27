@@ -8,7 +8,7 @@ cover:
   label: Instagram
   tint: instagram
 sidebar:
-  order: 3
+  order: 1
 ---
 
 **The short version:** Instagram has no single algorithm. Feed, Explore, Reels, Stories and Search each rank differently, and Reels and Explore are mostly content from accounts people don't follow yet. That's where new reach comes from.
@@ -69,7 +69,7 @@ Instagram groups its money tools into three buckets. It doesn't publish one foll
 - **From your audience:** Subscriptions (fans pay a monthly price you set and get exclusive content with a purple ring), Gifts on Reels, and Badges in Lives. Subscription payouts arrive on the 21st of the following month. *(From the platform.)*
 - **From brands:** Partnership Ads, which let a brand run your post as an ad, and Creator Marketplace, where brands find creators for paid work. *(From the platform.)*
 - **From Instagram:** Bonuses, invite-based, that "reward you for the performance of your reels, carousels and single image posts." *(From the platform.)*
-- **Brand deals are still the big one** for most Instagram creators. See [Brand deals](/earn/brand-deals/) and [Pricing](/earn/pricing/). *(Creator-tested.)*
+- **Brand deals are still the big one** for most Instagram creators. See [Brand deals](/deals/brand-deals/) and [Pricing](/deals/pricing/). *(Creator-tested.)*
 
 ## Who to follow for Instagram changes
 

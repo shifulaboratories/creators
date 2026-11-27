@@ -8,7 +8,7 @@ cover:
   label: Snapchat
   tint: snapchat
 sidebar:
-  order: 8
+  order: 9
 ---
 
 **The short version:** Snapchat recommends public content in three places: Spotlight, Public Stories (including Discover), and the Snap Map. Snap says plainly that "allowed on Snapchat doesn't always mean recommended." Its creator payout program rewards one thing above all: posting a lot, every week.

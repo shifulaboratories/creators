@@ -166,6 +166,21 @@ export const platforms: P[] = [
 		},
 	},
 	{
+		key: 'facebook',
+		name: 'Facebook',
+		tint: 'facebook',
+		href: '/platforms/facebook/',
+		rows: {
+			reach: { t: 'Feed and Reels, built by retrieving candidates, ranking, then reranking per viewer.', s: 'platform' },
+			signals: { t: 'Thousands of signals, led by what people like, comment on and watch, plus interests they pick in Your algorithm.', s: 'platform' },
+			hurts: { t: 'Reposted or lightly edited content, spam tactics, fake engagement, and topics a viewer marked not interested.', s: 'platform' },
+			followers: { t: 'Not covered in the sources we cite.', s: 'none' },
+			status: { t: 'Mostly unoriginal accounts can be made non-recommendable, with an appeal route.', s: 'platform' },
+			open: { t: 'Newsroom posts and a 2026 engineering write-up. No public ranking code.', s: 'platform' },
+			play: { t: 'Post your own originals natively, in a clear niche, and never repost to fill a calendar.', s: 'practitioner' },
+		},
+	},
+	{
 		key: 'x',
 		name: 'X',
 		tint: 'x',

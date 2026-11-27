@@ -8,7 +8,7 @@ cover:
   label: Threads
   tint: threads
 sidebar:
-  order: 6
+  order: 7
 ---
 
 **The short version:** Threads ranks posts by predicting whether you'll like them, open the replies, tap the profile, follow the author, or scroll right past. It's a conversation app tied to your Instagram account. Over 400 million people use it monthly, but Meta doesn't pay creators for Threads posts directly right now.
@@ -52,7 +52,7 @@ From the platform (Meta's explainer, as reproduced by Buffer, January 2026):
 
 - **No direct payouts today.** Meta began showing ads to all Threads users worldwide in January 2026, but TechCrunch's report on the rollout mentions no revenue sharing for creators. *(Reporting.)*
 - **Threads pays you through Instagram.** Followers you earn on Threads see you on Instagram too, where Subscriptions, Gifts, Bonuses and brand deals live. See the [Instagram guide](/platforms/instagram/). *(Creator-tested.)*
-- **Brands buy Threads posts as part of Instagram packages.** Price it as an add-on, not a standalone deliverable. See [Pricing](/earn/pricing/). *(Creator-tested.)*
+- **Brands buy Threads posts as part of Instagram packages.** Price it as an add-on, not a standalone deliverable. See [Pricing](/deals/pricing/). *(Creator-tested.)*
 
 ## Sources
 
