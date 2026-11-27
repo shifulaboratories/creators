@@ -5,6 +5,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { sets, myths, rows, platforms } from './widget-data';
 import { protectWidgetMarkdown } from './protect-playbooks';
+import { moneyWidgetText } from './money-markdown';
 
 export const SITE = 'https://creators.select';
 
@@ -48,6 +49,7 @@ const widgetText: Record<string, string> = {
 		'How a post snowballs (illustrative model, not platform data): a new post is shown to a small test group; if their reactions (watching through, sending, following, not swiping away) beat what the feed expects, it is shown to lookalike viewers, then adjacent interests, then broadly. Documented example: Instagram Trial Reels are shown to non-followers first, with views, likes, comments and shares visible after about 24 hours.',
 	SignalBoard:
 		'| Signal | Instagram | TikTok | YouTube | X |\n| --- | --- | --- | --- | --- |\n| Watching it through | Top | Top | Top | Counts |\n| Sending or sharing | Top | Counts | Counts | Top |\n| Talking (comments, replies) | Counts | Counts | Not stated | Top |\n| Following after | Not stated | Counts | Not stated | Counts |\n| Liking | Top | Counts | Counts | Counts (0.708) |\n| Saying no (not interested, report) | Not stated | Not stated | Penalty | Penalty |\n\nInstagram: Mosseri, Jan 2025, "The top three signals that matter most for ranking are watch time, likes and sends." TikTok: finishing a longer video is a strong signal (Newsroom, 2020). YouTube: clicks, watch time, surveys, shares, likes, dislikes. X: copy-link share 20, reply/quote/DM share 5, follow 4, like 0.708, report -234 (2026 code).',
+	...moneyWidgetText,
 	XWeights:
 		'X ranking weights (multiply predicted probabilities, not counts):\n\n| Action | 2026 weight |\n| --- | --- |\n' +
 		sets['2026'].map(([a, w]) => `| ${a} | ${w} |`).join('\n') +

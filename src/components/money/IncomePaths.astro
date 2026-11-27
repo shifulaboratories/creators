@@ -1,0 +1,239 @@
+---
+/**
+ * Income paths side by side. Pick what matters to you and the cards re-rank.
+ * Scores are our editorial read (labeled as such); the "you keep" lines are sourced.
+ */
+import { paths, sources } from '../../lib/money-data';
+const dims = [
+	{ key: 'steady', label: 'Steady money', low: 'Lumpy', high: 'Steady' },
+	{ key: 'ownership', label: 'Owning my audience', low: 'Platform’s', high: 'Yours' },
+	{ key: 'effort', label: 'Less ongoing work', low: 'Ongoing', high: 'Light', invert: true },
+	{ key: 'ceiling', label: 'Big upside', low: 'Capped', high: 'High' },
+] as const;
+---
+
+<div class="sc-widget ip not-content" data-section="earn" data-ip>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Income paths</div>
+			<h4 class="sc-widget__title">What matters most to you right now?</h4>
+		</div>
+	</div>
+	<div class="sc-chip-row" role="group" aria-label="Sort by what matters most">
+		{
+			dims.map((d, i) => (
+				<button type="button" class="sc-chip" data-dim={d.key} aria-pressed={i === 0 ? 'true' : 'false'}>
+					{d.label}
+				</button>
+			))
+		}
+	</div>
+
+	<div class="ip-grid sc-rail" data-rail data-grid>
+		{
+			paths.map((p) => (
+				<article class="ip-card" data-section={p.tint} data-steady={p.steady} data-ownership={p.ownership} data-effort={4 - p.effort} data-ceiling={p.ceiling}>
+					<span class="ip-rank" data-rank />
+					<h5>{p.name}</h5>
+					<p class="ip-who">{p.who}</p>
+					<dl class="ip-meters">
+						{dims.map((d) => {
+							const v = d.key === 'effort' ? 4 - p.effort : p[d.key];
+							return (
+								<div class="ip-meter" data-m={d.key}>
+									<dt>{d.label.replace('Less ongoing work', 'Low effort').replace('Owning my audience', 'You own the fans')}</dt>
+									<dd aria-label={`${v} of 3`}>
+										{[1, 2, 3].map((n) => (
+											<i class={n <= v ? 'on' : ''} />
+										))}
+									</dd>
+								</div>
+							);
+						})}
+					</dl>
+					<div class="ip-keep">
+						<span>What you keep</span>
+						<p>{p.keep}</p>
+					</div>
+					<details>
+						<summary>When it starts working, and what to watch</summary>
+						<p><b>Starts:</b> {p.starts}</p>
+						<p><b>Best for:</b> {p.bestFor}</p>
+						<p><b>Watch out:</b> {p.watch}</p>
+						<p class="ip-src">
+							{p.srcs.map((s, i) => (
+								<>
+									{i > 0 && ' · '}
+									<a href={sources[s].url} rel="noopener">
+										{sources[s].publisher}
+									</a>
+								</>
+							))}
+						</p>
+					</details>
+					<a class="ip-link" href={p.href}>
+						Read the guide →
+					</a>
+				</article>
+			))
+		}
+	</div>
+	<p class="sc-widget__note">
+		The dots are our editorial read, not data: <span class="sc-tag is-practitioner">Creator-tested</span>. Each “what you keep” line links to the platform or report it comes from.
+	</p>
+</div>
+
+<script>
+	import '../../scripts/rail';
+	document.querySelectorAll<HTMLElement>('[data-ip]').forEach((root) => {
+		const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+		const cards = [...grid.querySelectorAll<HTMLElement>('.ip-card')];
+		const sort = (dim: string) => {
+			root.querySelectorAll<HTMLButtonElement>('[data-dim]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dim === dim)));
+			const ranked = [...cards].sort((a, b) => +b.dataset[dim]! - +a.dataset[dim]!);
+			ranked.forEach((c, i) => {
+				c.style.order = String(i);
+				c.classList.toggle('is-top', +c.dataset[dim]! === +ranked[0].dataset[dim]!);
+				c.querySelectorAll<HTMLElement>('[data-m]').forEach((m) => m.classList.toggle('is-hot', m.dataset.m === dim));
+				c.querySelector('[data-rank]')!.textContent = c.classList.contains('is-top') ? 'Top pick' : '';
+			});
+			grid.scrollTo?.({ left: 0, behavior: 'smooth' });
+		};
+		root.querySelector('[role="group"]')!.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-dim]');
+			if (b) sort(b.dataset.dim!);
+		});
+		sort('steady');
+	});
+</script>
+
+<style>
+	.ip-grid {
+		display: grid;
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+	@media (min-width: 40rem) {
+		.ip-grid {
+			grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+		}
+	}
+	.ip-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		padding: 1rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line);
+		background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, transparent), rgb(255 255 255 / 0.015) 55%);
+		transition: border-color 0.25s, transform 0.25s;
+	}
+	.ip-card.is-top {
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+	}
+	.ip-rank {
+		position: absolute;
+		top: 0.8rem;
+		right: 0.8rem;
+		font-size: 0.66rem;
+		font-weight: 600;
+		padding: 0.1rem 0.5rem;
+		border-radius: 999px;
+		background: var(--sc-lime);
+		color: #111;
+	}
+	.ip-rank:empty {
+		display: none;
+	}
+	.ip-card h5 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.15rem;
+		color: var(--sc-ivory);
+		padding-right: 4.5rem;
+	}
+	.ip-who {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--sc-silver);
+		line-height: 1.45;
+	}
+	.ip-meters {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.4rem 0.8rem;
+		margin: 0;
+	}
+	.ip-meter {
+		display: grid;
+		gap: 0.2rem;
+	}
+	.ip-meter dt {
+		font-size: 0.68rem;
+		color: var(--sc-steel);
+	}
+	.ip-meter dd {
+		margin: 0;
+		display: flex;
+		gap: 4px;
+	}
+	.ip-meter i {
+		width: 100%;
+		max-width: 1.6rem;
+		height: 6px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.1);
+	}
+	.ip-meter i.on {
+		background: var(--accent);
+	}
+	.ip-meter.is-hot dt {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.ip-keep {
+		padding: 0.6rem 0.7rem;
+		border-radius: 10px;
+		background: rgb(255 255 255 / 0.04);
+	}
+	.ip-keep span {
+		font-size: 0.66rem;
+		color: var(--sc-jade);
+		font-weight: 600;
+	}
+	.ip-keep p {
+		margin: 0.15rem 0 0;
+		font-size: 0.8rem;
+		line-height: 1.45;
+		color: var(--sc-platinum);
+	}
+	.ip-card details {
+		font-size: 0.8rem;
+		color: var(--sc-silver);
+	}
+	.ip-card summary {
+		cursor: pointer;
+		color: var(--sc-platinum);
+		font-size: 0.78rem;
+	}
+	.ip-card details p {
+		margin: 0.45rem 0 0;
+		line-height: 1.45;
+	}
+	.ip-card details b {
+		color: var(--sc-ivory);
+		font-weight: 600;
+	}
+	.ip-src a {
+		color: var(--sc-silver);
+		font-size: 0.72rem;
+	}
+	.ip-link {
+		margin-top: auto;
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: none;
+	}
+</style>
