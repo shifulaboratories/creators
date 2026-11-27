@@ -30,6 +30,7 @@ export const PLATFORMS: Record<string, string> = {
 	podcast: 'Podcast',
 	newsletter: 'Newsletter',
 	twitch: 'Twitch',
+	linkedin: 'LinkedIn',
 	x: 'X',
 };
 

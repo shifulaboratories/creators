@@ -1,0 +1,32 @@
+name: Packy McCormick
+known: Not Boring, a long-form newsletter on tech strategy and startups
+niche: business
+platforms: [newsletter, x]
+site: https://www.notboring.co/
+about: Packy McCormick writes Not Boring, a newsletter of long essays on technology companies and strategy, and runs an early-stage venture fund. He started the newsletter on Substack in early 2020.
+tools:
+  - name: Substack
+    use: Runs the Not Boring newsletter
+    source: https://mercury.com/blog/packy-mccormick-one-man-show
+    sourceTitle: "Packy McCormick's one-man show (Mercury Meridian)"
+    date: "Jul 2022"
+  - name: Figma
+    use: Makes the graphics and memes in his posts
+    source: https://mercury.com/blog/packy-mccormick-one-man-show
+    sourceTitle: "Packy McCormick's one-man show (Mercury Meridian)"
+    date: "Jul 2022"
+  - name: Descript
+    use: Records and edits the audio versions of his essays
+    source: https://mercury.com/blog/packy-mccormick-one-man-show
+    sourceTitle: "Packy McCormick's one-man show (Mercury Meridian)"
+    date: "Jul 2022"
+advice:
+  - text: "And writing, for me, is a way of not forgetting."
+    source: https://mercury.com/blog/packy-mccormick-one-man-show
+    sourceTitle: "Packy McCormick's one-man show (Mercury Meridian)"
+    date: "Jul 2022"
+  - text: Besides regular newsletter ads, he earns from sponsored deep dives, long strategy pieces on a single company written with that company's backing, such as his Ramp essay.
+    quote: false
+    source: https://mercury.com/blog/packy-mccormick-one-man-show
+    sourceTitle: "Packy McCormick's one-man show (Mercury Meridian)"
+    date: "Jul 2022"
