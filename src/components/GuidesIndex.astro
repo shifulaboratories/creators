@@ -9,6 +9,7 @@
 import { getCollection } from 'astro:content';
 import { siFacebook, siInstagram, siTiktok, siX, siYoutube } from 'simple-icons';
 import { SECTION_LABELS } from '../lib/share';
+import { topicIcons } from '../data/topic-icons';
 
 const docs = await getCollection('docs');
 const has = (id: string) => docs.some((e) => e.id === id);
@@ -28,6 +29,7 @@ const topics: Topic[] = [
 	{ id: 'underground', title: 'Underground', text: 'Gray markets, reported as journalism' },
 	{ id: 'shortlist', title: 'The Shortlist', text: 'The few resources worth your time' },
 ];
+
 
 const guides = docs.filter((e) => e.id.includes('/') && !e.id.endsWith('/index') && SECTION_LABELS[e.id.split('/')[0]] && !e.id.startsWith('about/'));
 const count = (s: string) => guides.filter((e) => e.id.startsWith(s + '/')).length;
@@ -151,7 +153,11 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 					liveTopics.map((t) => (
 						<li>
 							<a href={`/${t.id}/`} data-section={t.id}>
-								<span class="dot" aria-hidden="true" />
+								<span class="ti" aria-hidden="true">
+									<svg viewBox="0 0 24 24">
+										<path d={topicIcons[t.id] ?? topicIcons.shortlist} />
+									</svg>
+								</span>
 								<span class="txt">
 									<strong>{t.title}</strong>
 									<span>{t.text}</span>
@@ -516,6 +522,22 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	.gi-try button:hover {
 		border-color: var(--sc-line-bright);
 	}
+	@media (max-width: 40rem) {
+		.gi-try {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			scrollbar-width: none;
+			margin-inline-end: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding-inline-end: var(--sl-content-pad-x, 1rem);
+			mask-image: linear-gradient(90deg, #000 85%, transparent);
+		}
+		.gi-try::-webkit-scrollbar {
+			display: none;
+		}
+		.gi-try button {
+			flex: none;
+		}
+	}
 
 	/* Blocks */
 	.gi-block {
@@ -781,6 +803,26 @@ const suggestions = ['brand deal rates', 'taxes', 'hacked account', 'OnlyFans', 
 	.gi-topics a:hover {
 		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 		background: color-mix(in srgb, var(--accent) 6%, transparent);
+	}
+	.ti {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 12px;
+		color: var(--accent);
+		background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+	}
+	.ti svg {
+		width: 1.15rem;
+		height: 1.15rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
 	}
 	.gi .dot {
 		flex: none;
