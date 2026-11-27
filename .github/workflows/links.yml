@@ -18,25 +18,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+ English pages only: translated pages carry the same links.node-version: 22
+ English pages only: translated pages carry the same links.cache: npm
       - run: npm ci
       - run: npm run build
       - name: Check links to other sites
         uses: lycheeverse/lychee-action@v2
         with:
-          # English pages only: translated pages carry the same links.
-          args: >-
-            --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
-            --accept '200..=299,401,403,429,999'
-            --exclude-path 'dist/es' --exclude-path 'dist/pt-br' --exclude-path 'dist/og'
-            --exclude '^https://creators\.select' --exclude '^https?://localhost'
-            --exclude '^https://(claude\.ai|chatgpt\.com|www\.perplexity\.ai)/'
-            --exclude '^https://(x\.com|twitter\.com)/intent' --exclude '^https://www\.linkedin\.com/sharing'
-            --exclude '^https://www\.threads\.net/intent' --exclude '^https://wa\.me/'
-            --exclude '^https://(www\.)?(instagram|tiktok|facebook|linkedin)\.com/'
-            --exclude '^https://i\.ytimg\.com/'
-            'dist/**/*.html'
-          format: markdown
-          jobSummary: true
-          fail: true
+ English pages only: translated pages carry the same links.# English pages only: translated pages carry the same links.
+ English pages only: translated pages carry the same links.args: >-
+ English pages only: translated pages carry the same links.  --scheme https --scheme http --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
+ English pages only: translated pages carry the same links.  --accept '200..=299,401,403,429,999'
+ English pages only: translated pages carry the same links.  --exclude-path 'dist/es' --exclude-path 'dist/pt-br' --exclude-path 'dist/og'
+ English pages only: translated pages carry the same links.  --exclude '^https://creators\.select' --exclude '^https?://localhost'
+ English pages only: translated pages carry the same links.  --exclude '^https://(claude\.ai|chatgpt\.com|www\.perplexity\.ai)/'
+ English pages only: translated pages carry the same links.  --exclude '^https://(x\.com|twitter\.com)/intent' --exclude '^https://www\.linkedin\.com/sharing'
+ English pages only: translated pages carry the same links.  --exclude '^https://www\.threads\.net/intent' --exclude '^https://wa\.me/'
+ English pages only: translated pages carry the same links.  --exclude '^https://(www\.)?(instagram|tiktok|facebook|linkedin)\.com/'
+ English pages only: translated pages carry the same links.  --exclude '^https://i\.ytimg\.com/'
+ English pages only: translated pages carry the same links.  'dist/**/*.html'
+ English pages only: translated pages carry the same links.format: markdown
+ English pages only: translated pages carry the same links.jobSummary: true
+ English pages only: translated pages carry the same links.fail: true
