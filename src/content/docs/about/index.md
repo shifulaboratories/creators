@@ -58,7 +58,7 @@ You don't need to be technical. When we explain how an algorithm works, we start
 
 ## Who's behind it
 
-Select Creators is built by the team behind a new, tech-forward talent agency for creators. That's a business interest, and we'd rather you hear it from us on day one. The handbook is complete on its own: nothing here is held back to make you hire anyone. [Work with us](/about/work-with-us/) explains how to reach the team if you want hands-on help.
+Select Creators is built by the team behind a new, tech-forward talent agency for creators, founded by William Lee. That's a business interest, and we'd rather you hear it from us on day one. The handbook is complete on its own: nothing here is held back to make you hire anyone. [Work with us](/about/work-with-us/) explains how to reach the team if you want hands-on help.
 
 ## The promises
 
