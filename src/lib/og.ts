@@ -42,7 +42,34 @@ export interface OgInput {
 	accent: string;
 }
 
-export async function renderOg({ title, description, kicker, accent }: OgInput): Promise<Buffer> {
+const glows = (accent: string) =>
+	[
+		`radial-gradient(circle at 96% 4%, ${accent}66 0%, ${accent}00 40%)`,
+		'radial-gradient(circle at 86% 118%, #ff86b870 0%, #ff86b800 42%)',
+		'radial-gradient(circle at 108% 70%, #ffb47e5c 0%, #ffb47e00 34%)',
+		'radial-gradient(circle at 60% 130%, #c3a6ff3d 0%, #c3a6ff00 38%)',
+	].join(', ');
+
+const toPng = async (tree: Node, width: number, height: number) => {
+	const svg = await satori(tree as never, { width, height, fonts: await loadFonts() });
+	return new Resvg(svg, { fitTo: { mode: 'width', value: width } }).render().asPng();
+};
+
+/** The sunset glows alone, on a transparent canvas larger than the card so they can drift. */
+export const GLOW_W = 1600;
+export const GLOW_H = 900;
+export function renderGlowLayer(accent: string): Promise<Buffer> {
+	return toPng(h('div', { width: GLOW_W, height: GLOW_H, backgroundImage: glows(accent) }), GLOW_W, GLOW_H);
+}
+
+/**
+ * The full card (`layer: 'full'`), or just its text and logo on a transparent
+ * canvas (`layer: 'fg'`) for the animated preview to move the glows behind.
+ */
+export async function renderOg(
+	{ title, description, kicker, accent }: OgInput,
+	layer: 'full' | 'fg' = 'full',
+): Promise<Buffer> {
 	const t = clamp(title, 80);
 	const titleSize = t.length > 44 ? 58 : t.length > 22 ? 70 : t.length > 12 ? 88 : 104;
 	const tree = h(
@@ -57,13 +84,7 @@ export async function renderOg({ title, description, kicker, accent }: OgInput):
 			paddingBottom: 60,
 			paddingLeft: 72,
 			paddingRight: 72,
-			backgroundColor: '#08070a',
-			backgroundImage: [
-				`radial-gradient(circle at 96% 4%, ${accent}66 0%, ${accent}00 40%)`,
-				'radial-gradient(circle at 86% 118%, #ff86b870 0%, #ff86b800 42%)',
-				'radial-gradient(circle at 108% 70%, #ffb47e5c 0%, #ffb47e00 34%)',
-				'radial-gradient(circle at 60% 130%, #c3a6ff3d 0%, #c3a6ff00 38%)',
-			].join(', '),
+			...(layer === 'full' ? { backgroundColor: '#08070a', backgroundImage: glows(accent) } : {}),
 			color: '#f5f5f4',
 			fontFamily: 'Geist',
 		},
@@ -121,6 +142,5 @@ export async function renderOg({ title, description, kicker, accent }: OgInput):
 			}),
 		),
 	);
-	const svg = await satori(tree as never, { width: 1200, height: 630, fonts: await loadFonts() });
-	return new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
+	return toPng(tree, 1200, 630);
 }

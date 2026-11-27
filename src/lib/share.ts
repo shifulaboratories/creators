@@ -70,3 +70,18 @@ export function accentFor(id: string, tint?: string): string {
 
 /** Path of the build-time preview image for a docs entry id ("" for the home page). */
 export const ogPath = (id: string) => `/og/${id || 'home'}.png`;
+
+/** Path of the build-time animated preview (MP4) for a docs entry id. */
+export const ogVideoPath = (id: string) => `/og/${id || 'home'}.mp4`;
+
+/**
+ * Head tags for the animated preview. og:type becomes video.other because
+ * Discord only plays og:video on video types; iMessage autoplays it either way.
+ */
+export const ogVideoTags = (videoUrl: string) => [
+	{ property: 'og:video', content: videoUrl },
+	{ property: 'og:video:secure_url', content: videoUrl },
+	{ property: 'og:video:type', content: 'video/mp4' },
+	{ property: 'og:video:width', content: '1200' },
+	{ property: 'og:video:height', content: '630' },
+];

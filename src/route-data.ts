@@ -5,7 +5,8 @@
  */
 import { defineRouteMiddleware } from '@astrojs/starlight/route-data';
 import { SITE_NAME } from './site.mjs';
-import { SITE_ORIGIN, SECTION_LABELS, ogPath } from './lib/share';
+import { SITE_ORIGIN, SECTION_LABELS, ogPath, ogVideoPath, ogVideoTags } from './lib/share';
+import { HAS_VIDEO } from './lib/og-video';
 import { personName, CONTRIBUTORS_PATH } from './data/people';
 import { NEWS_PLATFORM_INFO } from './lib/news';
 
@@ -33,6 +34,11 @@ export const onRequest = defineRouteMiddleware((context) => {
 		{ tag: 'meta', attrs: { property: 'og:image:alt', content: `${title} · ${SITE_NAME}` } },
 		{ tag: 'meta', attrs: { name: 'twitter:image', content: image } },
 	);
+	if (HAS_VIDEO) {
+		const ogType = head.find((t) => t.tag === 'meta' && t.attrs?.property === 'og:type');
+		if (ogType?.attrs) ogType.attrs.content = 'video.other';
+		for (const attrs of ogVideoTags(`${SITE_ORIGIN}${ogVideoPath(id)}`)) head.push({ tag: 'meta', attrs });
+	}
 
 	const section = id.split('/')[0];
 	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}/` }];
