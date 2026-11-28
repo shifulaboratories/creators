@@ -1,0 +1,78 @@
+---
+title: "How the feed learns your taste"
+description: "Every viewer and every post gets a spot on a map. Play with a mini feed and see how watching, sending and swiping move you, and what that means for your posts."
+payoff: "See how a feed learns one person's taste in a few swipes, and why that decides who your next post reaches."
+moves:
+  - do: "Make the first seconds say clearly who the post is for."
+    why: "Feeds place each post by what it's about and who engages with it, then show it to people placed nearby."
+    source: "Platform engineering papers"
+  - do: "Ask for the send, not the like."
+    why: "Sending is one of the strongest signals wherever platforms name them, so it moves viewers toward you fastest."
+    source: "Instagram, X code"
+  - do: "Read a flop as a placement problem before a quality problem."
+    why: "The same post can win with one crowd and get swiped by another. Check who it reached."
+    source: "Creator-tested"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Taste map
+sidebar:
+  order: 5
+---
+
+import TasteMap from '../../../components/algorithms/TasteMap.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** a feed keeps a map. Every viewer has a spot on it, and so does every post. To fill your feed, it grabs the posts closest to your spot, ranks them, and shows the best. Every watch, send and swipe nudges your spot, and the map updates within the hour or faster. Your job as a creator is to make each post easy to place, so it lands near the people who'll love it.
+
+## Play the feed
+
+You're a brand-new account. React to a few posts and watch your spot move, your shortlist change, and your feed fill up with what you showed interest in. Every fourth card is something new, on purpose.
+
+<TasteMap />
+
+## Know the four things it's doing
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li class="is-active"><strong>Put everyone on the map</strong><span>The model learns a position for every viewer and every post from what people engaged with. Posts that the same kind of people enjoy end up close together.</span></li>
+<li><strong>Shortlist what's nearby</strong><span>From millions or billions of posts, it pulls the few hundred closest to you. YouTube calls this candidate generation, Instagram calls it retrieval.</span></li>
+<li><strong>Learn from every reaction</strong><span>New reactions update the model fast: hourly for Instagram Explore, at minute-level intervals in ByteDance's published system.</span></li>
+<li><strong>Mix in something new</strong><span>Feeds deliberately show things outside your usual spot so they don't narrow into a bubble, and so new posts get a chance.</span></li>
+</ol>
+<figcaption>The shape described by YouTube (2016), Instagram Explore (2023), ByteDance (2022) and TikTok (2020)</figcaption>
+</figure>
+
+- **The map is learned from people, not just topics.** Instagram's engineers train one model for viewers and one for posts so that a viewer's position ends up "close to the embeddings of relevant items." Nobody hand-labels the map; engagement draws it. <span class="sc-tag is-research">From the research</span>
+- **Shortlisting is a nearest-neighbor search.** YouTube's 2016 paper describes the step as winnowing "millions" of videos down to "hundreds," using a nearest-neighbor lookup. Instagram's Explore pulls "hundreds of relevant items from a media pool of billions." <span class="sc-tag is-research">From the research</span>
+- **It updates fast.** Instagram says it can "re-train (fine-tune) our models every hour." ByteDance's Monolith paper syncs new learning to the live system "with a minute-level time interval," because a viewer's interest can "shift their zeal every next minute." <span class="sc-tag is-research">From the research</span>
+- **New accounts start from a guess.** TikTok invites new users to pick interests like pets or travel; those who skip get "a generalized feed of popular videos" until their reactions take over. <span class="sc-tag is-platform">From the platform</span>
+- **Exploration is a feature.** TikTok says it will "intersperse diverse types of content" and generally won't show two videos in a row from the same creator or sound. YouTube's researchers trained on all viewing, not only recommended videos, because otherwise "it would be very difficult for new content to surface." <span class="sc-tag is-platform">From the platform</span> <span class="sc-tag is-research">From the research</span>
+
+## Make your posts easy to place
+
+Your post gets a spot on the map too, and the first people who react to it help decide where. If the first seconds make it obvious who it's for, the right people react and the feed finds more of them. That's our read of how these systems work, not a rule any platform published. <span class="sc-tag is-practitioner">Creator-tested</span>
+
+<QuickCheck
+  title="Before you post"
+  id="alg-taste"
+  items={[
+    { text: "Someone can tell who it's for in the first two seconds", hint: "Topic, face, setting or caption. The first viewers' reactions help place the post." },
+    { text: "It gives people a reason to send it", hint: "Sends move viewers toward a post faster than anything in the map above, and platforms name them among their strongest signals." },
+    { text: "The hook matches the payoff", hint: "A bait hook earns swipes and “not interested” from the wrong crowd, which pushes the post away from everyone." },
+    { text: "You'll check who it reached, not just how many", hint: "Audience and traffic-source reports show whether it landed near your people. See [who sees you first](/algorithms/compare-platforms/)." },
+  ]}
+  done="Easy to place."
+/>
+
+<DeepDive title="Sources" hint="5 sources">
+
+- Paul Covington, Jay Adams, Emre Sargin, [Deep Neural Networks for YouTube Recommendations](https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/), RecSys 2016.
+- Vladislav Vorotilov, Ilnur Shugaepov, [Scaling the Instagram Explore recommendations system](https://engineering.fb.com/2023/08/09/ml-applications/scaling-instagram-explore-recommendations-system/), Engineering at Meta, Aug 9, 2023.
+- Zhuoran Liu et al., [Monolith: Real Time Recommendation System With Collisionless Embedding Table](https://arxiv.org/abs/2209.07663), ByteDance, ORSUM @ RecSys 2022. The paper describes ByteDance's BytePlus Recommend product; it doesn't say it is TikTok's For You feed.
+- TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
+- Instagram's and X's strongest-signal statements are sourced on [what to optimize for](/algorithms/what-to-optimize/).
+
+</DeepDive>

@@ -11,7 +11,7 @@ const platforms = [
 		'“Sends per reach correlate more, in my experience, with overall reach than anything else.” Mosseri, May 2024.',
 		'Instagram’s own ranking explainer lists comments, saves and shares as Feed signals, and reshares and watching to the end for Reels (2023).',
 	] },
-	{ key: 'tiktok', name: 'TikTok', short: 'TikTok', tint: 'tiktok', src: 'platform', proof: [
+	{ key: 'tiktok', name: 'TikTok', short: 'TT', tint: 'tiktok', src: 'platform', proof: [
 		'TikTok lists likes, shares, comments, accounts followed and content created as user-interaction signals (2020).',
 		'Its example of a strong signal: whether someone finishes watching a longer video from beginning to end.',
 		'Follower count and past hits are not direct factors.',
@@ -21,19 +21,32 @@ const platforms = [
 		'It added watch time in 2012 because clicks alone rewarded misleading videos.',
 		'It surveys viewers and counts time on videos rated 4 or 5 stars as more valuable (“valued watch time”).',
 	] },
+	{ key: 'facebook', name: 'Facebook', short: 'FB', tint: 'facebook', src: 'platform', proof: [
+		'Feed predicts how likely you are to like, comment on, share or watch each post, then adds those predictions up with weights (Engineering at Meta, 2021).',
+		'The weights come from surveys: Meta asks people “whether a post is worth their time” and weights the actions people say are meaningful.',
+		'Predicting that you will share a post is one factor its systems take into account (Meta, 2023).',
+		'Show less, and topics a viewer marks not interested, are held back (Meta, 2023 and 2026).',
+	] },
 	{ key: 'x', name: 'X', short: 'X', tint: 'x', src: 'code', proof: [
 		'Published weights (2026 code): share via copy link 20, reply 5, quote 5, share via DM 5, follow 4, like 0.708.',
 		'Negative weights: report −234, mute −58.8, “not interested” −53.07, block −31.2.',
 		'Weights multiply each viewer’s predicted probability of the action, not raw counts.',
 	] },
+	{ key: 'linkedin', name: 'LinkedIn', short: 'in', tint: 'linkedin', src: 'platform', proof: [
+		'LinkedIn’s feed model is judged on time spent plus likes, comments and reshares. Its 2026 model lifted them 2.10% and 3.52% (LinkedIn research, CIKM 2026).',
+		'Dwell time counts: posts people are predicted to scroll past quickly are scored down (LinkedIn Engineering, 2020).',
+		'Reshares and comments get extra value “because they lead to a more engaged network” (LinkedIn Engineering, 2021).',
+		'It is cutting engagement bait like “comment to agree,” engagement pods and recycled posts (LinkedIn, Mar 2026).',
+	] },
 ];
 const rows: { label: string; hint: string; cells: Lvl[] }[] = [
-	{ label: 'Watching it through', hint: 'Watch time, finishing, dwell', cells: ['top', 'top', 'top', 'yes'] },
-	{ label: 'Sending or sharing it', hint: 'DMs, copy link, reshares', cells: ['top', 'yes', 'yes', 'top'] },
-	{ label: 'Talking about it', hint: 'Comments, replies, quotes', cells: ['yes', 'yes', 'na', 'top'] },
-	{ label: 'Following you after', hint: 'Follows from the post', cells: ['na', 'yes', 'na', 'yes'] },
-	{ label: 'Liking it', hint: 'The cheapest signal', cells: ['top', 'yes', 'yes', 'yes'] },
-	{ label: 'Saying no', hint: 'Not interested, dislike, mute, report', cells: ['na', 'na', 'pen', 'pen'] },
+	// Instagram, TikTok, YouTube, Facebook, X, LinkedIn
+	{ label: 'Watching it through', hint: 'Watch time, finishing, dwell', cells: ['top', 'top', 'top', 'yes', 'yes', 'top'] },
+	{ label: 'Sending or sharing it', hint: 'DMs, copy link, reshares', cells: ['top', 'yes', 'yes', 'yes', 'top', 'yes'] },
+	{ label: 'Talking about it', hint: 'Comments, replies, quotes', cells: ['yes', 'yes', 'na', 'yes', 'top', 'yes'] },
+	{ label: 'Following you after', hint: 'Follows from the post', cells: ['na', 'yes', 'na', 'na', 'yes', 'na'] },
+	{ label: 'Liking it', hint: 'The cheapest signal', cells: ['top', 'yes', 'yes', 'yes', 'yes', 'yes'] },
+	{ label: 'Saying no', hint: 'Not interested, dislike, mute, report', cells: ['na', 'na', 'pen', 'pen', 'pen', 'na'] },
 ];
 const lvlText: Record<Lvl, string> = { top: 'Top signal', yes: 'Counts', pen: 'Penalty', na: 'Not stated' };
 ---
@@ -235,6 +248,11 @@ const lvlText: Record<Lvl, string> = { top: 'Top signal', yes: 'Counts', pen: 'P
 		height: 1px;
 		overflow: hidden;
 		clip: rect(0 0 0 0);
+	}
+	@media (max-width: 40rem) {
+		.sg-l {
+			display: none;
+		}
 	}
 	.sg-proof {
 		margin-top: 0.9rem;
