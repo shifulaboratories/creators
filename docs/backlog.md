@@ -10,6 +10,27 @@ The standing audit of creators.select. Each round re-checks `main` plus open PRs
 
 ---
 
+## Round 2 snapshot (2026-11-28)
+
+Audited `main` (03f29b3): 446 English pages plus /es/ and /pt-br/, build ~3 min cold. Fixes shipped in PR #112.
+
+| Measure | Result |
+| --- | --- |
+| Phone (iPhone 14 emulation, 35 key pages) | No horizontal overflow, no JS errors. Guide headers now a compact row (Ask AI, Share, Save) |
+| Accessibility (axe-core, 18 key pages, after #112) | 0 critical, 0 serious, 1 moderate (Team hub card heading order) |
+| Status labels | 162 draft, 4 outline, 1 published. After #112, drafts show no label instead of "In progress" |
+| Bylines | 16 pages have `authors`; reviewers still missing almost everywhere (P0-3 stands) |
+| Third-party images | Only YouTube thumbnails now (P0-1 resolved: icon hotlinks gone) |
+| Thinnest live pages | Tool directory entries ~220 words (fine for a listing); per-platform News pages ~230; Underground "Ban and unban services" is still an outline (noindexed, no longer linked from Protect) |
+
+Still open from this round:
+- **Translated fallbacks.** /es/ and /pt-br/ serve English text for untranslated pages under a Spanish/Portuguese header. They are noindexed (good), but readers who pick a language land on English with no notice. Show a one-line "Not translated yet" note on fallback pages. S/S.
+- **Team hub heading order.** GuideGrid cards are `h3`s placed straight after the h1 on /team/ and /case-studies/. Pass a heading level prop to GuideGrid. S/S.
+- **Underground ban/unban page.** Write from published reporting (ProPublica 2022, WSJ on Meta staff taking bribes to restore accounts) after lawyer review, or remove from the Underground index. S/M.
+- **Section kicker consistency.** Roadmap, Rate Check, Jobs, Creator directory and What's new have no section pill above the title, while every guide does. Minor; decide one rule. S/S.
+
+---
+
 ## Round 1 snapshot (2026-11-26)
 
 Audited `main` (6353efe) merged with open PRs #6 to #12 into one local build.
@@ -108,3 +129,4 @@ Fixed in this round's PR: SwipeDeck slide labels hid the card text from screen r
 | Date | Round | What changed |
 | --- | --- | --- |
 | 2026-11-26 | 1 | First audit. Backlog created. Fixed SwipeDeck accessible names, gallery heading order and chip contrast. |
+| 2026-11-28 | 2 | Polish pass (PR #112): hid draft "In progress" chips, read time from 2 min, redirected three Stack outlines, Protect no longer links to the Underground stub, meta descriptions trimmed to 160, heading/table/link-name accessibility fixes. P0-1 confirmed resolved. |

@@ -58,9 +58,6 @@ These clear the automatic bar (500+ words and 3+ sources, or 150+ words for over
 | Content removal and DMCA | `protect/content-removal` | outline | outline notice, 31 words, 0 sources |
 | Impersonation | `protect/impersonation` | outline | outline notice, 23 words, 0 sources |
 | Stack | `stack` | draft | 105 words |
-| Gear by budget | `stack/gear-by-budget` | outline | outline notice, 22 words, 0 sources |
-| Merch and products | `stack/merch-and-products` | outline | outline notice, 24 words, 0 sources |
-| Software by job | `stack/software-by-job` | outline | outline notice, 28 words, 0 sources |
 | Team | `team` | outline | 84 words |
 | Agency directory | `team/agency-directory` | outline | outline notice, 33 words, 0 sources |
 | Hiring your team | `team/hiring` | outline | outline notice, 28 words, 0 sources |

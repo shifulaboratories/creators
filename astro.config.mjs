@@ -59,6 +59,10 @@ const REDIRECTS = {
 	'/earn/brand-deals': '/deals/brand-deals/',
 	'/earn/pricing': '/deals/pricing/',
 	'/news/weekly': '/news/',
+	// Stack outlines replaced by the tool directory and the setups on /stack/.
+	'/stack/software-by-job': '/stack/directory/',
+	'/stack/merch-and-products': '/stack/directory/merch/',
+	'/stack/gear-by-budget': '/stack/',
 	// Short addresses for the five top-nav items (src/data/nav.ts).
 	'/resources': '/guides/',
 	'/directories': '/creators/',
@@ -67,7 +71,7 @@ const REDIRECTS = {
 	'/careers': '/jobs/',
 };
 // Guide pages also existed under /es/ and /pt-br/; their old addresses move too.
-const TRANSLATED_REDIRECTS = ['/grow/algorithms', '/grow/case-studies', '/goldmines', '/goldmines/mrbeast-production-handbook', '/grow/strategy', '/earn/brand-deals', '/earn/pricing', '/news/weekly'];
+const TRANSLATED_REDIRECTS = ['/grow/algorithms', '/grow/case-studies', '/goldmines', '/goldmines/mrbeast-production-handbook', '/grow/strategy', '/earn/brand-deals', '/earn/pricing', '/news/weekly', '/stack/software-by-job', '/stack/merch-and-products', '/stack/gear-by-budget'];
 const writeRedirects = {
 	name: 'cloudflare-redirects',
 	hooks: {

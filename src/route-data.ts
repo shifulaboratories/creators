@@ -103,6 +103,14 @@ export const onRequest = defineRouteMiddleware(async (context) => {
 		set((h) => h.attrs?.name === 'description', seo.description);
 		set((h) => h.attrs?.property === 'og:description', seo.description);
 	}
+	// Search results cut descriptions near 160 characters, mid-word. Trim the
+	// meta tag (not the on-page lead) at a word boundary so the snippet ends cleanly.
+	const metaDesc = head.find((h) => h.tag === 'meta' && h.attrs?.name === 'description');
+	const descText = metaDesc?.attrs?.content;
+	if (typeof descText === 'string' && descText.length > 160) {
+		const cut = descText.slice(0, 157);
+		metaDesc!.attrs!.content = `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:.\s]+$/, '')}…`;
+	}
 
 	const section = base.split('/')[0];
 	const crumbs = [{ name: SITE_NAME, url: `${SITE_ORIGIN}${localize(locale, '/')}` }];

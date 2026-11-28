@@ -94,14 +94,14 @@ const situations = [
 		{
 			stages.map((s) => (
 				<li class="dm-stage" data-stage={s.key} style={`--t:${s.tint}`}>
-					<a class="dm-cover" href={s.links[0][1]} aria-label={`${s.title}: ${s.links[0][0]}`}>
+					<a class="dm-cover" href={s.links[0][1]}>
 						<span class="dm-n">{s.n}</span>
 						<svg class="dm-icon" viewBox="0 0 24 24" aria-hidden="true">
 							<path d={s.icon} />
 						</svg>
 					</a>
 					<div class="dm-body">
-						<h3>{s.title}</h3>
+						<h2>{s.title}</h2>
 						<p>{s.line}</p>
 						<div class="dm-links">
 							{s.links.map(([label, href]) => (
@@ -269,7 +269,7 @@ const situations = [
 	.dm-stage.is-hot .dm-icon {
 		transform: scale(1.12) rotate(-4deg);
 	}
-	.dm-body h3 {
+	.dm-body h2 {
 		margin: 0;
 		font-family: var(--sc-font-display);
 		font-size: 1.1rem;
