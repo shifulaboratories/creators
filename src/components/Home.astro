@@ -9,6 +9,7 @@ import SiteNav from '../components/SiteNav.astro';
 import GuidesIndex from '../components/GuidesIndex.astro';
 import TabBar from '../components/TabBar.astro';
 import Seal3D from '../components/Seal3D.astro';
+import Showcase from '../components/home/Showcase.astro';
 import lockup from '../assets/logo-lockup.svg';
 import { SITE_NAME, REPO_URL } from '../site.mjs';
 import { home } from '../i18n/home';
@@ -122,10 +123,17 @@ const homeJsonLd = {
 
 		<main>
 			<section class="hero">
+				<div class="hero-3d">
+					<Seal3D />
+				</div>
 				<div class="hero-copy">
-					<p class="eyebrow">{T.eyebrow}</p>
+					<p class="eyebrow"><span class="eb-dot" aria-hidden="true"></span>{T.eyebrow}</p>
 					<h1>{T.h1a}<br /><span>{T.h1b}</span></h1>
 					<p class="lead">{T.lead}</p>
+					<div class="ctas">
+						<a class="btn btn-primary" href="#find">{T.cta.find}</a>
+						<a class="btn btn-ghost" href={L('/tools/media-kit-builder/')} hreflang={locale === 'en' ? undefined : 'en'}>{T.cta.kit}<span aria-hidden="true">→</span></a>
+					</div>
 					<ul class="facts" aria-label={T.facts.label}>
 						<li><strong>{guideCount}</strong> {T.facts.guides}</li>
 						<li><strong>7</strong> {T.facts.platforms}</li>
@@ -133,12 +141,11 @@ const homeJsonLd = {
 					</ul>
 					{T.langNote && <p class="lang-note">{T.langNote}</p>}
 				</div>
-				<div class="hero-3d">
-					<Seal3D />
-				</div>
 			</section>
 
-			<section class="find" aria-label={T.find}>
+			<Showcase locale={locale} T={T.show} />
+
+			<section class="find" id="find" aria-label={T.find}>
 				<GuidesIndex />
 			</section>
 
@@ -236,8 +243,9 @@ const homeJsonLd = {
 		z-index: -1;
 		pointer-events: none;
 		background:
-			radial-gradient(70vmax 50vmax at 10% -20%, rgb(255 134 184 / 0.10), transparent 60%),
-			radial-gradient(70vmax 50vmax at 95% -15%, rgb(195 166 255 / 0.11), transparent 60%);
+			radial-gradient(70vmax 50vmax at 10% -20%, rgb(255 134 184 / 0.12), transparent 60%),
+			radial-gradient(70vmax 50vmax at 95% -15%, rgb(195 166 255 / 0.13), transparent 60%),
+			radial-gradient(60vmax 40vmax at 50% 110%, rgb(255 180 126 / 0.06), transparent 60%);
 	}
 
 	.site-header {
@@ -298,40 +306,76 @@ const homeJsonLd = {
 		padding: 0 clamp(1rem, 4vw, 2rem);
 	}
 
+	/* Hero: the seal big and centered on every screen, the promise under it. */
 	.hero {
+		position: relative;
 		display: grid;
-		align-items: center;
-		gap: 0.5rem;
-		padding: clamp(1.75rem, 5vw, 4rem) 0 1.25rem;
+		justify-items: center;
+		text-align: center;
+		padding: clamp(0.5rem, 3vw, 1.5rem) 0 clamp(1rem, 3vw, 2rem);
+	}
+	/* A faint dot grid that fades out around the seal, for depth. */
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: -4rem calc(-1 * clamp(1rem, 4vw, 2rem)) 0;
+		z-index: -1;
+		background: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.09) 1px, transparent 0) 0 0 / 22px 22px;
+		-webkit-mask-image: radial-gradient(60% 55% at 50% 30%, #000 10%, transparent 75%);
+		mask-image: radial-gradient(60% 55% at 50% 30%, #000 10%, transparent 75%);
+		pointer-events: none;
+	}
+	.hero-3d {
+		width: min(92vw, 30rem);
+		margin: -1rem 0 -2.25rem;
+	}
+	.hero-copy {
+		display: grid;
+		justify-items: center;
 	}
 	.eyebrow {
-		margin: 0 0 1rem;
-		color: var(--sc-silver);
-		font-size: 0.85rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0 0 1.1rem;
+		padding: 0.35rem 0.85rem 0.35rem 0.65rem;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.04);
+		box-shadow: inset 0 0 0 1px var(--sc-line-strong);
+		color: var(--sc-platinum);
+		font-size: 0.82rem;
 		font-weight: 500;
-		letter-spacing: 0.02em;
+	}
+	.eb-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--sc-jade);
+		box-shadow: 0 0 0 3px rgb(95 227 176 / 0.18);
 	}
 	h1 {
 		margin: 0;
 		font-family: var(--sc-font-display);
-		font-size: clamp(2.2rem, 5.2vw, 3.5rem);
-		line-height: 1.02;
-		letter-spacing: -0.03em;
+		font-size: clamp(2.4rem, 7vw, 4.75rem);
+		line-height: 0.98;
+		letter-spacing: -0.035em;
 		font-weight: 700;
 		color: var(--sc-ivory);
+		text-wrap: balance;
 	}
 	h1 span {
-		background: linear-gradient(90deg, var(--sc-rose, #ff86b8), var(--sc-ion, #c3a6ff));
+		background: linear-gradient(90deg, var(--sc-champagne, #ffb47e), var(--sc-rose, #ff86b8) 45%, var(--sc-ion, #c3a6ff));
 		-webkit-background-clip: text;
 		background-clip: text;
 		color: transparent;
 	}
 	.lead {
-		max-width: 36rem;
+		max-width: 38rem;
 		margin: 1.25rem 0 0;
 		color: var(--sc-silver);
-		font-size: clamp(1rem, 1.6vw, 1.12rem);
+		font-size: clamp(1rem, 1.6vw, 1.15rem);
 		line-height: 1.6;
+		text-wrap: pretty;
 	}
 	.lang-note {
 		max-width: 36rem;
@@ -339,30 +383,85 @@ const homeJsonLd = {
 		color: var(--sc-steel);
 		font-size: var(--sc-text-sm);
 	}
-	.hero-3d {
-		justify-self: center;
-		width: min(100%, 22rem);
-		aspect-ratio: 1;
+	.ctas {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem;
+		margin-top: 1.75rem;
 	}
-	@media (max-width: 47.99rem) {
-		/* Phones: the seal is the hero, big and centered above the headline. */
-		.hero-3d {
-			order: -1;
-			justify-self: center;
-			width: min(88vw, 21rem);
-			margin: -2rem 0 -1rem;
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		min-height: 3rem;
+		padding: 0 1.4rem;
+		border-radius: 999px;
+		font-size: 0.95rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+	}
+	.btn:active {
+		transform: scale(0.97);
+	}
+	.btn-primary {
+		background: var(--sc-ivory);
+		color: #0a0a0b;
+		box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4), 0 10px 40px -10px rgb(255 134 184 / 0.55);
+	}
+	.btn-primary:hover {
+		box-shadow: 0 0 0 1px #fff, 0 14px 50px -10px rgb(255 134 184 / 0.75);
+		transform: translateY(-1px);
+	}
+	.btn-ghost {
+		background: rgb(255 255 255 / 0.04);
+		box-shadow: inset 0 0 0 1px var(--sc-line-strong);
+		color: var(--sc-ivory);
+	}
+	.btn-ghost:hover {
+		background: rgb(255 255 255 / 0.08);
+	}
+	.btn-ghost span {
+		transition: transform 0.2s;
+	}
+	.btn-ghost:hover span {
+		transform: translateX(3px);
+	}
+
+	/* The copy settles in once on load, after the seal. CSS only. */
+	.hero-copy > * {
+		animation: hero-rise 0.8s var(--sc-ease-settle, cubic-bezier(0.2, 0.8, 0.2, 1)) both;
+	}
+	.hero-copy > :nth-child(2) { animation-delay: 60ms; }
+	.hero-copy > :nth-child(3) { animation-delay: 140ms; }
+	.hero-copy > :nth-child(4) { animation-delay: 220ms; }
+	.hero-copy > :nth-child(n + 5) { animation-delay: 300ms; }
+	@keyframes hero-rise {
+		from {
+			opacity: 0;
+			transform: translateY(14px);
 		}
 	}
-	@media (min-width: 48rem) {
-		.hero {
-			grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-			gap: 2rem;
+
+	@media (max-width: 47.99rem) {
+		.hero-3d {
+			width: min(88vw, 21rem);
+			margin: -2rem 0 -1.5rem;
+		}
+		.btn {
+			flex: 1 1 auto;
+			justify-content: center;
+		}
+		.ctas {
+			width: 100%;
 		}
 	}
 
 	.facts {
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: center;
 		gap: 0.5rem;
 		margin: 1.5rem 0 0;
 		padding: 0;
@@ -479,6 +578,7 @@ const homeJsonLd = {
 	}
 	.find {
 		padding: 1rem 0 2.5rem;
+		scroll-margin-top: 5rem;
 	}
 
 	.trust {

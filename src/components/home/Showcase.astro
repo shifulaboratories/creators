@@ -1,0 +1,928 @@
+---
+/**
+ * Home page showcase: a bento of live previews for the newest things on the
+ * site. Each tile is built from real site data at build time and links to the
+ * full feature. Interactions are tiny (a few lines of JS each) and the whole
+ * thing is readable with JS off. Motion only plays once, on reveal or on tap.
+ */
+import { getChangelog, NEWS_PLATFORM_INFO } from '../../lib/timeline';
+import { jobs } from '../../lib/jobs';
+import { localize, type Locale } from '../../i18n';
+import type { HomeCopy } from '../../i18n/home';
+
+interface Props {
+	locale: Locale;
+	T: HomeCopy['show'];
+}
+const { locale, T } = Astro.props;
+const L = (p: string) => localize(locale, p);
+const en = locale === 'en' ? undefined : 'en';
+
+// Platform timeline: the four newest dated changes.
+const latest = (await getChangelog()).slice(0, 4);
+
+// Jobs: total open roles and who's hiring most.
+const byCompany = new Map<string, number>();
+for (const j of jobs) byCompany.set(j.company, (byCompany.get(j.company) ?? 0) + 1);
+const topHiring = [...byCompany].sort((a, b) => b[1] - a[1]).slice(0, 4);
+const topMax = topHiring[0]?.[1] ?? 1;
+const companyCount = byCompany.size;
+
+// Case studies: the one move each creator made (from /case-studies/).
+const cases = [
+	{ id: 'mrbeast', name: 'MrBeast', tint: 'youtube', move: 'Designs the thumbnail before the video.' },
+	{ id: 'alix-earle', name: 'Alix Earle', tint: 'instagram', move: 'Turned Get Ready With Me into a story show.' },
+	{ id: 'alex-cooper', name: 'Alex Cooper', tint: 'deals', move: 'Owned her show, then licensed it for nine figures.' },
+	{ id: 'khaby-lame', name: 'Khaby Lame', tint: 'tiktok', move: 'No words, so every video worked in every country.' },
+	{ id: 'ryan-trahan', name: 'Ryan Trahan', tint: 'grow', move: 'Turned vlogs into seasons with a goal.' },
+	{ id: 'ali-abdaal', name: 'Ali Abdaal', tint: 'earn', move: 'Five income streams, so ads became the small half.' },
+];
+const initials = (n: string) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+// Taste map: six topic clusters, the same layout as the full explainer.
+const topics = [
+	{ key: 'beauty', color: 'var(--sc-rose)', x: 20, y: 28 },
+	{ key: 'travel', color: 'var(--sc-amethyst)', x: 52, y: 16 },
+	{ key: 'food', color: 'var(--sc-champagne)', x: 82, y: 32 },
+	{ key: 'comedy', color: 'var(--sc-ion)', x: 50, y: 52 },
+	{ key: 'money', color: 'var(--sc-cyan)', x: 22, y: 76 },
+	{ key: 'fitness', color: 'var(--sc-jade)', x: 80, y: 76 },
+] as const;
+const jitter = [
+	[-6, -4],
+	[5, -5],
+	[-3, 6],
+	[7, 3],
+];
+---
+
+<section class="show" aria-labelledby="show-h">
+	<div class="show-head" data-rv>
+		<span class="show-pill"><i aria-hidden="true"></i>{T.pill}</span>
+		<h2 id="show-h">{T.title}</h2>
+		<p>{T.lead}</p>
+	</div>
+
+	<div class="bento">
+		<!-- Media kit builder -->
+		<article class="tile t-kit" data-rv style="--d:0">
+			<div class="tile-copy">
+				<span class="tag" style="--accent:var(--sc-champagne)">{T.kit.tag}</span>
+				<h3>{T.kit.title}</h3>
+				<p>{T.kit.text}</p>
+			</div>
+			<div class="kit-stage">
+				<div class="kit-looks" role="radiogroup" aria-label={T.kit.looks}>
+					<button type="button" role="radio" aria-checked="true" data-look="noir">Noir</button>
+					<button type="button" role="radio" aria-checked="false" data-look="paper">Paper</button>
+					<button type="button" role="radio" aria-checked="false" data-look="pop">Pop</button>
+				</div>
+				<div class="kit-card" data-kit data-look="noir" aria-hidden="true">
+					<div class="kc-top">
+						<span class="kc-av"></span>
+						<span class="kc-id"><b>Maya Reyes</b><small>@mayamakes · Beauty</small></span>
+					</div>
+					<div class="kc-stats">
+						<span><b>248K</b><small>Followers</small></span>
+						<span><b>4.8%</b><small>Engaged</small></span>
+						<span><b>92K</b><small>Avg views</small></span>
+					</div>
+					<div class="kc-bars"><i style="--h:38%"></i><i style="--h:62%"></i><i style="--h:48%"></i><i style="--h:80%"></i><i style="--h:70%"></i><i style="--h:96%"></i></div>
+					<div class="kc-foot"><span>Reels</span><span>Stories</span><span>UGC</span></div>
+				</div>
+				<p class="sample">{T.kit.sample}</p>
+			</div>
+			<a class="go stretch" href={L('/tools/media-kit-builder/')} hreflang={en}>{T.kit.cta}<span aria-hidden="true">→</span></a>
+		</article>
+
+		<!-- Taste map -->
+		<article class="tile t-taste" data-rv style="--d:1">
+			<div class="tile-copy">
+				<span class="tag" style="--accent:var(--sc-rose)">{T.taste.tag}</span>
+				<h3>{T.taste.title}</h3>
+				<p>{T.taste.text}</p>
+			</div>
+			<div class="tm-mini" data-tm-mini data-moved={T.taste.moved}>
+				<svg viewBox="0 0 100 92" role="img" aria-label={T.taste.mapLabel}>
+					{
+						topics.map((t) =>
+							jitter.map(([dx, dy]) => (
+								<circle class="tm-dot" data-topic={t.key} cx={t.x + dx} cy={t.y + dy} r="2.1" style={`--c:${t.color}`} />
+							)),
+						)
+					}
+					<line class="tm-trail" x1="50" y1="46" x2="50" y2="46" data-trail />
+					<g class="tm-you" data-you style="transform: translate(50px, 46px)">
+						<circle r="5.5" class="tm-you-ring" />
+						<circle r="2.8" class="tm-you-dot" />
+					</g>
+				</svg>
+				<div class="tm-chips" role="group" aria-label={T.taste.chipsLabel}>
+					{
+						topics.map((t, i) => (
+							<button type="button" data-topic={t.key} style={`--c:${t.color}`} aria-pressed="false">
+								<span aria-hidden="true">♥</span> {T.taste.topics[i]}
+							</button>
+						))
+					}
+				</div>
+				<p class="tm-status" data-tm-status aria-live="polite">{T.taste.start}</p>
+			</div>
+			<a class="go stretch" href={L('/algorithms/taste-map/')} hreflang={en}>{T.taste.cta}<span aria-hidden="true">→</span></a>
+		</article>
+
+		<!-- Platform timeline -->
+		<article class="tile t-time" data-rv style="--d:2">
+			<div class="tile-copy">
+				<span class="tag" style="--accent:var(--sc-cyan)">{T.time.tag}</span>
+				<h3>{T.time.title}</h3>
+			</div>
+			<ol class="tl" lang={en}>
+				{
+					latest.map((c, i) => (
+						<li style={`--i:${i}`} data-section={c.platform}>
+							<span class="tl-dot" aria-hidden="true" />
+							<span class="tl-meta">
+								<b>{NEWS_PLATFORM_INFO[c.platform]?.name ?? c.platform}</b> · {c.label}
+							</span>
+							<span class="tl-title">{c.title}</span>
+						</li>
+					))
+				}
+			</ol>
+			<a class="go stretch" href="/news/timeline/" hreflang={en}>{T.time.cta}<span aria-hidden="true">→</span></a>
+		</article>
+
+		<!-- Jobs -->
+		<article class="tile t-jobs" data-rv style="--d:3">
+			<div class="tile-copy">
+				<span class="tag" style="--accent:var(--sc-jade)">{T.jobs.tag}</span>
+				<p class="jobs-big"><b data-count={jobs.length}>{jobs.length}</b> <span>{T.jobs.open.replace('{n}', String(companyCount))}</span></p>
+			</div>
+			<ul class="jobs-bars" aria-label={T.jobs.top}>
+				{
+					topHiring.map(([co, n], i) => (
+						<li style={`--w:${Math.round((n / topMax) * 100)}%; --i:${i}`}>
+							<span class="jb-name">{co}</span>
+							<span class="jb-n">{n}</span>
+						</li>
+					))
+				}
+			</ul>
+			<a class="go stretch" href="/jobs/" hreflang={en}>{T.jobs.cta}<span aria-hidden="true">→</span></a>
+		</article>
+
+		<!-- Case studies -->
+		<article class="tile t-cases" data-rv style="--d:4">
+			<div class="tile-copy">
+				<span class="tag" style="--accent:var(--sc-amethyst)">{T.cases.tag}</span>
+				<h3>{T.cases.title}</h3>
+			</div>
+			<ul class="cases" lang={en}>
+				{
+					cases.map((c, i) => (
+						<li style={`--i:${i}`}>
+							<a href={L(`/case-studies/${c.id}/`)} hreflang={en} data-section={c.tint} class="sc-press">
+								<span class="cs-av" aria-hidden="true">{initials(c.name)}</span>
+								<span class="cs-txt"><b>{c.name}</b><small>{c.move}</small></span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+			<a class="go" href={L('/case-studies/')} hreflang={en}>{T.cases.cta}<span aria-hidden="true">→</span></a>
+		</article>
+	</div>
+</section>
+
+<script>
+	// Reveal tiles once as they scroll into view (CSS does the motion).
+	const rv = document.querySelectorAll<HTMLElement>('[data-rv]');
+	if ('IntersectionObserver' in window) {
+		const io = new IntersectionObserver(
+			(es) =>
+				es.forEach((e) => {
+					if (!e.isIntersecting) return;
+					e.target.classList.add('is-in');
+					io.unobserve(e.target);
+				}),
+			{ rootMargin: '0px 0px -10% 0px' },
+		);
+		rv.forEach((el) => io.observe(el));
+	} else rv.forEach((el) => el.classList.add('is-in'));
+
+	// Jobs: count up once when the tile appears.
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+	document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+		const to = Number(el.dataset.count);
+		if (reduce || !('IntersectionObserver' in window)) return;
+		const io = new IntersectionObserver(([e]) => {
+			if (!e.isIntersecting) return;
+			io.disconnect();
+			const t0 = performance.now();
+			const tick = (t: number) => {
+				const k = Math.min(1, (t - t0) / 900);
+				el.textContent = String(Math.round(to * (1 - Math.pow(1 - k, 3))));
+				if (k < 1) requestAnimationFrame(tick);
+			};
+			requestAnimationFrame(tick);
+		});
+		io.observe(el);
+	});
+
+	// A soft light follows the pointer across tiles on laptops.
+	if (matchMedia('(hover: hover) and (pointer: fine)').matches)
+		document.querySelectorAll<HTMLElement>('.bento .tile').forEach((t) =>
+			t.addEventListener('pointermove', (e) => {
+				const r = t.getBoundingClientRect();
+				t.style.setProperty('--mx', `${e.clientX - r.left}px`);
+				t.style.setProperty('--my', `${e.clientY - r.top}px`);
+			}),
+		);
+
+	// Media kit: switch the sample card between the builder's three looks.
+	document.querySelectorAll<HTMLButtonElement>('[data-look]').forEach((b) => {
+		if (b.tagName !== 'BUTTON') return;
+		b.addEventListener('click', (ev) => {
+			ev.stopPropagation();
+			const tile = b.closest('.t-kit')!;
+			tile.querySelectorAll('[role=radio]').forEach((r) => r.setAttribute('aria-checked', String(r === b)));
+			tile.querySelector<HTMLElement>('[data-kit]')!.dataset.look = b.dataset.look;
+		});
+	});
+
+	// Taste map: each reaction pulls "you" 45% of the way to that topic, and
+	// the posts nearest you light up as your shortlist.
+	document.querySelectorAll<HTMLElement>('[data-tm-mini]').forEach((root) => {
+		const you = root.querySelector<SVGGElement>('[data-you]')!;
+		const trail = root.querySelector<SVGLineElement>('[data-trail]')!;
+		const status = root.querySelector<HTMLElement>('[data-tm-status]')!;
+		const dots = [...root.querySelectorAll<SVGCircleElement>('.tm-dot')];
+		const centers: Record<string, [number, number]> = {};
+		for (const d of dots) {
+			const k = d.dataset.topic!;
+			const c = centers[k] ?? [0, 0];
+			centers[k] = [c[0] + Number(d.getAttribute('cx')) / 4, c[1] + Number(d.getAttribute('cy')) / 4];
+		}
+		let pos: [number, number] = [50, 46];
+		const near = () => {
+			const ranked = dots.map((d) => ({ d, dist: Math.hypot(Number(d.getAttribute('cx')) - pos[0], Number(d.getAttribute('cy')) - pos[1]) })).sort((a, b) => a.dist - b.dist);
+			dots.forEach((d) => d.classList.remove('is-near'));
+			ranked.slice(0, 5).forEach((r) => r.d.classList.add('is-near'));
+		};
+		root.querySelectorAll<HTMLButtonElement>('button[data-topic]').forEach((b) =>
+			b.addEventListener('click', () => {
+				const [tx, ty] = centers[b.dataset.topic!];
+				const from = pos;
+				pos = [from[0] + (tx - from[0]) * 0.45, from[1] + (ty - from[1]) * 0.45];
+				trail.setAttribute('x1', String(from[0]));
+				trail.setAttribute('y1', String(from[1]));
+				trail.setAttribute('x2', String(pos[0]));
+				trail.setAttribute('y2', String(pos[1]));
+				you.style.transform = `translate(${pos[0]}px, ${pos[1]}px)`;
+				b.setAttribute('aria-pressed', 'true');
+				root.classList.add('is-moved');
+				near();
+				status.textContent = root.dataset.moved ?? status.textContent;
+			}),
+		);
+	});
+</script>
+
+<style>
+	.show {
+		padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(2rem, 5vw, 3.5rem);
+	}
+	.show-head {
+		display: grid;
+		justify-items: center;
+		gap: 0.75rem;
+		margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+		text-align: center;
+	}
+	.show-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.3rem 0.75rem 0.3rem 0.55rem;
+		border-radius: 999px;
+		background: rgb(220 255 107 / 0.1);
+		box-shadow: inset 0 0 0 1px rgb(220 255 107 / 0.3);
+		color: var(--sc-lime);
+		font-size: 0.78rem;
+		font-weight: 600;
+	}
+	.show-pill i {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--sc-lime);
+		box-shadow: 0 0 10px var(--sc-lime);
+	}
+	.show-head h2 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.8rem, 4.4vw, 2.8rem);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		color: var(--sc-ivory);
+		text-wrap: balance;
+	}
+	.show-head p {
+		max-width: 34rem;
+		margin: 0;
+		color: var(--sc-silver);
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	/* ---------- Bento ---------- */
+	.bento {
+		display: grid;
+		gap: 0.85rem;
+	}
+	@media (min-width: 48rem) {
+		.bento {
+			grid-template-columns: repeat(6, minmax(0, 1fr));
+		}
+		.t-kit,
+		.t-taste {
+			grid-column: span 3;
+		}
+		.t-time,
+		.t-jobs,
+		.t-cases {
+			grid-column: span 2;
+		}
+	}
+
+	.tile {
+		position: relative;
+		isolation: isolate;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		min-width: 0;
+		padding: clamp(1.1rem, 2.4vw, 1.5rem);
+		border-radius: 24px;
+		background:
+			radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.045), transparent 55%),
+			linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.012));
+		box-shadow:
+			inset 0 0 0 1px var(--sc-line),
+			inset 0 1px 0 rgb(255 255 255 / 0.06);
+		overflow: hidden;
+		transition: box-shadow 0.3s, transform 0.3s;
+	}
+	/* A soft light that follows the pointer on laptops. */
+	.tile::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, -30%), rgb(195 166 255 / 0.1), transparent 60%);
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.tile:hover {
+			box-shadow:
+				inset 0 0 0 1px var(--sc-line-strong),
+				inset 0 1px 0 rgb(255 255 255 / 0.08),
+				0 24px 60px -30px rgb(195 166 255 / 0.35);
+		}
+		.tile:hover::before {
+			opacity: 1;
+		}
+	}
+	.tile-copy {
+		display: grid;
+		gap: 0.45rem;
+	}
+	.tag {
+		justify-self: start;
+		padding: 0.22rem 0.6rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+		color: var(--accent);
+		font-size: 0.74rem;
+		font-weight: 600;
+	}
+	.tile h3 {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: clamp(1.15rem, 2vw, 1.35rem);
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+		text-wrap: balance;
+	}
+	.tile-copy p {
+		margin: 0;
+		color: var(--sc-silver);
+		font-size: 0.92rem;
+		line-height: 1.55;
+	}
+	.go {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin-top: auto;
+		color: var(--sc-ivory);
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.go span {
+		transition: transform 0.2s;
+	}
+	.tile:hover .go span,
+	.go:focus-visible span {
+		transform: translateX(3px);
+	}
+	/* The whole tile is the link, except the controls inside it. */
+	.stretch::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		border-radius: inherit;
+	}
+	.kit-looks,
+	.tm-chips,
+	.cases {
+		position: relative;
+		z-index: 1;
+	}
+
+	/* Reveal: tiles rise in once. Without JS everything is just there. */
+	:global(html.js) [data-rv] {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+	:global(html.js) [data-rv].is-in {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 0.7s var(--sc-ease-settle, ease) calc(var(--d, 0) * 80ms),
+			transform 0.7s var(--sc-ease-settle, ease) calc(var(--d, 0) * 80ms),
+			box-shadow 0.3s;
+	}
+
+	/* ---------- Media kit ---------- */
+	.t-kit {
+		background:
+			radial-gradient(90% 70% at 100% 100%, rgb(255 180 126 / 0.14), transparent 60%),
+			radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.045), transparent 55%),
+			rgb(255 255 255 / 0.02);
+	}
+	.kit-stage {
+		display: grid;
+		justify-items: center;
+		gap: 0.85rem;
+		padding: 0.25rem 0;
+	}
+	.kit-looks {
+		display: inline-flex;
+		gap: 0.25rem;
+		padding: 0.25rem;
+		border-radius: 999px;
+		background: rgb(0 0 0 / 0.35);
+		box-shadow: inset 0 0 0 1px var(--sc-line);
+	}
+	.kit-looks button {
+		min-height: 2rem;
+		padding: 0 0.9rem;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s, color 0.2s;
+	}
+	.kit-looks [aria-checked='true'] {
+		background: var(--sc-ivory);
+		color: #0a0a0b;
+	}
+	.kit-card {
+		--bg: #121015;
+		--fg: #f5f5f4;
+		--mut: #a3a1a8;
+		--ac: #ffb47e;
+		--ac2: #ff86b8;
+		width: min(100%, 19rem);
+		display: grid;
+		gap: 0.9rem;
+		padding: 1.1rem;
+		border-radius: 18px;
+		background:
+			radial-gradient(80% 60% at 100% 0%, color-mix(in srgb, var(--ac2) 22%, transparent), transparent 60%),
+			var(--bg);
+		color: var(--fg);
+		box-shadow:
+			0 0 0 1px rgb(255 255 255 / 0.08),
+			0 30px 60px -24px rgb(0 0 0 / 0.8),
+			0 0 50px -20px color-mix(in srgb, var(--ac) 60%, transparent);
+		transform: perspective(900px) rotateX(8deg) rotateY(-10deg) rotateZ(1deg);
+		transition:
+			transform 0.6s var(--sc-ease-settle, ease),
+			background 0.4s,
+			color 0.4s,
+			box-shadow 0.4s;
+	}
+	.t-kit:hover .kit-card {
+		transform: perspective(900px) rotateX(0) rotateY(0) rotateZ(0) translateY(-4px);
+	}
+	.kit-card[data-look='paper'] {
+		--bg: #f6f2ea;
+		--fg: #17151a;
+		--mut: #6c6870;
+		--ac: #17151a;
+		--ac2: #e9dfcf;
+	}
+	.kit-card[data-look='pop'] {
+		--bg: #ff86b8;
+		--fg: #17151a;
+		--mut: #4a2034;
+		--ac: #dcff6b;
+		--ac2: #c3a6ff;
+	}
+	.kc-top {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+	}
+	.kc-av {
+		width: 2.6rem;
+		height: 2.6rem;
+		flex: none;
+		border-radius: 50%;
+		background: conic-gradient(from 200deg, var(--ac), var(--ac2), var(--ac));
+		box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px color-mix(in srgb, var(--fg) 25%, transparent);
+	}
+	.kc-id {
+		display: grid;
+		line-height: 1.25;
+	}
+	.kc-id b {
+		font-family: var(--sc-font-display);
+		font-size: 1.02rem;
+	}
+	.kc-id small,
+	.kc-stats small,
+	.kc-foot {
+		color: var(--mut);
+		font-size: 0.72rem;
+	}
+	.kc-stats {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.4rem;
+	}
+	.kc-stats span {
+		display: grid;
+		padding: 0.5rem;
+		border-radius: 10px;
+		background: color-mix(in srgb, var(--fg) 7%, transparent);
+	}
+	.kc-stats b {
+		font-size: 1rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.kc-bars {
+		display: flex;
+		align-items: end;
+		gap: 0.35rem;
+		height: 3rem;
+	}
+	.kc-bars i {
+		flex: 1;
+		height: var(--h);
+		border-radius: 5px 5px 2px 2px;
+		background: linear-gradient(180deg, var(--ac), color-mix(in srgb, var(--ac) 35%, transparent));
+		transform-origin: bottom;
+	}
+	:global(html.js) .t-kit:not(.is-in) .kc-bars i {
+		transform: scaleY(0.1);
+	}
+	.t-kit.is-in .kc-bars i {
+		transition: transform 0.8s var(--sc-ease-settle, ease) 0.4s;
+	}
+	.kc-foot {
+		display: flex;
+		gap: 0.4rem;
+	}
+	.kc-foot span {
+		padding: 0.15rem 0.5rem;
+		border-radius: 999px;
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 18%, transparent);
+	}
+	.sample {
+		margin: 0;
+		color: var(--sc-steel);
+		font-size: 0.75rem;
+	}
+
+	/* ---------- Taste map ---------- */
+	.t-taste {
+		background:
+			radial-gradient(90% 70% at 0% 100%, rgb(255 134 184 / 0.12), transparent 60%),
+			radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.045), transparent 55%),
+			rgb(255 255 255 / 0.02);
+	}
+	.tm-mini {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.tm-mini svg {
+		width: 100%;
+		max-height: 15rem;
+		border-radius: 16px;
+		background:
+			radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.07) 1px, transparent 0) 0 0 / 8px 8px,
+			rgb(0 0 0 / 0.25);
+		box-shadow: inset 0 0 0 1px var(--sc-line);
+		overflow: visible;
+	}
+	.tm-dot {
+		fill: var(--c);
+		opacity: 0.35;
+		transition: opacity 0.4s, r 0.4s;
+	}
+	.tm-dot.is-near {
+		opacity: 1;
+		r: 2.8;
+		filter: drop-shadow(0 0 2px var(--c));
+	}
+	.tm-trail {
+		stroke: var(--sc-ivory);
+		stroke-width: 0.6;
+		stroke-dasharray: 1.5 1.5;
+		opacity: 0.5;
+	}
+	.tm-you {
+		transition: transform 0.7s var(--sc-ease-settle, cubic-bezier(0.2, 0.8, 0.2, 1));
+	}
+	.tm-you-ring {
+		fill: rgb(220 255 107 / 0.15);
+		stroke: var(--sc-lime);
+		stroke-width: 0.6;
+	}
+	.tm-you-dot {
+		fill: var(--sc-lime);
+	}
+	.tm-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	.tm-chips button {
+		min-height: 2.25rem;
+		padding: 0 0.75rem;
+		border: 0;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--c) 10%, transparent);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent);
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 0.82rem;
+		cursor: pointer;
+		transition: background 0.2s, transform 0.15s;
+	}
+	.tm-chips button span {
+		color: var(--c);
+	}
+	.tm-chips button:active {
+		transform: scale(0.95);
+	}
+	.tm-chips [aria-pressed='true'] {
+		background: color-mix(in srgb, var(--c) 24%, transparent);
+	}
+	.tm-status {
+		margin: 0;
+		color: var(--sc-steel);
+		font-size: 0.8rem;
+	}
+
+	/* ---------- Timeline ---------- */
+	.tl {
+		position: relative;
+		display: grid;
+		gap: 0.85rem;
+		margin: 0;
+		padding: 0 0 0 1.1rem;
+		list-style: none;
+	}
+	.tl::before {
+		content: '';
+		position: absolute;
+		left: 4px;
+		top: 0.4rem;
+		bottom: 0.4rem;
+		width: 1px;
+		background: linear-gradient(var(--sc-line-bright), transparent);
+		transform-origin: top;
+	}
+	:global(html.js) .t-time:not(.is-in) .tl::before {
+		transform: scaleY(0);
+	}
+	.t-time.is-in .tl::before {
+		transition: transform 1s var(--sc-ease-settle, ease) 0.2s;
+	}
+	.tl li {
+		position: relative;
+		display: grid;
+		gap: 0.15rem;
+	}
+	:global(html.js) .t-time:not(.is-in) .tl li {
+		opacity: 0;
+		transform: translateX(-6px);
+	}
+	.t-time.is-in .tl li {
+		transition:
+			opacity 0.5s ease calc(0.3s + var(--i) * 120ms),
+			transform 0.5s ease calc(0.3s + var(--i) * 120ms);
+	}
+	.tl-dot {
+		position: absolute;
+		left: calc(-1.1rem + 1px);
+		top: 0.3rem;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 0 3px var(--sc-obsidian), 0 0 10px var(--accent);
+	}
+	.tl-meta {
+		color: var(--sc-steel);
+		font-size: 0.74rem;
+	}
+	.tl-meta b {
+		color: var(--accent);
+		font-weight: 600;
+	}
+	.tl-title {
+		color: var(--sc-platinum);
+		font-size: 0.88rem;
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* ---------- Jobs ---------- */
+	.t-jobs {
+		background:
+			radial-gradient(90% 70% at 100% 0%, rgb(95 227 176 / 0.12), transparent 60%),
+			radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.045), transparent 55%),
+			rgb(255 255 255 / 0.02);
+	}
+	.jobs-big {
+		display: grid;
+		gap: 0.2rem;
+		margin: 0.25rem 0 0;
+	}
+	.jobs-big b {
+		font-family: var(--sc-font-display);
+		font-size: clamp(2.8rem, 6vw, 3.6rem);
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.jobs-big span {
+		color: var(--sc-silver);
+		font-size: 0.9rem;
+	}
+	.jobs-bars {
+		display: grid;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.jobs-bars li {
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+		padding: 0.4rem 0.6rem;
+		border-radius: 8px;
+		font-size: 0.82rem;
+		color: var(--sc-platinum);
+		overflow: hidden;
+	}
+	.jobs-bars li::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		width: var(--w);
+		border-radius: 8px;
+		background: linear-gradient(90deg, rgb(95 227 176 / 0.28), rgb(95 227 176 / 0.08));
+		transform-origin: left;
+	}
+	:global(html.js) .t-jobs:not(.is-in) .jobs-bars li::before {
+		transform: scaleX(0);
+	}
+	.t-jobs.is-in .jobs-bars li::before {
+		transition: transform 0.8s var(--sc-ease-settle, ease) calc(0.3s + var(--i) * 100ms);
+	}
+	.jb-n {
+		color: var(--sc-jade);
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* ---------- Case studies ---------- */
+	.cases {
+		display: grid;
+		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.cases a {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.4rem;
+		border-radius: 12px;
+		text-decoration: none;
+		transition: background 0.2s;
+	}
+	.cases a:hover {
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+	.cs-av {
+		display: grid;
+		place-items: center;
+		width: 2.2rem;
+		height: 2.2rem;
+		flex: none;
+		border-radius: 50%;
+		background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--accent) 70%, #fff), var(--accent) 45%, color-mix(in srgb, var(--accent) 40%, #000));
+		color: #0a0a0b;
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+	.cs-txt {
+		display: grid;
+		min-width: 0;
+		line-height: 1.3;
+	}
+	.cs-txt b {
+		color: var(--sc-ivory);
+		font-size: 0.88rem;
+	}
+	.cs-txt small {
+		color: var(--sc-silver);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	/* Laptops: show four, the rest are a tap away. */
+	@media (min-width: 48rem) {
+		.cases li:nth-child(n + 5) {
+			display: none;
+		}
+	}
+	@media (max-width: 47.99rem) {
+		/* Phones: creators become a sideways swipe of story-style cards. */
+		.cases {
+			grid-auto-flow: column;
+			grid-auto-columns: 70%;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			margin-inline: -1.1rem;
+			padding-inline: 1.1rem;
+			scroll-padding-inline: 1.1rem;
+		}
+		.cases::-webkit-scrollbar {
+			display: none;
+		}
+		.cases li {
+			scroll-snap-align: start;
+		}
+		.cases a {
+			flex-direction: column;
+			align-items: start;
+			height: 100%;
+			padding: 0.9rem;
+			background: color-mix(in srgb, var(--accent) 8%, rgb(255 255 255 / 0.02));
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+		}
+		.cs-av {
+			width: 2.6rem;
+			height: 2.6rem;
+		}
+		.cs-txt small {
+			white-space: normal;
+		}
+	}
+</style>
