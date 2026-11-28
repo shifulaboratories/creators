@@ -1,0 +1,209 @@
+---
+/**
+ * Which platform pay programs you qualify for, and how far off you are.
+ * Bars and sources live in src/lib/monetization-rules.ts.
+ */
+import './tools.css';
+import { METRICS, PROGRAMS, PLATFORM_NAMES } from '../../lib/monetization-rules';
+interface Props {
+	platform?: string;
+}
+const { platform = 'youtube' } = Astro.props;
+const payload = { metrics: METRICS, programs: PROGRAMS };
+const DEFAULTS: Record<string, number> = { subs: 820, hours: 2600, shorts: 400000, uploads: 6, followers: 6500, views30: 140000, impr: 120000, vfollowers: 180, elsewhere: 45000 };
+---
+
+<div class="sc-widget mc not-content" data-section="earn" data-mc data-start={platform} data-payload={JSON.stringify(payload)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Monetization check</div>
+			<p class="sc-widget__title">Can you get paid by the platform yet?</p>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="Platform" data-group="platform">
+		{Object.entries(PLATFORM_NAMES).map(([k, name]) => <button type="button" class="sc-chip" data-v={k} aria-pressed={String(k === platform)}>{name}</button>)}
+	</div>
+
+	{Object.entries(METRICS).map(([p, ms]) => (
+		<div class="tw-grid mc-fields" data-fields={p} hidden={p !== platform}>
+			{ms.map((m) =>
+				m.kind === 'yes' ? (
+					<label class="mc-yes"><input type="checkbox" data-in={m.key} checked /> <span>{m.label}</span></label>
+				) : (
+					<label class="tw-field">
+						<span>{m.label}</span>
+						<input inputmode="numeric" data-in={m.key} value={(DEFAULTS[m.key] ?? 0).toLocaleString('en-US')} />
+						{m.help && <small>{m.help}</small>}
+					</label>
+				),
+			)}
+		</div>
+	))}
+
+	<div class="mc-results" aria-live="polite" data-out="results"></div>
+	<p class="sc-widget__note">
+		Bars as each platform publishes them; sources are listed below the tool. Meeting a bar makes you eligible to apply, not accepted: every program also checks originality, its policies and where you live. The defaults are examples. Find your own numbers in YouTube Studio, TikTok Studio, X Creator Studio or Meta’s Professional Dashboard.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	type Rule = { metric: string; need: number; label: string };
+	type Program = { key: string; platform: string; name: string; unlocks: string; all: Rule[]; any?: Rule[]; note?: string; source: { url: string; publisher: string } };
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const short = (n: number) => (n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : Math.round(n).toLocaleString('en-US'));
+	const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+	document.querySelectorAll<HTMLElement>('[data-mc]').forEach((root) => {
+		const P = JSON.parse(root.dataset.payload!) as { programs: Program[] };
+		let platform = root.dataset.start!;
+		const value = (k: string) => {
+			const el = root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!;
+			return el.type === 'checkbox' ? Number(el.checked) : num(el.value);
+		};
+		const row = (r: Rule) => {
+			const have = value(r.metric);
+			const ok = have >= r.need;
+			const pct = Math.min(100, (have / r.need) * 100);
+			const yesNo = r.need === 1;
+			const gap = yesNo ? (ok ? 'Yes' : 'Not yet') : ok ? 'Done' : `${short(r.need - have)} to go`;
+			return `<li class="${ok ? 'is-ok' : ''}"><div class="mc-rule"><span>${esc(r.label)}</span><b>${gap}</b></div>${yesNo ? '' : `<div class="tw-meter"><i style="width:${pct}%"></i></div>`}</li>`;
+		};
+		const render = () => {
+			const html = P.programs
+				.filter((p) => p.platform === platform)
+				.map((p) => {
+					const allOk = p.all.every((r) => value(r.metric) >= r.need);
+					const anyOk = !p.any || p.any.some((r) => value(r.metric) >= r.need);
+					const ok = allOk && anyOk;
+					return `<article class="mc-card ${ok ? 'is-ok' : ''}">
+						<header><span class="mc-badge">${ok ? 'You qualify' : 'Not yet'}</span><h3>${esc(p.name)}</h3><p>${esc(p.unlocks)}</p></header>
+						<ul>${p.all.map(row).join('')}</ul>
+						${p.any ? `<p class="mc-or">Plus one of these:</p><ul>${p.any.map(row).join('')}</ul>` : ''}
+						${p.note ? `<p class="mc-note">${esc(p.note)}</p>` : ''}
+						<a class="mc-src" href="${p.source.url}" target="_blank" rel="noopener">Rules: ${esc(p.source.publisher)} ↗</a>
+					</article>`;
+				})
+				.join('');
+			root.querySelector('[data-out="results"]')!.innerHTML = html;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-group="platform"] [data-v]').forEach((btn) =>
+			btn.addEventListener('click', () => {
+				platform = btn.dataset.v!;
+				root.querySelectorAll('[data-group="platform"] [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+				root.querySelectorAll<HTMLElement>('[data-fields]').forEach((f) => (f.hidden = f.dataset.fields !== platform));
+				render();
+			}),
+		);
+		root.querySelectorAll<HTMLInputElement>('[data-in]').forEach((i) => {
+			i.addEventListener('input', render);
+			i.addEventListener('change', render);
+			if (i.type !== 'checkbox') i.addEventListener('blur', () => (i.value = num(i.value).toLocaleString('en-US')));
+		});
+		render();
+	});
+</script>
+
+<style is:global>
+	.mc [hidden] {
+		display: none;
+	}
+	.mc-fields {
+		margin-top: 0.9rem;
+	}
+	.mc-yes {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		min-height: 2.75rem;
+		font-size: 0.9rem;
+		color: var(--sc-ivory);
+		cursor: pointer;
+	}
+	.mc-yes input {
+		width: 1.15rem;
+		height: 1.15rem;
+		accent-color: var(--accent);
+	}
+	.mc-results {
+		display: grid;
+		gap: 0.8rem;
+		margin-top: 1.1rem;
+	}
+	.mc-card {
+		padding: 1rem 1.05rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.mc-card.is-ok {
+		border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+	.mc-card h3 {
+		margin: 0.35rem 0 0.2rem;
+		font-size: 1.02rem;
+		color: var(--sc-ivory);
+	}
+	.mc-card header p,
+	.mc-note,
+	.mc-or {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--sc-silver);
+	}
+	.mc-or {
+		margin-top: 0.7rem;
+		font-weight: 600;
+	}
+	.mc-note {
+		margin-top: 0.7rem;
+		color: var(--sc-steel);
+	}
+	.mc-badge {
+		display: inline-block;
+		font-size: 0.7rem;
+		font-weight: 650;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		padding: 0.2rem 0.55rem;
+		border-radius: 99px;
+		background: var(--sc-fill-muted);
+		color: var(--sc-silver);
+	}
+	.mc-card.is-ok .mc-badge {
+		background: var(--accent);
+		color: #0a0a0a;
+	}
+	.mc-card ul {
+		list-style: none;
+		padding: 0;
+		margin: 0.6rem 0 0;
+		display: grid;
+		gap: 0.6rem;
+	}
+	.mc-card li .tw-meter {
+		margin-top: 0.35rem;
+	}
+	.mc-rule {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.8rem;
+		font-size: 0.85rem;
+		color: var(--sc-platinum);
+	}
+	.mc-rule b {
+		font-variant-numeric: tabular-nums;
+		color: var(--sc-ivory);
+		white-space: nowrap;
+	}
+	.mc-card li.is-ok .mc-rule b {
+		color: var(--accent);
+	}
+	.mc-src {
+		display: inline-block;
+		margin-top: 0.7rem;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+</style>

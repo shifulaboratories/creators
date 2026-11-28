@@ -1,0 +1,308 @@
+---
+/**
+ * Best time to post when your audience lives in other time zones. The reader enters where
+ * their audience is (from their own analytics) and which hours those people are usually
+ * online; the tool converts everything into the reader's own time with the browser's time
+ * zone data (DST-correct for today) and ranks the hours by how much of the audience they reach.
+ * No universal "best time" is asserted: feeds are personalized, and the platforms' own
+ * analytics show when a given audience is online.
+ */
+import './tools.css';
+const ZONES: [string, string][] = [
+	['America/Los_Angeles', 'Los Angeles, Pacific'],
+	['America/Denver', 'Denver, Mountain'],
+	['America/Chicago', 'Chicago, Central'],
+	['America/New_York', 'New York, Eastern'],
+	['America/Toronto', 'Toronto'],
+	['America/Mexico_City', 'Mexico City'],
+	['America/Bogota', 'Bogotá, Lima'],
+	['America/Sao_Paulo', 'São Paulo'],
+	['America/Argentina/Buenos_Aires', 'Buenos Aires'],
+	['Europe/London', 'London, Dublin, Lisbon'],
+	['Europe/Paris', 'Paris, Berlin, Madrid'],
+	['Europe/Athens', 'Athens, Bucharest'],
+	['Europe/Istanbul', 'Istanbul'],
+	['Africa/Lagos', 'Lagos'],
+	['Africa/Johannesburg', 'Johannesburg'],
+	['Africa/Cairo', 'Cairo'],
+	['Asia/Dubai', 'Dubai'],
+	['Asia/Riyadh', 'Riyadh'],
+	['Asia/Kolkata', 'Mumbai, Delhi'],
+	['Asia/Jakarta', 'Jakarta, Bangkok'],
+	['Asia/Manila', 'Manila, Singapore'],
+	['Asia/Shanghai', 'Hong Kong, Taipei'],
+	['Asia/Seoul', 'Seoul'],
+	['Asia/Tokyo', 'Tokyo'],
+	['Australia/Sydney', 'Sydney, Melbourne'],
+	['Pacific/Auckland', 'Auckland'],
+];
+const DEFAULT_ON = [7, 8, 12, 13, 18, 19, 20, 21];
+const hourLabel = (h: number) => `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`;
+---
+
+<div class="sc-widget pt not-content" data-section="grow" data-pt data-zones={JSON.stringify(ZONES)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Best time to post</div>
+			<p class="sc-widget__title">Find the hours that reach most of your audience</p>
+		</div>
+	</div>
+
+	<label class="tw-field">
+		<span>Your time zone</span>
+		<select data-me>{ZONES.map(([z, l]) => <option value={z}>{l}</option>)}</select>
+	</label>
+
+	<fieldset class="pt-places">
+		<legend>Where your audience is</legend>
+		<small class="pt-hint pt-hint--top">Top countries or cities from your analytics, with their share.</small>
+		{[
+			['America/New_York', 60],
+			['America/Los_Angeles', 25],
+			['Europe/London', 15],
+		].map(([z, s], i) => (
+			<div class="pt-place" data-place={i}>
+				<select aria-label={`Place ${i + 1}`} data-zone>
+					<option value="">Not used</option>
+					{ZONES.map(([v, l]) => <option value={v} selected={v === z}>{l}</option>)}
+				</select>
+				<label class="pt-share"><input inputmode="numeric" value={String(s)} data-share aria-label={`Share of audience in place ${i + 1}`} /><span>%</span></label>
+			</div>
+		))}
+	</fieldset>
+
+	<div class="pt-hours">
+		<span class="tw-label">Hours they’re usually online, in <b>their</b> local time</span>
+		<div class="pt-hourgrid" role="group" aria-label="Online hours">
+			{Array.from({ length: 24 }, (_, h) => (
+				<button type="button" data-h={h} aria-pressed={String(DEFAULT_ON.includes(h))} aria-label={`${h}:00`}>{hourLabel(h)}</button>
+			))}
+		</div>
+		<small class="pt-hint">A starting guess: before work, lunch and evening. Swap in the hours your analytics actually show.</small>
+	</div>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label">Best hour to post, your time</span>
+		<b class="tw-big" data-out="best">–</b>
+		<p class="tw-sub" data-out="sub"></p>
+		<div class="pt-strip" aria-hidden="true" data-out="strip"></div>
+		<div class="pt-axis" aria-hidden="true"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>12a</span></div>
+		<ol class="pt-top" data-out="top"></ol>
+	</div>
+	<p class="sc-widget__note">
+		Each hour of your day is scored by the share of your audience for whom it falls in an online hour, in their local time, using your browser’s time zone data for today (so daylight saving is handled). Post a little before the window starts so the first hour, when a post gets its first test audience, lands inside it. Timing is a small lever on feeds that are personalized per viewer, and a bigger one for lives, Premieres, Stories and audiences split across continents.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	/** Minutes a zone is ahead of UTC right now. */
+	const offset = (tz: string, at = new Date()) => {
+		const parts = Object.fromEntries(
+			new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+				.formatToParts(at)
+				.map((p) => [p.type, p.value]),
+		);
+		const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute);
+		return Math.round((asUtc - at.getTime()) / 60000);
+	};
+	const label = (h: number) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
+	document.querySelectorAll<HTMLElement>('[data-pt]').forEach((root) => {
+		const zones = new Map(JSON.parse(root.dataset.zones!) as [string, string][]);
+		const me = root.querySelector<HTMLSelectElement>('[data-me]')!;
+		try {
+			const local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			if (local && !zones.has(local)) {
+				zones.set(local, local.split('/').pop()!.replace(/_/g, ' ') + ' (yours)');
+				me.add(new Option(zones.get(local)!, local), 0);
+				root.querySelectorAll<HTMLSelectElement>('[data-zone]').forEach((s) => s.add(new Option(zones.get(local)!, local), 1));
+			}
+			if (local) me.value = local;
+		} catch {
+			/* keep the first zone */
+		}
+		const render = () => {
+			const on = new Set([...root.querySelectorAll<HTMLButtonElement>('[data-h][aria-pressed="true"]')].map((b) => Number(b.dataset.h)));
+			const places = [...root.querySelectorAll<HTMLElement>('[data-place]')]
+				.map((el) => ({ tz: el.querySelector<HTMLSelectElement>('[data-zone]')!.value, share: num(el.querySelector<HTMLInputElement>('[data-share]')!.value) }))
+				.filter((p) => p.tz && p.share);
+			const total = places.reduce((s, p) => s + p.share, 0);
+			const mine = offset(me.value);
+			const score = Array.from({ length: 24 }, (_, h) => {
+				let s = 0;
+				const who: string[] = [];
+				for (const p of places) {
+					const theirs = (((h * 60 + offset(p.tz) - mine) % 1440) + 1440) % 1440;
+					const th = Math.floor(theirs / 60);
+					if (on.has(th)) {
+						s += p.share;
+						who.push(`${zones.get(p.tz)!.split(',')[0]} ${label(th)}`);
+					}
+				}
+				return { h, s: total ? s / total : 0, who };
+			});
+			const strip = root.querySelector<HTMLElement>('[data-out="strip"]')!;
+			strip.innerHTML = score.map((x) => `<i style="--a:${x.s}" title="${label(x.h)}: ${Math.round(x.s * 100)}%"></i>`).join('');
+			// Ties go to hours you're likely awake (7 AM to 11 PM), then to the earliest.
+			const awake = (h: number) => Number(h >= 7 && h <= 23);
+			const ranked = [...score].sort((a, b) => b.s - a.s || awake(b.h) - awake(a.h) || a.h - b.h);
+			const best = ranked[0];
+			const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+			if (!total || !on.size || !best.s) {
+				$('[data-out="best"]').textContent = '–';
+				$('[data-out="sub"]').textContent = 'Add where your audience is and when they’re online.';
+				$('[data-out="top"]').innerHTML = '';
+				return;
+			}
+			$('[data-out="best"]').textContent = label(best.h);
+			$('[data-out="sub"]').textContent = `Reaches ${Math.round(best.s * 100)}% of your audience in an online hour: ${best.who.join(' · ')}.`;
+			$('[data-out="top"]').innerHTML = ranked
+				.filter((x) => x.s > 0)
+				.slice(0, 4)
+				.map((x) => `<li><b>${label(x.h)}</b><span>${Math.round(x.s * 100)}% · ${x.who.join(' · ')}</span></li>`)
+				.join('');
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-h]').forEach((b) =>
+			b.addEventListener('click', () => {
+				b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+				render();
+			}),
+		);
+		root.querySelectorAll<HTMLSelectElement | HTMLInputElement>('select, input').forEach((el) => el.addEventListener('input', render));
+		render();
+	});
+</script>
+
+<style>
+	.pt-places {
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		padding: 0.5rem 0.9rem 0.9rem;
+		margin: 0.9rem 0 0;
+		display: grid;
+		gap: 0.55rem;
+	}
+	.pt-places legend {
+		padding: 0 0.35rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--sc-platinum);
+	}
+	.pt-places legend small {
+		font-weight: 400;
+		color: var(--sc-steel);
+	}
+	.pt-place {
+		display: grid;
+		grid-template-columns: 1fr 5.2rem;
+		gap: 0.5rem;
+	}
+	.pt select,
+	.pt-share input {
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+		padding: 0.6rem 0.7rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-fill-subtle);
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 1rem;
+	}
+	.pt-share {
+		position: relative;
+	}
+	.pt-share input {
+		padding-right: 1.6rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.pt-share span {
+		position: absolute;
+		right: 0.65rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: var(--sc-steel);
+		font-size: 0.85rem;
+	}
+	.pt-hours {
+		margin-top: 0.9rem;
+	}
+	.pt-hint--top {
+		margin: 0 0 0.2rem;
+	}
+	.pt-hourgrid {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 0.3rem;
+		margin-top: 0.4rem;
+	}
+	@media (min-width: 40rem) {
+		.pt-hourgrid {
+			grid-template-columns: repeat(12, 1fr);
+		}
+	}
+	.pt-hourgrid button {
+		min-height: 2.5rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line);
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		font-size: 0.78rem;
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+		transition: background 0.15s ease, color 0.15s ease;
+	}
+	.pt-hourgrid button[aria-pressed='true'] {
+		background: color-mix(in srgb, var(--accent) 30%, transparent);
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+		color: var(--sc-ivory);
+	}
+	.pt-hint {
+		display: block;
+		margin-top: 0.4rem;
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.pt-strip {
+		display: grid;
+		grid-template-columns: repeat(24, 1fr);
+		gap: 2px;
+		height: 2.2rem;
+		margin-top: 0.9rem;
+	}
+	.pt-strip :global(i) {
+		border-radius: 3px;
+		background: var(--accent);
+		opacity: max(0.1, var(--a));
+		transition: background 0.25s ease;
+	}
+	.pt-axis {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.68rem;
+		color: var(--sc-steel);
+		margin-top: 0.25rem;
+	}
+	.pt-top {
+		list-style: none;
+		padding: 0;
+		margin: 0.9rem 0 0;
+		display: grid;
+		gap: 0.4rem;
+	}
+	.pt-top :global(li) {
+		display: flex;
+		gap: 0.7rem;
+		align-items: baseline;
+		font-size: 0.85rem;
+		color: var(--sc-silver);
+	}
+	.pt-top :global(b) {
+		min-width: 3.6rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+</style>

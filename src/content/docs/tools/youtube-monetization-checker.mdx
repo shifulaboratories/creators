@@ -1,0 +1,38 @@
+---
+title: "YouTube monetization checker: am I eligible for the Partner Program?"
+description: "Free YouTube monetization checker. Type your subscribers, watch hours and Shorts views to see if you qualify for the YouTube Partner Program, and how far off you are."
+payoff: "See how close you are to each YouTube Partner Program tier."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: "YouTube monetization"
+sidebar:
+  order: 17
+  label: "YouTube monetization checker"
+faq:
+  - q: "How many subscribers do you need to monetize on YouTube?"
+    a: "500 subscribers unlock fan funding and Shopping, with 3 uploads in 90 days and 3,000 watch hours or 3 million Shorts views. Ad revenue needs 1,000 subscribers plus 4,000 watch hours in 12 months or 10 million Shorts views in 90 days."
+  - q: "Do Shorts views count toward watch hours?"
+    a: "No. Watch hours count public long-form videos. Shorts views are a separate route: 3 million in 90 days for the first tier, or 10 million for ad revenue."
+  - q: "Is YouTube changing the requirements?"
+    a: "YouTube announced that from February 1, 2027 new channels qualify for ad revenue with 8,000 watch hours in 365 days or 20 million Shorts views in 90 days. Channels already in the program aren’t affected."
+---
+
+import MonetizationChecker from '../../../components/tools/MonetizationChecker.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+import { PROGRAMS } from '../../../lib/monetization-rules';
+
+**How it works:** type your numbers from your analytics. You’ll see whether you meet each published requirement, and how far off you are. Switch platforms to check the others.
+
+<MonetizationChecker platform="youtube" />
+
+Two tiers, two doors. The first (500 subscribers) unlocks fan money like memberships and Super Thanks. The second (1,000 subscribers) adds a 55% share of ad revenue on long videos. More in the [YouTube guide](/platforms/youtube/), and see what ads would pay with the [YouTube money calculator](/tools/youtube-money-calculator/).
+
+<ToolSources items={[...new Map(PROGRAMS.filter((x) => x.platform === 'youtube').map((x) => [x.source.url, x.source])).values(), { title: 'YouTube Partner Program updates: new opportunities to earn', publisher: 'YouTube Official Blog', url: 'https://blog.youtube/news-and-events/youtube-partner-program-updates-2027-new-opportunities-earn/', date: 'Aug 10, 2026' }]} />
+
+<Faq />
+
+<MoreTools />

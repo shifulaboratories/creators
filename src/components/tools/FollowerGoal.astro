@@ -1,0 +1,153 @@
+---
+/**
+ * When you hit a follower goal at your current pace, and what pace a deadline needs.
+ * Two projections: steady (same number gained each month) and compounding (same % each
+ * month). Pure arithmetic, no benchmarks.
+ */
+import './tools.css';
+---
+
+<div class="sc-widget fg not-content" data-section="grow" data-fg>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Follower goal</div>
+			<p class="sc-widget__title">When will you hit your next milestone?</p>
+		</div>
+	</div>
+
+	<div class="tw-grid">
+		<label class="tw-field"><span>Followers now</span><input inputmode="numeric" data-in="now" value="6,200" /></label>
+		<label class="tw-field"><span>Gained in the last 30 days</span><input inputmode="numeric" data-in="gain" value="450" /><small>Net: new followers minus unfollows.</small></label>
+	</div>
+
+	<div class="fg-goal">
+		<span class="tw-label">Goal</span>
+		<div class="sc-chip-row" role="group" aria-label="Goal" data-group="goal">
+			<button type="button" class="sc-chip" data-v="10000" aria-pressed="true">10K</button>
+			<button type="button" class="sc-chip" data-v="50000" aria-pressed="false">50K</button>
+			<button type="button" class="sc-chip" data-v="100000" aria-pressed="false">100K</button>
+			<button type="button" class="sc-chip" data-v="1000000" aria-pressed="false">1M</button>
+		</div>
+		<label class="tw-field"><span>Or type a goal</span><input inputmode="numeric" data-in="goal" value="10,000" /></label>
+	</div>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label">At your current pace you’ll get there</span>
+		<b class="tw-big" data-out="when">–</b>
+		<p class="tw-sub" data-out="sub"></p>
+		<div class="tw-meter" aria-hidden="true"><i data-out="meter"></i></div>
+		<div class="tw-split">
+			<div><span>If growth compounds</span><b data-out="compound">–</b></div>
+			<div><span>Monthly growth rate</span><b data-out="rate">–</b></div>
+			<div><span>A day, on average</span><b data-out="day">–</b></div>
+		</div>
+	</div>
+
+	<label class="tw-field fg-by">
+		<span>Want it sooner? Hit it in <b data-out="monthsv">12 months</b></span>
+		<input type="range" min="1" max="36" step="1" value="12" data-in="months" aria-label="Months to reach the goal" />
+	</label>
+	<div class="tw-split">
+		<div><span>Followers needed a month</span><b data-out="need">–</b></div>
+		<div><span>Or monthly growth of</span><b data-out="needRate">–</b></div>
+		<div><span>Vs your pace now</span><b data-out="vs">–</b></div>
+	</div>
+
+	<p class="sc-widget__note">
+		Steady = the same number of new followers every month as the last 30 days. Compounding = the same percentage every month, which is the optimistic case: it assumes a bigger account keeps growing at the same rate. Real growth comes in jumps when a post travels, so treat both as a range, not a promise. Followers also matter less than they did: most feeds now pick posts by what each viewer likes, not by who they follow (see <a href="/algorithms/">how algorithms work</a>).
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const int = (n: number) => Math.round(n).toLocaleString('en-US');
+	const short = (n: number) => (n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : int(n));
+	const pct = (x: number) => (x >= 10 ? x.toFixed(0) : x.toFixed(1)) + '%';
+	const date = (months: number) => {
+		const d = new Date();
+		d.setDate(d.getDate() + Math.round(months * 30.44));
+		return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+	};
+	const span = (m: number) => (m < 1 ? 'under a month' : m < 24 ? `${Math.ceil(m)} month${Math.ceil(m) === 1 ? '' : 's'}` : `${(m / 12).toFixed(1)} years`);
+	document.querySelectorAll<HTMLElement>('[data-fg]').forEach((root) => {
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const input = (k: string) => root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!;
+		const syncChips = () => {
+			const g = num(input('goal').value);
+			root.querySelectorAll('[data-group="goal"] [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(Number((b as HTMLElement).dataset.v) === g)));
+		};
+		const render = () => {
+			const now = num(input('now').value);
+			const gain = num(input('gain').value);
+			const goal = num(input('goal').value);
+			const months = num(input('months').value) || 1;
+			const left = goal - now;
+			$('[data-out="monthsv"]').textContent = `${months} month${months === 1 ? '' : 's'}`;
+			$('[data-out="meter"]').style.width = goal ? Math.min(100, (now / goal) * 100) + '%' : '0';
+			const rate = now ? gain / now : 0;
+			$('[data-out="rate"]').textContent = now ? pct(rate * 100) : '–';
+			$('[data-out="day"]').textContent = int(gain / 30);
+			if (left <= 0) {
+				$('[data-out="when"]').textContent = 'Already there';
+				$('[data-out="sub"]').textContent = 'Pick a bigger goal.';
+				$('[data-out="compound"]').textContent = '–';
+				['need', 'needRate', 'vs'].forEach((k) => ($(`[data-out="${k}"]`).textContent = '–'));
+				return;
+			}
+			if (!gain) {
+				$('[data-out="when"]').textContent = 'Not at this pace';
+				$('[data-out="sub"]').textContent = `You need ${int(left)} more. Add how many you gained last month.`;
+				$('[data-out="compound"]').textContent = '–';
+			} else {
+				const steady = left / gain;
+				$('[data-out="when"]').textContent = date(steady);
+				$('[data-out="sub"]').textContent = `${short(left)} to go, about ${span(steady)} at ${int(gain)} a month.`;
+				const comp = now && rate ? Math.log(goal / now) / Math.log(1 + rate) : NaN;
+				$('[data-out="compound"]').textContent = isFinite(comp) ? `${date(comp)} (${span(comp)})` : '–';
+			}
+			const need = left / months;
+			const needRate = now ? Math.pow(goal / now, 1 / months) - 1 : NaN;
+			$('[data-out="need"]').textContent = int(need);
+			$('[data-out="needRate"]').textContent = isFinite(needRate) ? pct(needRate * 100) : '–';
+			$('[data-out="vs"]').textContent = gain ? `${(need / gain).toFixed(1)}×` : '–';
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-group="goal"] [data-v]').forEach((btn) =>
+			btn.addEventListener('click', () => {
+				input('goal').value = Number(btn.dataset.v).toLocaleString('en-US');
+				syncChips();
+				render();
+			}),
+		);
+		root.querySelectorAll<HTMLInputElement>('[data-in]').forEach((i) => {
+			i.addEventListener('input', () => {
+				if (i.dataset.in === 'goal') syncChips();
+				render();
+			});
+			if (i.type !== 'range') i.addEventListener('blur', () => (i.value = num(i.value).toLocaleString('en-US')));
+		});
+		render();
+	});
+</script>
+
+<style>
+	.fg-goal {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 0.9rem;
+	}
+	.fg-goal .sc-chip-row {
+		margin: 0;
+	}
+	.fg-by {
+		margin-top: 1.1rem;
+	}
+	.fg-by b {
+		color: var(--sc-ivory);
+	}
+	.fg-by input[type='range'] {
+		width: 100%;
+		accent-color: var(--accent);
+		min-height: 2rem;
+	}
+</style>

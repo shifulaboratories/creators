@@ -1,0 +1,48 @@
+---
+title: "Monetization checker: YouTube, TikTok, X and Facebook requirements"
+description: "Free monetization checker. Type your numbers and see which pay programs you qualify for on YouTube, TikTok, X and Facebook, and exactly how far off the rest are."
+payoff: "Know which platform will pay you first, and what it takes to get there."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: "Monetization"
+sidebar:
+  order: 17
+  label: "Monetization checker"
+faq:
+  - q: "How many subscribers do you need to get paid on YouTube?"
+    a: "500 subscribers, 3 uploads in 90 days and 3,000 watch hours or 3 million Shorts views unlock fan funding like memberships and Super Thanks. Ad revenue needs 1,000 subscribers and 4,000 watch hours in 12 months or 10 million Shorts views in 90 days."
+  - q: "How many followers do you need for TikTok Creator Rewards?"
+    a: "10,000 followers and 100,000 video views in the last 30 days, and you must be 18 or older, per TikTok. Only original videos of one minute or longer earn, and only where the program is available."
+  - q: "What do you need to get paid on X?"
+    a: "An active Premium subscription, 500 verified followers and 500,000 Home timeline impressions from verified users in the last 90 days, per X’s help center. Replies don’t count toward the impressions."
+  - q: "How do you get monetized on Facebook?"
+    a: "Content Monetization is invite-only, with no published follower minimum. Creators with 100,000 or more followers on Instagram, TikTok or YouTube can apply for Creator Fast Track, which gives three months of guaranteed pay and immediate access."
+  - q: "Do I get paid as soon as I qualify?"
+    a: "No. Meeting the bar lets you apply. Each platform then reviews your account for originality and policy, and pays only in listed countries."
+---
+
+import MonetizationChecker from '../../../components/tools/MonetizationChecker.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+import { PROGRAM_SOURCES } from '../../../lib/monetization-rules';
+
+**How it works:** pick a platform and type your numbers from its analytics. Each program shows whether you qualify, and how far off each requirement is.
+
+<MonetizationChecker />
+
+## Platform pay is the smallest check
+
+Ad revenue and creator funds are the money most people think of first, but for most creators they’re not the biggest. Brand deals, fan subscriptions and your own products usually pay more per follower, and none of them has a bar to clear. See [ways creators make money](/earn/monetization-paths/) for how they compare, and the [YouTube money calculator](/tools/youtube-money-calculator/) for what ads pay once you’re in.
+
+## YouTube changes in 2027
+
+YouTube has announced new Partner Program terms from **February 1, 2027**. New channels will need 8,000 watch hours in the last 365 days or 20 million Shorts views in 90 days for ad and Premium revenue, and Shorts revenue sharing will need 10 million qualified Shorts views in 90 days. Channels already in the program aren’t affected. Accept the new terms in YouTube Studio by January 31, 2027.
+
+<ToolSources items={[...PROGRAM_SOURCES, { title: 'YouTube Partner Program updates: new opportunities to earn', publisher: 'YouTube Official Blog', url: 'https://blog.youtube/news-and-events/youtube-partner-program-updates-2027-new-opportunities-earn/', date: 'Aug 10, 2026' }]} />
+
+<Faq />
+
+<MoreTools />

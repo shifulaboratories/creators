@@ -1,0 +1,38 @@
+---
+title: "TikTok Creator Rewards checker: do you qualify?"
+description: "Free TikTok Creator Rewards Program checker. Type your followers and last 30 days of views to see if you meet TikTok’s published bar, and how far off you are."
+payoff: "See how far you are from TikTok’s Creator Rewards bar."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: "TikTok rewards"
+sidebar:
+  order: 17
+  label: "TikTok rewards checker"
+faq:
+  - q: "How many followers do you need for TikTok Creator Rewards?"
+    a: "10,000 followers and 100,000 video views in the last 30 days, and you must be 18 or older, per TikTok’s announcement of the program."
+  - q: "Which TikTok videos earn money?"
+    a: "Only original videos one minute or longer, from accounts in good standing, in countries where the program is available."
+  - q: "Does TikTok pay for videos under a minute?"
+    a: "Not through Creator Rewards. Short videos still help you get found, but the program only pays for videos of one minute or more."
+---
+
+import MonetizationChecker from '../../../components/tools/MonetizationChecker.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+import { PROGRAMS } from '../../../lib/monetization-rules';
+
+**How it works:** type your numbers from your analytics. You’ll see whether you meet each published requirement, and how far off you are. Switch platforms to check the others.
+
+<MonetizationChecker platform="tiktok" />
+
+Use short videos to get found and longer ones to get paid: TikTok says Creator Rewards only pays for original videos of a minute or more. More in the [TikTok guide](/platforms/tiktok/).
+
+<ToolSources items={[...new Map(PROGRAMS.filter((x) => x.platform === 'tiktok').map((x) => [x.source.url, x.source])).values()]} />
+
+<Faq />
+
+<MoreTools />

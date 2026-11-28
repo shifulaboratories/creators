@@ -1,0 +1,147 @@
+---
+/**
+ * CPM and RPM, four ways round: what a deal cost per 1,000 views, what a CPM makes a
+ * deal cost, what views earn at an RPM, and a rough YouTube RPM from a CPM using
+ * YouTube's published 55% long-form share. Sources are listed on /tools/cpm-rpm-calculator/.
+ */
+import './tools.css';
+---
+
+<div class="sc-widget cpm not-content" data-section="earn" data-cpm>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · CPM and RPM</div>
+			<p class="sc-widget__title">Price per 1,000 views, every way round</p>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="What do you want to work out?" data-group="mode">
+		<button type="button" class="sc-chip" data-v="cpm" aria-pressed="true">CPM of a deal</button>
+		<button type="button" class="sc-chip" data-v="price" aria-pressed="false">Price from a CPM</button>
+		<button type="button" class="sc-chip" data-v="rpm" aria-pressed="false">Earnings from RPM</button>
+		<button type="button" class="sc-chip" data-v="yt" aria-pressed="false">YouTube CPM to RPM</button>
+	</div>
+
+	<div class="tw-grid cpm-fields">
+		<label class="tw-field"><span data-label="a">Price paid ($)</span><input inputmode="decimal" data-in="a" /><small data-help="a"></small></label>
+		<label class="tw-field"><span data-label="b">Views</span><input inputmode="numeric" data-in="b" /><small data-help="b"></small></label>
+		<label class="tw-field" data-field="c" hidden><span data-label="c">Views with an ad (%)</span><input inputmode="decimal" data-in="c" /><small data-help="c"></small></label>
+	</div>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label" data-out="label">CPM</span>
+		<b class="tw-big" data-out="big">$0</b>
+		<p class="tw-sub" data-out="sub"></p>
+		<div class="tw-split" data-out="split"></div>
+	</div>
+	<p class="sc-widget__note" data-out="note"></p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	type Mode = 'cpm' | 'price' | 'rpm' | 'yt';
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const usd = (n: number) => (isFinite(n) ? '$' + (n >= 1000 ? Math.round(n).toLocaleString('en-US') : n.toFixed(2)) : '–');
+	const int = (n: number) => (isFinite(n) ? Math.round(n).toLocaleString('en-US') : '–');
+	const MODES: Record<Mode, { a: [string, string, string]; b: [string, string, string]; c?: [string, string, string]; note: string }> = {
+		cpm: {
+			a: ['Price paid ($)', '500', 'The flat fee for the post.'],
+			b: ['Views it got', '25,000', 'Or your average views per post.'],
+			note: 'CPM = price ÷ views × 1,000. CPV (cost per view) = price ÷ views. Brands use both to compare creators with each other and with ads, so it pays to know yours before they do.',
+		},
+		price: {
+			a: ['CPM ($ per 1,000 views)', '20', 'The CPM you want to charge. Example only.'],
+			b: ['Average views per post', '25,000', 'From your last 10 or so posts.'],
+			note: 'Price = average views ÷ 1,000 × CPM. Use average views, not followers: a brand pays for the people who actually see the post. Pick the CPM yourself; no platform publishes a standard rate for sponsored posts.',
+		},
+		rpm: {
+			a: ['Your RPM ($)', '4', 'From your analytics. Example only.'],
+			b: ['Views a month', '200,000', 'All views, not just monetized ones.'],
+			note: 'Earnings = views ÷ 1,000 × RPM. RPM is what you earned per 1,000 views after the platform’s share, spread over every view, so nothing else gets taken off. On YouTube it’s in Studio under Analytics, then Revenue.',
+		},
+		yt: {
+			a: ['Your CPM ($)', '12', 'From YouTube Studio. Example only.'],
+			b: ['Views a month', '200,000', 'All views on long videos.'],
+			c: ['Views with an ad (%)', '50', 'Monetized playbacks ÷ views. A guess unless you check Studio.'],
+			note: 'A rough check, not a forecast: RPM ≈ CPM × the share of views that showed an ad × 55%, YouTube’s published share of ad revenue on long videos. Your real RPM also includes Premium and other income, and YouTube shows it directly, so use it once you have it. Shorts are paid from a pooled fund instead, so this does not apply to them.',
+		},
+	};
+	document.querySelectorAll<HTMLElement>('[data-cpm]').forEach((root) => {
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const input = (k: string) => root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!;
+		let mode: Mode = 'cpm';
+		const tile = (label: string, value: string) => `<div><span>${label}</span><b>${value}</b></div>`;
+		const setMode = (m: Mode) => {
+			mode = m;
+			const cfg = MODES[m];
+			(['a', 'b', 'c'] as const).forEach((k) => {
+				const f = cfg[k];
+				if (k === 'c') root.querySelector<HTMLElement>('[data-field="c"]')!.hidden = !f;
+				if (!f) return;
+				$(`[data-label="${k}"]`).textContent = f[0];
+				input(k).value = f[1];
+				$(`[data-help="${k}"]`).textContent = f[2];
+			});
+			$('[data-out="note"]').textContent = cfg.note;
+			root.querySelectorAll<HTMLButtonElement>('[data-group="mode"] [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === m)));
+			render();
+		};
+		const render = () => {
+			const a = num(input('a').value);
+			const b = num(input('b').value);
+			const out = (label: string, big: string, sub: string, tiles: string[]) => {
+				$('[data-out="label"]').textContent = label;
+				$('[data-out="big"]').textContent = big;
+				$('[data-out="sub"]').textContent = sub;
+				$('[data-out="split"]').innerHTML = tiles.join('');
+			};
+			if (mode === 'cpm') {
+				const cpm = b ? (a / b) * 1000 : NaN;
+				out('CPM: cost per 1,000 views', usd(cpm), b ? `The brand paid ${usd(a / b)} for each view.` : 'Add the views to see the CPM.', [
+					tile('At 2× the views', usd(cpm / 2)),
+					tile('At half the views', usd(cpm * 2)),
+					tile('Cost per view', b ? '$' + (a / b).toFixed(3) : '–'),
+				]);
+			} else if (mode === 'price') {
+				const price = (b / 1000) * a;
+				out('Price for one post', usd(price), `${int(b)} views at a ${usd(a)} CPM.`, [
+					tile('If views drop 30%', usd(price * 0.7)),
+					tile('If views rise 30%', usd(price * 1.3)),
+					tile('Three posts', usd(price * 3)),
+				]);
+			} else if (mode === 'rpm') {
+				const month = (b / 1000) * a;
+				out('Earnings a month', usd(month), `About ${usd(month * 12)} a year at this pace. Before tax.`, [
+					tile('Per 100K views', usd(100 * a)),
+					tile('Views for $1,000', a ? int((1000 / a) * 1000) : '–'),
+					tile('Per day', usd(month / 30)),
+				]);
+			} else {
+				const share = Math.min(100, num(input('c').value)) / 100;
+				const rpm = a * share * 0.55;
+				out('Rough RPM on long videos', usd(rpm), `So ${int(b)} views a month would pay about ${usd((b / 1000) * rpm)}.`, [
+					tile('YouTube’s share', '45%'),
+					tile('Your share', '55%'),
+					tile('RPM as % of CPM', a ? Math.round((rpm / a) * 100) + '%' : '–'),
+				]);
+			}
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-group="mode"] [data-v]').forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.v as Mode)));
+		root.querySelectorAll<HTMLInputElement>('[data-in]').forEach((i) => {
+			i.addEventListener('input', render);
+			i.addEventListener('blur', () => {
+				if (i.inputMode === 'numeric') i.value = num(i.value).toLocaleString('en-US');
+			});
+		});
+		setMode('cpm');
+	});
+</script>
+
+<style>
+	.cpm-fields {
+		margin-top: 0.9rem;
+	}
+	.cpm [hidden] {
+		display: none;
+	}
+</style>
