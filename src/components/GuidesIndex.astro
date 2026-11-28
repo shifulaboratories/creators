@@ -29,6 +29,7 @@ type Topic = { id: string; title: string; text: string };
 const topicsEn: Topic[] = [
 	{ id: 'algorithms', title: 'Make content that travels', text: 'Stop, stay, send, come back: what feeds reward and how to make it' },
 	{ id: 'grow', title: 'Grow', text: 'Niche, hooks, formats, cadence and analytics' },
+	{ id: 'strategy', title: 'Strategy', text: 'Clipping, fan pages and why one viral post rarely sells' },
 	{ id: 'paywall', title: 'Paywall', text: 'Fanfix, OnlyFans, Patreon, Fanvue and chatting agencies' },
 	{ id: 'deals', title: 'Brand deals', text: 'Agencies, commissions, pricing, negotiating, contracts' },
 	{ id: 'earn', title: 'Earn', text: 'Every income stream and what it really pays' },
@@ -68,7 +69,7 @@ const platforms: Plat[] = [
 	.filter((p) => p.key === 'general' || has(p.href.slice(1, -1)))
 	.map((p) => ({ ...p, href: localize(locale, p.href) }));
 
-const order = ['algorithms', 'platforms', 'grow', 'paywall', 'deals', 'earn', 'rates', 'tools', 'reviews', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
+const order = ['algorithms', 'platforms', 'grow', 'strategy', 'paywall', 'deals', 'earn', 'rates', 'tools', 'reviews', 'money', 'team', 'protect', 'case-studies', 'stack', 'underground', 'shortlist', 'news'];
 const rows = guides
 	.map((e) => {
 		const id = idOf(e);

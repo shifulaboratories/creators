@@ -1,0 +1,240 @@
+---
+/**
+ * The attention ladder: five steps from "saw you once" to "bought from you".
+ * Tap a step to see what moves people up it, what to measure, and the guide
+ * that covers it. Our framework; the research behind each step is cited on the page.
+ */
+import './strategy.css';
+
+const steps = [
+	{
+		key: 'seen',
+		n: 1,
+		name: 'Seen',
+		line: 'A stranger sees you for the first time.',
+		moves: 'Your own short posts, clip pages, fan pages, collabs, features. More surfaces, more first looks.',
+		measure: 'Reach to non-followers, views from clip and fan pages.',
+		href: '/strategy/clipping/',
+		cta: 'How clipping works',
+	},
+	{
+		key: 'remembered',
+		n: 2,
+		name: 'Remem\u00adbered',
+		line: 'They see you again, and again, until they recognize you.',
+		moves: 'Repeat exposure. One view rarely does anything; the classic finding is two to three within a buying cycle.',
+		measure: 'Returning viewers, profile visits, people who search your name.',
+		href: '/strategy/multiple-impressions/',
+		cta: 'Why it takes several looks',
+	},
+	{
+		key: 'trusted',
+		n: 3,
+		name: 'Trusted',
+		line: 'They spend real time with you and decide you’re worth it.',
+		moves: 'Long videos, lives, podcasts, replies, carousels that teach. Depth that a 20-second clip can’t give.',
+		measure: 'Watch time on long-form, comments that ask questions, saves.',
+		href: '/algorithms/',
+		cta: 'Make content that travels',
+	},
+	{
+		key: 'owned',
+		n: 4,
+		name: 'Owned',
+		line: 'They follow, subscribe or join your list, so you can reach them without a feed.',
+		moves: 'A clear reason to follow, an email list or community, a paid membership for your biggest fans.',
+		measure: 'Follows per 1,000 views, email sign-ups, members.',
+		href: '/earn/monetization-paths/',
+		cta: 'Ways creators earn',
+	},
+	{
+		key: 'bought',
+		n: 5,
+		name: 'Bought',
+		line: 'When they’re ready to buy, you’re the one they remember.',
+		moves: 'Most people aren’t in the market on any given day. Stay remembered so you’re there when they are.',
+		measure: 'Sales, sign-ups and brand-deal results, over months, not one post.',
+		href: '/paywall/',
+		cta: 'Fan platforms compared',
+	},
+];
+---
+
+<section class="st al not-content" data-al aria-labelledby="al-title" data-no-swipe>
+	<p class="st-kick">Tap a step</p>
+	<p id="al-title" class="st-title">From “saw you once” to “bought from you”</p>
+
+	<ol class="al-steps" role="tablist" aria-label="Steps of the attention ladder">
+		{
+			steps.map((s, i) => (
+				<li role="presentation">
+					<button
+						type="button"
+						role="tab"
+						id={`al-tab-${s.key}`}
+						aria-controls={`al-panel-${s.key}`}
+						aria-selected={i === 0 ? 'true' : 'false'}
+						tabindex={i === 0 ? 0 : -1}
+						data-step={s.key}
+						style={`--i:${i}`}
+					>
+						<span class="al-n">{s.n}</span>
+						<span class="al-name">{s.name}</span>
+					</button>
+				</li>
+			))
+		}
+	</ol>
+
+	{
+		steps.map((s, i) => (
+			<div class="al-panel" role="tabpanel" id={`al-panel-${s.key}`} aria-labelledby={`al-tab-${s.key}`} hidden={i !== 0} data-panel={s.key}>
+				<p class="al-line">{s.line}</p>
+				<dl>
+					<div>
+						<dt>What moves people here</dt>
+						<dd>{s.moves}</dd>
+					</div>
+					<div>
+						<dt>What to measure</dt>
+						<dd>{s.measure}</dd>
+					</div>
+				</dl>
+				<a class="al-cta" href={s.href}>
+					{s.cta} →
+				</a>
+			</div>
+		))
+	}
+	<p class="st-note">Our framework. Most people drop off at every step, which is why one viral post rarely turns into sales on its own.</p>
+</section>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-al]').forEach((root) => {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-step]')];
+		const pick = (b: HTMLButtonElement, focus = false) => {
+			tabs.forEach((t) => {
+				const on = t === b;
+				t.setAttribute('aria-selected', String(on));
+				t.tabIndex = on ? 0 : -1;
+			});
+			root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.step));
+			if (focus) b.focus();
+		};
+		tabs.forEach((b, i) => {
+			b.addEventListener('click', () => pick(b));
+			b.addEventListener('keydown', (e) => {
+				const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+				if (!d) return;
+				e.preventDefault();
+				pick(tabs[(i + d + tabs.length) % tabs.length], true);
+			});
+		});
+	});
+</script>
+
+<style>
+	.al-steps {
+		list-style: none;
+		margin: 0 0 1rem;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.35rem;
+		align-items: end;
+	}
+	.al-steps button {
+		appearance: none;
+		font: inherit;
+		width: 100%;
+		/* A staircase: each step a little taller than the one before. */
+		min-height: calc(3.4rem + var(--i) * 0.9rem);
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: flex-start;
+		gap: 0.15rem;
+		padding: 0.55rem 0.5rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line-strong);
+		background: color-mix(in srgb, var(--sc-strategy) calc(6% + var(--i) * 5%), transparent);
+		color: var(--sc-silver);
+		cursor: pointer;
+		text-align: left;
+		transition:
+			background 0.2s,
+			border-color 0.2s,
+			color 0.2s;
+	}
+	.al-steps button:hover {
+		border-color: var(--sc-line-bright);
+		color: var(--sc-ivory);
+	}
+	.al-steps button[aria-selected='true'] {
+		background: var(--sc-strategy);
+		border-color: var(--sc-strategy);
+		color: #0a0a0a;
+	}
+	.al-steps button:focus-visible {
+		outline: 2px solid var(--sc-ivory);
+		outline-offset: 2px;
+	}
+	.al-n {
+		font-family: var(--sc-font-display);
+		font-weight: 700;
+		font-size: var(--sc-text-lg);
+		line-height: 1;
+	}
+	.al-name {
+		font-size: clamp(0.68rem, 2.6vw, var(--sc-text-sm));
+		font-weight: 600;
+		line-height: 1.15;
+		hyphens: manual;
+	}
+	.al-line {
+		margin: 0 0 0.75rem;
+		font-size: var(--sc-text-lg);
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	.al-panel dl {
+		margin: 0;
+		display: grid;
+		gap: 0.6rem;
+	}
+	@media (min-width: 48rem) {
+		.al-panel dl {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.al-panel dt {
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+		color: var(--sc-strategy);
+	}
+	.al-panel dd {
+		margin: 0.15rem 0 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+		line-height: 1.5;
+	}
+	.al-cta {
+		display: inline-block;
+		margin-top: 0.9rem;
+		padding: 0.45rem 0.9rem;
+		border-radius: var(--sc-radius-pill);
+		border: 1px solid var(--sc-line-strong);
+		color: var(--sc-ivory);
+		text-decoration: none;
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+	}
+	.al-cta:hover {
+		border-color: var(--sc-strategy);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.al-steps button {
+			transition: none;
+		}
+	}
+</style>

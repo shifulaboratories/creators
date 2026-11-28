@@ -15,6 +15,8 @@
 	--sc-money: color-mix(in srgb, var(--sc-jade) 60%, var(--sc-lime));
 	/* Paywall (fan platforms): a warm orchid between rose and amethyst. */
 	--sc-paywall: color-mix(in srgb, var(--sc-rose) 65%, var(--sc-amethyst));
+	/* Strategy: cyan leaning toward champagne, so it reads apart from Stack and Reviews. */
+	--sc-strategy: color-mix(in srgb, var(--sc-cyan) 70%, var(--sc-champagne));
 }
 
 [data-section='grow'] { --accent: var(--sc-grow); }
@@ -30,6 +32,8 @@
 [data-section='about'] { --accent: var(--sc-ion); }
 [data-section='money'] { --accent: var(--sc-money); }
 [data-section='paywall'] { --accent: var(--sc-paywall); }
+/* Strategy (clipping, fan pages, multiple impressions): the cyan of reach. */
+[data-section='strategy'] { --accent: var(--sc-strategy); }
 [data-section='glossary'] { --accent: var(--sc-ion); }
 /* Free tools: the warm champagne of the brand's aurora gradient. */
 [data-section='tools'] { --accent: var(--sc-champagne); }

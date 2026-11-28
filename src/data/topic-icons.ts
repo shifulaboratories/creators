@@ -2,6 +2,7 @@
 export const topicIcons: Record<string, string> = {
 	algorithms: 'M4 19V9M10 19V5M16 19v-7M22 19H2',
 	grow: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+	strategy: 'M5 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM19 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM7 17l10-10M12 19h7v-7',
 	paywall: 'M6 11V8a6 6 0 0 1 12 0v3M5 11h14v10H5zM12 15v2',
 	deals: 'M8 12l3 3 6-6M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0',
 	earn: 'M12 3v18M17 7H9.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H6',

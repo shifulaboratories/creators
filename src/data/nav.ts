@@ -27,6 +27,7 @@ export const NAV: NavGroup[] = [
 		links: [
 			{ label: 'Make content that travels', href: '/algorithms/', text: 'How posts go viral, in five lessons' },
 			{ label: 'Grow your audience', href: '/grow/', text: 'Hooks, formats, algorithms, case studies' },
+			{ label: 'Strategy', href: '/strategy/', text: 'Clipping, fan pages, turning views into sales' },
 			{ label: 'Brand deals', href: '/deals/', text: 'Pitch, price, negotiate, contracts' },
 			{ label: 'Paywall', href: '/paywall/', text: 'Fanfix, OnlyFans, Patreon, Fanvue' },
 			{ label: 'Money basics', href: '/money/', text: 'Taxes, set-asides, LLC vs S corp' },
@@ -56,7 +57,7 @@ export const groupFor = (path: string): string | undefined => {
 	if (/^\/jobs\//.test(p)) return 'jobs';
 	if (/^\/news\//.test(p)) return 'news';
 	if (/^\/about\/contributors\//.test(p)) return 'contributors';
-	if (/^\/(guides|platforms|grow|algorithms|case-studies|shortlist|deals|paywall|earn|rates|tools|money|team|stack|reviews|protect|underground|glossary)\//.test(p)) return 'resources';
+	if (/^\/(guides|platforms|grow|strategy|algorithms|case-studies|shortlist|deals|paywall|earn|rates|tools|money|team|stack|reviews|protect|underground|glossary)\//.test(p)) return 'resources';
 	return undefined;
 };
 
@@ -65,7 +66,7 @@ export const groupFor = (path: string): string | undefined => {
  * Brand and platform names stay as they are. Machine-assisted: see docs/translating.md.
  */
 type Words = { label: string; text?: string };
-const ENGLISH_ONLY = ['/glossary/', '/creators/', '/tools/', '/rates/', '/jobs/', '/stack/directory/'];
+const ENGLISH_ONLY = ['/strategy/', '/glossary/', '/creators/', '/tools/', '/rates/', '/jobs/', '/stack/directory/'];
 
 const NAV_WORDS: Record<'es' | 'pt-br', { groups: Record<string, string>; links: Record<string, Words> }> = {
 	es: {
