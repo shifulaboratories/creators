@@ -1,0 +1,177 @@
+---
+/**
+ * How many times has your audience seen you? A simple model: every post reaches
+ * a random slice of the people you want; count how many have seen you 0, 1–2,
+ * 3–6 and 7+ times. Illustrative (binomial math), not platform data. The research
+ * on why repeat exposure matters is on /strategy/multiple-impressions/.
+ */
+import './strategy.css';
+const dots = Array.from({ length: 100 });
+---
+
+<section class="st is not-content" data-is aria-labelledby="is-title" data-no-swipe>
+	<p class="st-kick">Play with it</p>
+	<p id="is-title" class="st-title">Out of 100 people you’d like to reach, how many have seen you enough to remember?</p>
+
+	<div class="st-controls">
+		<label class="st-field">
+			<span>Places they can see you <small>(your account, clip pages, fan pages)</small></span>
+			<output data-out="surfaces">1</output>
+			<input type="range" min="1" max="10" step="1" value="1" data-in="surfaces" />
+		</label>
+		<label class="st-field">
+			<span>Posts per week, each</span>
+			<output data-out="posts">3</output>
+			<input type="range" min="1" max="14" step="1" value="3" data-in="posts" />
+		</label>
+		<label class="st-field">
+			<span>Share of them one post reaches</span>
+			<output data-out="reach">5%</output>
+			<input type="range" min="1" max="20" step="1" value="5" data-in="reach" />
+		</label>
+		<label class="st-field">
+			<span>Weeks</span>
+			<output data-out="weeks">4</output>
+			<input type="range" min="1" max="12" step="1" value="4" data-in="weeks" />
+		</label>
+	</div>
+
+	<div class="is-grid" aria-hidden="true">
+		{dots.map(() => <i></i>)}
+	</div>
+	<ul class="is-legend">
+		<li class="b0">Never saw you <b data-val="0"></b></li>
+		<li class="b1">Once or twice <b data-val="1"></b></li>
+		<li class="b3">3 to 6 times <b data-val="3"></b></li>
+		<li class="b7">7 or more <b data-val="7"></b></li>
+	</ul>
+	<p class="is-verdict" data-verdict aria-live="polite"></p>
+	<p class="st-note">
+		Illustrative model: assumes each post reaches people at random. Real feeds show you to the same fans more often, so the people closest to you stack up exposures faster than this, and strangers slower.
+	</p>
+</section>
+
+<script>
+	/** Share of people who saw you exactly k times, for k = 0..6, when n posts each reach share p. */
+	const pmf = (n: number, p: number) => {
+		const out = [Math.pow(1 - p, n)];
+		for (let k = 0; k < 6; k++) out.push(k >= n ? 0 : (out[k] * (n - k) * p) / ((k + 1) * (1 - p)));
+		return out;
+	};
+	document.querySelectorAll<HTMLElement>('[data-is]').forEach((root) => {
+		const get = (k: string) => Number(root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!.value);
+		const set = (sel: string, v: string) => root.querySelectorAll<HTMLElement>(sel).forEach((el) => (el.textContent = v));
+		const dots = [...root.querySelectorAll<HTMLElement>('.is-grid i')];
+		const update = () => {
+			const s = get('surfaces');
+			const w = get('posts');
+			const r = get('reach');
+			const wk = get('weeks');
+			set('[data-out="surfaces"]', String(s));
+			set('[data-out="posts"]', String(w));
+			set('[data-out="reach"]', r + '%');
+			set('[data-out="weeks"]', String(wk));
+			const n = s * w * wk;
+			const f = pmf(n, r / 100);
+			const zero = f[0];
+			const oneTwo = f[1] + f[2];
+			const threeSix = f[3] + f[4] + f[5] + f[6];
+			// Round to whole people, then let 7+ take the remainder so the grid always adds to 100.
+			const b0 = Math.round(zero * 100);
+			const b1 = Math.round(oneTwo * 100);
+			const b3 = Math.max(0, Math.min(100 - b0 - b1, Math.round(threeSix * 100)));
+			const b7 = Math.max(0, 100 - b0 - b1 - b3);
+			set('[data-val="0"]', String(b0));
+			set('[data-val="1"]', String(b1));
+			set('[data-val="3"]', String(b3));
+			set('[data-val="7"]', String(b7));
+			dots.forEach((d, i) => (d.className = i < b7 ? 'b7' : i < b7 + b3 ? 'b3' : i < b7 + b3 + b1 ? 'b1' : 'b0'));
+			const enough = b3 + b7;
+			const v = root.querySelector<HTMLElement>('[data-verdict]')!;
+			v.textContent =
+				enough >= 50
+					? `${enough} of 100 have seen you three or more times. That’s the range where research says ads start to stick.`
+					: enough >= 15
+						? `${enough} of 100 have seen you three or more times. Most still only know you as a face they scrolled past.`
+						: `Only ${enough} of 100 have seen you three or more times. Add places to be seen or give it more weeks.`;
+		};
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
+		update();
+	});
+</script>
+
+<style>
+	.st-field small {
+		color: var(--sc-steel);
+		font-size: var(--sc-text-xs);
+	}
+	.is-grid {
+		display: grid;
+		grid-template-columns: repeat(20, 1fr);
+		gap: 4px;
+		margin-top: 1.25rem;
+	}
+	.is-grid i {
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.08);
+		transition:
+			background 0.3s,
+			transform 0.3s;
+	}
+	.is-grid i.b1 {
+		background: color-mix(in srgb, var(--sc-strategy) 40%, transparent);
+	}
+	.is-grid i.b3 {
+		background: var(--sc-strategy);
+	}
+	.is-grid i.b7 {
+		background: var(--sc-champagne);
+		transform: scale(1.12);
+	}
+	.is-legend {
+		list-style: none;
+		margin: 0.8rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.1rem;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.is-legend li::before {
+		content: '';
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		margin-right: 6px;
+		border-radius: 50%;
+		background: var(--c);
+	}
+	.is-legend .b0 {
+		--c: rgb(255 255 255 / 0.2);
+	}
+	.is-legend .b1 {
+		--c: color-mix(in srgb, var(--sc-strategy) 40%, transparent);
+	}
+	.is-legend .b3 {
+		--c: var(--sc-strategy);
+	}
+	.is-legend .b7 {
+		--c: var(--sc-champagne);
+	}
+	.is-legend b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.is-verdict {
+		margin: 1rem 0 0;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.is-grid i {
+			transition: none;
+		}
+	}
+</style>

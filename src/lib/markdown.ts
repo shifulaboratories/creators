@@ -7,6 +7,7 @@ import type { CollectionEntry } from 'astro:content';
 import { sets, myths, rows, platforms } from './widget-data';
 import { protectWidgetMarkdown } from './protect-playbooks';
 import { moneyWidgetText } from './money-markdown';
+import { strategyWidgetText } from './strategy-data';
 import { growWidgetText } from './grow-data';
 
 export const SITE = 'https://creators.select';
@@ -65,6 +66,7 @@ const widgetText: Record<string, string> = {
 	ReachSources: reachText,
 	...moneyWidgetText,
 	...growWidgetText,
+	...strategyWidgetText,
 	XWeights:
 		'X ranking weights (multiply predicted probabilities, not counts):\n\n| Action | 2026 weight |\n| --- | --- |\n' +
 		sets['2026'].map(([a, w]) => `| ${a} | ${w} |`).join('\n') +

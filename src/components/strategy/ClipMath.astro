@@ -1,0 +1,208 @@
+---
+/**
+ * Clipping campaign math: budget ÷ rate per 1,000 views = the most views the
+ * budget can buy. Preset rates are the figures reported in src/lib/strategy-data.ts.
+ * Optional: new followers or sales during the campaign, for cost per result.
+ */
+import './strategy.css';
+import { clipRates, WHOP_AD_CPM, sources } from '../../lib/strategy-data';
+const presets = clipRates.map((r) => ({ ...r, pub: sources[r.src]?.publisher.split(' (')[0] ?? '' }));
+---
+
+<section class="st cm not-content" data-cm data-ad={WHOP_AD_CPM} aria-labelledby="cm-title" data-no-swipe>
+	<p class="st-kick">Calculator</p>
+	<p id="cm-title" class="st-title">What a clipping budget buys, and what to judge it by</p>
+
+	<p class="cm-label">Reported rates per 1,000 views</p>
+	<div class="cm-presets" role="radiogroup" aria-label="Reported clipper rates">
+		{
+			presets.map((p, i) => (
+				<button type="button" class="sc-chip" role="radio" aria-checked={i === 2 ? 'true' : 'false'} data-rate={p.perK} title={`${p.label} (${p.pub})`}>
+					${p.perK.toFixed(2)}
+					<span class="cm-pub">{p.pub}</span>
+				</button>
+			))
+		}
+	</div>
+
+	<div class="st-controls">
+		<label class="st-field">
+			<span>Budget</span>
+			<output data-out="budget">$5,000</output>
+			<input type="range" min="500" max="50000" step="500" value="5000" data-in="budget" />
+		</label>
+		<label class="st-field">
+			<span>Rate per 1,000 views</span>
+			<output data-out="rate">$1.00</output>
+			<input type="range" min="0.2" max="5" step="0.1" value="1" data-in="rate" />
+		</label>
+	</div>
+
+	<div class="cm-result">
+		<div>
+			<span class="cm-k">Most views it can buy</span>
+			<span class="st-big cm-v" data-val="views"></span>
+		</div>
+		<div>
+			<span class="cm-k">Same budget at Whop’s ${WHOP_AD_CPM} ad figure</span>
+			<span class="st-big cm-v is-dim" data-val="ads"></span>
+		</div>
+	</div>
+
+	<details class="cm-after">
+		<summary>After the campaign: what did it actually get you?</summary>
+		<div class="cm-after-body">
+			<label class="cm-num">
+				<span>New followers during the campaign</span>
+				<input type="number" min="0" inputmode="numeric" placeholder="e.g. 1200" data-in="follows" />
+			</label>
+			<label class="cm-num">
+				<span>Email sign-ups or sales</span>
+				<input type="number" min="0" inputmode="numeric" placeholder="e.g. 40" data-in="sales" />
+			</label>
+			<p class="cm-per" data-per aria-live="polite">Fill in either box to see your cost per result.</p>
+		</div>
+	</details>
+
+	<p class="st-note">
+		Rates are what the reporting found, not a quote. The ad comparison is Whop’s own figure, from its marketing. Views are capped by your budget; whether clippers reach it depends on the clips. Compare cost per follower or sale against your other channels, not views.
+	</p>
+</section>
+
+<script>
+	const usd = (n: number, d = 0) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+	const big = (n: number) => (n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(Math.round(n)));
+	document.querySelectorAll<HTMLElement>('[data-cm]').forEach((root) => {
+		const ad = Number(root.dataset.ad);
+		const input = (k: string) => root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!;
+		const set = (sel: string, v: string) => root.querySelectorAll<HTMLElement>(sel).forEach((el) => (el.textContent = v));
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-rate]')];
+		const update = () => {
+			const budget = Number(input('budget').value);
+			const rate = Number(input('rate').value);
+			set('[data-out="budget"]', usd(budget));
+			set('[data-out="rate"]', usd(rate, 2));
+			set('[data-val="views"]', big((budget / rate) * 1000));
+			set('[data-val="ads"]', big((budget / ad) * 1000));
+			chips.forEach((c) => c.setAttribute('aria-checked', String(Math.abs(Number(c.dataset.rate) - rate) < 0.001)));
+			const f = Number(input('follows').value);
+			const s = Number(input('sales').value);
+			const parts: string[] = [];
+			if (f > 0) parts.push(`${usd(budget / f, 2)} per new follower`);
+			if (s > 0) parts.push(`${usd(budget / s, 2)} per sign-up or sale`);
+			set('[data-per]', parts.length ? parts.join(' · ') : 'Fill in either box to see your cost per result.');
+		};
+		chips.forEach((c) =>
+			c.addEventListener('click', () => {
+				input('rate').value = c.dataset.rate!;
+				update();
+			}),
+		);
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', update));
+		update();
+	});
+</script>
+
+<style>
+	.cm-label {
+		margin: 0 0 0.4rem;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+		font-weight: 600;
+	}
+	.cm-presets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 1rem;
+	}
+	.cm-presets .sc-chip {
+		display: inline-flex;
+		flex-direction: column;
+		align-items: flex-start;
+		line-height: 1.2;
+		font-family: var(--sc-font-display);
+		font-size: var(--sc-text-sm);
+		font-weight: 700;
+	}
+	.cm-presets [aria-checked='true'] {
+		background: var(--sc-strategy);
+		border-color: var(--sc-strategy);
+		color: #0a0a0a;
+	}
+	.cm-pub {
+		font-family: var(--sc-font-body, inherit);
+		font-size: 0.62rem;
+		font-weight: 500;
+		opacity: 0.8;
+	}
+	.cm-result {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-top: 1.25rem;
+	}
+	.cm-result > div {
+		padding: 0.8rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.03);
+		display: grid;
+		gap: 0.2rem;
+	}
+	.cm-k {
+		font-size: var(--sc-text-xs);
+		color: var(--sc-silver);
+	}
+	.cm-v {
+		font-size: var(--sc-text-2xl);
+		color: var(--sc-strategy);
+	}
+	.cm-v.is-dim {
+		color: var(--sc-silver);
+	}
+	.cm-after {
+		margin-top: 1rem;
+		border-top: 1px solid var(--sc-line);
+		padding-top: 0.75rem;
+	}
+	.cm-after summary {
+		cursor: pointer;
+		font-weight: 600;
+		color: var(--sc-ivory);
+		font-size: var(--sc-text-sm);
+	}
+	.cm-after-body {
+		display: grid;
+		gap: 0.75rem;
+		margin-top: 0.75rem;
+	}
+	@media (min-width: 48rem) {
+		.cm-after-body {
+			grid-template-columns: 1fr 1fr;
+		}
+		.cm-per {
+			grid-column: 1 / -1;
+		}
+	}
+	.cm-num {
+		display: grid;
+		gap: 0.3rem;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.cm-num input {
+		font: inherit;
+		font-size: 16px;
+		padding: 0.55rem 0.7rem;
+		border-radius: var(--sc-radius-sm);
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-ivory);
+	}
+	.cm-per {
+		margin: 0;
+		font-weight: 600;
+		color: var(--sc-ivory);
+	}
+</style>

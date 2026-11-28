@@ -159,6 +159,7 @@ addEventListener('pageswap',function(e){try{if(!e.viewTransition||!e.activation|
 				section('case-studies'),
 				section('shortlist'),
 				section('grow'),
+				section('strategy'),
 				section('earn'),
 				section('paywall'),
 				section('deals'),

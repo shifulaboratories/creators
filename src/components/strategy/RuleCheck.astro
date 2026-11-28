@@ -1,0 +1,249 @@
+---
+/**
+ * "Is this allowed?" One scenario at a time: guess Fine, Risky or Against the
+ * rules, then see the platform rule behind the answer. Scenarios and quotes live
+ * in src/lib/strategy-data.ts. Without JavaScript every card shows, answered.
+ */
+import './strategy.css';
+import { scenarios, sources } from '../../lib/strategy-data';
+const word = { ok: 'Fine', risky: 'Risky', no: 'Against the rules' } as const;
+---
+
+<section class="st rc not-content" data-rc aria-labelledby="rc-title" data-no-swipe>
+	<p class="st-kick">Quiz</p>
+	<p id="rc-title" class="st-title">Is this allowed? Guess, then see the rule.</p>
+	<p class="rc-progress" data-progress aria-live="polite"></p>
+
+	<ol class="rc-cards">
+		{
+			scenarios.map((s, i) => (
+				<li class="rc-card" data-card data-verdict={s.verdict} data-i={i}>
+					<p class="rc-text">{s.text}</p>
+					<div class="rc-guess" role="group" aria-label="Your guess" hidden>
+						<button type="button" data-guess="ok">Fine</button>
+						<button type="button" data-guess="risky">Risky</button>
+						<button type="button" data-guess="no">Against the rules</button>
+					</div>
+					<div class="rc-answer" data-answer>
+						<p class="rc-verdict">
+							<span class:list={['rc-pill', `is-${s.verdict}`]}>{word[s.verdict]}</span>
+							<span class="rc-mark" data-mark></span>
+						</p>
+						<p class="rc-why">{s.why}</p>
+						<p class="rc-src">
+							{s.src.map((id, j) => (
+								<>
+									{j > 0 && ' · '}
+									<a href={sources[id].url} rel="noopener">
+										{sources[id].publisher.split(' (')[0]}
+									</a>
+								</>
+							))}
+						</p>
+						<button type="button" class="rc-next" data-next hidden>
+							{i === scenarios.length - 1 ? 'See your score' : 'Next →'}
+						</button>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+	<div class="rc-done" data-done hidden>
+		<p class="st-big rc-score" data-score></p>
+		<p class="rc-done-text">The pattern: extra accounts are fine when they’re honest about who runs them, add something new, and say when they’re paid.</p>
+		<button type="button" class="rc-next" data-restart>Try again</button>
+	</div>
+</section>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-rc]').forEach((root) => {
+		const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
+		const progress = root.querySelector<HTMLElement>('[data-progress]')!;
+		const done = root.querySelector<HTMLElement>('[data-done]')!;
+		let at = 0;
+		let right = 0;
+		const show = (i: number) => {
+			at = i;
+			cards.forEach((c, j) => {
+				c.hidden = j !== i;
+				c.querySelector<HTMLElement>('[data-answer]')!.hidden = true;
+				c.querySelector<HTMLElement>('.rc-guess')!.hidden = false;
+				c.querySelector<HTMLElement>('[data-next]')!.hidden = true;
+			});
+			done.hidden = true;
+			progress.textContent = `${i + 1} of ${cards.length}`;
+		};
+		root.classList.add('is-live');
+		cards.forEach((c, i) => {
+			c.querySelectorAll<HTMLButtonElement>('[data-guess]').forEach((b) =>
+				b.addEventListener('click', () => {
+					const ok = b.dataset.guess === c.dataset.verdict;
+					if (ok) right++;
+					c.querySelector<HTMLElement>('[data-mark]')!.textContent = ok ? 'You got it' : 'Not quite';
+					c.querySelector<HTMLElement>('.rc-guess')!.hidden = true;
+					c.querySelector<HTMLElement>('[data-answer]')!.hidden = false;
+					const next = c.querySelector<HTMLButtonElement>('[data-next]')!;
+					next.hidden = false;
+					next.focus();
+				}),
+			);
+			c.querySelector<HTMLButtonElement>('[data-next]')!.addEventListener('click', () => {
+				if (i < cards.length - 1) {
+					show(i + 1);
+					cards[i + 1].querySelector<HTMLButtonElement>('[data-guess]')!.focus();
+				} else {
+					cards.forEach((x) => (x.hidden = true));
+					progress.textContent = '';
+					done.hidden = false;
+					root.querySelector<HTMLElement>('[data-score]')!.textContent = `${right} of ${cards.length} right`;
+				}
+			});
+		});
+		root.querySelector<HTMLButtonElement>('[data-restart]')!.addEventListener('click', () => {
+			right = 0;
+			show(0);
+		});
+		show(at);
+	});
+</script>
+
+<style>
+	.rc-progress {
+		margin: -0.5rem 0 0.75rem;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+		min-height: 1em;
+	}
+	.rc-cards {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.75rem;
+	}
+	.rc-card {
+		padding: 1rem;
+		border-radius: var(--sc-radius-md);
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+	}
+	.is-live .rc-card {
+		animation: rc-in 0.25s ease-out;
+	}
+	@keyframes rc-in {
+		from {
+			opacity: 0;
+			transform: translateX(12px);
+		}
+	}
+	.rc-text {
+		margin: 0;
+		font-size: var(--sc-text-lg);
+		font-weight: 600;
+		color: var(--sc-ivory);
+		line-height: 1.4;
+	}
+	.rc-guess {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 0.4rem;
+		margin-top: 1rem;
+	}
+	.rc-guess button,
+	.rc-next {
+		appearance: none;
+		font: inherit;
+		font-size: var(--sc-text-sm);
+		font-weight: 600;
+		min-height: 44px;
+		padding: 0.5rem 0.6rem;
+		border-radius: var(--sc-radius-pill);
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.04);
+		color: var(--sc-ivory);
+		cursor: pointer;
+		line-height: 1.15;
+	}
+	.rc-guess button:hover,
+	.rc-next:hover {
+		border-color: var(--sc-strategy);
+	}
+	.rc-guess button:focus-visible,
+	.rc-next:focus-visible {
+		outline: 2px solid var(--sc-ivory);
+		outline-offset: 2px;
+	}
+	.rc-guess[hidden],
+	.rc-card[hidden],
+	.rc-answer[hidden] {
+		display: none;
+	}
+	.rc-answer {
+		margin-top: 0.9rem;
+	}
+	.rc-verdict {
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		flex-wrap: wrap;
+	}
+	.rc-pill {
+		padding: 2px 10px;
+		border-radius: var(--sc-radius-pill);
+		font-size: var(--sc-text-xs);
+		font-weight: 700;
+		color: #111;
+	}
+	.rc-pill.is-ok {
+		background: var(--sc-jade);
+	}
+	.rc-pill.is-risky {
+		background: var(--sc-champagne);
+	}
+	.rc-pill.is-no {
+		background: var(--sc-rose);
+	}
+	.rc-mark {
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+	}
+	.rc-why {
+		margin: 0.6rem 0 0;
+		font-size: var(--sc-text-sm);
+		color: var(--sc-silver);
+		line-height: 1.55;
+	}
+	.rc-src {
+		margin: 0.5rem 0 0;
+		font-size: var(--sc-text-xs);
+		color: var(--sc-steel);
+	}
+	.rc-src a {
+		color: var(--sc-platinum);
+	}
+	.rc-next {
+		margin-top: 0.9rem;
+		padding-inline: 1.1rem;
+	}
+	.rc-done {
+		text-align: center;
+		padding: 1rem 0 0.25rem;
+	}
+	.rc-score {
+		margin: 0;
+		font-size: var(--sc-text-2xl);
+		color: var(--sc-strategy);
+	}
+	.rc-done-text {
+		margin: 0.5rem auto 0;
+		max-width: 34rem;
+		color: var(--sc-silver);
+		font-size: var(--sc-text-sm);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.is-live .rc-card {
+			animation: none;
+		}
+	}
+</style>

@@ -1,0 +1,69 @@
+/* Shared look for Strategy widgets (src/components/strategy/). Calm: no looping motion. */
+.st {
+	margin-block: 1.5rem 2rem;
+	padding: 1.25rem;
+	border: 1px solid var(--sc-line);
+	border-radius: var(--sc-radius-lg);
+	background:
+		radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--sc-strategy, var(--sc-cyan)) 14%, transparent), transparent 60%),
+		rgb(255 255 255 / 0.02);
+}
+.st-kick {
+	margin: 0;
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: var(--sc-radius-pill);
+	background: var(--sc-lime);
+	color: #111;
+	font-size: var(--sc-text-xs);
+	font-weight: 700;
+}
+.st-title {
+	margin: 0.5rem 0 1rem;
+	font-family: var(--sc-font-display);
+	font-size: var(--sc-text-xl);
+	color: var(--sc-ivory);
+	line-height: 1.2;
+}
+.st-note {
+	margin: 0.75rem 0 0;
+	font-size: var(--sc-text-xs);
+	color: var(--sc-steel);
+	line-height: 1.55;
+}
+.st-controls {
+	display: grid;
+	gap: 1rem;
+}
+@media (min-width: 48rem) {
+	.st-controls {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+.st-field {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0.35rem 0.75rem;
+	align-items: baseline;
+	font-size: var(--sc-text-sm);
+	color: var(--sc-silver);
+}
+.st-field output {
+	font-family: var(--sc-font-display);
+	font-weight: 700;
+	color: var(--sc-ivory);
+	font-size: var(--sc-text-lg);
+	font-variant-numeric: tabular-nums;
+}
+.st-field input[type='range'] {
+	grid-column: 1 / -1;
+	width: 100%;
+	accent-color: var(--sc-strategy, var(--sc-cyan));
+	height: 28px;
+}
+.st-big {
+	font-family: var(--sc-font-display);
+	font-weight: 700;
+	color: var(--sc-ivory);
+	font-variant-numeric: tabular-nums;
+}
