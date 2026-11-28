@@ -1,0 +1,38 @@
+---
+title: "X monetization checker: Original Content Rewards requirements"
+description: "Free X monetization checker. Type your verified impressions and verified followers to see if you meet the bar for X’s Original Content Rewards, and how far off you are."
+payoff: "See how far you are from getting paid on X."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: "X payouts"
+sidebar:
+  order: 17
+  label: "X payouts checker"
+faq:
+  - q: "What are the requirements to get paid on X?"
+    a: "An active Premium subscription, 500 verified followers and 500,000 Home timeline impressions from verified users in the last 90 days, per X’s help center. You must also be 18 or older and in an eligible country."
+  - q: "Do replies count toward X impressions?"
+    a: "No. Only Home timeline impressions from verified users count toward the 500,000 bar."
+  - q: "How much does X pay?"
+    a: "X doesn’t publish a rate. It pays for unique views from Premium subscribers on the Home timeline, with a $30 minimum payout every two weeks."
+---
+
+import MonetizationChecker from '../../../components/tools/MonetizationChecker.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+import { PROGRAMS } from '../../../lib/monetization-rules';
+
+**How it works:** type your numbers from your analytics. You’ll see whether you meet each published requirement, and how far off you are. Switch platforms to check the others.
+
+<MonetizationChecker platform="x" />
+
+X pays for views from Premium subscribers, so a post that only travels among free accounts earns little even if it goes wide. More in the [X guide](/platforms/x/).
+
+<ToolSources items={[...new Map(PROGRAMS.filter((x) => x.platform === 'x').map((x) => [x.source.url, x.source])).values()]} />
+
+<Faq />
+
+<MoreTools />

@@ -7,6 +7,7 @@
 .tw-field {
 	display: grid;
 	gap: 0.3rem;
+	align-content: start;
 	font-size: 0.8rem;
 	color: var(--sc-silver);
 	min-width: 0;

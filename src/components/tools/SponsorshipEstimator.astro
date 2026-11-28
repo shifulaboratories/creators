@@ -1,0 +1,237 @@
+---
+/**
+ * Sponsorship price from views: average views × a CPM the creator picks, plus the
+ * published add-ons (money-data.ts addOns), checked against the published rate range for
+ * their follower tier (rate-tiers.ts). No CPM benchmark is asserted: none is published by a
+ * platform, so the creator sets it and sees what the published ranges imply as a CPM.
+ */
+import './tools.css';
+import { addOns } from '../../lib/money-data';
+import { RATE_PLATFORMS, TIERS, ratesFor, middle, mainFormat } from '../../lib/rate-tiers';
+
+const ranges = Object.fromEntries(
+	RATE_PLATFORMS.map((p) => [p.key, TIERS.map((t) => ({ key: t.key, name: t.name, range: t.range, min: t.min, mid: middle(ratesFor(p.key, t)) }))]),
+);
+const formatOf = Object.fromEntries(RATE_PLATFORMS.map((p) => [p.key, mainFormat(p.key)]));
+const adds = addOns.filter((a) => a.lo !== null);
+const payload = { ranges, formatOf, adds };
+---
+
+<div class="sc-widget sp not-content" data-section="deals" data-sp data-payload={JSON.stringify(payload)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Free tool · Sponsorship price</div>
+			<p class="sc-widget__title">Price a sponsorship from your views</p>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="Platform" data-group="platform">
+		{RATE_PLATFORMS.map((p, i) => <button type="button" class="sc-chip" data-v={p.key} aria-pressed={String(i === 0)}>{p.name}</button>)}
+	</div>
+
+	<div class="tw-grid sp-fields">
+		<label class="tw-field"><span>Followers</span><input inputmode="numeric" data-in="followers" value="40,000" /></label>
+		<label class="tw-field"><span>Average views per post</span><input inputmode="numeric" data-in="views" value="18,000" /><small>Last 10 or so posts.</small></label>
+	</div>
+
+	<label class="tw-field sp-cpm">
+		<span><span>Your CPM</span><b data-out="cpmv">$25</b></span>
+		<input type="range" min="5" max="80" step="1" value="25" data-in="cpm" aria-label="CPM in dollars per 1,000 views" />
+		<small>What you charge per 1,000 views. You set it; see what the published ranges work out to below.</small>
+	</label>
+
+	<fieldset class="sp-adds">
+		<legend>Extras the brand asked for</legend>
+		{adds.map((a) => (
+			<label class="sp-add">
+				<input type="checkbox" data-add={a.key} />
+				<span><b>{a.label}</b> <em>+{Math.round(a.lo! * 100)}–{Math.round(a.hi! * 100)}%</em><small>{a.help}</small></span>
+			</label>
+		))}
+	</fieldset>
+
+	<div class="tw-result" aria-live="polite">
+		<span class="tw-label">Your quote</span>
+		<b class="tw-big" data-out="quote">$0</b>
+		<p class="tw-sub" data-out="sub"></p>
+		<div class="sp-compare">
+			<span class="tw-label" data-out="tierLabel"></span>
+			<div class="sp-track" aria-hidden="true"><i data-out="band"></i><b data-out="pin"></b></div>
+			<p class="tw-sub" data-out="verdict"></p>
+		</div>
+		<div class="tw-split">
+			<div><span>Published range</span><b data-out="range">–</b></div>
+			<div><span>That range as a CPM</span><b data-out="rangeCpm">–</b></div>
+			<div><span>Cost per view</span><b data-out="cpv">–</b></div>
+		</div>
+		<div class="tw-actions"><button type="button" class="tw-btn is-primary" data-copy>Copy my quote</button></div>
+	</div>
+	<p class="sc-widget__note">
+		Base price = average views ÷ 1,000 × your CPM. Extras add the published ranges on top: usage rights and paid ads from your handle 30–50% each (Later, 2026), peak shopping season 20–30% (Collabstr). Exclusivity has no published benchmark, so price it as the deals you’d have to turn down. The published range is the middle of the rate ranges from Later, Influencer Marketing Hub and Collabstr for your follower tier and main format, the same numbers as the <a href="/tools/brand-deal-rate-calculator/">rate calculator</a>.
+	</p>
+	<p class="tw-privacy">Runs in your browser. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+	type Tier = { key: string; name: string; range: string; min: number; mid: [number, number | null] | null };
+	type Add = { key: string; label: string; lo: number; hi: number };
+	const num = (s: string) => Math.max(0, Number(String(s).replace(/[^0-9.]/g, '')) || 0);
+	const usd = (n: number) => (isFinite(n) ? '$' + (n >= 10000 ? Math.round(n / 100) * 100 : Math.round(n)).toLocaleString('en-US') : '–');
+	document.querySelectorAll<HTMLElement>('[data-sp]').forEach((root) => {
+		const P = JSON.parse(root.dataset.payload!) as { ranges: Record<string, Tier[]>; formatOf: Record<string, string>; adds: Add[] };
+		const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+		const input = (k: string) => root.querySelector<HTMLInputElement>(`[data-in="${k}"]`)!;
+		let platform = 'instagram';
+		let copyText = '';
+		const render = () => {
+			const followers = num(input('followers').value);
+			const views = num(input('views').value);
+			const cpm = num(input('cpm').value);
+			$('[data-out="cpmv"]').textContent = '$' + cpm;
+			const base = (views / 1000) * cpm;
+			const on = P.adds.filter((a) => root.querySelector<HTMLInputElement>(`[data-add="${a.key}"]`)!.checked);
+			const lo = base * (1 + on.reduce((s, a) => s + a.lo, 0));
+			const hi = base * (1 + on.reduce((s, a) => s + a.hi, 0));
+			$('[data-out="quote"]').textContent = on.length ? `${usd(lo)}–${usd(hi)}` : usd(base);
+			$('[data-out="sub"]').textContent = on.length
+				? `${usd(base)} for the post, plus ${on.map((a) => a.label.toLowerCase()).join(' and ')}.`
+				: `${views.toLocaleString('en-US')} views at a $${cpm} CPM, organic posting only.`;
+			$('[data-out="cpv"]').textContent = views ? '$' + (base / views).toFixed(3) : '–';
+
+			const tiers = P.ranges[platform];
+			const tier = [...tiers].reverse().find((t) => followers >= t.min) ?? tiers[0];
+			const mid = tier.mid;
+			$('[data-out="tierLabel"]').textContent = `Published range: ${tier.name} (${tier.range} followers), one ${P.formatOf[platform].toLowerCase()}`;
+			if (!mid) {
+				$('[data-out="range"]').textContent = '–';
+				$('[data-out="rangeCpm"]').textContent = '–';
+				$('[data-out="verdict"]').textContent = 'No published range for this size yet.';
+			} else {
+				const [mlo, mhi] = mid;
+				const top = mhi ?? mlo * 2;
+				$('[data-out="range"]').textContent = mhi === null ? `${usd(mlo)}+` : `${usd(mlo)}–${usd(mhi)}`;
+				$('[data-out="rangeCpm"]').textContent = views ? `$${Math.round((mlo / views) * 1000)}${mhi === null ? '+' : '–$' + Math.round((mhi / views) * 1000)}` : '–';
+				const scaleMax = Math.max(top, base) * 1.25;
+				const band = $('[data-out="band"]');
+				band.style.left = (mlo / scaleMax) * 100 + '%';
+				band.style.width = ((top - mlo) / scaleMax) * 100 + '%';
+				$('[data-out="pin"]').style.left = `calc(${Math.min(100, (base / scaleMax) * 100)}% - 1px)`;
+				$('[data-out="verdict"]').textContent =
+					base < mlo
+						? 'Your base price is below the published range for your size. If your views are strong, you have room to raise your CPM.'
+						: mhi !== null && base > mhi
+							? 'Your base price is above the published range. That can be fair when your views beat your follower count; lead with them.'
+							: 'Your base price sits inside the published range for your size.';
+			}
+			copyText = `My rate for one ${P.formatOf[platform].toLowerCase()} is ${on.length ? `${usd(lo)}–${usd(hi)}` : usd(base)}, based on ${views.toLocaleString('en-US')} average views per post${on.length ? `, including ${on.map((a) => a.label.toLowerCase()).join(' and ')}` : ', organic posting only. Usage rights, paid ads and exclusivity are priced separately'}.`;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-group="platform"] [data-v]').forEach((btn) =>
+			btn.addEventListener('click', () => {
+				platform = btn.dataset.v!;
+				root.querySelectorAll('[data-group="platform"] [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+				render();
+			}),
+		);
+		root.querySelectorAll<HTMLInputElement>('input').forEach((i) => {
+			i.addEventListener('input', render);
+			if (i.inputMode === 'numeric') i.addEventListener('blur', () => (i.value = num(i.value).toLocaleString('en-US')));
+		});
+		root.querySelector<HTMLButtonElement>('[data-copy]')!.addEventListener('click', async (e) => {
+			const btn = e.currentTarget as HTMLButtonElement;
+			try {
+				await navigator.clipboard.writeText(copyText);
+				btn.textContent = 'Copied';
+			} catch {
+				btn.textContent = 'Copy failed';
+			}
+			setTimeout(() => (btn.textContent = 'Copy my quote'), 1600);
+		});
+		render();
+	});
+</script>
+
+<style>
+	.sp-fields {
+		margin-top: 0.9rem;
+	}
+	.sp-cpm {
+		margin-top: 0.9rem;
+	}
+	.sp-cpm b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.sp-cpm input[type='range'] {
+		width: 100%;
+		accent-color: var(--accent);
+		min-height: 2rem;
+	}
+	.sp-adds {
+		border: 1px solid var(--sc-line);
+		border-radius: var(--sc-radius-md);
+		padding: 0.5rem 0.9rem 0.7rem;
+		margin: 0.9rem 0 0;
+		display: grid;
+		gap: 0.15rem;
+	}
+	.sp-adds legend {
+		padding: 0 0.35rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--sc-platinum);
+	}
+	.sp-add {
+		display: flex;
+		gap: 0.7rem;
+		align-items: flex-start;
+		padding: 0.5rem 0;
+		cursor: pointer;
+		font-size: 0.9rem;
+		color: var(--sc-ivory);
+	}
+	.sp-add input {
+		width: 1.15rem;
+		height: 1.15rem;
+		margin-top: 0.15rem;
+		accent-color: var(--accent);
+		flex: none;
+	}
+	.sp-add em {
+		font-style: normal;
+		color: var(--accent);
+		font-size: 0.8rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.sp-add small {
+		display: block;
+		color: var(--sc-steel);
+		font-size: 0.75rem;
+	}
+	.sp-compare {
+		margin-top: 1rem;
+	}
+	.sp-track {
+		position: relative;
+		height: 0.7rem;
+		border-radius: 99px;
+		background: var(--sc-fill-muted);
+		margin: 0.5rem 0;
+	}
+	.sp-track i {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		border-radius: 99px;
+		background: color-mix(in srgb, var(--accent) 55%, transparent);
+		transition: left 0.25s ease, width 0.25s ease;
+	}
+	.sp-track b {
+		position: absolute;
+		top: -0.3rem;
+		bottom: -0.3rem;
+		width: 3px;
+		border-radius: 2px;
+		background: var(--sc-ivory);
+		transition: left 0.25s ease;
+	}
+</style>

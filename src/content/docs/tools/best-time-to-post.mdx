@@ -1,0 +1,50 @@
+---
+title: "Best time to post planner for audiences in other time zones"
+description: "Free best time to post planner. Tell it where your audience lives and when they’re online, and see the hours in your own time zone that reach the most of them."
+payoff: "Stop guessing from someone else’s chart. Find the hours that fit your audience."
+status: draft
+confidence: practitioner-view
+lastReviewed: 2026-11-28
+cover:
+  label: "Best time"
+sidebar:
+  order: 16
+  label: "Best time to post planner"
+faq:
+  - q: "What is the best time to post on Instagram or TikTok?"
+    a: "There isn’t one for everyone. Feeds are personalized for each viewer, so a post can find people for days. The useful question is when your own audience is online, which your analytics show, and where they live if they’re spread across time zones."
+  - q: "Does posting time matter for the algorithm?"
+    a: "Less than most advice claims. It matters most for things that happen live or in the first hours: lives, YouTube Premieres, Stories, and posts aimed at one country. For everything else, a strong hook does more than a perfect time."
+  - q: "How do I post for an audience in another country?"
+    a: "Add each country or city with its share of your audience, and mark the hours people there are usually online. The planner converts it all to your time and ranks the hours by how much of your audience they reach."
+  - q: "Where can I see when my followers are online?"
+    a: "YouTube Studio has a report called When your viewers are on YouTube, under the Audience tab. Instagram and TikTok show similar charts in their own analytics for professional and creator accounts."
+---
+
+import PostingTimePlanner from '../../../components/tools/PostingTimePlanner.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** pick your time zone, add up to three places your audience lives with their share, and mark the hours people there are usually online. The planner shows, in your own time, the hours that reach the most of them.
+
+<PostingTimePlanner />
+
+## Why there’s no universal best time
+
+You’ll find a lot of “best time to post” charts online. Most come from averages across millions of accounts, which tells you very little about yours. Feeds today pick posts for each viewer from what they like, so a good video can keep finding people long after you post it. That’s why we call one-size timing rules a weak lever in [algorithm myths](/algorithms/myths/).
+
+Timing still matters in two cases. First, when something only works live or early: a live stream, a YouTube Premiere, a Story that disappears in 24 hours, a drop. Second, when your audience is spread across time zones, and 9 PM for you is 4 AM for a third of your followers. This planner is for both.
+
+## Use your own numbers
+
+The online hours above are a starting guess. Swap in what your analytics actually show. On YouTube, open YouTube Studio, then Analytics, then Audience, and look for **When your viewers are on YouTube**, which shows the last 28 days. Then test: post at your top hour for two weeks, then at the next one, and compare views after the same number of hours. More on running tests like this in [Growth experiments](/grow/experiments/) and on picking a pace in the [posting schedule planner](/tools/posting-schedule-planner/).
+
+<ToolSources items={[
+  { title: 'Understand your YouTube audience', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/9314416', date: 'checked Nov 28, 2026' },
+  { title: 'Tips to learn what viewers are watching', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/13616337', date: 'checked Nov 28, 2026' },
+]} />
+
+<Faq />
+
+<MoreTools />

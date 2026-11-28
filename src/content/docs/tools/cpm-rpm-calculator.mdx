@@ -1,0 +1,53 @@
+---
+title: "CPM and RPM calculator for creators and brand deals"
+description: "Free CPM and RPM calculator. Work out the CPM of a brand deal, price a post from a CPM, turn views and RPM into earnings, or estimate YouTube RPM from CPM."
+payoff: "Speak the number brands budget in: cost per 1,000 views, both ways round."
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: "CPM and RPM"
+sidebar:
+  order: 14
+  label: "CPM and RPM calculator"
+faq:
+  - q: "How do you calculate CPM?"
+    a: "Divide the cost by the number of views (or impressions) and multiply by 1,000. A $500 post that gets 25,000 views has a $20 CPM. The same formula works for ads, sponsored posts and anything else priced on attention."
+  - q: "What is the difference between CPM and RPM?"
+    a: "CPM is what an advertiser pays per 1,000 ad impressions, before the platform takes its share. RPM is what you earned per 1,000 views after the platform’s share, spread over every view, including ones with no ad. RPM is always lower and is the one to plan your income with."
+  - q: "How do I turn RPM into earnings?"
+    a: "Multiply your views by your RPM and divide by 1,000. At a $4 RPM, 200,000 views pay about $800. YouTube Studio shows your RPM under Analytics, then Revenue."
+  - q: "Why is my YouTube RPM so much lower than my CPM?"
+    a: "Two reasons. YouTube keeps 45% of ad revenue on long videos and pays creators 55%, and CPM only counts views that showed an ad, while RPM is spread over all of them. So RPM is often well under half of CPM."
+  - q: "What CPM should I charge brands?"
+    a: "No platform publishes a standard rate for sponsored posts. Start from what brands already pay you, divide by your average views, and you have your current CPM. The sponsorship price estimator compares a CPM with the published rate ranges for your size."
+---
+
+import CpmCalculator from '../../../components/tools/CpmCalculator.astro';
+import ToolSources from '../../../components/tools/ToolSources.astro';
+import Faq from '../../../components/tools/Faq.astro';
+import MoreTools from '../../../components/tools/MoreTools.astro';
+
+**How it works:** pick what you want to work out, then type two numbers. Switch modes any time: the defaults are examples, not benchmarks.
+
+<CpmCalculator />
+
+## Why brands think in CPM
+
+A brand can buy attention many ways: ads on Instagram, a pre-roll on YouTube, your sponsored Reel. CPM turns all of them into the same unit, dollars per 1,000 views, so they can compare. If your quote works out to a much higher CPM than other options, expect them to push back, or show them why your audience is worth more: who they are, how they buy, how long they watch.
+
+That’s also why average views beat followers in a negotiation. Two creators with 100,000 followers can have very different CPMs if one gets 60,000 views a post and the other gets 8,000. More on this in [Pricing your rates](/deals/pricing/), and in the glossary entries for [CPM](/glossary/cpm/) and [RPM](/glossary/rpm/).
+
+## RPM is the one you get paid
+
+On YouTube, **CPM** is what advertisers paid per 1,000 ad impressions on your videos, before YouTube’s share. **RPM** is what you earned per 1,000 views after YouTube’s share, across all your revenue sources. YouTube pays creators 55% of net ad revenue on long videos and 45% of their allocated Shorts revenue. For a full monthly picture with long videos and Shorts apart, use the [YouTube money calculator](/tools/youtube-money-calculator/).
+
+<ToolSources items={[
+  { title: 'Understand your revenue per mille (RPM)', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/9314357' },
+  { title: 'YouTube partner earnings overview', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/72902', date: 'checked Nov 26, 2026' },
+  { title: 'YouTube Shorts monetization policies', publisher: 'YouTube Help', url: 'https://support.google.com/youtube/answer/12504220' },
+]} />
+
+<Faq />
+
+<MoreTools />
