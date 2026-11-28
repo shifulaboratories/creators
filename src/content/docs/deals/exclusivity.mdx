@@ -1,0 +1,91 @@
+---
+title: "Exclusivity"
+description: "How to read, narrow and price an exclusivity clause in a brand deal: which competitors, which category, for how long, and what it should cost the brand."
+payoff: "Narrow an exclusivity clause to the brands that actually compete, and charge for the work it makes you turn down."
+moves:
+  - do: "Ask the brand to list the competitors by name in an exhibit."
+    why: "Exclusivity should cover brands that directly compete with the specific product, not a whole industry."
+    source: "Revision Legal"
+  - do: "Count the deals you did in that category last year, and price exclusivity as those."
+    why: "Nobody publishes an exclusivity rate, so the honest price is the work you'd turn down."
+    source: "Creator-tested"
+  - do: "Cap anything after the campaign at 30 to 90 days."
+    why: "Revision Legal flags 6–12 months after posting as overreach."
+    source: "Revision Legal"
+status: draft
+confidence: practitioner-view
+lastReviewed: 2026-11-28
+cover:
+  label: Exclusivity
+sidebar:
+  order: 3.6
+---
+
+import ExclusivityFloor from '../../../components/deals/ExclusivityFloor.astro';
+import ClauseDiff from '../../../components/deals/ClauseDiff.astro';
+import Sources from '../../../components/money/Sources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import CopyBlock from '../../../components/guide/CopyBlock.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** exclusivity is the brand paying you not to work with someone else. It’s normal and often fair, but it’s a separate thing you’re selling. Shrink it to named competitors and a clear end date, then charge for whatever it still makes you turn down.
+
+## Shrink the circle first
+
+Three questions decide how much an exclusivity clause costs you: **who** is off limits, **where** (only sponsored posts, or any mention), and **for how long**. SAG-AFTRA’s checklist asks for a contract that says which brands are off limits and for how long. Revision Legal adds that it should only cover brands that directly compete with the specific product, and shouldn’t apply at all to a UGC-only deal.
+
+<figure class="sc-figure">
+<div class="sc-compare">
+<div class="sc-compare__side is-rose"><h3>As they usually write it</h3><ul><li>“Any product or service competitive with Brand”</li><li>Every platform and any mention, paid or not</li><li>The campaign plus 6–12 months</li><li>Included in the fee</li></ul></div>
+<div class="sc-compare__side is-jade"><h3>What to send back</h3><ul><li>Three to five competitors named in an exhibit</li><li>Sponsored content only, on the platforms in the deal</li><li>The campaign plus 30 days</li><li>A separate exclusivity fee</li></ul></div>
+</div>
+<figcaption>Typical wording on the left. Guidance from SAG-AFTRA and Revision Legal</figcaption>
+</figure>
+
+## Price what it still blocks
+
+Once the circle is as small as it’ll go, price what’s left. Enter the deals you’d normally do inside it.
+
+<ExclusivityFloor />
+
+If the brand won’t pay the floor, trade instead of discounting: a smaller circle, a shorter tail, or exclusivity only on the platform the campaign runs on.
+
+<CopyBlock
+  label="Reply to an exclusivity ask"
+  text={`Happy to be exclusive against your direct competitors during the campaign. Could we list them by name (I'd suggest [Brand A], [Brand B] and [Brand C]) and end it 30 days after the last post goes live?
+
+Exclusivity means turning down other work in the category, so I price it separately: [$X] for the terms above. If you need the wider category or a longer window, I'm happy to quote that too.`}
+/>
+
+## Fix the wording before you sign
+
+<ClauseDiff topic="exclusivity" title="Exclusivity" />
+
+<QuickCheck
+  title="Exclusivity check"
+  id="deal-exclusivity"
+  items={[
+    { text: "Competitors are named, or the category is narrow", hint: "“Protein powder,” not “food and beverage.”" },
+    { text: "It covers sponsored content only", hint: "Not organic mentions, a product you already use, or your own products." },
+    { text: "It names an end date", hint: "Counted from the last post going live, so anyone can check it." },
+    { text: "It has its own fee", hint: "Listed separately in the fee exhibit." },
+    { text: "It ends if they cancel", hint: "If they kill the campaign or don't pay, the exclusivity ends too." },
+    { text: "You've checked your other contracts", hint: "Make sure it doesn't clash with a deal you already signed." },
+  ]}
+  done="Exclusivity is scoped and priced."
+/>
+
+:::caution[Not legal advice]
+Educational information only. Long or broad exclusivity, ambassador deals and anything that touches deals you’ve already signed are worth a lawyer’s review.
+:::
+
+<DeepDive title="Related terms you’ll see" hint="Right of first refusal, first look, non-compete">
+- **Right of first refusal:** before you sign with a competitor, you have to offer the brand the same deal first. Lighter than exclusivity, but it can slow every competing deal down. Give it an end date too.
+- **First look:** you show the brand new opportunities in the category first. Lighter still.
+- **Non-compete:** sometimes used loosely for exclusivity. If it limits work beyond sponsored posts, or lasts long after the deal, have a lawyer look at it.
+- **Category exclusivity on a retainer:** for long ambassador deals, exclusivity is often the main thing the brand is paying for. Price the retainer with it in mind.
+</DeepDive>
+
+<DeepDive title="Sources" hint="3 sources">
+<Sources bare ids={['revision', 'sag', 'later26']} />
+</DeepDive>

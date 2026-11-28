@@ -14,7 +14,7 @@ moves:
     source: "NYC and NY State law"
 status: draft
 confidence: verified
-lastReviewed: 2026-11-26
+lastReviewed: 2026-11-28
 cover:
   label: Invoice
 sidebar:
@@ -25,6 +25,8 @@ import ScriptCards from '../../../components/money/ScriptCards.astro';
 import Sources from '../../../components/money/Sources.astro';
 import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
+import PaymentTimeline from '../../../components/deals/PaymentTimeline.astro';
+import ClauseDiff from '../../../components/deals/ClauseDiff.astro';
 
 **The short version:** most late payments are paperwork problems: a missing purchase order number, the invoice sent to the wrong inbox, or a vague due date. Fix those in the contract, invoice the day your post goes live, and follow up on the due date. If you’re in New York City or New York State, the law gives you real leverage.
 
@@ -39,6 +41,18 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 | **Late fee** | Interest or a flat fee on overdue amounts. Only enforceable if it’s in the contract |
 
 Aim for a deposit on signing with new brands, the balance Net 30 from posting, and a late fee written into the contract. See [payment terms in the clause library](/deals/clause-library/#clause-payment).
+
+## See the terms on a calendar
+
+“Net 60” sounds close to “Net 30” in an email. On a calendar it’s another month of you funding the campaign. Pick the terms you were offered and move the posting date.
+
+<PaymentTimeline />
+
+## Fix the payment clause before you sign
+
+The three payment clauses that cost creators the most time. Flip between their version, the redline and your clean copy.
+
+<ClauseDiff topic="payment" title="Payment terms" />
 
 ## Send an invoice that gets paid
 
@@ -99,6 +113,6 @@ This is a summary for creators, not legal advice. Check the current rules where 
 
 </DeepDive>
 
-<DeepDive title="Sources" hint="2 sources">
-<Sources bare ids={['nyc', 'nys']} />
+<DeepDive title="Sources" hint="3 sources">
+<Sources bare ids={['nyc', 'nys', 'revision']} />
 </DeepDive>

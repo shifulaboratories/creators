@@ -1,5 +1,6 @@
 /** Plain-text versions of the Earn and Deals widgets, for "Copy as Markdown" and llms.txt. */
 import { bands, marketAverage, fees, paths, clauses, redlines, scripts, sources, cuts } from './money-data';
+import { diffs, diffBefore, diffAfter, adTools, payPlans } from './deal-terms-data';
 
 const usd = (n: number | null) => (n === null ? 'and up' : '$' + n.toLocaleString('en-US'));
 const fmtFollowers = (n: number | null) => (n === null ? '+' : n >= 1e6 ? n / 1e6 + 'M' : n / 1e3 + 'K');
@@ -27,5 +28,14 @@ export const moneyWidgetText: Record<string, string> = {
 		'\n\nExample: on a $10,000 fee, a 20% manager and a 10% agent leave $7,000 before taxes and costs.',
 	DealsMap:
 		'The six steps of a brand deal: 1. Get found (/deals/pitching-brands/) 2. Price it (/deals/pricing/) 3. Negotiate (/deals/negotiation/) 4. Fix the contract (/deals/redline-a-contract/, /deals/clause-library/) 5. Post it right (/deals/disclosure/) 6. Get paid (/deals/getting-paid/). Team and commissions: /deals/agencies-and-commissions/',
+	ClauseDiff: diffs.map((d) => `- **${d.title}** (${d.where}). Theirs: "${diffBefore(d.text)}" Yours: "${diffAfter(d.text)}" Comment: ${d.say} Why: ${d.why}`).join('\n'),
+	UsageBuilder:
+		'Price rights as separate lines on top of the post fee. Usage on the brand’s own channels: +30–50% (Later 2026). Paid ads from your handle or theirs: +30–50% (Later 2026). Rule of thumb (creator-tested): 30 days at the low end, 90 days mid, 6 months at the top, 12 months as two periods; forever is a buyout quoted separately. Name the channels, the term and the start date, and keep ownership.',
+	AdTools: adTools.map((t) => `- **${t.platform}: ${t.name}.** ${t.how} ${t.control} Watch for: ${t.watch}`).join('\n'),
+	ExclusivityFloor:
+		'Exclusivity fee floor (creator-tested): deals a year you would normally do inside the exclusivity × your average fee × months ÷ 12. Narrow it to named direct competitors and 30–90 days after the campaign (Revision Legal); it should not apply to a UGC-only deal.',
+	PaymentTimeline: payPlans.map((p) => `- **${p.label}:** ${p.note}`).join('\n'),
+	CommissionTerms:
+		'Commission on gross vs net: on a $10,000 deal with $2,500 of costs, 20% on gross is $2,000 and 20% on net is $1,500. Managers usually take commission on gross (Pfeiffer Law); net and excluding deals you found are things to ask for. Sunset clause to ask for (creator-tested, at 20%): 10% for six months after the term, 5% for the next six, then nothing, only on deals they closed.',
 	ScriptCards: scripts.map((s) => `### ${s.when}: ${s.title}\n\n\`\`\`\n${s.body}\n\`\`\``).join('\n\n'),
 };

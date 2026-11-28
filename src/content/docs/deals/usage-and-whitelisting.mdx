@@ -1,0 +1,93 @@
+---
+title: "Usage rights and whitelisting"
+description: "What usage rights, whitelisting, Spark Ads and partnership ads actually are, how to price them as separate lines, and the contract wording to send back."
+payoff: "Price the rights to your content separately from the post, and grant ad access without handing over your account."
+moves:
+  - do: "Split your next quote into three lines: the post, usage on their channels, and paid ads."
+    why: "Later's 2026 benchmarks add 30–50% each for usage and for paid ads, and bundling hides that money."
+    source: "Later, 2026"
+  - do: "Search the contract for “perpetuity,” “paid media” and “whitelist.”"
+    why: "Rights that never end and paid ads slipped in under “promote” are the two most common giveaways."
+    source: "SAG-AFTRA, Revision Legal"
+  - do: "Grant ad access only through the platform's partner tools, never your password."
+    why: "Meta, TikTok and YouTube all have permission flows, and Meta lets you revoke them any time."
+    source: "Instagram, TikTok, Google help centers"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Usage and ads
+sidebar:
+  order: 3.5
+  label: Usage rights and whitelisting
+---
+
+import UsageBuilder from '../../../components/deals/UsageBuilder.astro';
+import AdTools from '../../../components/deals/AdTools.astro';
+import ClauseDiff from '../../../components/deals/ClauseDiff.astro';
+import Sources from '../../../components/money/Sources.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** your fee pays for the post. Everything the brand does with that post afterwards, reposting it, putting it on their site, running it as an ad, is a right you’re licensing. Price each right by where it runs and for how long, keep ownership, and give ad access through the platform’s own tools with an end date.
+
+## Know the three things a brand can buy
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li class="is-active"><strong>The post</strong><span>You make it and post it on your channels. This is your base fee.</span></li>
+<li><strong>Usage</strong><span>They repost or reuse it on their own channels, site and email, for a set time.</span></li>
+<li><strong>Paid ads</strong><span>They put money behind it, from their account or from yours (“whitelisting”).</span></li>
+</ol>
+<figcaption>Each step is a separate line on your quote</figcaption>
+</figure>
+
+Paid ads from your handle are worth the most to a brand: the ad shows your name and face to people who don’t follow you, and it usually performs like a recommendation, not an ad. That’s why Later’s 2026 benchmarks price it as its own add-on, on top of usage. Google even tells advertisers that running a creator’s video as an ad may need a separate agreement with the creator. That agreement is your fee.
+
+## Build the quote and the clause
+
+Pick where they can use it and for how long. The quote and the clause update together, so what you price is exactly what you sign.
+
+<UsageBuilder />
+
+## Approve ad access the safe way
+
+Every platform has a permission flow for this, and none of them needs your login. If a brand or agency asks for your password, say no and send them the flow below.
+
+<AdTools />
+
+<QuickCheck
+  title="Before you approve ad access"
+  id="deal-ad-access"
+  items={[
+    { text: "The paid-usage fee is in the signed contract", hint: "Approve permissions after signing, not before. Google tells advertisers they're responsible for securing the rights." },
+    { text: "Per-post, not your whole account, where you can", hint: "Meta's account-level permission can cover future posts too." },
+    { text: "An end date that matches the contract", hint: "Put it in your calendar and revoke on the day. On Meta you can revoke at any time." },
+    { text: "You approve the ad copy", hint: "The ad runs under your name, so the words above your video are yours too." },
+    { text: "You know what can't be undone", hint: "On TikTok you can't edit the caption once a post is authorized, and a private video becomes public when it's used in a campaign." },
+  ]}
+  done="Ready to approve."
+/>
+
+## Fix the wording before you sign
+
+These four clauses are where creators give the most away. Flip between their version, the redline and your clean copy.
+
+<ClauseDiff keys={['usage-term', 'usage-license', 'ads-scope', 'ads-access']} title="Usage and paid ads" />
+
+:::caution[Not legal advice]
+Educational information only. Anything forever, anything involving your likeness, voice or AI, or a large paid-media budget is worth a lawyer’s review before you sign.
+:::
+
+<DeepDive title="Words you’ll hear, in plain English" hint="Whitelisting, dark posts, paid usage, buyout">
+- **Whitelisting:** the older industry word for a brand running ads from your handle. On Meta it’s now *partnership ads*, on TikTok *Spark Ads*, on YouTube *partnership ads* through BrandConnect.
+- **Dark post:** an ad that runs from your handle but never appears on your profile grid. Revision Legal lists it with whitelisting as paid usage that needs its own paid license.
+- **Paid usage:** any use of your content with ad money behind it, from either account.
+- **Organic usage:** reposts and placements with no ad spend: their feed, site, emails.
+- **Buyout:** selling the rights for a very long time or forever. Price it as its own number, not an add-on.
+- **Term starts on:** the go-live date for usage, and the first ad’s start date for paid ads. Write both down so the end date is checkable.
+</DeepDive>
+
+<DeepDive title="Sources" hint="8 sources">
+<Sources bare ids={['later26', 'sag', 'revision', 'metaPerm', 'metaRevoke', 'tiktokSpark', 'ytBoost', 'ytPartners']} />
+</DeepDive>

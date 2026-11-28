@@ -1,0 +1,258 @@
+---
+/**
+ * Exclusivity: pick how wide the lock is (rings) and how long it lasts, enter
+ * the deals you'd normally do inside it, and get the fee floor: the deals
+ * you'd turn down. Method is creator-tested; scope and length guidance is
+ * Revision Legal's.
+ */
+import { exclusivityScopes } from '../../lib/deal-terms-data';
+import { sources } from '../../lib/money-data';
+const rev = sources.revision;
+---
+
+<div class="sc-widget ef not-content" data-section="deals" data-ef data-scopes={JSON.stringify(exclusivityScopes)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Exclusivity price</div>
+			<p class="sc-widget__title">What is this exclusivity costing you?</p>
+		</div>
+	</div>
+
+	<div class="ef-top">
+		<svg class="ef-rings" viewBox="0 0 200 200" role="img" aria-label="Exclusivity scope">
+			<circle class="ef-r" data-ring="industry" cx="100" cy="100" r="94"></circle>
+			<circle class="ef-r" data-ring="product" cx="100" cy="100" r="64"></circle>
+			<circle class="ef-r" data-ring="named" cx="100" cy="100" r="34"></circle>
+			<text x="100" y="104" text-anchor="middle">Brand</text>
+		</svg>
+		<div class="ef-scopes" role="radiogroup" aria-label="How wide is the exclusivity?">
+			{
+				exclusivityScopes.map((s, i) => (
+					<button type="button" class="ef-scope" role="radio" data-scope={s.key} aria-checked={String(i === 1)}>
+						<b>{s.label}</b>
+						<small>{s.example}</small>
+						<em>{s.verdict}</em>
+					</button>
+				))
+			}
+		</div>
+	</div>
+
+	<label class="ef-row">
+		<span>Months you can’t work with them, campaign plus after <b data-out="months">3</b></span>
+		<input class="sc-range" type="range" min="1" max="18" value="3" data-months aria-label="Months of exclusivity" />
+	</label>
+	<label class="ef-row">
+		<span>Deals a year you’d normally do inside that circle <b data-out="deals">3</b></span>
+		<input class="sc-range" type="range" min="0" max="24" value="3" data-deals aria-label="Deals per year inside the exclusivity" />
+	</label>
+	<label class="ef-row ef-inline">
+		<span>Your average fee for one of those deals</span>
+		<span class="ef-money"><i>$</i><input type="number" inputmode="numeric" min="0" step="100" value="2500" data-fee aria-label="Average fee in dollars" /></span>
+	</label>
+	<label class="ef-ugc">
+		<input type="checkbox" data-ugc />
+		<span>This is UGC only: the content goes on their channels, not mine</span>
+	</label>
+
+	<div class="ef-out" aria-live="polite">
+		<span data-out="lbl">Ask at least</span>
+		<b data-out="floor"></b>
+		<p data-out="say"></p>
+	</div>
+
+	<p class="sc-widget__note">
+		Nobody publishes an exclusivity benchmark, so price it as the work you’d turn down: deals a year × your fee × months ÷ 12. <span class="sc-tag is-practitioner">Creator-tested</span> Scope and length guidance from <a href={rev.url} rel="noopener">{rev.publisher.split(' (')[0]}</a>. Not legal advice.
+	</p>
+</div>
+
+<style>
+	.ef-top {
+		display: grid;
+		gap: 1rem;
+		align-items: center;
+	}
+	@media (min-width: 40rem) {
+		.ef-top {
+			grid-template-columns: 11rem 1fr;
+		}
+	}
+	.ef-rings {
+		width: 100%;
+		max-width: 11rem;
+		margin: 0 auto;
+	}
+	.ef-r {
+		fill: rgb(255 255 255 / 0.02);
+		stroke: var(--sc-line-strong);
+		stroke-width: 1.5;
+		transition: fill 0.25s, stroke 0.25s;
+	}
+	.ef-r.is-on {
+		fill: color-mix(in srgb, var(--accent) 22%, transparent);
+		stroke: var(--accent);
+	}
+	.ef-rings text {
+		fill: var(--sc-ivory);
+		font-size: 13px;
+		font-weight: 650;
+	}
+	.ef-scopes {
+		display: grid;
+		gap: 0.4rem;
+	}
+	.ef-scope {
+		appearance: none;
+		text-align: left;
+		font: inherit;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0 0.6rem;
+		padding: 0.55rem 0.75rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		background: none;
+		color: inherit;
+		cursor: pointer;
+	}
+	.ef-scope[aria-checked='true'] {
+		border-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+	.ef-scope b {
+		font-size: 0.88rem;
+		color: var(--sc-ivory);
+	}
+	.ef-scope small {
+		grid-column: 1;
+		font-size: 0.76rem;
+		color: var(--sc-steel);
+	}
+	.ef-scope em {
+		grid-row: 1 / span 2;
+		grid-column: 2;
+		align-self: center;
+		font-style: normal;
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.ef-row {
+		display: block;
+		margin-top: 1rem;
+		font-size: 0.86rem;
+		color: var(--sc-silver);
+	}
+	.ef-row b {
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.ef-inline {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.ef-money {
+		display: inline-flex;
+		gap: 0.25rem;
+		align-items: center;
+		padding: 0.3rem 0.65rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line-strong);
+	}
+	.ef-money i {
+		font-style: normal;
+		color: var(--sc-steel);
+	}
+	.ef-money input {
+		width: 6rem;
+		border: 0;
+		background: none;
+		color: var(--sc-ivory);
+		font: inherit;
+		font-weight: 650;
+	}
+	.ef-ugc {
+		display: flex;
+		gap: 0.5rem;
+		align-items: flex-start;
+		margin-top: 0.85rem;
+		font-size: 0.84rem;
+		color: var(--sc-silver);
+	}
+	.ef-ugc input {
+		margin-top: 0.2rem;
+		accent-color: var(--accent);
+	}
+	.ef-out {
+		margin-top: 1rem;
+		padding: 0.85rem 0.95rem;
+		border-radius: 14px;
+		background: var(--sc-fill-muted);
+	}
+	.ef-out span {
+		display: block;
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+	.ef-out b {
+		font-family: var(--sc-font-display);
+		font-size: 1.6rem;
+		color: var(--sc-jade);
+		font-variant-numeric: tabular-nums;
+	}
+	.ef-out p {
+		margin: 0.35rem 0 0;
+		font-size: 0.86rem;
+		line-height: 1.5;
+		color: var(--sc-platinum);
+	}
+</style>
+
+<script>
+	type S = { key: string; label: string; example: string; verdict: string };
+	const usd = (n: number) => '$' + (Math.round(n / 50) * 50).toLocaleString('en-US');
+	document.querySelectorAll<HTMLElement>('[data-ef]').forEach((root) => {
+		const scopes: S[] = JSON.parse(root.dataset.scopes!);
+		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		let scope = 'product';
+		const render = () => {
+			const months = +$<HTMLInputElement>('[data-months]').value;
+			const deals = +$<HTMLInputElement>('[data-deals]').value;
+			const fee = Math.max(0, +$<HTMLInputElement>('[data-fee]').value || 0);
+			const ugc = $<HTMLInputElement>('[data-ugc]').checked;
+			$('[data-out="months"]').textContent = String(months);
+			$('[data-out="deals"]').textContent = String(deals);
+			root.querySelectorAll<HTMLInputElement>('.sc-range').forEach((r) => r.style.setProperty('--fill', ((+r.value - +r.min) / (+r.max - +r.min)) * 100 + '%'));
+			const order = scopes.map((s) => s.key);
+			const idx = order.indexOf(scope);
+			root.querySelectorAll<SVGCircleElement>('[data-ring]').forEach((c) => c.classList.toggle('is-on', order.indexOf(c.dataset.ring!) <= idx));
+			root.querySelectorAll<HTMLButtonElement>('[data-scope]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.scope === scope)));
+			const floor = (deals * fee * months) / 12;
+			const say = $('[data-out="say"]');
+			if (ugc) {
+				$('[data-out="lbl"]').textContent = 'Exclusivity';
+				$('[data-out="floor"]').textContent = 'Shouldn’t apply';
+				say.textContent = 'Revision Legal’s view: if the deal is purely UGC, exclusivity shouldn’t apply at all. Ask them to strike it.';
+				return;
+			}
+			$('[data-out="lbl"]').textContent = 'Ask at least, on top of your fee';
+			$('[data-out="floor"]').textContent = deals === 0 ? '$0' : usd(floor);
+			const tips: string[] = [];
+			if (deals === 0) tips.push('You don’t turn anything down, so you can give this one cheaply. Still name the competitors and the end date.');
+			else tips.push(`That’s ${deals} deal${deals === 1 ? '' : 's'} a year × ${usd(fee)} × ${months} month${months === 1 ? '' : 's'} ÷ 12.`);
+			if (scope === 'industry') tips.push('A whole industry blocks deals that don’t compete with them. Offer named competitors instead, or price the wider circle.');
+			if (months > 3) tips.push('Revision Legal flags 6–12 months after posting as overreach and suggests 30 to 90 days after the campaign.');
+			say.textContent = tips.join(' ');
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-scope]').forEach((b) =>
+			b.addEventListener('click', () => {
+				scope = b.dataset.scope!;
+				render();
+			}),
+		);
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', render));
+		render();
+	});
+</script>

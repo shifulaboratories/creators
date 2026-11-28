@@ -1,0 +1,228 @@
+---
+/**
+ * Payment terms on a calendar: pick the terms, set when the post goes live,
+ * and see on which day each dollar actually lands. Data: payPlans in
+ * src/lib/deal-terms-data.ts.
+ */
+import { payPlans } from '../../lib/deal-terms-data';
+---
+
+<div class="sc-widget pt not-content" data-section="deals" data-pt data-plans={JSON.stringify(payPlans)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Payment terms</div>
+			<p class="sc-widget__title">When does the money actually land?</p>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="Payment terms">
+		{payPlans.map((p, i) => <button type="button" class="sc-chip" data-plan={p.key} aria-pressed={String(i === 0)}>{p.label}</button>)}
+	</div>
+
+	<label class="pt-live">
+		<span>Your post goes live <b data-out="live">21</b> days after you sign</span>
+		<input class="sc-range" type="range" min="3" max="60" value="21" data-live aria-label="Days from signing to go-live" />
+	</label>
+
+	<div class="pt-track" aria-hidden="true">
+		<div class="pt-wait" data-wait></div>
+		<div class="pt-fog" data-fog hidden><span>?</span></div>
+		<div class="pt-marks" data-marks></div>
+		<div class="pt-axis"><span>Sign</span><span>60</span><span>120</span><span>180</span></div>
+	</div>
+
+	<div class="pt-out" aria-live="polite">
+		<div><span>First money</span><b data-out="first"></b></div>
+		<div><span>Paid in full</span><b data-out="full"></b></div>
+		<div><span>Waiting after you post</span><b data-out="after"></b></div>
+	</div>
+	<p class="pt-note" data-out="note"></p>
+
+	<p class="sc-widget__note">Due dates shown as calendar days. A deposit is shown a week after signing, the time a first invoice usually takes. If the contract names no date at all, New York City and New York State freelance laws require payment within 30 days of finishing the work: see below.</p>
+</div>
+
+<style>
+	.pt-live {
+		display: block;
+		margin-top: 1rem;
+		font-size: 0.86rem;
+		color: var(--sc-silver);
+	}
+	.pt-live b {
+		color: var(--sc-ivory);
+	}
+	.pt-track {
+		position: relative;
+		height: 6.4rem;
+		margin: 1.2rem 0 0.4rem;
+	}
+	.pt-track::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 2.3rem;
+		height: 6px;
+		border-radius: 999px;
+		background: rgb(255 255 255 / 0.08);
+	}
+	.pt-wait {
+		position: absolute;
+		top: 2.3rem;
+		height: 6px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--sc-champagne), var(--sc-rose));
+		transition: left 0.3s, width 0.3s;
+	}
+	.pt-fog {
+		position: absolute;
+		top: 1.9rem;
+		height: 14px;
+		border-radius: 999px;
+		background: repeating-linear-gradient(135deg, rgb(255 134 184 / 0.35) 0 6px, transparent 6px 12px);
+		display: grid;
+		place-items: center;
+	}
+	.pt-fog[hidden] {
+		display: none;
+	}
+	.pt-fog span {
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: var(--sc-ivory);
+	}
+	:global(.pt-mark) {
+		position: absolute;
+		top: 0;
+		transform: translateX(-50%);
+		display: grid;
+		justify-items: center;
+		gap: 0.15rem;
+		font-size: 0.68rem;
+		line-height: 1.15;
+		color: var(--sc-silver);
+		white-space: nowrap;
+		transition: left 0.3s;
+	}
+	:global(.pt-mark i) {
+		width: 14px;
+		height: 14px;
+		margin-top: 0.15rem;
+		border-radius: 50%;
+		background: var(--sc-carbon);
+		border: 2px solid var(--sc-steel);
+	}
+	:global(.pt-mark.is-money i) {
+		border-color: var(--sc-jade);
+		background: var(--sc-jade);
+	}
+	:global(.pt-mark.is-money) {
+		top: auto;
+		top: 1.95rem;
+		color: var(--sc-jade);
+		grid-auto-flow: row;
+	}
+	:global(.pt-mark.is-money i) {
+		order: -1;
+	}
+	:global(.pt-mark em) {
+		font-style: normal;
+	}
+	:global(.pt-mark.is-low em) {
+		margin-top: 1.15rem;
+	}
+	.pt-axis {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.64rem;
+		color: var(--sc-steel);
+	}
+	.pt-out {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.5rem;
+		margin-top: 0.6rem;
+	}
+	.pt-out div {
+		padding: 0.6rem 0.7rem;
+		border-radius: 12px;
+		background: var(--sc-fill-muted);
+	}
+	.pt-out span {
+		display: block;
+		font-size: 0.7rem;
+		color: var(--sc-steel);
+	}
+	.pt-out b {
+		font-family: var(--sc-font-display);
+		font-size: 1.05rem;
+		color: var(--sc-ivory);
+		font-variant-numeric: tabular-nums;
+	}
+	.pt-note {
+		margin: 0.7rem 0 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--sc-platinum);
+	}
+	.pt-note.is-bad {
+		color: var(--sc-champagne);
+	}
+</style>
+
+<script>
+	type Plan = { key: string; label: string; pays: { share: number; from: 'sign' | 'live'; days: number }[]; unknown?: boolean; verdict: string; note: string };
+	const MAX = 180;
+	document.querySelectorAll<HTMLElement>('[data-pt]').forEach((root) => {
+		const plans: Plan[] = JSON.parse(root.dataset.plans!);
+		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		let key = plans[0].key;
+		const pos = (d: number) => Math.min(100, (d / MAX) * 100) + '%';
+		const render = () => {
+			const p = plans.find((x) => x.key === key)!;
+			const slider = $<HTMLInputElement>('[data-live]');
+			const live = +slider.value;
+			slider.style.setProperty('--fill', ((live - 3) / 57) * 100 + '%');
+			$('[data-out="live"]').textContent = String(live);
+			const pays = p.pays.map((x) => ({ ...x, day: x.from === 'sign' ? x.days : live + x.days }));
+			const first = Math.min(...pays.map((x) => x.day));
+			const full = Math.max(...pays.map((x) => x.day));
+			const at = (d: number) => {
+				const f = (d / MAX) * 100;
+				return `left:${pos(d)};transform:translateX(${f < 12 ? '-7px' : f > 88 ? 'calc(-100% + 7px)' : '-50%'});justify-items:${f < 12 ? 'start' : f > 88 ? 'end' : 'center'}`;
+			};
+			const marks = [`<span class="pt-mark" style="${at(live)}">Post live<i></i></span>`];
+			if (!p.unknown) pays.forEach((x, n) => marks.push(`<span class="pt-mark is-money${n % 2 ? ' is-low' : ''}" style="${at(x.day)}"><i></i><em>${Math.round(x.share * 100)}% · day ${x.day}</em></span>`));
+			$('[data-marks]').innerHTML = marks.join('');
+			const end = p.unknown ? live + 30 : full;
+			const w = $('[data-wait]');
+			w.style.left = pos(live);
+			w.style.width = `calc(${pos(end)} - ${pos(live)})`;
+			const fog = $('[data-fog]');
+			fog.hidden = !p.unknown;
+			if (p.unknown) {
+				fog.style.left = pos(live + 30);
+				fog.style.width = `calc(100% - ${pos(live + 30)})`;
+			}
+			$('[data-out="first"]').textContent = p.unknown ? 'Unknown' : `Day ${first}`;
+			$('[data-out="full"]').textContent = p.unknown ? 'Unknown' : `Day ${full}`;
+			$('[data-out="after"]').textContent = p.unknown ? 'No date' : `${Math.max(0, full - live)} days`;
+			const note = $('[data-out="note"]');
+			note.textContent = p.note;
+			note.classList.toggle('is-bad', p.verdict === 'bad');
+			root.querySelectorAll<HTMLButtonElement>('[data-plan]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.plan === key)));
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-plan]').forEach((b) =>
+			b.addEventListener('click', () => {
+				key = b.dataset.plan!;
+				render();
+			}),
+		);
+		$('[data-live]').addEventListener('input', render);
+		render();
+	});
+</script>

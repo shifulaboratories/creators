@@ -1,0 +1,326 @@
+---
+/**
+ * Usage builder: pick where and how long a brand can use your content, see the
+ * add-on priced from Later's 2026 bands, and copy the matching clause.
+ * Data: src/lib/deal-terms-data.ts (usageBand, adsBand, usageTerms, usageChannels).
+ */
+import { usageBand, adsBand, usageTerms, usageChannels } from '../../lib/deal-terms-data';
+import { sources } from '../../lib/money-data';
+const cfg = { usage: usageBand, ads: adsBand, terms: usageTerms };
+const later = sources.later26;
+---
+
+<div class="sc-widget ub not-content" data-section="deals" data-ub data-cfg={JSON.stringify(cfg)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Usage builder</div>
+			<p class="sc-widget__title">Price the rights, then copy the clause</p>
+		</div>
+	</div>
+
+	<label class="ub-fee">
+		<span>Your fee for the post itself</span>
+		<span class="ub-money"><i>$</i><input type="number" inputmode="numeric" min="0" step="50" value="2000" data-fee aria-label="Base fee in dollars" /></span>
+	</label>
+
+	<fieldset class="ub-set">
+		<legend>Where can the brand use it?</legend>
+		<div class="ub-channels">
+			{
+				usageChannels.map((c, i) => (
+					<label class="ub-ch">
+						<input type="checkbox" data-ch={c.key} checked={i === 0} />
+						<span>
+							<b>{c.label}</b>
+							<small>{c.help}</small>
+						</span>
+					</label>
+				))
+			}
+		</div>
+	</fieldset>
+
+	<fieldset class="ub-set" data-row="organic">
+		<legend>For how long, on their channels?</legend>
+		<div class="sc-chip-row">
+			{usageTerms.map((t, i) => <button type="button" class="sc-chip" data-term="organic" data-i={i} aria-pressed={String(i === 1)}>{t.label}</button>)}
+		</div>
+	</fieldset>
+
+	<fieldset class="ub-set" data-row="paid" hidden>
+		<legend>For how long, as paid ads?</legend>
+		<div class="sc-chip-row">
+			{usageTerms.map((t, i) => <button type="button" class="sc-chip" data-term="paid" data-i={i} aria-pressed={String(i === 0)}>{t.label}</button>)}
+		</div>
+	</fieldset>
+
+	<div class="ub-quote" aria-live="polite">
+		<ul data-lines></ul>
+		<div class="ub-total"><span>Quote</span><b data-total></b></div>
+		<p class="ub-flag" data-flag hidden></p>
+	</div>
+
+	<div class="ub-clause">
+		<div class="ub-clause__head">
+			<span>Your clause</span>
+			<button type="button" class="ub-copy" data-copy>Copy</button>
+		</div>
+		<p data-clause></p>
+	</div>
+
+	<p class="sc-widget__note">
+		The 30–50% bands for usage and for paid ads are from <a href={later.url} rel="noopener">{later.publisher}</a> ({later.date}). Where a term sits inside the band, and pricing 12 months as two periods, is our <span class="sc-tag is-practitioner">Creator-tested</span> rule of thumb, not a published benchmark. Not legal advice.
+	</p>
+</div>
+
+<style>
+	.ub-fee {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-size: 0.9rem;
+		color: var(--sc-silver);
+	}
+	.ub-money {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.35rem 0.7rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-fill-subtle);
+	}
+	.ub-money i {
+		font-style: normal;
+		color: var(--sc-steel);
+	}
+	.ub-money input {
+		width: 6.5rem;
+		border: 0;
+		background: none;
+		color: var(--sc-ivory);
+		font: inherit;
+		font-size: 1.1rem;
+		font-weight: 650;
+		font-variant-numeric: tabular-nums;
+	}
+	.ub-set {
+		margin: 1rem 0 0;
+		padding: 0;
+		border: 0;
+	}
+	.ub-set[hidden] {
+		display: none;
+	}
+	legend {
+		margin-bottom: 0.5rem;
+		font-size: 0.8rem;
+		font-weight: 650;
+		color: var(--sc-platinum);
+	}
+	.ub-channels {
+		display: grid;
+		gap: 0.45rem;
+	}
+	@media (min-width: 40rem) {
+		.ub-channels {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.ub-ch {
+		display: flex;
+		gap: 0.6rem;
+		align-items: flex-start;
+		padding: 0.6rem 0.75rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line);
+		cursor: pointer;
+		transition: border-color 0.2s, background 0.2s;
+	}
+	.ub-ch:has(input:checked) {
+		border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+		background: color-mix(in srgb, var(--accent) 9%, transparent);
+	}
+	.ub-ch input {
+		margin-top: 0.2rem;
+		accent-color: var(--accent);
+	}
+	.ub-ch b {
+		display: block;
+		font-size: 0.88rem;
+		color: var(--sc-ivory);
+	}
+	.ub-ch small {
+		font-size: 0.76rem;
+		color: var(--sc-steel);
+		line-height: 1.35;
+	}
+	.ub-quote {
+		margin-top: 1.1rem;
+		padding: 0.8rem 0.9rem;
+		border-radius: 14px;
+		background: var(--sc-fill-muted);
+	}
+	.ub-quote ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.3rem;
+	}
+	:global(.ub-quote li) {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		margin: 0;
+		font-size: 0.86rem;
+		color: var(--sc-silver);
+		font-variant-numeric: tabular-nums;
+	}
+	:global(.ub-quote li b) {
+		color: var(--sc-platinum);
+		font-weight: 600;
+		white-space: nowrap;
+	}
+	.ub-total {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-top: 0.55rem;
+		padding-top: 0.55rem;
+		border-top: 1px solid var(--sc-line-strong);
+	}
+	.ub-total span {
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+	}
+	.ub-total b {
+		font-family: var(--sc-font-display);
+		font-size: 1.35rem;
+		color: var(--sc-jade);
+		font-variant-numeric: tabular-nums;
+	}
+	.ub-flag {
+		margin: 0.55rem 0 0;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--sc-champagne);
+	}
+	.ub-clause {
+		margin-top: 0.9rem;
+		padding: 0.85rem 0.95rem;
+		border-radius: 12px;
+		background: #f6f1ea;
+		color: #2a2622;
+	}
+	.ub-clause__head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.35rem;
+		font-size: 0.72rem;
+		font-weight: 650;
+		color: #7a6f64;
+	}
+	.ub-copy {
+		appearance: none;
+		border: 0;
+		border-radius: 999px;
+		padding: 0.3rem 0.8rem;
+		background: #2a2622;
+		color: #f6f1ea;
+		font: inherit;
+		font-size: 0.75rem;
+		cursor: pointer;
+	}
+	.ub-clause p {
+		margin: 0;
+		font-family: Georgia, 'Times New Roman', serif;
+		font-size: 0.92rem;
+		line-height: 1.55;
+	}
+</style>
+
+<script>
+	type Term = { days: number; label: string; pos: number; periods: number };
+	type Cfg = { usage: { lo: number; hi: number }; ads: { lo: number; hi: number }; terms: Term[] };
+	const usd = (n: number) => '$' + (Math.round(n / 10) * 10).toLocaleString('en-US');
+	const pctOf = (b: { lo: number; hi: number }, t: Term) => (b.lo + (b.hi - b.lo) * t.pos) * t.periods;
+	const words: Record<number, string> = { 30: 'thirty (30) days', 90: 'ninety (90) days', 180: 'six (6) months', 365: 'twelve (12) months' };
+	document.querySelectorAll<HTMLElement>('[data-ub]').forEach((root) => {
+		const cfg: Cfg = JSON.parse(root.dataset.cfg!);
+		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const sel = { organic: 1, paid: 0 };
+		const render = () => {
+			const fee = Math.max(0, +$<HTMLInputElement>('[data-fee]').value || 0);
+			const on = (k: string) => $<HTMLInputElement>(`[data-ch="${k}"]`).checked;
+			const organic = on('social') || on('web');
+			const paid = on('brandAds') || on('handleAds');
+			$('[data-row="organic"]').hidden = !organic;
+			$('[data-row="paid"]').hidden = !paid;
+			const tO = cfg.terms[sel.organic];
+			const tP = cfg.terms[sel.paid];
+			const lines: string[] = [`<li><span>Post and deliverables</span><b>${usd(fee)}</b></li>`];
+			let total = fee;
+			let forever = false;
+			if (organic) {
+				if (tO.periods === 0) {
+					forever = true;
+					lines.push(`<li><span>Usage, forever</span><b>Quote separately</b></li>`);
+				} else {
+					const p = pctOf(cfg.usage, tO);
+					total += fee * p;
+					lines.push(`<li><span>Usage on their channels, ${tO.label} (+${Math.round(p * 100)}%)</span><b>${usd(fee * p)}</b></li>`);
+				}
+			}
+			if (paid) {
+				if (tP.periods === 0) {
+					forever = true;
+					lines.push(`<li><span>Paid ads, forever</span><b>Quote separately</b></li>`);
+				} else {
+					const p = pctOf(cfg.ads, tP);
+					total += fee * p;
+					lines.push(`<li><span>Paid ads, ${tP.label} (+${Math.round(p * 100)}%)</span><b>${usd(fee * p)}</b></li>`);
+				}
+			}
+			$('[data-lines]').innerHTML = lines.join('');
+			$('[data-total]').textContent = forever ? `${usd(total)} + buyout` : usd(total);
+			const flag = $('[data-flag]');
+			flag.hidden = !forever;
+			flag.textContent = 'Forever is a buyout, not an add-on. SAG-AFTRA says to avoid “in perpetuity” when you can. If they insist, quote it as its own number, well above a 12-month price, or offer 12 months with an option to renew.';
+			const where = [on('social') && 'Brand’s owned organic social media accounts', on('web') && 'Brand’s website, app and email'].filter(Boolean).join(' and ');
+			const term = (t: Term) => (t.periods === 0 ? 'a period to be agreed in writing' : words[t.days]);
+			const parts: string[] = [];
+			if (organic) parts.push(`Usage. Brand may use the Content on ${where} for ${term(tO)} from the date the Content goes live.`);
+			if (paid) {
+				const how = [on('brandAds') && 'from Brand’s own accounts', on('handleAds') && 'from Creator’s handle through each platform’s partner tools (no passwords shared)'].filter(Boolean).join(' and ');
+				parts.push(`Paid media. Brand may run the Content as paid ads ${how} for ${term(tP)} from the first ad’s start date, using ad copy Creator approves in advance. Ad permissions end with that term.`);
+			}
+			if (!organic && !paid) parts.push('Usage. Brand may share links to the Content as posted on Creator’s channels. Any other use requires Creator’s written approval and a separate fee.');
+			else parts.push('Creator keeps ownership of the Content. Any other use, or use after these terms, requires Creator’s written approval and a separate fee.');
+			$('[data-clause]').textContent = parts.join(' ');
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-term]').forEach((b) =>
+			b.addEventListener('click', () => {
+				const k = b.dataset.term as 'organic' | 'paid';
+				sel[k] = +b.dataset.i!;
+				root.querySelectorAll<HTMLButtonElement>(`[data-term="${k}"]`).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				render();
+			}),
+		);
+		root.querySelectorAll('input').forEach((i) => i.addEventListener('input', render));
+		$('[data-copy]').addEventListener('click', async () => {
+			const btn = $('[data-copy]');
+			try {
+				await navigator.clipboard.writeText($('[data-clause]').textContent || '');
+				btn.textContent = 'Copied';
+			} catch {
+				btn.textContent = 'Select and copy';
+			}
+			setTimeout(() => (btn.textContent = 'Copy'), 1600);
+		});
+		render();
+	});
+</script>
