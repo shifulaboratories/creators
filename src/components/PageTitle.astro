@@ -56,7 +56,7 @@ const mainText = (entry.body ?? '')
 	.replace(/[#*_`|>\-]+/g, ' ');
 const words = mainText.split(/\s+/).filter(Boolean).length;
 const minutes = Math.max(1, Math.round(words / 220));
-const showTime = data.status !== 'outline' && !['guides', '404'].includes(base) && words > 120;
+const showTime = data.status !== 'outline' && !['guides', '404'].includes(base) && minutes >= 2;
 const statusText = L.page.status;
 // Pages built in src/pages/ with their own header content: no chips, Ask AI or Share.
 const bare = ['guides', 'roadmap', 'changelog'].includes(base);
@@ -74,7 +74,7 @@ const confidenceText = L.page.confidence;
 	</ul>}
 	{!bare && !news && section !== 'news' && <ul class="chips">
 		{!tool && showTime && <li class="chip time">{L.page.minRead(minutes)}</li>}
-		{!tool && data.status && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
+		{!tool && data.status && data.status !== "draft" && <li class={`chip status-${data.status}`}>{statusText[data.status]}</li>}
 		{!tool && data.confidence && <li class="chip">{confidenceText[data.confidence]}</li>}
 		{data.authors && data.authors.length > 0 && (
 			<li class="chip byline">
@@ -121,6 +121,19 @@ const confidenceText = L.page.confidence;
 		import { markLinks, onChange } from '../scripts/library';
 		markLinks();
 		onChange(() => markLinks());
+
+		// Wide tables scroll sideways on phones. Let keyboard users focus them
+		// so the arrow keys can scroll (WCAG 2.1.1).
+		const focusWideTables = () => {
+			for (const t of document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table:not([tabindex])')) {
+				if (t.scrollWidth > t.clientWidth + 1) {
+					t.tabIndex = 0;
+					t.setAttribute('aria-label', t.querySelector('th')?.textContent?.trim() ? `Table: ${t.querySelector('th')!.textContent!.trim()}` : 'Table');
+				}
+			}
+		};
+		focusWideTables();
+		addEventListener('resize', focusWideTables, { passive: true });
 	</script>
 </header>
 

@@ -36,7 +36,7 @@ const statusText = L.status;
 					<div class="body">
 						<h3>{e.data.title}</h3>
 						{e.data.description && <p>{e.data.description}</p>}
-						{status && <span class={`status s-${status}`}>{statusText[status]}</span>}
+						{status && status !== "draft" && <span class={`status s-${status}`}>{statusText[status]}</span>}
 						{!baseOf.get(e)!.translated && <span class="status s-en" lang={locale}>{L.english}</span>}
 					</div>
 				</a>
