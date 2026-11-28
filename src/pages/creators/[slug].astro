@@ -38,7 +38,7 @@ const similar = all
 	.filter((o) => o.id !== c.id)
 	.map((o) => ({ o, score: (o.niche === c.niche ? 3 : 0) + o.platforms.filter((p) => c.platforms.includes(p)).length }))
 	.sort((a, b) => b.score - a.score)
-	.slice(0, 3)
+	.slice(0, 4)
 	.map((x) => x.o);
 
 // Every source on the page, once.
@@ -88,7 +88,7 @@ const ld = {
 		</p>
 
 		<header class="cp-hero">
-			<span class="cp-mono" aria-hidden="true">{initials(c.name)}</span>
+			<span class="cp-mono" aria-hidden="true" data-morph-target>{initials(c.name)}</span>
 			<div>
 				<p class="cp-known">{c.known}</p>
 				<p class="cp-plats">
@@ -590,7 +590,14 @@ const ld = {
 	}
 	.cp-similar {
 		display: grid;
-		gap: 0.75rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+	@media (min-width: 44rem) {
+		.cp-similar {
+			grid-template-columns: 1fr;
+			gap: 0.75rem;
+		}
 	}
 	.cp-sources ul {
 		margin: 0;

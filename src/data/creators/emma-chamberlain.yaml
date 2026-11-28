@@ -3,6 +3,7 @@ known: Self-edited YouTube vlogs, the Anything Goes podcast and Chamberlain Coff
 niche: lifestyle
 platforms: [youtube, podcast, instagram]
 about: Emma Chamberlain built a following with fast-cut, self-edited YouTube vlogs, then moved into podcasting with Anything Goes. She also founded the brand Chamberlain Coffee.
+caseStudy: case-studies/emma-chamberlain
 advice:
   - text: "The key to turning something into a business is making it consistent, and I know I can be consistent with the podcast."
     source: https://www.fastcompany.com/90904004/emma-chamberlain-on-succeeding-as-a-creator
@@ -23,3 +24,16 @@ advice:
     source: https://tubefilter.com/2019/06/10/emma-chamberlain-30-hours-editing-each-vlog/
     sourceTitle: "Emma Chamberlain says she spends up to 30 hours editing each vlog (Tubefilter)"
     date: "Jun 2019"
+videos:
+  - platform: youtube
+    id: euR3tMdites
+    title: "HIGHSCHOOL DROPOUTS TAKE FINALS ft Dolan Twins"
+    channel: emma chamberlain
+    date: Jun 2019
+    why: "The fast-cut, self-edited style at its peak. Tubefilter used it to illustrate her 20 to 30 hour edits."
+  - platform: youtube
+    id: qZLt2R2IgFE
+    title: "i got rid of (almost) everything"
+    channel: emma chamberlain
+    date: Nov 2024
+    why: "The later format: fewer uploads, longer videos, nearly an hour."

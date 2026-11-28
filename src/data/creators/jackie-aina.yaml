@@ -3,6 +3,7 @@ known: Inclusive beauty on YouTube, co-founder of FORVR Mood
 niche: beauty
 platforms: [youtube, instagram, tiktok]
 about: Jackie Aina built her audience with makeup techniques for a wide range of skin tones and by pushing the beauty industry on inclusivity. She co-founded the self-care brand FORVR Mood.
+caseStudy: case-studies/jackie-aina
 advice:
   - text: "I launched FORVR Mood for fans who wanted to try things that I recommended and love things that I do"
     source: https://www.glossy.co/beauty/jackie-aina-forevr-mood-influencer-brand/
@@ -16,3 +17,16 @@ advice:
     source: https://www.refinery29.com/en-gb/2020/08/9958115/jackie-aina-forvr-mood-candles-brand-interview
     sourceTitle: "Jackie Aina on launching FORVR Mood (Refinery29)"
     date: "Aug 2020"
+videos:
+  - platform: youtube
+    id: 4cXsgT3ZcL8
+    title: "Black Girls React to Tarte Shape Tape Foundation"
+    channel: Jackie Aina
+    date: Jan 2018
+    why: "Calling out a shade range that left darker skin out, the kind of honesty that built her leverage."
+  - platform: youtube
+    id: cprGVN3_nFA
+    title: "IT'S HERE! My Collab With Too Faced! Born This Way"
+    channel: Jackie Aina
+    date: Jun 2018
+    why: "The result: a foundation expansion where she developed 9 of the 11 new shades."

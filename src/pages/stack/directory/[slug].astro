@@ -74,7 +74,7 @@ const description = tool ? tool.what : `${cat!.intro} ${inCat.length} tools, wit
 		{tool && (
 			<>
 				<header class="dp-head">
-					<ToolLogo slug={tool.slug} name={tool.name} size="lg" />
+					<ToolLogo slug={tool.slug} name={tool.name} size="lg" morph="page" />
 					<a class="dp-visit" href={tool.url} target="_blank" rel="noopener nofollow">Visit {host(tool.url)} ↗</a>
 				</header>
 
