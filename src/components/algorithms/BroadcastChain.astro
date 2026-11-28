@@ -1,0 +1,73 @@
+---
+/**
+ * Broadcast vs chain: Goel, Anderson, Hofman and Watts (Management Science,
+ * 2016) found big spreads on Twitter look like one big broadcast, not a long
+ * chain of friends telling friends. Static figure, no animation.
+ */
+const star = Array.from({ length: 14 }, (_, i) => {
+	const a = (i / 14) * Math.PI * 2 - Math.PI / 2;
+	return [80 + 58 * Math.cos(a), 80 + 58 * Math.sin(a)];
+});
+// a hand-placed branching chain
+const chain: [number, number, number, number][] = [
+	[80, 16, 52, 52], [80, 16, 110, 50],
+	[52, 52, 30, 86], [52, 52, 64, 92], [110, 50, 124, 88],
+	[30, 86, 20, 122], [64, 92, 56, 128], [64, 92, 86, 126], [124, 88, 140, 122],
+	[56, 128, 46, 150], [86, 126, 98, 150],
+];
+const chainNodes = [[80, 16], ...chain.map(([, , x, y]) => [x, y])];
+---
+
+<figure class="sc-widget bc not-content">
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">From the research · How big spreads actually look</div>
+			<p class="sc-widget__title">Viral rarely means friends telling friends</p>
+		</div>
+	</div>
+	<div class="bc-grid">
+		<div class="bc-side is-win">
+			<svg viewBox="0 0 160 160" role="img" aria-label="One source with many direct viewers">
+				{star.map(([x, y]) => <line x1="80" y1="80" x2={x.toFixed(1)} y2={y.toFixed(1)} />)}
+				{star.map(([x, y]) => <circle cx={x.toFixed(1)} cy={y.toFixed(1)} r="5" />)}
+				<circle class="bc-root" cx="80" cy="80" r="11" />
+			</svg>
+			<p class="bc-name">Broadcast</p>
+			<p class="bc-text">One source reaches lots of people directly. This is what almost all big spreads looked like.</p>
+		</div>
+		<div class="bc-side">
+			<svg viewBox="0 0 160 160" role="img" aria-label="A chain where each viewer passes it on to a few more">
+				{chain.map(([a, b, c, d]) => <line x1={a} y1={b} x2={c} y2={d} />)}
+				{chainNodes.map(([x, y], i) => <circle class={i === 0 ? 'bc-root' : ''} cx={x} cy={y} r={i === 0 ? 9 : 5} />)}
+			</svg>
+			<p class="bc-name">Chain</p>
+			<p class="bc-text">Each person passes it to a few more, generation after generation. The picture most people imagine. It was rare.</p>
+		</div>
+	</div>
+	<ul class="bc-stats">
+		<li><b>1 in 4,000</b><span>posts reached even 100 reshares</span></li>
+		<li><b>~99%</b><span>of all sharing was the original post or one step away from it</span></li>
+		<li><b>Under 3</b><span>median “chain-ness” even for videos and pictures with 10,000+ reposts</span></li>
+	</ul>
+	<figcaption class="bc-src">Sharad Goel, Ashton Anderson, Jake Hofman, Duncan Watts, <a href="https://www.5harad.com/papers/twiral.pdf">“The Structural Virality of Online Diffusion”</a>, Management Science, 2016: about a billion sharing events on Twitter, July 2011 to June 2012, before recommendation feeds took over. Their conclusion: popularity is “largely driven by the size of the largest broadcast.”</figcaption>
+</figure>
+
+<style>
+	.bc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+	.bc-side { border: 1px solid var(--sc-line); border-radius: 14px; padding: 0.75rem; background: rgb(255 255 255 / 0.02); }
+	.bc-side.is-win { border-color: color-mix(in srgb, var(--sc-jade) 45%, transparent); }
+	.bc-side svg { width: 100%; max-width: 11rem; display: block; margin: 0 auto 0.4rem; }
+	.bc-side line { stroke: var(--sc-line-strong, rgb(255 255 255 / 0.2)); stroke-width: 1.5; }
+	.bc-side circle { fill: var(--sc-silver); }
+	.bc-side.is-win circle { fill: var(--sc-jade); }
+	.bc-side .bc-root { fill: var(--accent); }
+	.bc-name { margin: 0; font-family: var(--sc-font-display); font-weight: 700; color: var(--sc-ivory); }
+	.bc-text { margin: 0.2rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--sc-silver); }
+	.bc-stats { list-style: none; margin: 0.9rem 0 0; padding: 0; display: grid; gap: 0.5rem; }
+	@media (min-width: 40rem) { .bc-stats { grid-template-columns: repeat(3, 1fr); } }
+	.bc-stats li { display: grid; gap: 0.1rem; padding: 0.6rem 0.75rem; border-radius: 12px; background: rgb(255 255 255 / 0.03); }
+	.bc-stats b { font-family: var(--sc-font-display); font-size: 1.3rem; color: var(--sc-ivory); }
+	.bc-stats span { font-size: 0.8rem; line-height: 1.4; color: var(--sc-silver); }
+	.bc-src { margin: 0.9rem 0 0; font-size: 0.72rem; line-height: 1.5; color: var(--sc-steel); }
+	.bc-src a { color: var(--sc-silver); }
+</style>

@@ -1,0 +1,87 @@
+---
+title: "Get the tap"
+description: "Titles, thumbnails, covers and first frames that make the right people stop scrolling, and why YouTube's own test picks the winner by watch time, not clicks."
+payoff: "Package a post so the right people stop for it, without the clickbait that costs you everything after the tap."
+moves:
+  - do: "Write the title and cover before you make the post, then make the post deliver it."
+    why: "The packaging is a promise. Feeds measure whether people stay after they tap."
+    source: "YouTube, 2021"
+  - do: "Test two or three title and thumbnail ideas with YouTube's built-in A/B test."
+    why: "It picks the winner by watch time, not click-through rate."
+    source: "YouTube Help"
+  - do: "Cut anything in your cover that the post doesn't show."
+    why: "Clicks that don't turn into watching taught YouTube to stop trusting clicks."
+    source: "YouTube, 2021"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Lesson 2
+sidebar:
+  order: 2
+---
+
+import PackagingTest from '../../../components/algorithms/PackagingTest.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** packaging is everything someone sees before they decide to give you their time: the title, thumbnail or cover on YouTube, and the first frame, first words and on-screen text on a vertical feed. Its only job is to make the right person stop. The catch: every platform has learned that taps alone lie, so a tap only pays off if people stay after it.
+
+## Learn why clicks stopped counting
+
+YouTube's VP of engineering wrote that they "learned back in 2011 that clicking on a video doesn't mean you actually watched it." When YouTube started ranking by watch time in 2012, views dropped about 20% straight away, and it kept the change. YouTube's researchers had found that ranking by clicks promotes deceptive videos people don't finish.
+
+So a shock thumbnail can win the tap and still lose the feed. Try it:
+
+<PackagingTest />
+
+## Make a promise, then keep it
+
+Strong packaging is specific and a little curious, and the post pays it off fast. Weak packaging is either vague ("my morning routine") or a lie ("this changed my life").
+
+<BeforeAfter
+  illustration
+  before={{ label: "Vague or bait", title: "“You won't BELIEVE this”", lines: ["Says nothing about what's inside", "Shocked face, unrelated to the video", "Payoff arrives at minute 9, if at all"] }}
+  after={{ label: "Specific and honest", title: "“I cooked every viral pasta. One is actually good”", lines: ["You know exactly what you'll get", "Cover shows the dishes side by side", "First result in the first 20 seconds"] }}
+/>
+
+A useful habit from the biggest channels: decide the title and thumbnail first, then build the video to deliver on them. See how [MrBeast](/case-studies/mrbeast/) works this way.
+
+## Treat the first frame as your thumbnail
+
+On TikTok, Reels and Shorts there's no thumbnail to tap. The first frame and first line do the job, and "tapping" means not swiping away. Same rule: show the most interesting thing first, say who it's for, and put the words on screen for people watching with the sound off. [Hooks and the first seconds](/grow/hooks/) has eight openings to steal.
+
+<QuickCheck
+  title="Packaging check"
+  id="alg-tap"
+  items={[
+    { text: "Someone could guess what's inside from the title and cover alone", hint: "Specific beats clever." },
+    { text: "There's one open question that makes them want to know", hint: "Which pasta? What changed on day 30?" },
+    { text: "The post answers it, and early", hint: "The longer they wait, the more of them leave." },
+    { text: "The cover or first frame shows something the post really shows", hint: "No reaction faces to things that never happen." },
+    { text: "It reads on a phone at a glance", hint: "Three words on a thumbnail beat ten." },
+  ]}
+  done="Packaging ready."
+/>
+
+Next: [Keep them watching →](/algorithms/keep-them-watching/)
+
+<DeepDive title="How YouTube's A/B test works" hint="Test & compare, in brief">
+
+- You can test up to 3 titles, 3 thumbnails, or 3 title and thumbnail pairs, from YouTube Studio on a computer.
+- YouTube shows each option to part of your audience and picks the one with the highest share of watch time: "we optimize tests for overall watch time over other metrics, like click-through-rate."
+- A test takes a few days to two weeks. Results come back as Winner, Performed same, or Inconclusive.
+- Not available for Shorts, made-for-kids or private videos. Options that are too similar, or videos with few impressions, often come back inconclusive.
+- YouTube warns that outside tools that only count clicks "may determine a different 'winner'."
+
+</DeepDive>
+
+<DeepDive title="Sources" hint="3 sources">
+
+- Cristos Goodrow, [On YouTube's recommendation system](https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/), YouTube, Sep 15, 2021.
+- YouTube Help, [A/B test titles & thumbnails](https://support.google.com/youtube/answer/16391400), checked Nov 28, 2026.
+- Paul Covington, Jay Adams, Emre Sargin, [Deep Neural Networks for YouTube Recommendations](https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/), RecSys 2016.
+- The packaging test uses a made-up video and made-up numbers to show the pattern.
+
+</DeepDive>

@@ -25,6 +25,7 @@ export const NAV: NavGroup[] = [
 			{ label: 'All platforms', href: '/platforms/' },
 		],
 		links: [
+			{ label: 'Make content that travels', href: '/algorithms/', text: 'How posts go viral, in five lessons' },
 			{ label: 'Grow your audience', href: '/grow/', text: 'Hooks, formats, algorithms, case studies' },
 			{ label: 'Brand deals', href: '/deals/', text: 'Pitch, price, negotiate, contracts' },
 			{ label: 'Paywall', href: '/paywall/', text: 'Fanfix, OnlyFans, Patreon, Fanvue' },

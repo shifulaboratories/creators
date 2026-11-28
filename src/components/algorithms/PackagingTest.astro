@@ -1,0 +1,127 @@
+---
+/**
+ * Guess the winner: three title + thumbnail ideas for one made-up video.
+ * Reveal shows taps vs total watch time, and that YouTube's own A/B test picks
+ * the winner by watch time, not click-through rate. Numbers are illustrative.
+ */
+import { packagingVariants as variants } from '../../lib/viral-data';
+const maxCtr = Math.max(...variants.map((v) => v.ctr));
+const maxWatch = Math.max(...variants.map((v) => v.watch));
+const winner = variants.reduce((a, b) => (b.watch > a.watch ? b : a)).key;
+---
+
+<div class="sc-widget pt not-content" data-pt data-winner={winner}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Guess the winner</div>
+			<p class="sc-widget__title">Which packaging wins the test?</p>
+		</div>
+		<span class="sc-tag is-illustrative">Made-up video and numbers</span>
+	</div>
+	<p class="pt-intro">Same video: thirty days of waking up at 5am. Tap the title and thumbnail you think wins.</p>
+
+	<div class="pt-grid" role="group" aria-label="Packaging options">
+		{variants.map((v, i) => (
+			<button type="button" class="pt-card" data-v={v.key} aria-pressed="false">
+				<span class={`pt-thumb t-${v.key}`} aria-hidden="true">
+					{v.key === 'a' && <span class="pt-thumb__a">☕</span>}
+					{v.key === 'b' && <span class="pt-thumb__b">WOW?!</span>}
+					{v.key === 'c' && (
+						<span class="pt-thumb__c"><i>DAY 1</i><i>DAY 30</i></span>
+					)}
+				</span>
+				<span class="pt-title">{v.title}</span>
+				<span class="pt-desc">{v.thumb}</span>
+				<span class="pt-stats" hidden>
+					<span class="pt-row"><em>Taps</em><span class="pt-track"><span class="pt-fill is-ctr" style={`--w:${(v.ctr / maxCtr) * 100}%`}></span></span><b>{v.ctr}%</b></span>
+					<span class="pt-row"><em>Watch time</em><span class="pt-track"><span class="pt-fill is-watch" style={`--w:${(v.watch / maxWatch) * 100}%`}></span></span><b>{v.watch}%</b></span>
+					<span class="pt-read">{v.read}</span>
+				</span>
+				<span class="pt-badge" hidden>Wins</span>
+			</button>
+		))}
+	</div>
+
+	<p class="pt-out" aria-live="polite" data-out></p>
+	<p class="pt-src">How YouTube picks: “we optimize tests for overall watch time over other metrics, like click-through-rate.” <a href="https://support.google.com/youtube/answer/16391400">YouTube Help, A/B test titles &amp; thumbnails</a>. “Watch time” here is each option’s share of total watch time in the test.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-pt]').forEach((root) => {
+		const winner = root.dataset.winner!;
+		const out = root.querySelector<HTMLElement>('[data-out]')!;
+		root.querySelectorAll<HTMLButtonElement>('.pt-card').forEach((b) =>
+			b.addEventListener('click', () => {
+				root.classList.add('is-revealed');
+				root.querySelectorAll<HTMLElement>('.pt-card').forEach((c) => {
+					c.setAttribute('aria-pressed', String(c === b));
+					c.querySelector<HTMLElement>('.pt-stats')!.hidden = false;
+					c.querySelector<HTMLElement>('.pt-badge')!.hidden = c.dataset.v !== winner;
+					c.classList.toggle('is-win', c.dataset.v === winner);
+				});
+				out.textContent =
+					b.dataset.v === winner
+						? 'You picked it. The specific title gets fewer taps than the shock version, but people stay, so it wins on total watch time, which is what YouTube’s own test counts.'
+						: b.dataset.v === 'b'
+							? 'Most people pick this one, because it gets the most taps. But viewers leave once the video doesn’t match the promise, so it loses on total watch time, which is what YouTube’s own test counts.'
+							: 'Honest, but too plain to stop anyone. The winner is specific and a little curious, and the video delivers on it.';
+			}),
+		);
+	});
+</script>
+
+<style>
+	.pt-intro { margin: -0.35rem 0 0.9rem; font-size: 0.9rem; color: var(--sc-silver); }
+	.pt-grid { display: grid; gap: 0.6rem; }
+	@media (min-width: 46rem) { .pt-grid { grid-template-columns: repeat(3, 1fr); } }
+	.pt-card {
+		appearance: none; font: inherit; text-align: left; cursor: pointer; position: relative;
+		display: grid; gap: 0.4rem; align-content: start;
+		padding: 0.6rem; border-radius: 14px; border: 1px solid var(--sc-line);
+		background: rgb(255 255 255 / 0.02); color: inherit; transition: border-color 0.2s, transform 0.2s;
+	}
+	.pt-card:hover { border-color: var(--sc-line-bright); }
+	.pt-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+	.pt-card[aria-pressed='true'] { border-color: var(--accent); }
+	.pt-card.is-win { border-color: var(--sc-jade); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-jade) 16%, transparent); }
+	@media (max-width: 45.99rem) {
+		.pt-card { grid-template-columns: 7rem 1fr; column-gap: 0.7rem; }
+		.pt-thumb { grid-row: 1 / span 2; align-self: start; }
+		.pt-stats { grid-column: 1 / -1; }
+		.pt-card .pt-thumb__c i { font-size: 0.6rem; white-space: nowrap; font-family: var(--sc-font-sans); font-weight: 900; }
+		.pt-card .pt-badge { top: 0.3rem; left: 0.3rem; right: auto; }
+		.pt-thumb__a { font-size: 1.6rem !important; }
+	}
+	.pt-thumb { aspect-ratio: 16 / 9; border-radius: 10px; display: grid; place-items: center; overflow: hidden; }
+	.t-a { background: linear-gradient(135deg, #e9d8c4, #c9a98a); }
+	.t-b { background: radial-gradient(circle at 30% 40%, #ffe14d, #ff3b3b 70%); }
+	.t-c { background: linear-gradient(90deg, #2b2f3a 50%, #f4c76b 50%); }
+	.pt-thumb__a { font-size: 2.2rem; }
+	.pt-thumb__b { font-family: var(--sc-font-sans); font-weight: 900; font-size: clamp(1rem, 6vw, 2rem); color: #fff; text-shadow: 0 3px 0 #000; }
+	.pt-thumb__c { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; }
+	.pt-thumb__c i { display: grid; place-items: center; font-style: normal; font-family: var(--sc-font-display); font-weight: 800; font-size: 0.95rem; color: #fff; }
+	.pt-thumb__c i + i { color: #1a1a1a; }
+	.pt-title { font-weight: 700; color: var(--sc-ivory); line-height: 1.3; font-size: 0.95rem; }
+	.pt-desc { font-size: 0.76rem; color: var(--sc-steel); }
+	.pt-stats { display: grid; gap: 0.35rem; margin-top: 0.2rem; }
+	.pt-stats[hidden] { display: none; }
+	.pt-row { display: grid; grid-template-columns: 5.2rem 1fr 2.6rem; align-items: center; gap: 0.4rem; font-size: 0.74rem; color: var(--sc-silver); }
+	.pt-row em { font-style: normal; }
+	.pt-row b { text-align: right; color: var(--sc-ivory); }
+	.pt-track { height: 8px; border-radius: 99px; background: rgb(255 255 255 / 0.07); overflow: hidden; }
+	.pt-fill { display: block; height: 100%; width: var(--w); border-radius: 99px; animation: pt-grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+	.pt-fill.is-ctr { background: var(--sc-rose); }
+	.pt-fill.is-watch { background: var(--sc-jade); }
+	@keyframes pt-grow { from { width: 0; } }
+	@media (prefers-reduced-motion: reduce) { .pt-fill { animation: none; } }
+	.pt-read { font-size: 0.8rem; line-height: 1.45; color: var(--sc-platinum); }
+	.pt-badge {
+		position: absolute; top: 0.9rem; right: 0.9rem; padding: 0.2rem 0.55rem; border-radius: 999px;
+		font-size: 0.7rem; font-weight: 700; color: #0a0a0a; background: var(--sc-jade);
+	}
+	.pt-badge[hidden] { display: none; }
+	.pt-out { margin: 0.9rem 0 0; font-size: 0.95rem; line-height: 1.5; color: var(--sc-ivory); }
+	.pt-out:empty { display: none; }
+	.pt-src { margin: 0.8rem 0 0; font-size: 0.72rem; line-height: 1.5; color: var(--sc-steel); }
+	.pt-src a { color: var(--sc-silver); }
+</style>
