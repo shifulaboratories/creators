@@ -199,6 +199,46 @@ export const sources: Record<string, Source> = {
 		url: 'https://dir.ca.gov/dlse/Talent%20Agency_License_and_Fee-Related_Talent_Services.htm',
 		method: 'Official guidance on who needs a talent agency license.',
 	},
+	metaPerm: {
+		id: 'metaPerm',
+		name: 'About partnership ad permissions',
+		publisher: 'Instagram Help Center (Meta)',
+		date: 'Checked Nov 28, 2026',
+		url: 'https://help.instagram.com/ipad-app/442108830566254',
+		method: 'Official help article: advertisers need the partner’s permission to run ads from their handle.',
+	},
+	metaRevoke: {
+		id: 'metaRevoke',
+		name: 'Stop an advertiser from running partnership ads from your account',
+		publisher: 'Instagram Help Center (Meta)',
+		date: 'Checked Nov 28, 2026',
+		url: 'https://help.instagram.com/ipad-app/1159476377787773',
+		method: 'Official help article: partners can revoke permissions at any time.',
+	},
+	tiktokSpark: {
+		id: 'tiktokSpark',
+		name: 'How to create Spark Ads in TikTok Ads Manager',
+		publisher: 'TikTok Ads Help Center',
+		date: 'Updated Jun 2026',
+		url: 'https://ads.tiktok.com/resources/help/article/spark-ads-creation-guide?redirected=1',
+		method: 'Official help article: post codes, authorization periods, what changes once a post is an ad.',
+	},
+	ytBoost: {
+		id: 'ytBoost',
+		name: 'Creator partnerships boost (partnership ads)',
+		publisher: 'Google Ads Help',
+		date: 'Checked Nov 28, 2026',
+		url: 'https://support.google.com/google-ads/answer/15223349?hl=en',
+		method: 'Official help article: ads run from the creator’s channel; the brand must secure the rights separately.',
+	},
+	ytPartners: {
+		id: 'ytPartners',
+		name: 'About YouTube Creator Partnerships',
+		publisher: 'Google Ads Help',
+		date: 'Checked Nov 28, 2026',
+		url: 'https://support.google.com/google-ads/answer/15471603?hl=en',
+		method: 'Official help article: how creators link a brand in YouTube Studio.',
+	},
 };
 
 /* ───────────── Rate benchmarks ───────────── */
