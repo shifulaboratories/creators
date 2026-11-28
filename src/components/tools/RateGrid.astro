@@ -13,7 +13,7 @@ const { current, title = 'Rates by platform and size' } = Astro.props;
 	<div class="rg-scroll">
 		<table>
 			<thead>
-				<tr><th></th>{RATE_PLATFORMS.map((p) => <th>{p.name}</th>)}</tr>
+				<tr><th scope="col"><span class="sr-only">Follower tier</span></th>{RATE_PLATFORMS.map((p) => <th>{p.name}</th>)}</tr>
 			</thead>
 			<tbody>
 				{TIERS.map((t) => (

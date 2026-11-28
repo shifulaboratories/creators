@@ -391,7 +391,7 @@ export const paths: Path[] = [
 		ceiling: 3,
 		bestFor: 'Creators who teach a skill or have a signature look or system.',
 		watch: 'Launches are spiky. Refund rates rise when the promise is bigger than the product.',
-		href: '/stack/merch-and-products/',
+		href: '/stack/directory/storefront/',
 	},
 	{
 		key: 'affiliate',
