@@ -5,12 +5,14 @@ interface Props {
 	slug: string;
 	name: string;
 	size?: 'sm' | 'lg';
+	/** Card-to-page morph (astro.config.mjs): 'card' on a directory card, 'page' on the tool's page. */
+	morph?: 'card' | 'page';
 }
-const { slug, name, size = 'sm' } = Astro.props;
+const { slug, name, size = 'sm', morph } = Astro.props;
 const icon = iconFor(slug);
 ---
 
-<span class={`tl tl--${size}`} aria-hidden="true">
+<span class={`tl tl--${size}`} aria-hidden="true" data-morph={morph === 'card' ? '' : undefined} data-morph-target={morph === 'page' ? '' : undefined}>
 	{icon ? (
 		<svg viewBox="0 0 24 24" role="img"><path d={icon.path} /></svg>
 	) : (

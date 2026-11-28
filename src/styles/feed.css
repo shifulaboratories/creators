@@ -1,0 +1,274 @@
+/*
+ * App-style feeds for phones (issue #113): story decks (FeedDeck.astro), card
+ * parts the decks share, and the platform tints news cards use.
+ * Nothing here loops or plays by itself; it moves only when you swipe or tap.
+ */
+[data-platform='instagram'] { --plat: var(--sc-rose); }
+[data-platform='tiktok'] { --plat: var(--sc-cyan); }
+[data-platform='youtube'] { --plat: var(--sc-ember); }
+[data-platform='facebook'] { --plat: #7ea6ff; }
+[data-platform='linkedin'] { --plat: #6fb6e8; }
+[data-platform='x'] { --plat: var(--sc-silver); }
+
+.fd {
+	margin: 1.25rem 0 2rem;
+}
+.fd-head {
+	display: flex;
+	align-items: end;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.7rem;
+}
+.fd .fd-kicker {
+	margin: 0;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--accent, var(--sc-ion));
+}
+.fd .fd-title {
+	margin: 0.15rem 0 0;
+	padding: 0;
+	border: 0;
+	font: 600 clamp(1.3rem, 5vw, 1.7rem) / 1.15 var(--sc-font-display);
+	letter-spacing: -0.02em;
+	color: var(--sc-ivory);
+}
+.fd-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex: none;
+}
+.fd-more {
+	font-size: var(--sc-text-sm);
+	color: var(--sc-silver);
+	text-decoration: none;
+	white-space: nowrap;
+}
+.fd-more:hover {
+	color: var(--sc-ivory);
+}
+.fd-arrows {
+	display: none;
+	gap: 0.4rem;
+}
+@media (hover: hover) and (pointer: fine) {
+	.fd-arrows {
+		display: flex;
+	}
+}
+.fd-arrows button {
+	width: 2.3rem;
+	height: 2.3rem;
+	border-radius: 50%;
+	border: 1px solid var(--sc-line-strong);
+	background: rgb(255 255 255 / 0.03);
+	color: var(--sc-ivory);
+	font-size: 1.3rem;
+	line-height: 1;
+	cursor: pointer;
+}
+.fd-arrows button:hover {
+	background: rgb(255 255 255 / 0.08);
+}
+.fd-progress {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 0.7rem;
+}
+.fd-progress span {
+	flex: 1;
+	height: 3px;
+	border-radius: 3px;
+	background: rgb(255 255 255 / 0.12);
+	overflow: hidden;
+}
+.fd-progress i {
+	display: block;
+	height: 100%;
+	width: 0;
+	background: var(--sc-ivory);
+	transition: width 0.35s var(--sc-ease-settle);
+}
+.fd-progress .on i,
+.fd-progress .seen i {
+	width: 100%;
+}
+.fd-progress .seen i {
+	opacity: 0.45;
+}
+.fd-track {
+	display: flex;
+	gap: 0.7rem;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	/* Let cards bleed to the screen edge on phones, like an app row. */
+	margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+	padding: 0 var(--sl-content-pad-x, 1rem) 0.25rem;
+	scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+	outline: none;
+}
+.fd-track::-webkit-scrollbar {
+	display: none;
+}
+.fd-track:focus-visible {
+	outline: 2px solid var(--sc-ion);
+	outline-offset: 4px;
+}
+@media (min-width: 50rem) {
+	.fd-track {
+		margin-inline: 0;
+		padding-inline: 0;
+		scroll-padding-inline: 0;
+	}
+}
+
+/* ---------- A story card ---------- */
+.fd-card {
+	--tint: var(--plat, var(--accent, var(--sc-ion)));
+	position: relative;
+	flex: 0 0 min(84%, 20rem);
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+	min-height: 21rem;
+	padding: 1.15rem 1.15rem 1rem;
+	border-radius: 24px;
+	border: 1px solid color-mix(in srgb, var(--tint) 30%, transparent);
+	background:
+		radial-gradient(110% 70% at 100% 0%, color-mix(in srgb, var(--tint) 30%, transparent), transparent 65%),
+		radial-gradient(90% 60% at 0% 100%, color-mix(in srgb, var(--tint) 12%, transparent), transparent 70%),
+		#0c0c0c;
+	color: var(--sc-ivory);
+	text-decoration: none;
+	overflow: hidden;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		transform 0.22s var(--sc-ease-settle),
+		border-color 0.22s;
+}
+.fd-card:hover {
+	border-color: color-mix(in srgb, var(--tint) 60%, transparent);
+}
+.fd-card:active {
+	transform: scale(0.97);
+}
+.fd-top {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-size: 0.8rem;
+	color: var(--sc-silver);
+}
+.fd-who {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-weight: 600;
+	color: var(--sc-ivory);
+}
+.fd-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: var(--tint);
+	box-shadow: 0 0 12px var(--tint);
+}
+.fd-avatar {
+	display: grid;
+	place-items: center;
+	width: 2.6rem;
+	height: 2.6rem;
+	border-radius: 999px;
+	background: linear-gradient(140deg, var(--tint), color-mix(in srgb, var(--tint) 35%, var(--sc-obsidian)));
+	color: var(--sc-obsidian);
+	font: 700 0.95rem / 1 var(--sc-font-display);
+	flex: none;
+}
+.fd-sticker {
+	padding: 0.1rem 0.5rem;
+	border-radius: 999px;
+	background: var(--sc-lime, #d9f56b);
+	color: var(--sc-obsidian);
+	font-size: 0.72rem;
+	font-weight: 600;
+}
+.fd-big {
+	margin-top: auto;
+	font: 600 clamp(1.35rem, 6vw, 1.6rem) / 1.18 var(--sc-font-display);
+	letter-spacing: -0.02em;
+	color: var(--sc-ivory);
+	display: -webkit-box;
+	-webkit-line-clamp: 6;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.fd-text {
+	font-size: 0.95rem;
+	line-height: 1.45;
+	color: var(--sc-platinum, var(--sc-silver));
+	display: -webkit-box;
+	-webkit-line-clamp: 4;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.fd-foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	padding-top: 0.7rem;
+	border-top: 1px solid var(--sc-line);
+	font-size: 0.78rem;
+	color: var(--sc-steel);
+}
+.fd-foot > :first-child {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.fd-go {
+	flex: none;
+	font-weight: 600;
+	color: var(--tint);
+}
+
+/* ---------- Press feedback: cards dip slightly under your finger ---------- */
+@media (hover: none) {
+	.sc-press {
+		-webkit-tap-highlight-color: transparent;
+		transition: transform 0.18s var(--sc-ease-settle);
+	}
+	/* Repeated class: beats a card's own :hover lift, which sticks after a tap. */
+	.sc-press.sc-press.sc-press:active {
+		transform: scale(0.975);
+	}
+}
+
+/* ---------- Card-to-page morph (see the head script in astro.config.mjs) ---------- */
+::view-transition-group(sc-morph) {
+	animation-duration: 320ms;
+	animation-timing-function: cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+::view-transition-old(sc-morph),
+::view-transition-new(sc-morph) {
+	height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.fd-card,
+	.fd-progress i,
+	.sc-press {
+		transition: none;
+	}
+	.fd-card:active,
+	.sc-press.sc-press.sc-press:active {
+		transform: none;
+	}
+}

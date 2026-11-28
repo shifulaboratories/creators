@@ -119,7 +119,8 @@ const order = Object.keys(kinds) as Kind[];
 			))
 		}
 	</div>
-	<div class="ad-grid">
+	<p class="ad-pos" aria-hidden="true" data-pos></p>
+	<div class="ad-grid" data-grid>
 		{
 			entries.map((e) => (
 				<article class={`ad-card ${kinds[e.kind].tint}`} data-kind={e.kind}>
@@ -195,6 +196,43 @@ const order = Object.keys(kinds) as Kind[];
 		gap: 0.75rem;
 		margin-top: 0.75rem;
 	}
+	.ad-pos {
+		display: none;
+	}
+	/* Phones: swipe through the companies one card at a time. */
+	@media (max-width: 43.99rem) {
+		.ad-pos {
+			display: block;
+			margin: 0.4rem 0 0;
+			font-size: var(--sc-text-xs);
+			color: var(--sc-steel);
+			font-variant-numeric: tabular-nums;
+		}
+		.ad-grid {
+			display: flex;
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding: 0 var(--sl-content-pad-x, 1rem) 0.25rem;
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+			margin-top: 0.5rem;
+		}
+		.ad-grid::-webkit-scrollbar {
+			display: none;
+		}
+		.ad-card {
+			flex: 0 0 min(86%, 21rem);
+			scroll-snap-align: start;
+			scroll-snap-stop: always;
+			min-height: 17rem;
+			border-radius: 22px;
+			background:
+				radial-gradient(100% 50% at 100% 0%, color-mix(in srgb, var(--c) 14%, transparent), transparent 70%),
+				rgb(255 255 255 / 0.02);
+		}
+	}
 	.ad-card {
 		display: flex;
 		flex-direction: column;
@@ -266,12 +304,27 @@ const order = Object.keys(kinds) as Kind[];
 	document.querySelectorAll<HTMLElement>('[data-ad]').forEach((root) => {
 		const chips = [...root.querySelectorAll<HTMLButtonElement>('.ad-chip')];
 		const cards = [...root.querySelectorAll<HTMLElement>('.ad-card')];
+		const grid = root.querySelector<HTMLElement>('[data-grid]')!;
+		const pos = root.querySelector<HTMLElement>('[data-pos]')!;
+		// "3 of 11" under the chips while you swipe (phones only; hidden by CSS elsewhere).
+		const where = () => {
+			const shown = cards.filter((c) => !c.hidden);
+			if (!shown.length) return;
+			const w = shown[0].offsetWidth + 12;
+			const i = Math.min(shown.length - 1, Math.round(grid.scrollLeft / w));
+			pos.textContent = shown.length > 1 ? `${i + 1} of ${shown.length} · swipe for more` : '1 of 1';
+		};
+		let raf = 0;
+		grid.addEventListener('scroll', () => (cancelAnimationFrame(raf), (raf = requestAnimationFrame(where))), { passive: true });
 		chips.forEach((chip) =>
 			chip.addEventListener('click', () => {
 				const k = chip.dataset.k;
 				chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
 				cards.forEach((card) => (card.hidden = k !== 'all' && card.dataset.kind !== k));
+				grid.scrollLeft = 0;
+				where();
 			}),
 		);
+		where();
 	});
 </script>
