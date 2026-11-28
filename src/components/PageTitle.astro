@@ -89,6 +89,7 @@ const confidenceText = L.page.confidence;
 		{section === 'underground' && <li class="chip ember">{L.page.noAffiliates}</li>}
 		{section === 'tools' && base !== 'tools' && <><li class="chip status-published">Free</li><li class="chip">No signup</li><li class="chip">Private</li></>}
 	</ul>}
+	{locale !== 'en' && entryLocale === 'en' && <p class="tr-note">{L.page.notTranslated}</p>}
 	{translated && (
 		<p class="tr-note" data-review={translated}>
 			{translated === 'native' ? L.page.reviewed : L.page.machine} <a href={`/${base}/`} hreflang="en">{L.page.readOriginal}</a>
