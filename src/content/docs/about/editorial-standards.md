@@ -35,7 +35,7 @@ The chips under a page title tell you two things at a glance.
 | Label | What it means |
 | --- | --- |
 | **Coming soon** | An outline. The structure is there; the writing isn't. |
-| **In progress** | Written and sourced, still being reviewed. |
+| *(no label)* | Written and sourced, not yet signed off by a second reviewer. |
 | **Fact-checked** | Every claim checked against its source by someone other than the author. |
 
 **How sure we are**

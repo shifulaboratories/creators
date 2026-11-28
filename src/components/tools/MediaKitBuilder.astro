@@ -1,27 +1,71 @@
 ---
 /**
  * Media kit builder. No signup and no server: the kit is drawn in the browser,
- * saved on this device (localStorage), exported with the browser's own
- * "Save as PDF", and shared as a link whose #hash holds the kit itself
- * (compressed). A photo stays on this device and is never put in the link.
+ * saved on this device (localStorage), and shared as a link whose #hash holds
+ * the kit itself (compressed). A photo stays on this device and is never put
+ * in the link.
+ *
+ * Downloads are made on the device too: the kit is rendered to a canvas
+ * (modern-screenshot, loaded only on the first download) and saved as a PNG,
+ * or wrapped into a one-page PDF by makePdf() in ./media-kit-pdf.ts, with the
+ * email and website kept as clickable links.
+ *
+ * Three looks (noir, paper, pop) and three sizes (page, story, post). The
+ * sheet is laid out at its real export size and scaled down to fit the
+ * preview, so what you see is exactly what downloads. Fixed sizes shrink the
+ * type a little (--fit) rather than cut anything off.
  */
 import './tools.css';
+import { siFacebook, siInstagram, siPinterest, siSnapchat, siThreads, siTiktok, siTwitch, siX, siYoutube } from 'simple-icons';
+
 const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'X', 'LinkedIn', 'Facebook', 'Threads', 'Pinterest', 'Twitch', 'Snapchat', 'Newsletter', 'Podcast'];
+const ICONS: Record<string, string> = {
+	Instagram: siInstagram.path,
+	TikTok: siTiktok.path,
+	YouTube: siYoutube.path,
+	X: siX.path,
+	Facebook: siFacebook.path,
+	Threads: siThreads.path,
+	Pinterest: siPinterest.path,
+	Twitch: siTwitch.path,
+	Snapchat: siSnapchat.path,
+	// Generic shapes, not brand marks.
+	Newsletter: 'M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5zm2.2.5L12 12l7.8-6zM4 8.2v10.3h16V8.2l-8 6.1z',
+	Podcast: 'M12 2a4 4 0 0 1 4 4v5a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4zm-7 9h2a5 5 0 0 0 10 0h2a7 7 0 0 1-6 6.93V21h3v2H8v-2h3v-3.07A7 7 0 0 1 5 11z',
+};
 const ACCENTS = [
 	{ key: 'rose', hex: '#ff86b8' },
 	{ key: 'champagne', hex: '#ffb47e' },
+	{ key: 'butter', hex: '#ffe08a' },
 	{ key: 'ion', hex: '#c3a6ff' },
 	{ key: 'jade', hex: '#5fe3b0' },
 	{ key: 'cyan', hex: '#7cc8ff' },
 	{ key: 'ivory', hex: '#e9e4da' },
 ];
+const STYLES = [
+	{ key: 'noir', name: 'Noir', note: 'Dark and glowing' },
+	{ key: 'paper', name: 'Paper', note: 'Clean editorial' },
+	{ key: 'pop', name: 'Pop', note: 'Bold color' },
+];
+const FORMATS = [
+	{ key: 'page', name: 'Page', note: 'PDF for email' },
+	{ key: 'story', name: 'Story', note: '1080 × 1920' },
+	{ key: 'post', name: 'Post', note: '1080 × 1350' },
+];
 ---
 
-<div class="mk not-content" data-section="deals" data-mk data-platforms={JSON.stringify(PLATFORMS)} data-accents={JSON.stringify(ACCENTS)}>
+<div
+	class="mk not-content"
+	data-section="deals"
+	data-mk
+	data-platforms={JSON.stringify(PLATFORMS)}
+	data-accents={JSON.stringify(ACCENTS)}
+	data-icons={JSON.stringify(ICONS)}
+>
 	<div class="mk-view-bar" data-viewbar hidden>
 		<p>Someone shared this media kit with you.</p>
 		<div class="tw-actions">
-			<button type="button" class="tw-btn" data-print>Save as PDF</button>
+			<button type="button" class="tw-btn" data-dl="pdf">Download PDF</button>
 			<button type="button" class="tw-btn is-primary" data-remix>Make your own, free</button>
 		</div>
 	</div>
@@ -33,6 +77,26 @@ const ACCENTS = [
 
 	<div class="mk-layout">
 		<form class="mk-form" data-form autocomplete="off" onsubmit="return false">
+			<fieldset>
+				<legend>Pick a look</legend>
+				<div class="mk-styles" role="radiogroup" aria-label="Style">
+					{
+						STYLES.map((s) => (
+							<button type="button" role="radio" aria-checked="false" data-style={s.key} class={`mk-style is-${s.key}`}>
+								<span class="mk-style__thumb" aria-hidden="true">
+									<i />
+									<i />
+									<i />
+								</span>
+								<b>{s.name}</b>
+								<small>{s.note}</small>
+							</button>
+						))
+					}
+				</div>
+				<div class="mk-swatches" role="radiogroup" aria-label="Accent color" data-swatches></div>
+			</fieldset>
+
 			<fieldset>
 				<legend>You</legend>
 				<div class="mk-photo">
@@ -61,6 +125,7 @@ const ACCENTS = [
 				<legend>Platforms</legend>
 				<div class="mk-rows" data-plat-rows></div>
 				<button type="button" class="tw-btn" data-add-plat>Add a platform</button>
+				<small class="mk-help">Use numbers like 84K or 1.2M and we add up your total reach. Average views from your last 10 or so posts tell brands more than followers.</small>
 			</fieldset>
 
 			<fieldset>
@@ -80,49 +145,68 @@ const ACCENTS = [
 			</fieldset>
 
 			<fieldset>
-				<legend>Packages <small>(optional)</small></legend>
+				<legend>Packages <small>(optional, shown on the Page size)</small></legend>
 				<div class="mk-rows" data-pkg-rows></div>
 				<button type="button" class="tw-btn" data-add-pkg>Add a package</button>
 				<small class="mk-help">Not sure what to charge? Try the <a href="/tools/brand-deal-rate-calculator/">rate calculator</a>. Many creators leave prices off and send them on request.</small>
 			</fieldset>
 
-			<fieldset>
-				<legend>Look</legend>
-				<div class="mk-swatches" role="radiogroup" aria-label="Accent color" data-swatches></div>
-				<div class="sc-chip-row" role="group" aria-label="Theme" data-theme-row>
-					<button type="button" class="sc-chip" data-theme="dark" aria-pressed="true">Dark</button>
-					<button type="button" class="sc-chip" data-theme="light" aria-pressed="false">Light</button>
-				</div>
-			</fieldset>
+			<button type="button" class="tw-btn is-primary mk-next" data-tab="preview">Preview and download</button>
 		</form>
 
 		<div class="mk-side">
 			<div class="mk-sticky">
-				<div class="mk-sheet" data-sheet></div>
+				<div class="mk-formats" role="radiogroup" aria-label="Size" data-formats>
+					{
+						FORMATS.map((f) => (
+							<button type="button" role="radio" aria-checked="false" data-fmt={f.key}>
+								<b>{f.name}</b>
+								<small>{f.note}</small>
+							</button>
+						))
+					}
+				</div>
+				<div class="mk-stage" data-stage>
+					<div class="mk-sheet" data-sheet></div>
+				</div>
+				<p class="mk-fit" data-fitnote hidden></p>
 				<div class="tw-actions mk-actions">
-					<button type="button" class="tw-btn is-primary" data-print>Save as PDF</button>
+					<button type="button" class="tw-btn is-primary" data-dl="main">Download PDF</button>
+					<button type="button" class="tw-btn" data-dl="png" data-png-alt>Image</button>
 					<button type="button" class="tw-btn" data-mkshare>Copy share link</button>
-					<button type="button" class="tw-btn" data-reset>Start over</button>
+					<button type="button" class="tw-btn mk-reset" data-reset>Start over</button>
 				</div>
 				<p class="mk-status" aria-live="polite" data-status></p>
-				<p class="tw-privacy">Saved on this device only. We never see your kit: a share link carries the kit inside the link itself.</p>
+				<p class="tw-privacy">Made on this device. Downloads are drawn in your browser and nothing is uploaded. A share link carries the kit inside the link itself.</p>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	import { printSheet } from './print';
+	import { makePdf } from './media-kit-pdf';
 	type Plat = { p: string; handle: string; followers: string; views: string; er: string };
 	type Pkg = { name: string; price: string };
+	type Style = 'noir' | 'paper' | 'pop';
+	type Fmt = 'page' | 'story' | 'post';
 	type Kit = {
 		v: 1;
 		name: string; handle: string; tagline: string; bio: string; niche: string; location: string; email: string; link: string;
 		geo: string; age: string; gender: string; brands: string; proof: string;
-		plats: Plat[]; pkgs: Pkg[]; accent: string; theme: 'dark' | 'light';
+		plats: Plat[]; pkgs: Pkg[]; accent: string;
+		/** Kept so links made before styles existed still open in the right colors. */
+		theme?: 'dark' | 'light';
+		style?: Style;
+		fmt?: Fmt;
 	};
 	const KEY = 'sc-media-kit';
 	const PHOTO_KEY = 'sc-media-kit-photo';
+	/** Real export sizes in CSS pixels. Page is US Letter at 96 dpi; story and post are exported at 2.5x (1080 wide). */
+	const SIZES: Record<Fmt, { w: number; h: number; scale: number; min: number }> = {
+		page: { w: 816, h: 1056, scale: 2, min: 0.86 },
+		story: { w: 432, h: 768, scale: 2.5, min: 0.62 },
+		post: { w: 432, h: 540, scale: 2.5, min: 0.6 },
+	};
 	const SAMPLE: Kit = {
 		v: 1,
 		name: 'Maya Reyes',
@@ -149,9 +233,31 @@ const ACCENTS = [
 			{ name: '30 days of usage rights', price: '+35%' },
 		],
 		accent: 'rose',
-		theme: 'dark',
+		style: 'noir',
+		fmt: 'page',
+	};
+	const normalize = (k: Kit): Kit => {
+		const out = { ...SAMPLE, ...k };
+		if (!k.style) out.style = k.theme === 'light' ? 'paper' : 'noir';
+		if (!out.fmt || !(out.fmt in SIZES)) out.fmt = 'page';
+		delete out.theme;
+		return out;
 	};
 	const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+	/** "84K" → 84000, "1.2M" → 1200000, "12,400" → 12400. NaN when it isn't a count. */
+	const parseCount = (s: string) => {
+		const m = s.replace(/[,\s]/g, '').match(/^(\d+(?:\.\d+)?)([kmb])?\+?$/i);
+		if (!m) return NaN;
+		return +m[1] * ({ k: 1e3, m: 1e6, b: 1e9 }[(m[2] || '').toLowerCase() as 'k'] ?? 1);
+	};
+	const short = (n: number) => {
+		const f = (v: number) => (v >= 100 ? Math.round(v) : Math.round(v * 10) / 10).toString();
+		if (n >= 1e9) return f(n / 1e9) + 'B';
+		if (n >= 1e6) return f(n / 1e6) + 'M';
+		if (n >= 1e3) return f(n / 1e3) + 'K';
+		return String(Math.round(n));
+	};
+	const slug = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'my';
 	const store = {
 		get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
 		set: (k: string, v: string) => { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -172,21 +278,24 @@ const ACCENTS = [
 			const bytes = unb64u(s.slice(1));
 			const raw = s[0] === 'z' ? await pipe(bytes, new DecompressionStream('deflate-raw')) : bytes;
 			const k = JSON.parse(new TextDecoder().decode(raw));
-			return k && k.v === 1 ? { ...SAMPLE, ...k } : null;
+			return k && k.v === 1 ? normalize(k) : null;
 		} catch {
 			return null;
 		}
 	};
+	const href = (link: string) => (/^https?:\/\//i.test(link) ? link : 'https://' + link.replace(/^\/+/, ''));
 
 	document.querySelectorAll<HTMLElement>('[data-mk]').forEach(async (root) => {
 		const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
 		const PLATFORMS: string[] = JSON.parse(root.dataset.platforms!);
 		const ACCENTS: { key: string; hex: string }[] = JSON.parse(root.dataset.accents!);
+		const ICONS: Record<string, string> = JSON.parse(root.dataset.icons!);
 		const sheet = $('[data-sheet]');
+		const stage = $('[data-stage]');
 		const status = $('[data-status]');
-		const say = (t: string) => {
+		const say = (t: string, ms = 3200) => {
 			status.textContent = t;
-			setTimeout(() => status.textContent === t && (status.textContent = ''), 2600);
+			setTimeout(() => status.textContent === t && (status.textContent = ''), ms);
 		};
 
 		let kit: Kit = structuredClone(SAMPLE);
@@ -194,13 +303,13 @@ const ACCENTS = [
 		let shared = false;
 		const fromHash = location.hash.startsWith('#kit=') ? await decode(location.hash.slice(5)) : null;
 		if (fromHash) {
-			kit = fromHash;
+			kit = { ...fromHash, fmt: 'page' };
 			shared = true;
 			photo = '';
 		} else {
 			try {
 				const saved = store.get(KEY);
-				if (saved) kit = { ...SAMPLE, ...JSON.parse(saved) };
+				if (saved) kit = normalize(JSON.parse(saved));
 			} catch { /* ignore a broken draft */ }
 		}
 
@@ -212,8 +321,7 @@ const ACCENTS = [
 				el.value = (kit as any)[el.dataset.k!] ?? '';
 			});
 			renderRows();
-			renderSwatches();
-			root.querySelectorAll('[data-theme]').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.theme === kit.theme)));
+			renderPickers();
 			renderPhoto();
 		};
 		const renderRows = () => {
@@ -222,9 +330,9 @@ const ACCENTS = [
 					(r, i) => `<div class="mk-row" data-i="${i}">
 						<label class="tw-field"><span>Platform</span><select data-pk="p">${PLATFORMS.map((p) => `<option${p === r.p ? ' selected' : ''}>${p}</option>`).join('')}</select></label>
 						<label class="tw-field"><span>Handle</span><input data-pk="handle" maxlength="40" value="${esc(r.handle)}" /></label>
-						<label class="tw-field"><span>Followers</span><input data-pk="followers" maxlength="12" value="${esc(r.followers)}" placeholder="84K" /></label>
-						<label class="tw-field"><span>Avg views</span><input data-pk="views" maxlength="12" value="${esc(r.views)}" placeholder="41K" /></label>
-						<label class="tw-field"><span>Engagement</span><input data-pk="er" maxlength="8" value="${esc(r.er)}" placeholder="4.8%" /></label>
+						<label class="tw-field"><span>Followers</span><input data-pk="followers" maxlength="12" value="${esc(r.followers)}" placeholder="84K" inputmode="decimal" /></label>
+						<label class="tw-field"><span>Avg views</span><input data-pk="views" maxlength="12" value="${esc(r.views)}" placeholder="41K" inputmode="decimal" /></label>
+						<label class="tw-field"><span>Engagement</span><input data-pk="er" maxlength="8" value="${esc(r.er)}" placeholder="4.8%" inputmode="decimal" /></label>
 						<button type="button" class="mk-x" data-del-plat="${i}" aria-label="Remove ${esc(r.p)}">×</button>
 					</div>`,
 				)
@@ -239,10 +347,17 @@ const ACCENTS = [
 				)
 				.join('');
 		};
-		const renderSwatches = () => {
+		const renderPickers = () => {
+			const accent = ACCENTS.find((a) => a.key === kit.accent)?.hex ?? ACCENTS[0].hex;
+			root.style.setProperty('--mk-pick', accent);
 			$('[data-swatches]').innerHTML = ACCENTS.map(
 				(a) => `<button type="button" role="radio" aria-checked="${a.key === kit.accent}" aria-label="${a.key}" data-accent="${a.key}" style="--sw:${a.hex}"></button>`,
 			).join('');
+			root.querySelectorAll<HTMLElement>('[data-style]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.style === kit.style)));
+			root.querySelectorAll<HTMLElement>('[data-fmt]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.fmt === kit.fmt)));
+			const main = $('[data-dl="main"]');
+			main.textContent = kit.fmt === 'page' ? 'Download PDF' : 'Save image';
+			$('[data-png-alt]').hidden = kit.fmt !== 'page';
 		};
 		const renderPhoto = () => {
 			const p = $('[data-photo-preview]');
@@ -252,21 +367,27 @@ const ACCENTS = [
 		};
 
 		// ---------- the kit ----------
+		const icon = (p: string) =>
+			ICONS[p] ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[p]}"/></svg>` : `<b aria-hidden="true">${p === 'LinkedIn' ? 'in' : esc(p.charAt(0))}</b>`;
 		const draw = () => {
 			const accent = ACCENTS.find((a) => a.key === kit.accent)?.hex ?? ACCENTS[0].hex;
 			const brands = kit.brands.split(',').map((b) => b.trim()).filter(Boolean);
 			const facts = [
-				['Niche', kit.niche],
-				['Based in', kit.location],
 				['Top locations', kit.geo],
 				['Main age group', kit.age],
 				['Audience', kit.gender],
+				['Based in', kit.location],
 			].filter(([, v]) => v);
 			const plats = kit.plats.filter((p) => p.followers || p.handle);
+			const counts = plats.map((p) => parseCount(p.followers)).filter((n) => n > 0);
+			const total = counts.length >= 2 ? counts.reduce((a, b) => a + b, 0) : 0;
+			const views = plats.map((p) => parseCount(p.views)).filter((n) => n > 0);
 			const initial = esc((kit.name || '?').trim().charAt(0).toUpperCase());
-			sheet.className = `mk-sheet is-${kit.theme}`;
-			sheet.style.setProperty('--mk-accent', accent);
+			const pkgs = kit.pkgs.filter((p) => p.name);
+			sheet.className = `mk-sheet s-${kit.style} f-${kit.fmt}`;
+			sheet.style.setProperty('--a', accent);
 			sheet.innerHTML = `
+				<div class="k-glow" aria-hidden="true"></div>
 				<header class="k-head">
 					<div class="k-avatar" ${photo ? `style="background-image:url(${photo})"` : ''}>${photo ? '' : initial}</div>
 					<div class="k-id">
@@ -276,26 +397,162 @@ const ACCENTS = [
 					</div>
 				</header>
 				${kit.tagline ? `<p class="k-tagline">${esc(kit.tagline)}</p>` : ''}
-				${plats.length ? `<div class="k-plats">${plats
-					.map(
-						(p) => `<div class="k-plat"><span class="k-plat__name">${esc(p.p)}</span><b>${esc(p.followers || '–')}</b><span class="k-plat__sub">followers</span>
-						<div class="k-plat__meta">${p.views ? `<span><b>${esc(p.views)}</b> avg views</span>` : ''}${p.er ? `<span><b>${esc(p.er)}</b> engagement</span>` : ''}</div></div>`,
-					)
-					.join('')}</div>` : ''}
-				${kit.bio ? `<section class="k-sec"><h3>About</h3><p>${esc(kit.bio)}</p></section>` : ''}
-				${facts.length ? `<section class="k-sec"><h3>Audience</h3><dl class="k-facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}
-				${kit.proof ? `<section class="k-proof"><span>Result</span><p>${esc(kit.proof)}</p></section>` : ''}
-				${brands.length ? `<section class="k-sec"><h3>Worked with</h3><ul class="k-brands">${brands.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></section>` : ''}
-				${kit.pkgs.some((p) => p.name) ? `<section class="k-sec"><h3>Packages</h3><ul class="k-pkgs">${kit.pkgs.filter((p) => p.name).map((p) => `<li><span>${esc(p.name)}</span><b>${esc(p.price || 'On request')}</b></li>`).join('')}</ul></section>` : ''}
+				${
+					total
+						? `<div class="k-hero"><div><b>${short(total)}</b><span>followers across ${counts.length} platforms</span></div>${
+								views.length >= 2 ? `<div><b>${short(views.reduce((a, b) => a + b, 0))}</b><span>average views per post, combined</span></div>` : ''
+							}</div>`
+						: ''
+				}
+				${
+					plats.length
+						? `<div class="k-plats n-${plats.length}">${plats
+								.map(
+									(p) => `<div class="k-plat">
+										<div class="k-plat__top"><span class="k-ic">${icon(p.p)}</span><span class="k-plat__name">${esc(p.p)}${p.handle ? `<i>${esc(p.handle)}</i>` : ''}</span></div>
+										<b>${esc(p.followers || '–')}</b><span class="k-plat__sub">${p.p === 'YouTube' ? 'subscribers' : p.p === 'Newsletter' ? 'subscribers' : 'followers'}</span>
+										<div class="k-plat__meta">${p.views ? `<span><b>${esc(p.views)}</b> avg views</span>` : ''}${p.er ? `<span><b>${esc(p.er)}</b> engagement</span>` : ''}</div>
+									</div>`,
+								)
+								.join('')}</div>`
+						: ''
+				}
+				<div class="k-cols">
+					<div class="k-col">
+						${kit.bio ? `<section class="k-sec k-bio"><h3>About</h3><p>${esc(kit.bio)}</p></section>` : ''}
+						${facts.length ? `<section class="k-sec k-aud"><h3>Audience</h3><dl class="k-facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}
+					</div>
+					<div class="k-col">
+						${kit.proof ? `<section class="k-proof"><span>Result</span><p>${esc(kit.proof)}</p></section>` : ''}
+						${brands.length ? `<section class="k-sec k-wb"><h3>Worked with</h3><ul class="k-brands">${brands.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></section>` : ''}
+						${pkgs.length ? `<section class="k-sec k-pk"><h3>Packages</h3><ul class="k-pkgs">${pkgs.map((p) => `<li><span>${esc(p.name)}</span><b>${esc(p.price || 'On request')}</b></li>`).join('')}</ul></section>` : ''}
+					</div>
+				</div>
 				<footer class="k-foot">
-					<div>${kit.email ? `<span>${esc(kit.email)}</span>` : ''}${kit.link ? `<span>${esc(kit.link)}</span>` : ''}</div>
-					<span class="k-made">Made free at creators.select</span>
+					<div class="k-contact">${kit.email ? `<span class="k-email" data-href="mailto:${esc(kit.email)}">${esc(kit.email)}</span>` : ''}${kit.link ? `<span class="k-link" data-href="${esc(href(kit.link))}">${esc(kit.link)}</span>` : ''}</div>
+					<span class="k-made" data-href="https://creators.select/tools/media-kit-builder/">Made free at creators.select</span>
 				</footer>`;
+			fit();
 		};
 
+		// Shrink the type until the kit fits its size. Page grows taller instead once it hits its floor.
+		let scale = 1;
+		const fit = () => {
+			const S = SIZES[kit.fmt!];
+			sheet.style.width = S.w + 'px';
+			let f = 1;
+			const set = () => sheet.style.setProperty('--fit', String(f));
+			set();
+			let over = false;
+			if (kit.fmt === 'page') {
+				sheet.style.height = 'auto';
+				sheet.style.minHeight = S.h + 'px';
+				while (sheet.offsetHeight > S.h + 1 && f > S.min) { f -= 0.02; set(); }
+			} else {
+				sheet.style.minHeight = '';
+				sheet.style.height = S.h + 'px';
+				while (sheet.scrollHeight > S.h + 1 && f > S.min) { f -= 0.02; set(); }
+				over = sheet.scrollHeight > S.h + 1;
+			}
+			const note = $('[data-fitnote]');
+			note.hidden = !over;
+			if (over) note.textContent = 'This is a lot for one ' + kit.fmt + '. The bottom gets cut off: shorten your line, brands or audience, or use the Page size.';
+			place();
+		};
+		const place = () => {
+			const S = SIZES[kit.fmt!];
+			scale = Math.min(1, stage.clientWidth / S.w) || 1;
+			sheet.style.transform = `scale(${scale})`;
+			sheet.style.left = Math.max(0, (stage.clientWidth - S.w * scale) / 2) + 'px';
+			stage.style.height = Math.ceil(sheet.offsetHeight * scale) + 'px';
+			stage.style.setProperty('--w', Math.floor(S.w * scale) + 'px');
+		};
+		new ResizeObserver(() => place()).observe(stage);
+
+		let queued = 0;
 		const update = () => {
-			draw();
-			save();
+			cancelAnimationFrame(queued);
+			queued = requestAnimationFrame(() => { draw(); save(); });
+		};
+
+		// ---------- downloads ----------
+		let busy = false;
+		const render = async () => {
+			const S = SIZES[kit.fmt!];
+			await document.fonts.ready;
+			const { domToCanvas } = await import('modern-screenshot');
+			return domToCanvas(sheet, {
+				scale: S.scale,
+				width: S.w,
+				height: sheet.offsetHeight,
+				style: { transform: 'none', position: 'relative', left: '0', top: '0', margin: '0', borderRadius: '0' },
+				backgroundColor: null,
+			});
+		};
+		const links = () => {
+			const box = sheet.getBoundingClientRect();
+			return [...sheet.querySelectorAll<HTMLElement>('[data-href]')].map((el) => {
+				const r = el.getBoundingClientRect();
+				return { url: el.dataset.href!, x: (r.left - box.left) / scale, y: (r.top - box.top) / scale, w: r.width / scale, h: r.height / scale };
+			});
+		};
+		const saveFile = async (blob: Blob, name: string) => {
+			const file = new File([blob], name, { type: blob.type });
+			// Phones: the share sheet has "Save Image" / "Save to Files", which beats a bare download.
+			if (matchMedia('(pointer: coarse)').matches && navigator.canShare?.({ files: [file] })) {
+				try {
+					await navigator.share({ files: [file], title: name });
+					return true;
+				} catch (err) {
+					if ((err as Error).name === 'AbortError') return false;
+					// NotAllowedError: the tap "expired" while we drew. Fall through to a plain download.
+				}
+			}
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = name;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			setTimeout(() => URL.revokeObjectURL(url), 10000);
+			return true;
+		};
+		const download = async (kind: 'pdf' | 'png', btn: HTMLButtonElement) => {
+			if (busy) return;
+			busy = true;
+			const label = btn.textContent;
+			btn.disabled = true;
+			btn.textContent = 'Drawing…';
+			root.classList.add('is-busy');
+			try {
+				const canvas = await render();
+				const base = `${slug(kit.name)}-media-kit${kit.fmt === 'page' ? '' : '-' + kit.fmt}`;
+				let ok: boolean;
+				if (kind === 'pdf') {
+					const jpg = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('blob'))), 'image/jpeg', 0.93));
+					const pdf = makePdf({
+						jpeg: new Uint8Array(await jpg.arrayBuffer()),
+						px: { w: canvas.width, h: canvas.height },
+						size: { w: SIZES[kit.fmt!].w, h: sheet.offsetHeight },
+						links: links(),
+						title: `${kit.name || 'Creator'} · Media kit`,
+					});
+					ok = await saveFile(pdf, base + '.pdf');
+				} else {
+					const png = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('blob'))), 'image/png'));
+					ok = await saveFile(png, base + '.png');
+				}
+				if (ok) say(kind === 'pdf' ? 'PDF ready. Your email and website are clickable in it.' : 'Image ready. Post it to your Story or link it from your bio.');
+			} catch (err) {
+				console.error(err);
+				say('Couldn’t draw the file on this browser. Try Chrome or Safari, or take a screenshot of the preview.', 6000);
+			} finally {
+				busy = false;
+				btn.disabled = false;
+				btn.textContent = label;
+				root.classList.remove('is-busy');
+			}
 		};
 
 		// ---------- events ----------
@@ -309,7 +566,7 @@ const ACCENTS = [
 			update();
 		});
 		root.addEventListener('click', async (e) => {
-			const t = (e.target as HTMLElement).closest<HTMLElement>('button');
+			const t = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
 			if (!t) return;
 			if (t.dataset.delPlat) { kit.plats.splice(+t.dataset.delPlat, 1); renderRows(); update(); }
 			else if (t.dataset.delPkg) { kit.pkgs.splice(+t.dataset.delPkg, 1); renderRows(); update(); }
@@ -321,15 +578,16 @@ const ACCENTS = [
 			} else if (t.matches('[data-add-pkg]')) {
 				if (kit.pkgs.length >= 6) return say('Keep it to six packages or fewer.');
 				kit.pkgs.push({ name: '', price: '' }); renderRows(); update();
-			} else if (t.dataset.accent) { kit.accent = t.dataset.accent; renderSwatches(); update(); }
-			else if (t.dataset.theme) {
-				kit.theme = t.dataset.theme as Kit['theme'];
-				root.querySelectorAll('[data-theme]').forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
-				update();
-			} else if (t.dataset.tab) setTab(t.dataset.tab);
-			else if (t.matches('[data-print]')) {
-				setTab('preview');
-				printSheet($('[data-sheet]'), 'mk-printing');
+			} else if (t.dataset.accent) { kit.accent = t.dataset.accent; renderPickers(); update(); }
+			else if (t.dataset.style) { kit.style = t.dataset.style as Style; renderPickers(); update(); }
+			else if (t.dataset.fmt) { kit.fmt = t.dataset.fmt as Fmt; renderPickers(); update(); }
+			else if (t.dataset.tab) {
+				setTab(t.dataset.tab);
+				if (t.classList.contains('mk-next')) root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+			else if (t.dataset.dl) {
+				const kind = t.dataset.dl === 'png' || (t.dataset.dl === 'main' && kit.fmt !== 'page') ? 'png' : 'pdf';
+				download(kind, t);
 			} else if (t.matches('[data-mkshare]')) {
 				const url = `${location.origin}${location.pathname}#kit=${await encode(kit)}`;
 				try {
@@ -346,8 +604,9 @@ const ACCENTS = [
 				photo = '';
 				store.del(PHOTO_KEY);
 				fillFields(); update();
-				say('Cleared. Start typing on the left.');
-			} else if (t.matches('[data-photo-clear]')) { photo = ''; store.del(PHOTO_KEY); renderPhoto(); draw(); }
+				setTab('edit');
+				say('Cleared. Start with your name.');
+			} else if (t.matches('[data-photo-clear]')) { photo = ''; store.del(PHOTO_KEY); renderPhoto(); update(); }
 			else if (t.matches('[data-remix]')) {
 				history.replaceState(null, '', location.pathname);
 				shared = false;
@@ -355,11 +614,11 @@ const ACCENTS = [
 				$('[data-viewbar]').hidden = true;
 				setTab('edit');
 				save();
+				place();
 			}
 		});
-		
 
-		// Photo: shrink to 320px on this device before saving, so it fits in storage and the PDF stays small.
+		// Photo: shrink to 400px on this device before saving, so it fits in storage and downloads stay small.
 		root.querySelector<HTMLInputElement>('[data-photo]')!.addEventListener('change', async (e) => {
 			const f = (e.target as HTMLInputElement).files?.[0];
 			if (!f) return;
@@ -367,11 +626,11 @@ const ACCENTS = [
 				const bmp = await createImageBitmap(f);
 				const s = Math.min(bmp.width, bmp.height);
 				const c = document.createElement('canvas');
-				c.width = c.height = 320;
-				c.getContext('2d')!.drawImage(bmp, (bmp.width - s) / 2, (bmp.height - s) / 2, s, s, 0, 0, 320, 320);
-				photo = c.toDataURL('image/jpeg', 0.85);
+				c.width = c.height = 400;
+				c.getContext('2d')!.drawImage(bmp, (bmp.width - s) / 2, (bmp.height - s) / 2, s, s, 0, 0, 400, 400);
+				photo = c.toDataURL('image/jpeg', 0.86);
 				if (!store.set(PHOTO_KEY, photo)) say('Photo added for now. Your browser won’t let us keep it after you leave.');
-				renderPhoto(); draw();
+				renderPhoto(); update();
 			} catch {
 				say('That file didn’t open as an image. Try a JPG or PNG.');
 			}
@@ -381,21 +640,25 @@ const ACCENTS = [
 		const setTab = (tab: string) => {
 			root.dataset.tab = tab;
 			tabs.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String((b as HTMLElement).dataset.tab === tab)));
+			if (tab === 'preview') requestAnimationFrame(() => fit());
 		};
 
 		fillFields();
-		draw();
 		if (shared) {
 			root.classList.add('is-shared');
 			$('[data-viewbar]').hidden = false;
 			setTab('preview');
 		} else setTab('edit');
+		draw();
+		// Web fonts change line lengths; fit again once they're in.
+		document.fonts?.ready.then(() => fit());
 	});
 </script>
 
 <style>
 	.mk {
 		margin-top: 1.5rem;
+		--mk-pick: #ff86b8;
 	}
 	.mk [hidden] {
 		display: none !important;
@@ -430,6 +693,7 @@ const ACCENTS = [
 		border-radius: 99px;
 		background: color-mix(in srgb, var(--sc-obsidian) 85%, transparent);
 		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 		border: 1px solid var(--sc-line-strong);
 	}
 	.mk-tabs button {
@@ -442,6 +706,7 @@ const ACCENTS = [
 		font: inherit;
 		font-weight: 600;
 		cursor: pointer;
+		transition: background 0.2s, color 0.2s;
 	}
 	.mk-tabs button[aria-selected='true'] {
 		background: var(--sc-ivory);
@@ -449,7 +714,7 @@ const ACCENTS = [
 	}
 	.mk-layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
 		gap: 1.5rem;
 		align-items: start;
 	}
@@ -479,6 +744,91 @@ const ACCENTS = [
 		font-size: 0.75rem;
 		color: var(--sc-steel);
 	}
+	.mk-next {
+		display: none;
+	}
+
+	/* Style picker: three little kits drawn in CSS. */
+	.mk-styles {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+	.mk-style {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.5rem 0.5rem 0.6rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line-strong);
+		background: transparent;
+		color: var(--sc-ivory);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+		transition: border-color 0.2s, transform 0.2s;
+	}
+	.mk-style:hover {
+		transform: translateY(-2px);
+	}
+	.mk-style[aria-checked='true'] {
+		border-color: var(--mk-pick);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--mk-pick) 25%, transparent);
+	}
+	.mk-style b {
+		font-size: 0.88rem;
+		margin-top: 0.3rem;
+	}
+	.mk-style small {
+		font-size: 0.7rem;
+		color: var(--sc-steel);
+	}
+	.mk-style__thumb {
+		position: relative;
+		display: grid;
+		gap: 4px;
+		align-content: start;
+		aspect-ratio: 4 / 3;
+		padding: 9px;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+	.mk-style__thumb i {
+		display: block;
+		height: 6px;
+		border-radius: 3px;
+	}
+	.mk-style__thumb i:nth-child(1) {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+	}
+	.mk-style__thumb i:nth-child(2) {
+		width: 70%;
+		height: 9px;
+		margin-top: 3px;
+	}
+	.mk-style__thumb i:nth-child(3) {
+		width: 100%;
+		height: 18px;
+		margin-top: 3px;
+		border-radius: 5px;
+	}
+	.is-noir .mk-style__thumb {
+		background: radial-gradient(90% 70% at 100% 0%, color-mix(in srgb, var(--mk-pick) 45%, transparent), transparent 70%), #0d0c0f;
+		border: 1px solid rgb(255 255 255 / 0.08);
+	}
+	.is-noir .mk-style__thumb i { background: rgb(255 255 255 / 0.14); }
+	.is-noir .mk-style__thumb i:nth-child(1) { background: var(--mk-pick); }
+	.is-noir .mk-style__thumb i:nth-child(2) { background: #f5f3ef; }
+	.is-paper .mk-style__thumb { background: #f7f3ec; }
+	.is-paper .mk-style__thumb i { background: rgb(20 18 21 / 0.1); }
+	.is-paper .mk-style__thumb i:nth-child(1) { background: color-mix(in srgb, var(--mk-pick) 70%, #fff); }
+	.is-paper .mk-style__thumb i:nth-child(2) { background: #161416; }
+	.is-pop .mk-style__thumb { background: linear-gradient(150deg, var(--mk-pick), color-mix(in srgb, var(--mk-pick) 55%, #fff)); }
+	.is-pop .mk-style__thumb i { background: #fff; }
+	.is-pop .mk-style__thumb i:nth-child(1) { background: #111; }
+	.is-pop .mk-style__thumb i:nth-child(2) { background: #111; }
+
 	.mk-photo {
 		display: flex;
 		gap: 0.9rem;
@@ -550,6 +900,7 @@ const ACCENTS = [
 	}
 	.mk-swatches {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 0.55rem;
 	}
 	.mk-swatches :global(button) {
@@ -560,6 +911,10 @@ const ACCENTS = [
 		background: var(--sw);
 		box-shadow: inset 0 0 0 3px var(--sc-obsidian);
 		cursor: pointer;
+		transition: transform 0.15s;
+	}
+	.mk-swatches :global(button:hover) {
+		transform: scale(1.08);
 	}
 	.mk-swatches :global(button[aria-checked='true']) {
 		border-color: var(--sc-ivory);
@@ -568,8 +923,86 @@ const ACCENTS = [
 		position: sticky;
 		top: calc(var(--sl-nav-height, 3.5rem) + 1rem);
 	}
+
+	/* Size picker */
+	.mk-formats {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.25rem;
+		padding: 0.25rem;
+		margin-bottom: 0.8rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-fill-subtle);
+	}
+	.mk-formats button {
+		display: grid;
+		gap: 0.05rem;
+		padding: 0.45rem 0.4rem;
+		border: 0;
+		border-radius: 14px;
+		background: transparent;
+		color: var(--sc-silver);
+		font: inherit;
+		cursor: pointer;
+		transition: background 0.2s, color 0.2s;
+	}
+	.mk-formats b {
+		font-size: 0.88rem;
+	}
+	.mk-formats small {
+		font-size: 0.68rem;
+		opacity: 0.75;
+	}
+	.mk-formats button[aria-checked='true'] {
+		background: var(--sc-ivory);
+		color: #0a0a0a;
+	}
+
+	/* The stage holds the full-size sheet, scaled down to fit. */
+	.mk-stage {
+		position: relative;
+		width: 100%;
+		overflow: hidden;
+	}
+	.mk-stage::before {
+		/* soft shadow under the scaled sheet, sized by --w */
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: var(--w, 100%);
+		transform: translateX(-50%);
+		border-radius: 18px;
+		box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.55);
+		pointer-events: none;
+	}
+	.mk-stage .mk-sheet {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transform-origin: 0 0;
+	}
+	.mk.is-busy .mk-stage {
+		opacity: 0.85;
+	}
+	.mk-fit {
+		margin: 0.6rem 0 0;
+		font-size: 0.8rem;
+		color: var(--sc-champagne, #ffb47e);
+	}
 	.mk-actions {
 		justify-content: flex-start;
+	}
+	.mk-actions .tw-btn:disabled {
+		opacity: 0.7;
+		cursor: progress;
+	}
+	.mk-reset {
+		margin-left: auto;
+		border-color: transparent;
+		color: var(--sc-steel);
 	}
 	.mk-status {
 		min-height: 1.2em;
@@ -578,194 +1011,396 @@ const ACCENTS = [
 		color: var(--sc-jade);
 	}
 
-	/* ---------- The kit itself (also what prints) ---------- */
+	/* ---------- The kit itself (also what downloads) ----------
+	   Everything inside is in em, so --fit scales the whole kit at once. */
 	.mk-sheet {
+		--fit: 1;
+		--base: 16px;
 		--ink: #f5f3ef;
-		--ink-2: rgb(245 243 239 / 0.66);
-		--ink-3: rgb(245 243 239 / 0.42);
+		--ink-2: rgb(245 243 239 / 0.7);
+		--ink-3: rgb(245 243 239 / 0.45);
 		--paper: #0c0b0d;
-		--card: rgb(255 255 255 / 0.05);
+		--card: rgb(255 255 255 / 0.055);
 		--rule: rgb(255 255 255 / 0.1);
+		--a-ink: var(--a);
+		--pad: 3em;
+		box-sizing: border-box;
 		position: relative;
 		overflow: hidden;
-		padding: clamp(1.25rem, 4vw, 2.2rem);
-		border-radius: 22px;
-		background:
-			radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--mk-accent) 26%, transparent), transparent 60%),
-			var(--paper);
-		color: var(--ink);
-		border: 1px solid var(--rule);
-		font-family: var(--sc-font-sans);
-		min-height: 36rem;
 		display: flex;
 		flex-direction: column;
-		gap: 1.05rem;
-		print-color-adjust: exact;
-		-webkit-print-color-adjust: exact;
+		gap: 1.25em;
+		padding: var(--pad);
+		border-radius: 18px;
+		background: var(--paper);
+		color: var(--ink);
+		font-family: var(--sc-font-sans);
+		font-size: calc(var(--base) * var(--fit));
+		line-height: 1.4;
+		text-align: left;
 	}
-	.mk-sheet.is-light {
-		--ink: #141215;
-		--ink-2: rgb(20 18 21 / 0.68);
-		--ink-3: rgb(20 18 21 / 0.45);
-		--paper: #fbf9f6;
-		--card: rgb(20 18 21 / 0.04);
-		--rule: rgb(20 18 21 / 0.1);
+	.mk-sheet.f-story {
+		--base: 15px;
+		--pad: 2.2em;
+		gap: 1.1em;
 	}
+	.mk-sheet.f-post {
+		--base: 14px;
+		--pad: 2em;
+		gap: 1em;
+	}
+	.mk-sheet > :global(*:not(.k-glow)) {
+		position: relative;
+	}
+	.mk-sheet :global(.k-glow) {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background:
+			radial-gradient(70% 45% at 100% 0%, color-mix(in srgb, var(--a) 34%, transparent), transparent 70%),
+			radial-gradient(60% 35% at 0% 100%, color-mix(in srgb, var(--a) 14%, transparent), transparent 70%);
+	}
+
+	/* Paper: warm, editorial, lots of air. */
+	.mk-sheet.s-paper {
+		--ink: #161416;
+		--ink-2: rgb(22 20 22 / 0.7);
+		--ink-3: rgb(22 20 22 / 0.48);
+		--paper: #f7f3ec;
+		--card: transparent;
+		--rule: rgb(22 20 22 / 0.13);
+		--a-ink: color-mix(in srgb, var(--a) 52%, #1a1018);
+	}
+	.mk-sheet.s-paper :global(.k-glow) {
+		background: linear-gradient(90deg, var(--a), color-mix(in srgb, var(--a) 40%, #fff)) top / 100% 0.45em no-repeat;
+	}
+	/* Pop: the accent is the paper. */
+	.mk-sheet.s-pop {
+		--ink: #111013;
+		--ink-2: rgb(17 16 19 / 0.74);
+		--ink-3: rgb(17 16 19 / 0.52);
+		--paper: var(--a);
+		--card: rgb(255 255 255 / 0.78);
+		--rule: rgb(17 16 19 / 0.14);
+		--a-ink: #111013;
+	}
+	.mk-sheet.s-pop :global(.k-glow) {
+		background:
+			radial-gradient(80% 50% at 100% 0%, rgb(255 255 255 / 0.55), transparent 70%),
+			radial-gradient(70% 45% at 0% 100%, color-mix(in srgb, var(--a) 60%, #000 8%), transparent 70%);
+	}
+
 	.mk-sheet :global(.k-head) {
 		display: flex;
-		gap: 1rem;
+		gap: 1.1em;
 		align-items: center;
 	}
 	.mk-sheet :global(.k-avatar) {
 		flex: none;
 		display: grid;
 		place-items: center;
-		width: 4.6rem;
-		height: 4.6rem;
+		width: 2.5em;
+		height: 2.5em;
 		border-radius: 50%;
-		background: color-mix(in srgb, var(--mk-accent) 30%, var(--paper)) center / cover;
-		box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--mk-accent);
+		background: color-mix(in srgb, var(--a) 32%, var(--paper)) center / cover;
+		box-shadow: 0 0 0 0.1em var(--paper), 0 0 0 0.16em var(--a);
 		font-family: var(--sc-font-display);
-		font-size: 1.9rem;
+		font-size: 2.1em;
 		font-weight: 700;
 		color: var(--ink);
 	}
+	.mk-sheet.s-pop :global(.k-avatar) {
+		background-color: #fff;
+		box-shadow: 0 0 0 0.1em #111013;
+	}
+	.mk-sheet :global(.k-id) {
+		min-width: 0;
+	}
 	.mk-sheet :global(.k-kicker) {
 		margin: 0;
-		font-size: 0.7rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--mk-accent);
+		font-size: 0.76em;
+		letter-spacing: 0.02em;
+		color: var(--a-ink);
 		font-weight: 600;
-	}
-	.mk-sheet.is-light :global(.k-kicker) {
-		color: color-mix(in srgb, var(--mk-accent) 55%, #000);
 	}
 	.mk-sheet :global(h2) {
 		border: 0;
 		padding: 0;
-		margin: 0.1rem 0 0;
+		margin: 0.12em 0 0;
 		font-family: var(--sc-font-display);
-		font-size: clamp(1.6rem, 5vw, 2.3rem);
+		font-weight: 700;
+		font-size: 2.7em;
+		line-height: 0.98;
+		letter-spacing: -0.04em;
+		color: var(--ink);
+		overflow-wrap: anywhere;
+	}
+	.mk-sheet.s-paper :global(h2) {
+		font-size: 3.1em;
+	}
+	.mk-sheet :global(.k-handle) {
+		margin: 0.3em 0 0;
+		color: var(--ink-2);
+		font-size: 0.95em;
+	}
+	.mk-sheet :global(.k-tagline) {
+		margin: 0;
+		font-size: 1.32em;
+		line-height: 1.3;
+		color: var(--ink);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		max-width: 30em;
+	}
+	.mk-sheet.s-paper :global(.k-tagline) {
+		font-family: var(--sc-font-display);
+		font-weight: 600;
+		letter-spacing: -0.02em;
+	}
+
+	.mk-sheet :global(.k-hero) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6em 2.2em;
+		padding: 0.2em 0;
+	}
+	.mk-sheet :global(.k-hero b) {
+		display: block;
+		font-family: var(--sc-font-display);
+		font-size: 3.2em;
+		line-height: 1;
+		letter-spacing: -0.045em;
+		color: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+	.mk-sheet.s-noir :global(.k-hero > div:first-child b) {
+		background: linear-gradient(120deg, #fff 20%, var(--a));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+	.mk-sheet.s-paper :global(.k-hero > div:first-child b) {
+		color: var(--a-ink);
+	}
+	.mk-sheet :global(.k-hero span) {
+		display: block;
+		margin-top: 0.25em;
+		font-size: 0.8em;
+		color: var(--ink-2);
+	}
+
+	.mk-sheet :global(.k-plats) {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.65em;
+	}
+	.mk-sheet.f-page :global(.k-plats.n-4) {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+	.mk-sheet :global(.k-plats.n-1) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.mk-sheet :global(.k-plats.n-2),
+	.mk-sheet:not(.f-page) :global(.k-plats.n-4) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.mk-sheet :global(.k-plat) {
+		min-width: 0;
+		padding: 0.95em 1em;
+		border-radius: 1.1em;
+		background: var(--card);
+		border: 1px solid var(--rule);
+	}
+	.mk-sheet.s-paper :global(.k-plat) {
+		border-radius: 0;
+		border: 0;
+		border-top: 2px solid var(--ink);
+		padding: 0.8em 0 0;
+	}
+	.mk-sheet.s-pop :global(.k-plat) {
+		border: 0;
+		box-shadow: 0 0.5em 1.4em -0.7em rgb(0 0 0 / 0.35);
+	}
+	.mk-sheet :global(.k-plat__top) {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		min-width: 0;
+	}
+	.mk-sheet :global(.k-ic) {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 1.75em;
+		height: 1.75em;
+		border-radius: 0.55em;
+		background: color-mix(in srgb, var(--a) 22%, transparent);
+		color: var(--ink);
+	}
+	.mk-sheet.s-pop :global(.k-ic) {
+		background: #111013;
+		color: #fff;
+	}
+	.mk-sheet.s-paper :global(.k-ic) {
+		background: transparent;
+		width: 1.2em;
+		justify-content: start;
+	}
+	.mk-sheet :global(.k-ic svg) {
+		width: 0.95em;
+		height: 0.95em;
+		fill: currentColor;
+	}
+	.mk-sheet :global(.k-ic b) {
+		font-size: 0.78em;
+		font-weight: 800;
+	}
+	.mk-sheet :global(.k-plat__name) {
+		min-width: 0;
+		display: grid;
+		font-size: 0.78em;
+		font-weight: 600;
+		color: var(--ink);
+		line-height: 1.2;
+	}
+	.mk-sheet :global(.k-plat__name i) {
+		font-style: normal;
+		font-weight: 400;
+		color: var(--ink-3);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.mk-sheet :global(.k-plat > b) {
+		display: block;
+		margin-top: 0.45em;
+		font-family: var(--sc-font-display);
+		font-size: 1.95em;
 		line-height: 1;
 		letter-spacing: -0.035em;
 		color: var(--ink);
 	}
-	.mk-sheet :global(.k-handle) {
-		margin: 0.25rem 0 0;
-		color: var(--ink-2);
-		font-size: 0.9rem;
-	}
-	.mk-sheet :global(.k-tagline) {
-		margin: 0;
-		font-size: clamp(1rem, 2.6vw, 1.2rem);
-		line-height: 1.35;
-		color: var(--ink);
-		font-weight: 500;
-	}
-	.mk-sheet :global(.k-plats) {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-		gap: 0.55rem;
-	}
-	.mk-sheet :global(.k-plat) {
-		padding: 0.8rem 0.85rem;
-		border-radius: 14px;
-		background: var(--card);
-		border: 1px solid var(--rule);
-	}
-	.mk-sheet :global(.k-plat__name) {
-		display: block;
-		font-size: 0.72rem;
-		color: var(--ink-2);
-	}
-	.mk-sheet :global(.k-plat > b) {
-		display: inline-block;
-		margin-top: 0.15rem;
-		font-family: var(--sc-font-display);
-		font-size: 1.55rem;
-		letter-spacing: -0.03em;
-		color: var(--ink);
-	}
 	.mk-sheet :global(.k-plat__sub) {
 		display: block;
-		margin-top: -0.2rem;
-		font-size: 0.7rem;
+		margin-top: 0.15em;
+		font-size: 0.72em;
 		color: var(--ink-3);
 	}
 	.mk-sheet :global(.k-plat__meta) {
 		display: grid;
-		gap: 0.1rem;
-		margin-top: 0.35rem;
-		font-size: 0.72rem;
+		gap: 0.1em;
+		margin-top: 0.55em;
+		font-size: 0.76em;
 		color: var(--ink-2);
+	}
+	.mk-sheet :global(.k-plat__meta:empty) {
+		display: none;
 	}
 	.mk-sheet :global(.k-plat__meta b) {
 		color: var(--ink);
 	}
+
+	.mk-sheet :global(.k-cols) {
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+		gap: 1.25em 2em;
+		align-items: start;
+	}
+	.mk-sheet:not(.f-page) :global(.k-cols) {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1em;
+	}
+	.mk-sheet :global(.k-col) {
+		display: grid;
+		gap: 1.25em;
+		align-content: start;
+	}
+	.mk-sheet:not(.f-page) :global(.k-col) {
+		gap: 1em;
+	}
+	.mk-sheet :global(.k-col:empty) {
+		display: none;
+	}
 	.mk-sheet :global(.k-sec h3) {
-		margin: 0 0 0.35rem;
-		font-size: 0.7rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		margin: 0 0 0.45em;
+		font-size: 0.76em;
+		letter-spacing: 0.02em;
 		color: var(--ink-3);
 		font-family: var(--sc-font-sans);
 		font-weight: 600;
 	}
 	.mk-sheet :global(.k-sec p) {
 		margin: 0;
-		font-size: 0.88rem;
+		font-size: 0.92em;
 		line-height: 1.55;
 		color: var(--ink-2);
 	}
 	.mk-sheet :global(.k-facts) {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-		gap: 0.5rem 1rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6em 1em;
 		margin: 0;
 	}
 	.mk-sheet :global(.k-facts dt) {
-		font-size: 0.7rem;
+		font-size: 0.72em;
 		color: var(--ink-3);
 	}
 	.mk-sheet :global(.k-facts dd) {
-		margin: 0;
-		font-size: 0.88rem;
+		margin: 0.1em 0 0;
+		font-size: 0.92em;
+		font-weight: 500;
 		color: var(--ink);
 	}
 	.mk-sheet :global(.k-proof) {
-		padding: 0.8rem 0.95rem;
-		border-radius: 14px;
-		background: color-mix(in srgb, var(--mk-accent) 16%, transparent);
-		border: 1px solid color-mix(in srgb, var(--mk-accent) 40%, transparent);
+		padding: 1em 1.1em;
+		border-radius: 1.1em;
+		background: color-mix(in srgb, var(--a) 16%, transparent);
+		border: 1px solid color-mix(in srgb, var(--a) 42%, transparent);
+	}
+	.mk-sheet.s-paper :global(.k-proof) {
+		border-radius: 0;
+		border: 0;
+		border-left: 0.3em solid var(--a);
+		background: color-mix(in srgb, var(--a) 12%, transparent);
+	}
+	.mk-sheet.s-pop :global(.k-proof) {
+		background: #111013;
+		border: 0;
 	}
 	.mk-sheet :global(.k-proof span) {
-		font-size: 0.7rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--ink-2);
-		font-weight: 600;
+		font-size: 0.72em;
+		font-weight: 700;
+		color: var(--a-ink);
+	}
+	.mk-sheet.s-pop :global(.k-proof span) {
+		color: var(--a);
 	}
 	.mk-sheet :global(.k-proof p) {
-		margin: 0.2rem 0 0;
+		margin: 0.25em 0 0;
+		font-size: 1.02em;
 		font-weight: 600;
 		color: var(--ink);
-		line-height: 1.4;
+		line-height: 1.38;
+	}
+	.mk-sheet.s-pop :global(.k-proof p) {
+		color: #fff;
 	}
 	.mk-sheet :global(.k-brands) {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
+		gap: 0.4em;
 		list-style: none;
 		padding: 0;
 		margin: 0;
 	}
 	.mk-sheet :global(.k-brands li) {
 		margin: 0;
-		padding: 0.3rem 0.7rem;
+		padding: 0.35em 0.8em;
 		border-radius: 99px;
 		border: 1px solid var(--rule);
-		font-size: 0.82rem;
+		background: var(--card);
+		font-size: 0.86em;
+		font-weight: 500;
 		color: var(--ink);
 	}
 	.mk-sheet :global(.k-pkgs) {
@@ -776,16 +1411,17 @@ const ACCENTS = [
 	.mk-sheet :global(.k-pkgs li) {
 		display: flex;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: 1em;
 		margin: 0;
-		padding: 0.45rem 0;
+		padding: 0.5em 0;
 		border-bottom: 1px solid var(--rule);
-		font-size: 0.88rem;
+		font-size: 0.9em;
 		color: var(--ink-2);
 	}
 	.mk-sheet :global(.k-pkgs b) {
 		color: var(--ink);
 		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
 	}
 	.mk-sheet :global(.k-foot) {
 		margin-top: auto;
@@ -793,26 +1429,61 @@ const ACCENTS = [
 		flex-wrap: wrap;
 		justify-content: space-between;
 		align-items: flex-end;
-		gap: 0.5rem;
-		padding-top: 0.8rem;
+		gap: 0.5em 1em;
+		padding-top: 1em;
 		border-top: 1px solid var(--rule);
-		font-size: 0.82rem;
+		font-size: 0.9em;
 		color: var(--ink);
 	}
-	.mk-sheet :global(.k-foot div) {
+	.mk-sheet :global(.k-contact) {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.3rem 1rem;
+		gap: 0.3em 1.2em;
+		font-weight: 600;
 	}
 	.mk-sheet :global(.k-made) {
-		font-size: 0.68rem;
+		font-size: 0.74em;
 		color: var(--ink-3);
+	}
+
+	/* Story and post: the pitch, not the whole deck. */
+	.mk-sheet:not(.f-page) :global(.k-pk) {
+		display: none;
+	}
+	.mk-sheet.f-post :global(.k-bio),
+	.mk-sheet.f-post :global(.k-proof) {
+		display: none;
+	}
+	.mk-sheet.f-story :global(.k-head) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.9em;
+		margin-top: 0.6em;
+	}
+	.mk-sheet.f-story :global(h2) {
+		font-size: 3em;
+	}
+	.mk-sheet.f-story :global(.k-bio p) {
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+	.mk-sheet:not(.f-page) :global(.k-hero b) {
+		font-size: 2.6em;
+	}
+	.mk-sheet.f-post :global(.k-avatar) {
+		font-size: 1.7em;
 	}
 
 	/* Phones: one pane at a time, switched by the Edit / Preview pill. */
 	@media (max-width: 52rem) {
 		.mk-tabs {
 			display: flex;
+		}
+		.mk-next {
+			display: inline-flex;
+			width: 100%;
 		}
 		.mk-layout {
 			grid-template-columns: minmax(0, 1fr);
@@ -824,39 +1495,36 @@ const ACCENTS = [
 		.mk-sticky {
 			position: static;
 		}
-		.mk-sheet {
-			min-height: 30rem;
+		.mk-actions .tw-btn.is-primary {
+			flex: 1 1 100%;
+		}
+	}
+	@media (max-width: 30rem) {
+		.mk-styles {
+			gap: 0.4rem;
+		}
+		.mk-style small {
+			display: none;
 		}
 	}
 	.mk.is-shared .mk-tabs,
 	.mk.is-shared .mk-form,
 	.mk.is-shared .mk-actions,
+	.mk.is-shared .mk-formats,
 	.mk.is-shared .tw-privacy {
 		display: none;
 	}
 	.mk.is-shared .mk-layout {
-		grid-template-columns: minmax(0, 40rem);
+		grid-template-columns: minmax(0, 46rem);
 		justify-content: center;
 	}
 	.mk.is-shared .mk-side {
 		display: block;
 	}
-
-	/* Save as PDF: print the kit alone, one US Letter page, edge to edge. */
-	@media print {
-		@page {
-			size: letter;
-			margin: 0;
-		}
-		:global(#sc-print-root) .mk-sheet {
-			width: 8.5in;
-			height: 11in;
-			min-height: 0;
-			box-sizing: border-box;
-			border-radius: 0;
-			border: 0;
-			padding: 0.6in;
-			font-size: 13px;
+	@media (prefers-reduced-motion: reduce) {
+		.mk-style,
+		.mk-swatches :global(button) {
+			transition: none;
 		}
 	}
 </style>

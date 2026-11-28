@@ -12,7 +12,7 @@ const payload = platforms.map(({ key, name, pct, procPct, procFixed }) => ({ key
 
 <section class="fm sc-widget not-content" data-fm data-p={JSON.stringify(payload)} data-v0={L.verdictNone} data-v1={L.verdictAgency} aria-labelledby="fm-title" data-no-swipe>
 	<p class="fm-kick">{L.kick}</p>
-	<h3 id="fm-title" class="fm-title">{L.title}</h3>
+	<p id="fm-title" class="fm-title">{L.title}</p>
 
 	<div class="fm-plats" role="radiogroup" aria-label={L.platform}>
 		{

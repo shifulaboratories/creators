@@ -215,10 +215,10 @@ export const playbooks: Record<SituationKey, Record<PlatformKey, Playbook>> = {
 					d: 'Point your audience to your other channels. Don’t make a new account to dodge the ban: that usually breaks the rules too.',
 				},
 			],
-			watch: 'Anyone DMing you an “unban service” is a scam or a rule-breaker. Read our reporting on how ban and unban services work.',
+			watch: 'Anyone DMing you an “unban service” is a scam or a rule-breaker. See how paid unban scams work.',
 			sources: [
 				{ label: 'Instagram Help: About disabled Instagram accounts', href: 'https://help.instagram.com/366993040048856' },
-				{ label: 'Our Underground report: Ban and unban services', href: '/underground/ban-and-unban-services/' },
+				{ label: 'How paid unban scams work', href: '/protect/scams/' },
 			],
 		},
 		tiktok: {
@@ -554,7 +554,6 @@ export const scams: Scam[] = [
 		todo: 'Use the platform’s own verification and appeal routes. Read our reporting on how this market works.',
 		src: [
 			{ label: 'Underground: Paid verification', href: '/underground/paid-verification/' },
-			{ label: 'Underground: Ban and unban services', href: '/underground/ban-and-unban-services/' },
 		],
 	},
 ];
