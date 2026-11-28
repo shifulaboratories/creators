@@ -1,5 +1,5 @@
 {
-	"updated": "2026-11-27",
+	"updated": "2026-11-28",
 	"since": "2026-11-27",
 	"sources": [
 		{
@@ -9,7 +9,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/agentio",
 			"board": "https://jobs.ashbyhq.com/agentio",
 			"count": 31,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Beacons",
@@ -18,7 +18,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/beacons",
 			"board": "https://jobs.ashbyhq.com/beacons",
 			"count": 0,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Cameo",
@@ -27,7 +27,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/cameo/jobs",
 			"board": "https://job-boards.greenhouse.io/cameo",
 			"count": 1,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "CreatorIQ",
@@ -36,7 +36,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/creatoriq",
 			"board": "https://jobs.ashbyhq.com/creatoriq",
 			"count": 38,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Descript",
@@ -45,7 +45,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/descript/jobs",
 			"board": "https://job-boards.greenhouse.io/descript",
 			"count": 10,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Discord",
@@ -54,7 +54,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/discord/jobs",
 			"board": "https://job-boards.greenhouse.io/discord",
 			"count": 0,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Dude Perfect",
@@ -63,7 +63,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/dudeperfect/jobs",
 			"board": "https://job-boards.greenhouse.io/dudeperfect",
 			"count": 3,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Dulcedo",
@@ -72,7 +72,7 @@
 			"feed": "https://api.lever.co/v0/postings/dulcedo?mode=json",
 			"board": "https://jobs.lever.co/dulcedo",
 			"count": 13,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "ElevenLabs",
@@ -81,7 +81,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/elevenlabs",
 			"board": "https://jobs.ashbyhq.com/elevenlabs",
 			"count": 4,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Epidemic Sound",
@@ -90,7 +90,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/epidemic-sound",
 			"board": "https://jobs.ashbyhq.com/epidemic-sound",
 			"count": 33,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Feastables (Beast Industries)",
@@ -99,7 +99,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/feastables/jobs",
 			"board": "https://job-boards.greenhouse.io/feastables",
 			"count": 7,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "GRIN",
@@ -108,7 +108,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/grin/jobs",
 			"board": "https://job-boards.greenhouse.io/grin",
 			"count": 3,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "impact.com",
@@ -117,7 +117,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/impact/jobs",
 			"board": "https://job-boards.greenhouse.io/impact",
 			"count": 8,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Kapwing",
@@ -126,7 +126,7 @@
 			"feed": "https://api.lever.co/v0/postings/kapwing?mode=json",
 			"board": "https://jobs.lever.co/kapwing",
 			"count": 0,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Later",
@@ -134,8 +134,8 @@
 			"source": "Greenhouse",
 			"feed": "https://boards-api.greenhouse.io/v1/boards/later/jobs",
 			"board": "https://job-boards.greenhouse.io/later",
-			"count": 35,
-			"checked": "2026-11-27"
+			"count": 34,
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Lightricks",
@@ -144,7 +144,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/lightricks/jobs",
 			"board": "https://job-boards.greenhouse.io/lightricks",
 			"count": 0,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Linqia",
@@ -153,7 +153,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/linqia/jobs",
 			"board": "https://job-boards.greenhouse.io/linqia",
 			"count": 21,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "LTK",
@@ -162,7 +162,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/shopltk/jobs",
 			"board": "https://job-boards.greenhouse.io/shopltk",
 			"count": 13,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Medium",
@@ -171,7 +171,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/medium/jobs",
 			"board": "https://job-boards.greenhouse.io/medium",
 			"count": 2,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "OpusClip",
@@ -180,7 +180,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/opusclip",
 			"board": "https://jobs.ashbyhq.com/opusclip",
 			"count": 16,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Passionfroot",
@@ -189,7 +189,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/passionfroot",
 			"board": "https://jobs.ashbyhq.com/passionfroot",
 			"count": 6,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Patreon",
@@ -198,7 +198,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/patreon",
 			"board": "https://jobs.ashbyhq.com/patreon",
 			"count": 21,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Pearpop",
@@ -207,7 +207,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/pearpop",
 			"board": "https://jobs.ashbyhq.com/pearpop",
 			"count": 5,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Pinterest",
@@ -216,7 +216,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/pinterest/jobs",
 			"board": "https://job-boards.greenhouse.io/pinterest",
 			"count": 14,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Reddit",
@@ -225,7 +225,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/reddit/jobs",
 			"board": "https://job-boards.greenhouse.io/reddit",
 			"count": 16,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Restream",
@@ -234,7 +234,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/restream",
 			"board": "https://jobs.ashbyhq.com/restream",
 			"count": 9,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Rumble",
@@ -243,7 +243,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/rumble/jobs",
 			"board": "https://job-boards.greenhouse.io/rumble",
 			"count": 0,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Select Management Group",
@@ -252,7 +252,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/selectmanagementgroup/jobs",
 			"board": "https://job-boards.greenhouse.io/selectmanagementgroup",
 			"count": 6,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "ShopMy",
@@ -261,7 +261,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/shopmy/jobs",
 			"board": "https://job-boards.greenhouse.io/shopmy",
 			"count": 36,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Spotify",
@@ -270,7 +270,7 @@
 			"feed": "https://api.lever.co/v0/postings/spotify?mode=json",
 			"board": "https://jobs.lever.co/spotify",
 			"count": 25,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Spotter",
@@ -279,7 +279,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/spotter/jobs",
 			"board": "https://job-boards.greenhouse.io/spotter",
 			"count": 5,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Substack",
@@ -288,7 +288,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/substack",
 			"board": "https://jobs.ashbyhq.com/substack",
 			"count": 20,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Thinkific",
@@ -297,7 +297,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/thinkific",
 			"board": "https://jobs.ashbyhq.com/thinkific",
 			"count": 3,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Traackr",
@@ -306,7 +306,7 @@
 			"feed": "https://api.lever.co/v0/postings/traackr?mode=json",
 			"board": "https://jobs.lever.co/traackr",
 			"count": 1,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Twitch",
@@ -315,7 +315,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/twitch/jobs",
 			"board": "https://job-boards.greenhouse.io/twitch",
 			"count": 54,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Viral Nation",
@@ -324,7 +324,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/viralnation/jobs",
 			"board": "https://job-boards.greenhouse.io/viralnation",
 			"count": 72,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Whalar",
@@ -333,7 +333,7 @@
 			"feed": "https://boards-api.greenhouse.io/v1/boards/whalar/jobs",
 			"board": "https://job-boards.greenhouse.io/whalar",
 			"count": 10,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		},
 		{
 			"company": "Whop",
@@ -342,7 +342,7 @@
 			"feed": "https://api.ashbyhq.com/posting-api/job-board/whop",
 			"board": "https://jobs.ashbyhq.com/whop",
 			"count": 12,
-			"checked": "2026-11-27"
+			"checked": "2026-11-28"
 		}
 	],
 	"jobs": [
@@ -3737,19 +3737,6 @@
 			"url": "https://job-boards.greenhouse.io/twitch/jobs/8901014002",
 			"source": "Greenhouse",
 			"posted": "2026-10-19",
-			"firstSeen": "2026-11-27"
-		},
-		{
-			"id": "greenhouse:later:8895439002",
-			"company": "Later",
-			"kind": "tools",
-			"title": "Senior Analyst, Client Analytics",
-			"role": "sales",
-			"location": "Boston, MA",
-			"remote": false,
-			"url": "https://job-boards.greenhouse.io/later/jobs/8895439002",
-			"source": "Greenhouse",
-			"posted": "2026-10-16",
 			"firstSeen": "2026-11-27"
 		},
 		{
