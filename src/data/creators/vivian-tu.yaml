@@ -3,6 +3,7 @@ known: Your Rich BFF, personal finance explainers on TikTok and Instagram
 niche: business
 platforms: [tiktok, instagram, youtube, podcast, newsletter]
 about: A former Wall Street trader who left JPMorgan and later BuzzFeed to make personal finance videos as Your Rich BFF. She posts short explainers across TikTok, Instagram and YouTube and runs the account full-time with a small team.
+caseStudy: case-studies/vivian-tu
 advice:
   - text: "it's not about who's going to give me the most money for one video, but who actually wants to grow this with me."
     source: https://www.retailtouchpoints.com/features/4-rules-for-maximizing-creator-investments-from-top-influencer-your-rich-bff/147787/
@@ -22,3 +23,18 @@ advice:
     source: https://www.retailtouchpoints.com/features/4-rules-for-maximizing-creator-investments-from-top-influencer-your-rich-bff/147787/
     sourceTitle: "4 Rules for Maximizing Creator Investments from Top Influencer Your Rich BFF (Retail TouchPoints)"
     date: "Oct 2024"
+videos:
+  - platform: tiktok
+    id: "6912857127002311941"
+    handle: yourrichbff
+    title: "Welcome to #richtok, kids!"
+    date: Jan 2021
+    stat: 2M views by Nov 2026
+    why: "Her first TikTok, posted Jan 1, 2021. She had about 100,000 followers by the end of that week."
+  - platform: tiktok
+    id: "7135060512324341038"
+    handle: yourrichbff
+    title: "How the rich set their kids up for success"
+    date: Aug 2022
+    stat: 4.9M views by Nov 2026
+    why: "The format: one money idea, a 529 savings plan, explained like a friend would."
