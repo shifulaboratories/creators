@@ -1,6 +1,6 @@
 ---
 title: "What to optimize for"
-description: "Watch time, sends, replies, follows: what Instagram, TikTok, YouTube and X each say they reward, side by side, with the receipts."
+description: "Watch time, sends, replies, follows: what Instagram, TikTok, YouTube, Facebook, X and LinkedIn each say they reward, side by side, with receipts."
 payoff: "The three things every platform rewards, and the cheap signals to stop chasing."
 moves:
   - do: "Design your next post to be watched to the end."
@@ -14,7 +14,7 @@ moves:
     source: "Platforms"
 status: draft
 confidence: verified
-lastReviewed: 2026-11-26
+lastReviewed: 2026-11-28
 cover:
   label: What to optimize
 sidebar:
@@ -51,7 +51,9 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 <li class="sc-bar is-rose" style="--v:92;--i:0"><div class="sc-bar__head">Instagram<b>Watch time, likes, sends</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
 <li class="sc-bar is-cyan" style="--v:86;--i:1"><div class="sc-bar__head">TikTok<b>Finishing the video</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
 <li class="sc-bar is-ion" style="--v:80;--i:2"><div class="sc-bar__head">YouTube<b>Watch time people don't regret</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
-<li class="sc-bar is-amethyst" style="--v:74;--i:3"><div class="sc-bar__head">X<b>Shares and replies</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-champagne" style="--v:77;--i:3"><div class="sc-bar__head">Facebook<b>What people say is worth their time</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-amethyst" style="--v:74;--i:4"><div class="sc-bar__head">X<b>Shares and replies</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-jade" style="--v:70;--i:5"><div class="sc-bar__head">LinkedIn<b>Time spent, not scrolled past</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
 </ul>
 <figcaption>The headline signal each platform names. Bar lengths are decorative, not measured.</figcaption>
 </figure>
@@ -59,9 +61,11 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 - **Instagram:** Mosseri's January 2025 answer: "The top three signals that matter most for ranking are watch time, likes and sends," with sends "slightly more important" for reaching people who don't follow you. <span class="sc-tag is-platform">From the platform</span>
 - **TikTok:** its strongest example signal is whether someone finishes a longer video. Follower count and past hits aren't direct factors. <span class="sc-tag is-platform">From the platform</span>
 - **YouTube:** watch time, weighted by whether viewers say they were glad they watched. <span class="sc-tag is-platform">From the platform</span>
+- **Facebook:** Feed predicts whether you'll like, comment on, share or watch each post, and weights those predictions by what people say in surveys is "worth their time." <span class="sc-tag is-research">From the research</span>
 - **X:** a copy-link share is weighted 20, a reply or DM share 5, a like 0.708. <span class="sc-tag is-code">From the code</span>
+- **LinkedIn:** its 2026 feed model is judged on time spent and on likes, comments and reshares, and since 2020 it has scored down posts people are predicted to scroll straight past. <span class="sc-tag is-research">From the research</span>
 
-<DeepDive title="Sources" hint="6 sources">
+<DeepDive title="Sources" hint="11 sources">
 
 - Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025 (Mosseri video).
 - Andrew Hutchinson, [Instagram chief says post share rates are now a key driver of reach](https://www.socialmediatoday.com/news/instagram-chief-post-share-rates-key-driver-reach/716540/), Social Media Today, May 19, 2024.
@@ -69,5 +73,11 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 - TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
 - YouTube, [Algorithm-based recommendations on YouTube](https://www.youtube.com/howyoutubeworks/recommendations/), How YouTube Works.
 - X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026.
+- Akos Lada, Meihong Wang, Tak Yan, [How machine learning powers Facebook's News Feed ranking algorithm](https://engineering.fb.com/2021/01/26/ml-applications/news-feed-ranking/), Engineering at Meta, Jan 26, 2021.
+- Nick Clegg, [How AI Influences What You See on Facebook and Instagram](https://about.fb.com/news/2023/06/how-ai-ranks-content-on-facebook-and-instagram/), Meta, June 29, 2023.
+- Siddharth Dangi, Johnson Jia, Manas Somaiya, Ying Xuan, [Understanding feed dwell time](https://engineering.linkedin.com/blog/2020/understanding-feed-dwell-time), LinkedIn Engineering, 2020.
+- Ian Ackerman, Saurabh Kataria, [Homepage feed multi-task learning using TensorFlow](https://engineering.linkedin.com/blog/2021/homepage-feed-multi-task-learning-using-tensorflow), LinkedIn Engineering, 2021.
+- Lars Hertel et al., [An Industrial-Scale Sequential Recommender for LinkedIn Feed Ranking](https://arxiv.org/abs/2602.12354), CIKM 2026.
+- LinkedIn, [How LinkedIn is improving the feed](https://news.linkedin.com/2026/ImprovingTheFeed), Mar 12, 2026.
 
 </DeepDive>

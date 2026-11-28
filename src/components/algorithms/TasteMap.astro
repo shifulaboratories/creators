@@ -1,0 +1,484 @@
+---
+/**
+ * Try it: how a feed learns one viewer's taste.
+ * Every post and the viewer get a spot on a map (an embedding). The feed
+ * shortlists the posts nearest the viewer, shows the best one, and moves the
+ * viewer's spot after every reaction. Every fourth card explores somewhere new.
+ *
+ * The mechanism follows YouTube (RecSys 2016), Instagram Explore (Meta, 2023),
+ * ByteDance Monolith (2022) and TikTok's 2020 explainer. Posts, positions and
+ * step sizes are made up to show the effect; they are not platform data.
+ */
+const topics = [
+	{ key: 'beauty', label: 'Skincare', color: 'var(--sc-rose)', x: 20, y: 28 },
+	{ key: 'travel', label: 'Travel', color: 'var(--sc-amethyst)', x: 52, y: 14 },
+	{ key: 'food', label: 'Cooking', color: 'var(--sc-champagne)', x: 82, y: 32 },
+	{ key: 'comedy', label: 'Comedy', color: 'var(--sc-ion)', x: 50, y: 50 },
+	{ key: 'money', label: 'Money', color: 'var(--sc-cyan)', x: 20, y: 76 },
+	{ key: 'fitness', label: 'Fitness', color: 'var(--sc-jade)', x: 80, y: 76 },
+] as const;
+const titles: Record<string, string[]> = {
+	beauty: ['My 3-step night routine', 'Sunscreen myths, ranked', 'Drugstore dupes that work', 'Fixing dry skin in winter', 'Retinol for beginners'],
+	travel: ['Lisbon in 48 hours', 'Packing light for 2 weeks', 'Cheapest flights hack, tested', 'Hidden beaches in Greece', 'Solo trip to Tokyo'],
+	food: ['5-minute pasta', 'Meal prep for the week', 'Grandma’s dumplings', 'The perfect fried egg', 'Viral cookie, rated'],
+	comedy: ['When the group chat goes quiet', 'Every first date ever', 'Cats vs. Monday', 'Me at the gym (lying)', 'POV: your mom texts'],
+	money: ['First $1k saved', 'Rent vs. buy, honestly', 'What I spend in a week', 'Side hustle taxes 101', 'Index funds in 60 seconds'],
+	fitness: ['10-minute home workout', 'Leg day, no gym', 'What I eat to train', 'Fixing your squat', 'Couch to 5k, week 1'],
+};
+const offsets = [
+	[-7, -4],
+	[6, -6],
+	[-3, 7],
+	[8, 4],
+	[0, -1],
+];
+const posts = topics.flatMap((t) =>
+	titles[t.key].map((title, i) => ({ id: `${t.key}-${i}`, topic: t.key, title, x: t.x + offsets[i][0], y: t.y + offsets[i][1] })),
+);
+---
+
+<div class="sc-widget tm not-content" data-tm data-posts={JSON.stringify(posts)} data-topics={JSON.stringify(topics)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Your taste map</div>
+			<h4 class="sc-widget__title">React to posts. Watch the feed learn you.</h4>
+		</div>
+		<span class="sc-tag is-illustrative">Illustrative posts</span>
+	</div>
+
+	<div class="tm-grid">
+		<figure class="tm-map">
+			<svg viewBox="0 0 100 100" role="img" aria-label="A map of 30 posts in six topics. Your spot moves as you react, and the ring marks the posts the feed would shortlist for you next." data-svg>
+				<defs>
+					<radialGradient id="tm-glow">
+						<stop offset="0%" stop-color="#fff" stop-opacity="0.9"></stop>
+						<stop offset="60%" stop-color="#ffb47e" stop-opacity="0.35"></stop>
+						<stop offset="100%" stop-color="#ffb47e" stop-opacity="0"></stop>
+					</radialGradient>
+				</defs>
+				{topics.map((t) => (
+					<text class="tm-label" x={t.x} y={t.y + (t.y > 50 ? 14 : -10)} text-anchor="middle" fill={t.color} data-label={t.key}>{t.label}</text>
+				))}
+				<circle class="tm-ring" data-ring cx="0" cy="0" r="14"></circle>
+				{posts.map((p) => {
+					const t = topics.find((x) => x.key === p.topic)!;
+					return <circle class="tm-post" data-post={p.id} cx={p.x} cy={p.y} r="1.9" fill={t.color} style={`--c:${t.color}`}></circle>;
+				})}
+				<line class="tm-link" data-link x1="50" y1="60" x2="50" y2="60"></line>
+				<g class="tm-you" data-you>
+					<circle r="6" fill="url(#tm-glow)"></circle>
+					<circle r="2.2" class="tm-you__dot"></circle>
+				</g>
+			</svg>
+			<figcaption class="tm-legend">
+				<span><i class="tm-k tm-k--you"></i>You</span>
+				<span><i class="tm-k tm-k--ring"></i>Your shortlist</span>
+				<span><i class="tm-k tm-k--seen"></i>Seen</span>
+			</figcaption>
+		</figure>
+
+		<div class="tm-side">
+			<article class="tm-card" data-card aria-live="polite">
+				<span class="tm-card__why" data-why>Picked because it’s near you</span>
+				<span class="tm-card__topic" data-topic>Comedy</span>
+				<strong class="tm-card__title" data-title>…</strong>
+			</article>
+			<div class="tm-actions" role="group" aria-label="React to this post">
+				<button type="button" class="tm-act is-good" data-act="watch">Watch to the end</button>
+				<button type="button" class="tm-act is-good" data-act="send">Send to a friend</button>
+				<button type="button" class="tm-act" data-act="skip">Swipe away</button>
+				<button type="button" class="tm-act is-bad" data-act="no">Not interested</button>
+			</div>
+			<p class="tm-note" data-note aria-live="polite">You’re new, so you start in the middle. React to a few posts.</p>
+			<div class="tm-mix">
+				<div class="tm-mix__head"><span>What your next feed is made of</span><button type="button" class="tm-reset" data-reset>Start over</button></div>
+				<div class="tm-mix__bar" data-mix></div>
+				<div class="tm-mix__keys" data-mixkeys></div>
+			</div>
+		</div>
+	</div>
+
+	<p class="sc-widget__note">
+		The shape is real: YouTube, Instagram and ByteDance describe giving every viewer and every post a position learned from engagement, pulling the nearest few hundred posts out of millions, and updating from new reactions within the hour or faster. TikTok says it mixes in different content so feeds don’t narrow. The 30 posts, the map and how far you move are made up to show the effect.
+	</p>
+</div>
+
+<script>
+	type Post = { id: string; topic: string; title: string; x: number; y: number };
+	type Topic = { key: string; label: string; color: string; x: number; y: number };
+	const STEP: Record<string, number> = { watch: 0.35, send: 0.5, skip: -0.08, no: -0.22 };
+	const SHORT = 6;
+	const START = { x: 50, y: 62 };
+
+	document.querySelectorAll<HTMLElement>('[data-tm]').forEach((root) => {
+		const posts: Post[] = JSON.parse(root.dataset.posts!);
+		const topics: Topic[] = JSON.parse(root.dataset.topics!);
+		const topic = (k: string) => topics.find((t) => t.key === k)!;
+		const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+		const you = $<SVGGElement>('[data-you]');
+		const ring = $<SVGCircleElement>('[data-ring]');
+		const link = $<SVGLineElement>('[data-link]');
+		const dots = new Map<string, SVGCircleElement>();
+		root.querySelectorAll<SVGCircleElement>('[data-post]').forEach((c) => dots.set(c.dataset.post!, c));
+
+		let pos = { ...START };
+		let seen = new Set<string>();
+		let muted = new Map<string, number>(); // topic -> picks left with a penalty
+		let count = 0;
+		let current: Post | null = null;
+		let exploring = false;
+
+		const dist = (p: Post) => {
+			const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+			return muted.has(p.topic) ? d * 2.2 : d;
+		};
+		const shortlist = () =>
+			posts
+				.filter((p) => !seen.has(p.id))
+				.sort((a, b) => dist(a) - dist(b))
+				.slice(0, SHORT);
+
+		const pick = () => {
+			if (posts.every((p) => seen.has(p.id))) seen = new Set();
+			const list = shortlist();
+			exploring = count > 0 && count % 4 === 3;
+			if (exploring) {
+				const near = new Set(list.map((p) => p.topic));
+				const far = posts.filter((p) => !seen.has(p.id) && !near.has(p.topic) && !muted.has(p.topic));
+				current = far.length ? far[Math.floor(Math.random() * far.length)] : list[0];
+			} else {
+				current = list[0];
+			}
+		};
+
+		const draw = () => {
+			const list = shortlist();
+			you.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+			const r = list.length ? Math.hypot(list[list.length - 1].x - pos.x, list[list.length - 1].y - pos.y) + 3 : 10;
+			ring.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${Math.min(r, 60) / 14})`;
+			const inList = new Set(list.map((p) => p.id));
+			dots.forEach((el, id) => {
+				el.classList.toggle('is-short', inList.has(id));
+				el.classList.toggle('is-seen', seen.has(id));
+				el.classList.toggle('is-now', current?.id === id);
+				const p = posts.find((x) => x.id === id)!;
+				el.classList.toggle('is-muted', muted.has(p.topic));
+			});
+			if (current) {
+				link.setAttribute('x1', String(pos.x));
+				link.setAttribute('y1', String(pos.y));
+				link.setAttribute('x2', String(current.x));
+				link.setAttribute('y2', String(current.y));
+				const t = topic(current.topic);
+				const card = $<HTMLElement>('[data-card]');
+				card.style.setProperty('--c', t.color);
+				card.classList.remove('is-in');
+				void card.offsetWidth;
+				card.classList.add('is-in');
+				card.classList.toggle('is-explore', exploring);
+				$('[data-why]').textContent = exploring ? 'Something new, to keep your feed from narrowing' : count === 0 ? 'Popular with new viewers' : 'Picked because it’s near you';
+				$('[data-topic]').textContent = t.label;
+				$('[data-title]').textContent = current.title;
+			}
+			// What the shortlist is made of
+			const share = new Map<string, number>();
+			list.forEach((p) => share.set(p.topic, (share.get(p.topic) ?? 0) + 1));
+			const order = [...share.entries()].sort((a, b) => b[1] - a[1]);
+			$('[data-mix]').innerHTML = order.map(([k, n]) => `<span style="flex:${n};background:${topic(k).color}" title="${topic(k).label}"></span>`).join('');
+			$('[data-mixkeys]').innerHTML = order.map(([k, n]) => `<span><i style="background:${topic(k).color}"></i>${topic(k).label} ${Math.round((n / list.length) * 100)}%</span>`).join('');
+		};
+
+		const react = (act: string) => {
+			if (!current) return;
+			const p = current;
+			const t = topic(p.topic);
+			const s = STEP[act];
+			pos = {
+				x: Math.max(4, Math.min(96, pos.x + (p.x - pos.x) * s)),
+				y: Math.max(4, Math.min(96, pos.y + (p.y - pos.y) * s)),
+			};
+			seen.add(p.id);
+			muted.forEach((n, k) => (n <= 1 ? muted.delete(k) : muted.set(k, n - 1)));
+			if (act === 'no') muted.set(p.topic, 6);
+			count++;
+			const notes: Record<string, string> = {
+				watch: `You stayed to the end, so your spot moved toward ${t.label}. More of it lands in your shortlist.`,
+				send: `A send is a strong signal. Your spot jumped toward ${t.label}.`,
+				skip: `A quick swipe is a small signal. You drifted a little away from ${t.label}.`,
+				no: `“Not interested” pushes you away and holds ${t.label} back for a while.`,
+			};
+			$('[data-note]').textContent = notes[act];
+			pick();
+			draw();
+		};
+
+		root.querySelectorAll<HTMLButtonElement>('[data-act]').forEach((b) => b.addEventListener('click', () => react(b.dataset.act!)));
+		$('[data-reset]').addEventListener('click', () => {
+			pos = { ...START };
+			seen = new Set();
+			muted = new Map();
+			count = 0;
+			$('[data-note]').textContent = 'You’re new, so you start in the middle. React to a few posts.';
+			pick();
+			draw();
+		});
+		pick();
+		draw();
+	});
+</script>
+
+<style>
+	.tm {
+		--accent: var(--sc-champagne);
+	}
+	.tm-grid {
+		display: grid;
+		gap: 1rem;
+	}
+	@media (min-width: 48rem) {
+		.tm-grid {
+			grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+			align-items: start;
+		}
+	}
+	.tm-map {
+		margin: 0;
+		border-radius: 14px;
+		background:
+			radial-gradient(circle at 50% 50%, rgb(255 255 255 / 0.04), transparent 70%),
+			rgb(255 255 255 / 0.015);
+		border: 1px solid var(--sc-line);
+		padding: 0.5rem;
+	}
+	.tm-map svg {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		overflow: visible;
+	}
+	.tm-label {
+		font-family: var(--sc-font-display);
+		font-size: 4.2px;
+		font-weight: 700;
+		opacity: 0.85;
+	}
+	.tm-post {
+		opacity: 0.4;
+		transition:
+			opacity 0.4s,
+			r 0.4s,
+			stroke-width 0.4s;
+		stroke: var(--c);
+		stroke-width: 0;
+	}
+	.tm-post.is-short {
+		opacity: 1;
+		r: 2.4;
+	}
+	.tm-post.is-seen {
+		fill: transparent;
+		stroke-width: 0.6;
+		opacity: 0.55;
+	}
+	.tm-post.is-now {
+		opacity: 1;
+		r: 3.2;
+		stroke: #fff;
+		stroke-width: 0.6;
+	}
+	.tm-post.is-muted {
+		opacity: 0.15;
+	}
+	.tm-ring {
+		fill: rgb(255 180 126 / 0.05);
+		stroke: var(--sc-champagne);
+		stroke-width: 0.35;
+		stroke-dasharray: 1.2 1.2;
+		vector-effect: non-scaling-stroke;
+		transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.tm-link {
+		stroke: rgb(255 255 255 / 0.35);
+		stroke-width: 0.35;
+		stroke-dasharray: 0.8 0.8;
+	}
+	.tm-you {
+		transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.tm-you__dot {
+		fill: #fff;
+		stroke: var(--sc-obsidian);
+		stroke-width: 0.6;
+	}
+	.tm-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 0.9rem;
+		padding: 0.4rem 0.3rem 0.1rem;
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+	}
+	.tm-k {
+		display: inline-block;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		margin-right: 0.35rem;
+		vertical-align: -1px;
+	}
+	.tm-k--you {
+		background: #fff;
+		box-shadow: 0 0 8px rgb(255 180 126 / 0.8);
+	}
+	.tm-k--ring {
+		border: 1px dashed var(--sc-champagne);
+	}
+	.tm-k--seen {
+		border: 1px solid var(--sc-silver);
+	}
+	.tm-side {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.tm-card {
+		--c: var(--sc-ion);
+		display: grid;
+		gap: 0.3rem;
+		padding: 1rem 1.1rem 1.1rem;
+		border-radius: 18px;
+		min-height: 7.2rem;
+		background:
+			radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--c) 28%, transparent), transparent 65%),
+			var(--sc-carbon);
+		border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+		box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--c) 70%, transparent);
+	}
+	.tm-card.is-in {
+		animation: tm-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	@keyframes tm-in {
+		from {
+			opacity: 0;
+			transform: translateY(10px) scale(0.98);
+		}
+	}
+	.tm-card__why {
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.tm-card.is-explore .tm-card__why {
+		color: var(--sc-lime);
+	}
+	.tm-card__topic {
+		justify-self: start;
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.1rem 0.55rem;
+		border-radius: 999px;
+		color: #0a0a0a;
+		background: var(--c);
+	}
+	.tm-card__title {
+		font-family: var(--sc-font-display);
+		font-size: 1.15rem;
+		line-height: 1.25;
+		color: var(--sc-ivory);
+	}
+	.tm-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.45rem;
+	}
+	.tm-act {
+		appearance: none;
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 600;
+		padding: 0.65rem 0.5rem;
+		border-radius: 12px;
+		border: 1px solid var(--sc-line-strong);
+		background: rgb(255 255 255 / 0.03);
+		color: var(--sc-platinum);
+		cursor: pointer;
+		transition:
+			background 0.2s,
+			border-color 0.2s,
+			transform 0.1s;
+	}
+	.tm-act:active {
+		transform: scale(0.97);
+	}
+	.tm-act.is-good:hover {
+		border-color: var(--sc-jade);
+		background: color-mix(in srgb, var(--sc-jade) 10%, transparent);
+	}
+	.tm-act.is-bad:hover {
+		border-color: var(--sc-ember);
+		background: color-mix(in srgb, var(--sc-ember) 10%, transparent);
+	}
+	.tm-act:focus-visible,
+	.tm-reset:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.tm-note {
+		margin: 0;
+		font-size: 0.86rem;
+		line-height: 1.45;
+		color: var(--sc-silver);
+		min-height: 2.6em;
+	}
+	.tm-mix__head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+		margin-bottom: 0.35rem;
+	}
+	.tm-reset {
+		all: unset;
+		cursor: pointer;
+		font-size: 0.75rem;
+		color: var(--sc-silver);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	.tm-mix__bar {
+		display: flex;
+		gap: 2px;
+		height: 10px;
+		border-radius: 999px;
+		overflow: hidden;
+	}
+	.tm-mix__bar :global(span) {
+		transition: flex 0.5s;
+	}
+	.tm-mix__keys {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.75rem;
+		margin-top: 0.4rem;
+		font-size: 0.72rem;
+		color: var(--sc-silver);
+	}
+	.tm-mix__keys :global(i) {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		margin-right: 0.3rem;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tm-you,
+		.tm-ring,
+		.tm-post,
+		.tm-mix__bar :global(span) {
+			transition: none;
+		}
+		.tm-card.is-in {
+			animation: none;
+		}
+	}
+</style>

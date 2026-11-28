@@ -2,6 +2,7 @@
  * Plain-Markdown copies of every guide, for AI assistants and "Copy as Markdown".
  * MDX components are replaced with a short note; raw HTML diagrams become text.
  */
+import { reachText } from './reach-data';
 import type { CollectionEntry } from 'astro:content';
 import { sets, myths, rows, platforms } from './widget-data';
 import { protectWidgetMarkdown } from './protect-playbooks';
@@ -58,7 +59,10 @@ const widgetText: Record<string, string> = {
 	SnowballFlow:
 		'How a post snowballs (illustrative model, not platform data): a new post is shown to a small test group; if their reactions (watching through, sending, following, not swiping away) beat what the feed expects, it is shown to lookalike viewers, then adjacent interests, then broadly. Documented example: Instagram Trial Reels are shown to non-followers first, with views, likes, comments and shares visible after about 24 hours.',
 	SignalBoard:
-		'| Signal | Instagram | TikTok | YouTube | X |\n| --- | --- | --- | --- | --- |\n| Watching it through | Top | Top | Top | Counts |\n| Sending or sharing | Top | Counts | Counts | Top |\n| Talking (comments, replies) | Counts | Counts | Not stated | Top |\n| Following after | Not stated | Counts | Not stated | Counts |\n| Liking | Top | Counts | Counts | Counts (0.708) |\n| Saying no (not interested, report) | Not stated | Not stated | Penalty | Penalty |\n\nInstagram: Mosseri, Jan 2025, "The top three signals that matter most for ranking are watch time, likes and sends." TikTok: finishing a longer video is a strong signal (Newsroom, 2020). YouTube: clicks, watch time, surveys, shares, likes, dislikes. X: copy-link share 20, reply/quote/DM share 5, follow 4, like 0.708, report -234 (2026 code).',
+		'| Signal | Instagram | TikTok | YouTube | Facebook | X | LinkedIn |\n| --- | --- | --- | --- | --- | --- | --- |\n| Watching it through | Top | Top | Top | Counts | Counts | Top |\n| Sending or sharing | Top | Counts | Counts | Counts | Top | Counts |\n| Talking (comments, replies) | Counts | Counts | Not stated | Counts | Top | Counts |\n| Following after | Not stated | Counts | Not stated | Not stated | Counts | Not stated |\n| Liking | Top | Counts | Counts | Counts | Counts (0.708) | Counts |\n| Saying no (not interested, report) | Not stated | Not stated | Penalty | Penalty | Penalty | Not stated |\n\nInstagram: Mosseri, Jan 2025, "The top three signals that matter most for ranking are watch time, likes and sends." TikTok: finishing a longer video is a strong signal (Newsroom, 2020). YouTube: clicks, watch time, surveys, shares, likes, dislikes. Facebook: predicted likes, comments, shares and watching, weighted by what people say in surveys is worth their time (Engineering at Meta, 2021). X: copy-link share 20, reply/quote/DM share 5, follow 4, like 0.708, report -234 (2026 code). LinkedIn: time spent plus likes, comments and reshares; posts predicted to be skipped are scored down (LinkedIn Engineering 2020, CIKM 2026).',
+	TasteMap:
+		'Interactive taste map (illustrative): 30 made-up posts in six topics sit on a map, and you are a dot in the middle. The feed shortlists the posts nearest you and shows the closest; watching to the end or sending moves you toward that post, swiping or "not interested" moves you away, and every fourth card explores a topic outside your shortlist. The mechanism follows YouTube (2016), Instagram Explore (2023), ByteDance Monolith (2022) and TikTok (2020).',
+	ReachSources: reachText,
 	...moneyWidgetText,
 	...growWidgetText,
 	XWeights:

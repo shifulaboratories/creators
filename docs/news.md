@@ -33,3 +33,12 @@ A scheduled task checks official sources every day and opens a pull request with
 - Roundups for leads only (never cited as the only source of an official claim): Social Media Today, Net Influencer, TechCrunch, The Verge
 
 When a change also makes a platform guide wrong, fix the guide in the same pull request.
+
+## Platform changelog
+
+`/news/timeline/` is the long record: one dated line per change since 2023, filterable by platform and topic. It merges two sources:
+
+- Every full update in `src/data/news/` (automatic, links to the update).
+- Shorter entries in `src/data/timeline.ts`, for older or smaller changes that don't need a full write-up. Each needs an `id` (the `#anchor`, never rename it), `date` (`YYYY-MM-DD`, or `YYYY-MM` when no source gives the day), `platform`, `kind`, a `title` under 80 characters, one or two plain sentences in `what`, and at least one source. Mark a source `official: true` only if it's the platform's own page or code. Don't add an entry that already has a full update.
+
+The build checks every entry (`src/lib/timeline.ts`) and fails on a missing source, a bad date or a duplicate id. The daily check adds full updates; when it finds a smaller change, it can add a timeline entry instead.

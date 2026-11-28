@@ -14,20 +14,31 @@ moves:
     source: "Creator-tested"
 status: draft
 confidence: verified
-lastReviewed: 2026-11-26
+lastReviewed: 2026-11-28
 cover:
   label: A vs B
 sidebar:
-  order: 5
+  order: 6
 ---
 
 import PlatformCompare from '../../../components/PlatformCompare.astro';
+import ReachSources from '../../../components/algorithms/ReachSources.astro';
 import QuickCheck from '../../../components/guide/QuickCheck.astro';
 import DeepDive from '../../../components/guide/DeepDive.astro';
 
 **The short version:** every platform runs the same kind of machine, but each one weights different actions. YouTube leans on watch time and satisfaction, TikTok on completion, Instagram Reels on reshares and watching through, and X on replies, quotes and shares. A post that won on one platform needs rebuilding for the next, not just re-uploading.
 
 <PlatformCompare />
+
+## Know who sees you first
+
+Some surfaces mostly show posts to people who already follow you. Others mostly show them to strangers. That decides what a post has to do: keep fans, or win over people who've never heard of you. Tap a platform.
+
+<ReachSources />
+
+- **Reach strangers on purpose.** Reels, Explore, For You, Home and Up next are where new viewers come from. Posts there are judged by people with no reason to give you the benefit of the doubt. <span class="sc-tag is-platform">From the platform</span>
+- **Your followers are a test audience, not a ceiling.** On X, about half of For You candidates came from followed accounts in the 2023 code; on LinkedIn, posts can reach "professionals you haven't met yet." <span class="sc-tag is-code">From the code</span> <span class="sc-tag is-platform">From the platform</span>
+- **See how the feed decides who's "near" your post** on [how the feed learns your taste](/algorithms/taste-map/).
 
 ## Cross-post without getting buried
 
@@ -53,4 +64,4 @@ import DeepDive from '../../../components/guide/DeepDive.astro';
 <figcaption>Common ground across the platforms' own explainers and X's code</figcaption>
 </figure>
 
-Each platform's full breakdown, with sources: [YouTube](/platforms/youtube/), [TikTok](/platforms/tiktok/), [Instagram](/platforms/instagram/), [X](/algorithms/x-open-source/), [LinkedIn](/platforms/linkedin/), [Threads](/platforms/threads/), [Pinterest](/platforms/pinterest/), [Snapchat](/platforms/snapchat/), [Twitch](/platforms/twitch/), [newsletters](/platforms/newsletters/) and [podcasts](/platforms/podcasts/). Or start from [what you like making](/platforms/).
+Each platform's full breakdown, with sources: [YouTube](/platforms/youtube/), [TikTok](/platforms/tiktok/), [Instagram](/platforms/instagram/), [Facebook](/platforms/facebook/), [X](/algorithms/x-open-source/), [LinkedIn](/platforms/linkedin/), [Threads](/platforms/threads/), [Pinterest](/platforms/pinterest/), [Snapchat](/platforms/snapchat/), [Twitch](/platforms/twitch/), [newsletters](/platforms/newsletters/) and [podcasts](/platforms/podcasts/). Or start from [what you like making](/platforms/).

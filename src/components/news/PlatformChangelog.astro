@@ -1,0 +1,650 @@
+---
+// The platform changelog: every dated, sourced change on one timeline, with
+// platform and topic filters, a year-by-month strip that shows when things
+// happened, and a link to each source. Works without JavaScript (everything
+// shows); with it, filters sync to the URL (?platform=x&topic=algorithm).
+import { getChangelog, NEWS_PLATFORM_INFO, KIND_LABEL } from '../../lib/timeline';
+
+interface Props {
+	/** Preselect a platform (the per-platform news pages). */
+	platform?: string;
+}
+const { platform: preset } = Astro.props;
+
+const items = await getChangelog();
+const platforms = Object.entries(NEWS_PLATFORM_INFO).map(([key, p]) => ({
+	key,
+	name: p.name,
+	count: items.filter((i) => i.platform === key).length,
+}));
+const kinds = Object.entries(KIND_LABEL).map(([key, label]) => ({
+	key,
+	label,
+	count: items.filter((i) => i.kind === key).length,
+}));
+
+const years = [...new Set(items.map((i) => i.year))].sort((a, b) => b.localeCompare(a));
+const byYear = years.map((y) => ({ year: y, items: items.filter((i) => i.year === y) }));
+// Strip: oldest year on the left, so time reads left to right.
+const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+const strip = [...years].reverse().map((y) => ({
+	year: y,
+	months: MONTHS.map((m, i) => ({
+		m,
+		items: items.filter((it) => it.year === y && Number(it.sortDate.slice(5, 7)) === i + 1),
+	})),
+}));
+const officialCount = items.filter((i) => i.official).length;
+---
+
+<div class="pc not-content" data-changelog data-preset={preset ?? ''}>
+	<div class="pc-stats" aria-hidden="true">
+		<div><strong>{items.length}</strong><span>changes logged</span></div>
+		<div><strong>{platforms.length}</strong><span>platforms</span></div>
+		<div><strong>{officialCount}</strong><span>confirmed by the platform</span></div>
+	</div>
+
+	<div class="pc-filters" role="group" aria-label="Filter changes">
+		<div class="pc-row" role="group" aria-label="Platform">
+			<button type="button" class="pc-chip" data-filter="platform" data-value="" aria-pressed="true">All platforms</button>
+			{platforms.map((p) => (
+				<button type="button" class="pc-chip" data-filter="platform" data-value={p.key} data-platform={p.key} aria-pressed="false">
+					<span class="pc-dot" aria-hidden="true" />{p.name}<span class="pc-n">{p.count}</span>
+				</button>
+			))}
+		</div>
+		<div class="pc-row" role="group" aria-label="Topic">
+			<button type="button" class="pc-chip is-sub" data-filter="topic" data-value="" aria-pressed="true">All topics</button>
+			{kinds.map((k) => (
+				<button type="button" class="pc-chip is-sub" data-filter="topic" data-value={k.key} aria-pressed="false">{k.label}</button>
+			))}
+			<button type="button" class="pc-chip is-sub is-big" data-filter="big" data-value="1" aria-pressed="false">Big ones only</button>
+		</div>
+	</div>
+
+	<figure class="pc-strip" aria-label="When changes happened, by month">
+		<div class="pc-strip__years">
+			{strip.map((y) => (
+				<div class="pc-year">
+					<div class="pc-months">
+						{y.months.map((mo) => (
+							<div class="pc-month">
+								<div class="pc-stack">
+									{mo.items.map((it) => (
+										<a class="pc-pip" href={`#${it.id}`} data-platform={it.platform} data-kind={it.kind} data-big={it.big ? '1' : ''} title={`${it.label}: ${it.title}`} aria-label={`${it.label}: ${it.title}`} />
+									))}
+								</div>
+								<span class="pc-m" aria-hidden="true">{mo.m}</span>
+							</div>
+						))}
+					</div>
+					<span class="pc-y">{y.year}</span>
+				</div>
+			))}
+		</div>
+		<figcaption>Each dot is one change. Tap a dot to jump to it.</figcaption>
+	</figure>
+
+	<p class="pc-count" aria-live="polite" data-count>Showing all {items.length} changes</p>
+
+	{byYear.map((g) => (
+		<section class="pc-group" data-year={g.year}>
+			<h2 class="pc-group__year" id={`year-${g.year}`}>{g.year}</h2>
+			<ol class="pc-list">
+				{g.items.map((it) => (
+					<li class="pc-item" id={it.id} data-platform={it.platform} data-kind={it.kind} data-big={it.big ? '1' : ''}>
+						<span class="pc-node" aria-hidden="true" />
+						<article class="pc-card">
+							<p class="pc-meta">
+								<span class="pc-plat"><span class="pc-dot" aria-hidden="true" />{NEWS_PLATFORM_INFO[it.platform].name}</span>
+								<time datetime={it.date}>{it.label}</time>
+								<span class="pc-tag">{KIND_LABEL[it.kind]}</span>
+								{it.big && <span class="pc-tag is-big">Big one</span>}
+								{it.official ? <span class="pc-tag is-official" title="At least one source is the platform itself">Official</span> : <span class="pc-tag is-reported" title="Confirmed by credible reporting, not by the platform">Reported</span>}
+							</p>
+							<h3 class="pc-title">{it.title}</h3>
+							<p class="pc-what">{it.what}</p>
+							{it.effective && <p class="pc-eff">Took effect {it.effective}</p>}
+							<p class="pc-src">
+								<span class="pc-src__label">Sources</span>
+								{it.sources.map((s) => (
+									<a href={s.url} rel="noopener" target="_blank" class:list={['pc-srcl', { 'is-official': s.official }]}>{s.publisher}{s.official && <span class="sr-only"> (official)</span>}</a>
+								))}
+							</p>
+							{(it.newsHref || it.guide) && (
+								<p class="pc-links">
+									{it.newsHref && <a href={it.newsHref}>What it means for you <span aria-hidden="true">→</span></a>}
+									{!it.newsHref && it.guide && <a href={it.guide}>{NEWS_PLATFORM_INFO[it.platform].name} guide <span aria-hidden="true">→</span></a>}
+								</p>
+							)}
+							<a class="pc-anchor" href={`#${it.id}`} aria-label={`Link to ${it.title}`}>#</a>
+						</article>
+					</li>
+				))}
+			</ol>
+		</section>
+	))}
+
+	<p class="pc-empty" data-empty hidden>No changes match these filters yet. <button type="button" data-reset>Show everything</button></p>
+</div>
+
+<script>
+	function setup(root: HTMLElement) {
+		if (root.dataset.ready) return;
+		root.dataset.ready = '1';
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+		const items = [...root.querySelectorAll<HTMLElement>('.pc-item')];
+		const pips = [...root.querySelectorAll<HTMLElement>('.pc-pip')];
+		const groups = [...root.querySelectorAll<HTMLElement>('.pc-group')];
+		const count = root.querySelector<HTMLElement>('[data-count]')!;
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+		const url = new URL(location.href);
+		const state = {
+			platform: url.searchParams.get('platform') ?? root.dataset.preset ?? '',
+			topic: url.searchParams.get('topic') ?? '',
+			big: url.searchParams.get('big') === '1' ? '1' : '',
+		};
+
+		const matches = (el: HTMLElement) =>
+			(!state.platform || el.dataset.platform === state.platform) &&
+			(!state.topic || el.dataset.kind === state.topic) &&
+			(!state.big || el.dataset.big === '1');
+
+		function render(push: boolean) {
+			for (const c of chips) {
+				const key = c.dataset.filter as keyof typeof state;
+				c.setAttribute('aria-pressed', String(state[key] === (c.dataset.value ?? '')));
+			}
+			let shown = 0;
+			for (const el of items) {
+				const ok = matches(el);
+				el.hidden = !ok;
+				if (ok) shown++;
+			}
+			for (const p of pips) p.classList.toggle('is-off', !matches(p));
+			for (const g of groups) g.hidden = !g.querySelector('.pc-item:not([hidden])');
+			empty.hidden = shown > 0;
+			count.textContent = shown === items.length ? `Showing all ${shown} changes` : `Showing ${shown} of ${items.length} changes`;
+			if (push) {
+				const u = new URL(location.href);
+				for (const k of ['platform', 'topic', 'big'] as const) {
+					if (state[k] && !(k === 'platform' && state[k] === root.dataset.preset)) u.searchParams.set(k, state[k]);
+					else u.searchParams.delete(k);
+				}
+				u.hash = '';
+				history.replaceState(null, '', u);
+			}
+		}
+
+		for (const c of chips) {
+			c.addEventListener('click', () => {
+				const key = c.dataset.filter as keyof typeof state;
+				const v = c.dataset.value ?? '';
+				state[key] = key === 'big' && state.big ? '' : v;
+				render(true);
+			});
+		}
+		root.querySelector('[data-reset]')?.addEventListener('click', () => {
+			state.platform = state.topic = state.big = '';
+			render(true);
+		});
+		// Jumping to a hidden entry (a dot, or a shared #link) clears the filters first.
+		function reveal() {
+			const id = decodeURIComponent(location.hash.slice(1));
+			const el = id && root.querySelector<HTMLElement>(`#${CSS.escape(id)}`);
+			if (el && el.classList.contains('pc-item')) {
+				if (el.hidden) {
+					state.platform = state.topic = state.big = '';
+					render(false);
+				}
+				el.classList.add('is-flash');
+				setTimeout(() => el.classList.remove('is-flash'), 1600);
+				el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+			}
+		}
+		window.addEventListener('hashchange', reveal);
+		render(false);
+		if (location.hash) requestAnimationFrame(reveal);
+	}
+	const init = () => document.querySelectorAll<HTMLElement>('[data-changelog]').forEach(setup);
+	init();
+	document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+	.pc {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1rem;
+	}
+	.pc-stats {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+	.pc-stats div {
+		display: grid;
+		gap: 0.1rem;
+		padding: 0.8rem 0.95rem;
+		border-radius: 14px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+	}
+	.pc-stats strong {
+		font-family: var(--sc-font-display);
+		font-size: 1.6rem;
+		line-height: 1.1;
+		color: var(--sc-ivory);
+	}
+	.pc-stats span {
+		font-size: 0.78rem;
+		color: var(--sc-steel);
+	}
+
+	/* Filters: one swipeable row each on phones, wrapping on wider screens. */
+	.pc-filters {
+		display: grid;
+		gap: 0.5rem;
+		position: sticky;
+		top: var(--sl-nav-height, 3.5rem);
+		z-index: 2;
+		margin-inline: -0.25rem;
+		padding: 0.5rem 0.25rem;
+		background: var(--sl-color-bg, var(--sc-obsidian));
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: 0 10px 18px -12px rgb(0 0 0 / 0.9);
+		border-radius: 0 0 14px 14px;
+	}
+	.pc-row {
+		display: flex;
+		gap: 0.4rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+		-webkit-overflow-scrolling: touch;
+		scroll-snap-type: x proximity;
+	}
+	.pc-row::-webkit-scrollbar {
+		display: none;
+	}
+	@media (min-width: 50rem) {
+		.pc-row {
+			flex-wrap: wrap;
+			overflow: visible;
+		}
+	}
+	.pc-chip {
+		flex: none;
+		scroll-snap-align: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2.25rem;
+		padding: 0.35rem 0.85rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		background: var(--sc-fill-subtle);
+		color: var(--sc-platinum);
+		font: inherit;
+		font-size: 0.85rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition:
+			background var(--sc-dur-quick),
+			border-color var(--sc-dur-quick),
+			color var(--sc-dur-quick);
+	}
+	.pc-chip:hover {
+		border-color: var(--sc-silver);
+	}
+	.pc-chip[aria-pressed='true'] {
+		background: var(--sc-ivory);
+		border-color: var(--sc-ivory);
+		color: var(--sc-obsidian);
+	}
+	.pc-chip.is-sub {
+		min-height: 2rem;
+		font-size: 0.8rem;
+	}
+	.pc-chip.is-big[aria-pressed='true'] {
+		background: var(--sc-lime);
+		border-color: var(--sc-lime);
+		color: #101010;
+	}
+	.pc-n {
+		font-size: 0.72rem;
+		opacity: 0.6;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Year-by-month strip. */
+	.pc-strip {
+		margin: 0;
+		padding: 1rem 1rem 0.75rem;
+		border-radius: 18px;
+		border: 1px solid var(--sc-line);
+		background:
+			radial-gradient(120% 80% at 0% 0%, rgb(255 255 255 / 0.04), transparent 60%),
+			var(--sc-fill-subtle);
+	}
+	.pc-strip__years {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		gap: 0.75rem;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.pc-strip__years::-webkit-scrollbar {
+		display: none;
+	}
+	.pc-year {
+		display: grid;
+		gap: 0.35rem;
+		min-width: 9.5rem;
+	}
+	.pc-months {
+		display: grid;
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		gap: 2px;
+		align-items: end;
+		height: 6rem;
+	}
+	.pc-month {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		height: 100%;
+		justify-items: center;
+	}
+	.pc-stack {
+		display: flex;
+		flex-direction: column-reverse;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 3px;
+		padding-bottom: 4px;
+		align-self: end;
+		width: 100%;
+		border-bottom: 1px solid var(--sc-line-strong);
+	}
+	.pc-m {
+		font-size: 0.58rem;
+		color: var(--sc-steel);
+		line-height: 1;
+		padding-top: 4px;
+	}
+	.pc-pip {
+		display: block;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: var(--plat, var(--sc-silver));
+		box-shadow: 0 0 0 0 transparent;
+		transition:
+			opacity var(--sc-dur-quick),
+			transform var(--sc-dur-quick),
+			box-shadow var(--sc-dur-quick);
+	}
+	.pc-pip[data-big='1'] {
+		box-shadow: 0 0 0 2px rgb(255 255 255 / 0.18);
+	}
+	.pc-pip:hover,
+	.pc-pip:focus-visible {
+		transform: scale(1.5);
+	}
+	.pc-pip.is-off {
+		opacity: 0.12;
+	}
+	.pc-y {
+		margin-top: 0.1rem;
+		font-family: var(--sc-font-display);
+		font-weight: 600;
+		font-size: 0.85rem;
+		color: var(--sc-platinum);
+	}
+	.pc-strip figcaption {
+		margin-top: 0.5rem;
+		font-size: 0.75rem;
+		color: var(--sc-steel);
+	}
+
+	.pc-count {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--sc-steel);
+	}
+
+	/* Timeline. */
+	.pc-group {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.pc-group__year {
+		margin: 0.5rem 0 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.5rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--sc-ivory);
+	}
+	.pc-list {
+		list-style: none;
+		margin: 0;
+		padding: 0 0 0 1.4rem;
+		display: grid;
+		gap: 0.65rem;
+		position: relative;
+	}
+	.pc-list::before {
+		content: '';
+		position: absolute;
+		left: 0.35rem;
+		top: 0.5rem;
+		bottom: 0.5rem;
+		width: 1px;
+		background: linear-gradient(to bottom, var(--sc-line-strong), var(--sc-line) 85%, transparent);
+	}
+	.pc-item {
+		position: relative;
+		scroll-margin-top: 9rem;
+	}
+	.pc-node {
+		position: absolute;
+		left: calc(-1.4rem + 0.35rem - 5px);
+		top: 1.15rem;
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		background: var(--plat, var(--sc-silver));
+		box-shadow: 0 0 0 3px var(--sl-color-bg, #0b0b0c);
+	}
+	.pc-item[data-big='1'] .pc-node {
+		box-shadow:
+			0 0 0 3px var(--sl-color-bg, #0b0b0c),
+			0 0 0 5px color-mix(in srgb, var(--plat, #fff) 45%, transparent);
+	}
+	.pc-card {
+		position: relative;
+		display: grid;
+		gap: 0.4rem;
+		padding: 0.95rem 1.1rem 1rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line);
+		background: var(--sc-fill-subtle);
+		transition: border-color var(--sc-dur-quick), background var(--sc-dur-quick);
+	}
+	.pc-item.is-flash .pc-card {
+		border-color: var(--plat, var(--sc-line-strong));
+		background: var(--sc-fill-muted);
+	}
+	.pc-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.3rem 0.55rem;
+		margin: 0;
+		padding-right: 1.5rem;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	.pc-plat {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-weight: 600;
+		color: var(--sc-platinum);
+	}
+	.pc-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--plat, var(--sc-silver));
+	}
+	.pc-tag {
+		padding: 0.05rem 0.5rem;
+		border-radius: 999px;
+		border: 1px solid var(--sc-line-strong);
+		font-size: 0.7rem;
+	}
+	.pc-tag.is-big {
+		border-color: transparent;
+		background: var(--sc-lime);
+		color: #101010;
+		font-weight: 600;
+	}
+	.pc-tag.is-official {
+		border-color: rgb(143 181 154 / 0.45);
+		color: var(--sc-sage);
+	}
+	.pc-tag.is-reported {
+		border-color: rgb(201 162 90 / 0.5);
+		color: var(--sc-brass);
+	}
+	.pc-title {
+		margin: 0;
+		font-family: var(--sc-font-display);
+		font-size: 1.08rem;
+		font-weight: 600;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: var(--sc-ivory);
+	}
+	.pc-what {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--sc-silver);
+	}
+	.pc-eff {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--sc-platinum);
+	}
+	.pc-src {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.3rem 0.4rem;
+		margin: 0.15rem 0 0;
+		font-size: 0.78rem;
+	}
+	.pc-src__label {
+		color: var(--sc-steel);
+		margin-right: 0.15rem;
+	}
+	.pc-srcl {
+		padding: 0.1rem 0.55rem;
+		border-radius: 8px;
+		background: var(--sc-fill-muted);
+		color: var(--sc-platinum);
+		text-decoration: none;
+	}
+	.pc-srcl:hover,
+	.pc-srcl:focus-visible {
+		color: var(--sc-ivory);
+		text-decoration: underline;
+	}
+	.pc-srcl.is-official::before {
+		content: '✓ ';
+		color: var(--sc-sage);
+	}
+	.pc-links {
+		margin: 0.1rem 0 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.pc-links a {
+		color: var(--sc-ivory);
+		text-decoration: none;
+	}
+	.pc-links a:hover {
+		text-decoration: underline;
+	}
+	.pc-anchor {
+		position: absolute;
+		top: 0.75rem;
+		right: 0.85rem;
+		padding: 0.1rem 0.3rem;
+		color: var(--sc-steel);
+		text-decoration: none;
+		font-size: 0.85rem;
+		opacity: 0.6;
+	}
+	.pc-anchor:hover,
+	.pc-anchor:focus-visible {
+		opacity: 1;
+		color: var(--sc-ivory);
+	}
+	.pc-empty {
+		color: var(--sc-silver);
+	}
+	.pc-empty button {
+		font: inherit;
+		color: var(--sc-ivory);
+		background: none;
+		border: 0;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+	[hidden] {
+		display: none !important;
+	}
+	@media (max-width: 30rem) {
+		.pc-chip {
+			min-height: 2rem;
+			padding: 0.25rem 0.75rem;
+			font-size: 0.8rem;
+		}
+		.pc-chip.is-sub {
+			min-height: 1.85rem;
+			font-size: 0.76rem;
+		}
+		.pc-stats strong {
+			font-size: 1.3rem;
+		}
+		.pc-card {
+			padding: 0.85rem 0.95rem 0.9rem;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pc-pip,
+		.pc-card,
+		.pc-chip {
+			transition: none;
+		}
+	}
+	[data-platform='instagram'] { --plat: var(--sc-rose); }
+	[data-platform='tiktok'] { --plat: var(--sc-cyan); }
+	[data-platform='youtube'] { --plat: var(--sc-ember); }
+	[data-platform='facebook'] { --plat: #7ea6ff; }
+	[data-platform='linkedin'] { --plat: #6fb6e8; }
+	[data-platform='x'] { --plat: var(--sc-silver); }
+</style>

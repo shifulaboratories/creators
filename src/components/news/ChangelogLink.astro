@@ -1,0 +1,87 @@
+---
+// A card that leads from the News pages into the platform changelog.
+import { getChangelog, NEWS_PLATFORM_INFO } from '../../lib/timeline';
+interface Props {
+	platform?: string;
+}
+const { platform } = Astro.props;
+const all = await getChangelog();
+const items = platform ? all.filter((i) => i.platform === platform) : all;
+const first = items.at(-1)?.year;
+const name = platform ? NEWS_PLATFORM_INFO[platform]?.name : undefined;
+const href = platform ? `/news/timeline/?platform=${platform}` : '/news/timeline/';
+const recent = items.slice(0, 18).reverse();
+---
+
+<a class="cl not-content" href={href}>
+	<span class="cl-pips" aria-hidden="true">
+		{recent.map((i) => <span class="cl-pip" data-platform={i.platform} data-big={i.big ? '1' : ''} />)}
+	</span>
+	<span class="cl-text">
+		<span class="cl-title">{name ? `${name} changelog` : 'Platform changelog'}</span>
+		<span class="cl-sub">{items.length} dated, sourced changes{first ? ` since ${first}` : ''}. Filter by platform and topic.</span>
+	</span>
+	<span class="cl-go" aria-hidden="true">→</span>
+</a>
+
+<style>
+	.cl {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.9rem;
+		margin: 1rem 0;
+		padding: 0.9rem 1.1rem;
+		border-radius: 16px;
+		border: 1px solid var(--sc-line-strong);
+		background:
+			radial-gradient(120% 120% at 0% 50%, var(--sc-ion-tint), transparent 60%),
+			var(--sc-fill-subtle);
+		color: inherit;
+		text-decoration: none;
+		transition: border-color var(--sc-dur-quick), background var(--sc-dur-quick);
+	}
+	.cl:hover,
+	.cl:focus-visible {
+		border-color: var(--sc-line-bright);
+		background-color: var(--sc-fill-muted);
+	}
+	.cl-pips {
+		display: flex;
+		align-items: flex-end;
+		gap: 3px;
+		max-width: 4.3rem;
+		flex-wrap: wrap-reverse;
+		align-content: flex-start;
+	}
+	.cl-pip {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--plat, var(--sc-silver));
+	}
+	.cl-text {
+		display: grid;
+		gap: 0.15rem;
+	}
+	.cl-title {
+		font-family: var(--sc-font-display);
+		font-weight: 600;
+		line-height: 1.2;
+		color: var(--sc-ivory);
+	}
+	.cl-sub {
+		font-size: 0.82rem;
+		color: var(--sc-silver);
+	}
+	.cl-go {
+		color: var(--sc-ivory);
+		font-size: 1.1rem;
+	}
+	[data-platform='instagram'] { --plat: var(--sc-rose); }
+	[data-platform='tiktok'] { --plat: var(--sc-cyan); }
+	[data-platform='youtube'] { --plat: var(--sc-ember); }
+	[data-platform='facebook'] { --plat: #7ea6ff; }
+	[data-platform='linkedin'] { --plat: #6fb6e8; }
+	[data-platform='x'] { --plat: var(--sc-silver); }
+</style>
