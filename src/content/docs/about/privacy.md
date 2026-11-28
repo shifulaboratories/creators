@@ -67,7 +67,7 @@ When you tap **Save** on a guide or **Mark as done** at the end of one, the site
 
 ## Free tools: media kit, invoice and calculators
 
-The [free tools](/tools/) run entirely in your browser. What you type into them, including an invoice's payment details or a photo you add to a media kit, is never uploaded. The media kit builder and invoice generator keep your latest draft in your browser's storage on that device so you don't lose it; **Start over** or **Clear** deletes it, as does clearing this site's data. **Save as PDF** uses your browser's own print dialog.
+The [free tools](/tools/) run entirely in your browser. What you type into them, including an invoice's payment details or a photo you add to a media kit, is never uploaded. The media kit builder and invoice generator keep your latest draft in your browser's storage on that device so you don't lose it; **Start over** or **Clear** deletes it, as does clearing this site's data. The invoice's **Save as PDF** uses your browser's own print dialog, and the media kit's PDF and image downloads are drawn by your browser on your device, so nothing is uploaded to make them.
 
 A media kit **share link** carries the kit itself, compressed, after the `#` in the address. Browsers don't send that part of a link to any server, so we never receive it, but anyone you give the link to can read the kit. Your photo is never included in a link.
 
