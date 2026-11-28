@@ -17,7 +17,7 @@ const cats = CATEGORIES.filter((c) => (!category || c.key === category) && tools
 const searchable = (t: (typeof tools)[number]) => [t.name, t.what, t.bestFor, t.who, t.alternative, ...(t.platforms ?? [])].join(' ').toLowerCase();
 ---
 
-<div class="td not-content" data-section="stack" data-td>
+<div class:list={['td not-content', { 'td--one': category }]} data-section="stack" data-td>
 	{!category && (
 		<div class="td-controls">
 			<label class="td-search">
@@ -49,9 +49,9 @@ const searchable = (t: (typeof tools)[number]) => [t.name, t.what, t.bestFor, t.
 					.filter((t) => t.slot === c.key)
 					.map((t) => (
 						<li data-td-item data-cat={t.slot} data-budget={budgetOf(t.pricing)} data-text={searchable(t)}>
-							<a href={toolPath(t.slug)}>
+							<a href={toolPath(t.slug)} class="sc-press">
 								<span class="td-top">
-									<ToolLogo slug={t.slug} name={t.name} />
+									<ToolLogo slug={t.slug} name={t.name} morph="card" />
 									<span>
 										<b>{t.name}</b>
 										<small>{priceText(t.pricing)}</small>
@@ -229,6 +229,37 @@ const searchable = (t: (typeof tools)[number]) => [t.name, t.what, t.bestFor, t.
 	}
 	.td-grid li {
 		margin: 0;
+	}
+	/* Phones: each category is a row you swipe sideways, like an app store shelf. */
+	@media (max-width: 49.99rem) {
+		.td:not(.td--one) .td-grid {
+			display: flex;
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			scroll-snap-type: x mandatory;
+			scrollbar-width: none;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding: 0 var(--sl-content-pad-x, 1rem) 0.2rem;
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+		}
+		.td:not(.td--one) .td-grid::-webkit-scrollbar {
+			display: none;
+		}
+		.td:not(.td--one) .td-grid li {
+			flex: 0 0 min(78%, 18rem);
+			scroll-snap-align: start;
+		}
+		.td:not(.td--one) .td-grid a {
+			min-height: 10.5rem;
+			border-radius: 20px;
+		}
+		.td:not(.td--one) .td-grid a:hover {
+			transform: none;
+		}
+		.td-sec header {
+			flex-wrap: wrap;
+			gap: 0.2rem 1rem;
+		}
 	}
 	.td-grid a {
 		display: grid;

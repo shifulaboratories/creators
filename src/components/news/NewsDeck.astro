@@ -1,0 +1,40 @@
+---
+// The newest platform updates as swipeable story cards, for the top of the
+// News hub. The dated list below it stays the full record.
+import FeedDeck from '../feed/FeedDeck.astro';
+import { getNews, newsPath, fmtDate, KIND_LABEL, NEWS_PLATFORM_INFO } from '../../lib/news';
+
+interface Props {
+	limit?: number;
+}
+const { limit = 6 } = Astro.props;
+const items = (await getNews()).slice(0, limit);
+---
+
+{
+	items.length > 1 && (
+		<FeedDeck title="The latest, in 30 seconds" kicker="Swipe the news">
+			{items.map((n) => (
+				<a class="fd-card" href={newsPath(n)} data-platform={n.data.platform}>
+					<span class="fd-top">
+						<span class="fd-who">
+							<span class="fd-dot" />
+							{NEWS_PLATFORM_INFO[n.data.platform].name}
+						</span>
+						<span>{fmtDate(n.data.announced)}</span>
+						{n.data.impact === 'high' && <span class="fd-sticker">Big one</span>}
+					</span>
+					<span class="fd-big">{n.data.title}</span>
+					<span class="fd-text">{n.data.summary}</span>
+					<span class="fd-foot">
+						<span>
+							{KIND_LABEL[n.data.kind]}
+							{n.data.confirmed === 'reported' && ' · Reported'}
+						</span>
+						<span class="fd-go">What it means →</span>
+					</span>
+				</a>
+			))}
+		</FeedDeck>
+	)
+}

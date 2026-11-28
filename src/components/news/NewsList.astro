@@ -32,7 +32,7 @@ for (const n of items) {
 				<ol class="nl-list">
 					{g.items.map((n) => (
 						<li>
-							<a class="nl-item" href={newsPath(n)} data-platform={n.data.platform}>
+							<a class="nl-item sc-press" href={newsPath(n)} data-platform={n.data.platform}>
 								<span class="nl-meta">
 									{showPlatform && <span class="nl-plat"><span class="nl-dot" />{NEWS_PLATFORM_INFO[n.data.platform].name}</span>}
 									<time datetime={isoDate(n.data.announced)}>{fmtDate(n.data.announced)}</time>

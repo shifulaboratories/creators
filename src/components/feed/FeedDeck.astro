@@ -1,0 +1,71 @@
+---
+/**
+ * A swipeable row of story-style cards for phones (Instagram-stories feel):
+ * full-height cards that snap one at a time, progress bars on top, arrows on
+ * desktop. Pass the cards as children, each an element with class `fd-card`
+ * (card parts are in src/styles/feed.css, loaded on every page). No autoplay, no looping motion.
+ */
+interface Props {
+	title: string;
+	kicker?: string;
+	/** "See all" style link on the right of the title. */
+	more?: { label: string; href: string };
+}
+const { title, kicker = 'Swipe', more } = Astro.props;
+---
+
+<section class="fd not-content" data-fd aria-roledescription="carousel" aria-label={title}>
+	<div class="fd-head">
+		<div>
+			<p class="fd-kicker">{kicker}</p>
+			<h2 class="fd-title">{title}</h2>
+		</div>
+		<div class="fd-actions">
+			{more && <a class="fd-more" href={more.href}>{more.label}</a>}
+			<span class="fd-arrows">
+				<button type="button" data-dir="-1" aria-label="Previous">‹</button>
+				<button type="button" data-dir="1" aria-label="Next">›</button>
+			</span>
+		</div>
+	</div>
+	<div class="fd-progress" aria-hidden="true" data-bars></div>
+	<div class="fd-track" tabindex="0" data-track>
+		<slot />
+	</div>
+</section>
+
+<script>
+	const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+	document.querySelectorAll<HTMLElement>('[data-fd]').forEach((root) => {
+		const track = root.querySelector<HTMLElement>('[data-track]')!;
+		const barsBox = root.querySelector<HTMLElement>('[data-bars]')!;
+		const cards = [...track.children] as HTMLElement[];
+		if (cards.length < 2) return;
+		const bars = cards.map(() => {
+			const s = document.createElement('span');
+			s.appendChild(document.createElement('i'));
+			barsBox.appendChild(s);
+			return s;
+		});
+		let current = 0;
+		const set = (i: number) => {
+			current = i;
+			bars.forEach((b, j) => {
+				b.classList.toggle('on', j === i);
+				b.classList.toggle('seen', j < i);
+			});
+		};
+		const go = (i: number) => {
+			const n = Math.max(0, Math.min(cards.length - 1, i));
+			track.scrollTo({ left: cards[n].offsetLeft - cards[0].offsetLeft, behavior: reduce() ? 'auto' : 'smooth' });
+		};
+		const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && set(cards.indexOf(e.target as HTMLElement))), { root: track, threshold: 0.6 });
+		cards.forEach((c) => io.observe(c));
+		root.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach((b) => b.addEventListener('click', () => go(current + +b.dataset.dir!)));
+		track.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowRight') (e.preventDefault(), go(current + 1));
+			if (e.key === 'ArrowLeft') (e.preventDefault(), go(current - 1));
+		});
+		set(0);
+	});
+</script>

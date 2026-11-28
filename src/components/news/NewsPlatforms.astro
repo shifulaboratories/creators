@@ -24,9 +24,27 @@ const tiles = Object.entries(NEWS_PLATFORM_INFO).map(([key, p]) => {
 		gap: 0.5rem;
 		margin: 1.25rem 0 0.5rem;
 	}
+	/* Phones: one swipeable row instead of a tall grid. */
 	@media (max-width: 40rem) {
 		.np {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			display: flex;
+			overflow-x: auto;
+			scroll-snap-type: x proximity;
+			scrollbar-width: none;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding: 0 var(--sl-content-pad-x, 1rem) 0.2rem;
+			scroll-padding-inline: var(--sl-content-pad-x, 1rem);
+		}
+		.np::-webkit-scrollbar {
+			display: none;
+		}
+		.np-tile {
+			flex: none;
+			scroll-snap-align: start;
+			-webkit-tap-highlight-color: transparent;
+		}
+		.np-tile:active {
+			transform: scale(0.96);
 		}
 	}
 	.np-tile {

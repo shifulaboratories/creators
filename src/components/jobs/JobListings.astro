@@ -5,6 +5,7 @@
  * HTML; the filters load the rest from /jobs/listings.json.
  * Nobody pays to be listed and no link earns us anything.
  */
+import FeedDeck from '../feed/FeedDeck.astro';
 import { jobs, jobSources, jobsUpdated, newSince, roles, kinds, shortDate } from '../../lib/jobs';
 
 const FIRST = 12;
@@ -16,6 +17,11 @@ const kindOf = Object.fromEntries(kinds.map((k) => [k.id, k]));
 const roleLabel = Object.fromEntries(roles.map((r) => [r.id, r.label]));
 const newCount = jobs.filter((j) => j.firstSeen >= newSince).length;
 const advised = jobSources.some((s) => s.company === 'Fanfix');
+// Who's hiring most: one swipeable card per company, tap to filter the list.
+const hiring = [...Map.groupBy(jobs, (j) => j.company)]
+	.map(([company, list]) => ({ company, kind: list[0].kind, n: list.length, titles: [...new Set(list.map((j) => j.title))].slice(0, 3) }))
+	.sort((a, b) => b.n - a.n || a.company.localeCompare(b.company))
+	.slice(0, 10);
 ---
 
 <section class="jl not-content" data-jl data-updated={jobsUpdated} data-new-since={newSince} data-first={FIRST} data-tints={JSON.stringify(Object.fromEntries(kinds.map((k) => [k.id, k.tint])))} id="open-roles">
@@ -36,9 +42,34 @@ const advised = jobSources.some((s) => s.company === 'Fanfix');
 	</div>
 
 	{
+		hiring.length > 2 && (
+			<FeedDeck title="Who's hiring most" kicker="Swipe companies">
+				{hiring.map((h) => (
+					<a class="fd-card jl-co" href="#jl-filters" data-company={h.company} style={`--accent:${kindOf[h.kind]?.tint}`}>
+						<span class="fd-top">
+							<span class="fd-avatar" aria-hidden="true">{h.company.slice(0, 1)}</span>
+							<span class="fd-who">{h.company}</span>
+						</span>
+						<span class="fd-big">
+							{h.n} open {h.n === 1 ? 'role' : 'roles'}
+						</span>
+						<span class="jl-co-titles">
+							{h.titles.map((t) => <span>{t}</span>)}
+						</span>
+						<span class="fd-foot">
+							<span>{kindOf[h.kind]?.label}</span>
+							<span class="fd-go">See roles →</span>
+						</span>
+					</a>
+				))}
+			</FeedDeck>
+		)
+	}
+
+	{
 		jobs.length > 0 && (
 			<>
-				<label class="jl-search">
+				<label class="jl-search" id="jl-filters">
 					<span class="sr-only">Search jobs</span>
 					<svg viewBox="0 0 24 24" aria-hidden="true">
 						<circle cx="11" cy="11" r="7" />
@@ -81,7 +112,7 @@ const advised = jobSources.some((s) => s.company === 'Fanfix');
 				<ul class="jl-list" data-list>
 					{jobs.slice(0, FIRST).map((j) => (
 						<li>
-							<a class="jl-card" href={j.url} rel="noopener nofollow" target="_blank" style={`--accent:${kindOf[j.kind]?.tint}`}>
+							<a class="jl-card sc-press" href={j.url} rel="noopener nofollow" target="_blank" style={`--accent:${kindOf[j.kind]?.tint}`}>
 								<span class="jl-av" aria-hidden="true">
 									{j.company.slice(0, 1)}
 								</span>
@@ -208,6 +239,42 @@ const advised = jobSources.some((s) => s.company === 'Fanfix');
 		color: var(--sc-ivory);
 		font: 500 1rem / 1 var(--sc-font-sans);
 		outline: none;
+	}
+	.jl-co .fd-big {
+		margin-top: 0.4rem;
+	}
+	.jl-co-titles {
+		display: grid;
+		gap: 0.35rem;
+		margin-top: auto;
+	}
+	.jl-co-titles span {
+		padding: 0.45rem 0.7rem;
+		border-radius: 12px;
+		background: rgb(255 255 255 / 0.05);
+		font-size: 0.82rem;
+		line-height: 1.3;
+		color: var(--sc-platinum);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	#jl-filters {
+		scroll-margin-top: calc(var(--sl-nav-height, 3.5rem) + 0.75rem);
+	}
+	/* Phones: role chips stay pinned under the header while you scroll the list. */
+	@media (max-width: 49.99rem) {
+		.jl-chips {
+			position: sticky;
+			top: var(--sl-nav-height, 3.5rem);
+			z-index: 5;
+			margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+			padding-inline: var(--sl-content-pad-x, 1rem);
+			padding-bottom: 0.6rem;
+			background: linear-gradient(rgb(5 5 5 / 0.92) 75%, rgb(5 5 5 / 0));
+			-webkit-backdrop-filter: blur(12px);
+			backdrop-filter: blur(12px);
+		}
 	}
 	.jl-chips {
 		display: flex;
@@ -497,7 +564,7 @@ const advised = jobSources.some((s) => s.company === 'Fanfix');
 		const card = (r: Row) => {
 			const [title, company, kind, rl, loc, remote, url, source, seen] = r;
 			const li = el('li');
-			const a = el('a', 'jl-card') as HTMLAnchorElement;
+			const a = el('a', 'jl-card sc-press') as HTMLAnchorElement;
 			if (!/^https:\/\//.test(url)) return li;
 			a.href = url;
 			a.rel = 'noopener nofollow';
@@ -562,6 +629,17 @@ const advised = jobSources.some((s) => s.company === 'Fanfix');
 		kindSel.addEventListener('change', () => update());
 		q.addEventListener('input', () => update());
 		q.addEventListener('focus', () => load(), { once: true });
+		// "Who's hiring most" cards: show that company's roles.
+		root.querySelectorAll<HTMLAnchorElement>('[data-company]').forEach((a) =>
+			a.addEventListener('click', (e) => {
+				e.preventDefault();
+				q.value = a.dataset.company!;
+				role = 'all';
+				chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.role === 'all')));
+				update();
+				root.querySelector('#jl-filters')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+			}),
+		);
 		more.addEventListener('click', () => {
 			shown += 24;
 			update(false);

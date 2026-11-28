@@ -122,8 +122,14 @@ export default defineConfig({
 				{ tag: 'meta', attrs: { name: 'theme-color', content: '#050505' } },
 				{
 					// Page transitions slide in the direction you swiped or tapped (src/styles/docs.css).
+					// Card-to-page morph (issue #113): the tapped card's [data-morph] part (a creator's
+					// avatar, a tool's logo) glides into the [data-morph-target] on the page it opens,
+					// and back again. Names are set only for the one navigation, so a list of 100
+					// cards never captures 100 snapshots.
 					tag: 'script',
-					content: `addEventListener('pagereveal',function(e){try{var d=sessionStorage.getItem('sc-nav');sessionStorage.removeItem('sc-nav');if(d&&e.viewTransition)e.viewTransition.types.add(d)}catch(_){}})`,
+					content: `(function(){var N='sc-morph';function m(p){var l=document.querySelectorAll('a[href] [data-morph]');for(var i=0;i<l.length;i++){var a=l[i].closest('a');if(a&&a.pathname===p)return l[i]}}function n(el,vt){if(!el)return;el.style.viewTransitionName=N;vt.finished.finally(function(){el.style.viewTransitionName=''})}
+addEventListener('pagereveal',function(e){try{var d=sessionStorage.getItem('sc-nav');sessionStorage.removeItem('sc-nav');if(!e.viewTransition)return;if(d)e.viewTransition.types.add(d);var f=navigation.activation&&navigation.activation.from;if(!f)return;n(document.querySelector('[data-morph-target]')||m(new URL(f.url).pathname),e.viewTransition)}catch(_){}});
+addEventListener('pageswap',function(e){try{if(!e.viewTransition||!e.activation||!e.activation.entry)return;var t=new URL(e.activation.entry.url).pathname;n(m(t)||document.querySelector('[data-morph-target]'),e.viewTransition)}catch(_){}})})()`,
 				},
 			],
 			components: {
@@ -140,7 +146,7 @@ export default defineConfig({
 			],
 			editLink: { baseUrl: `${REPO_URL}/edit/main/` },
 			lastUpdated: true,
-			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css'],
+			customCss: ['./src/styles/custom.css', './src/styles/docs.css', './src/styles/library.css', './src/styles/feed.css'],
 			sidebar: [
 				{ label: ui.en.start, translations: { es: ui.es.start, 'pt-BR': ui['pt-br'].start }, link: '/' },
 				{ label: ui.en.all, translations: { es: ui.es.all, 'pt-BR': ui['pt-br'].all }, link: '/guides/' },
