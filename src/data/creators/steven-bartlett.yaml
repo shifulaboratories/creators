@@ -3,6 +3,7 @@ known: Host of The Diary of a CEO podcast
 niche: podcast
 platforms: [podcast, youtube, instagram, linkedin]
 about: An entrepreneur who co-founded the social media agency Social Chain and now hosts The Diary of a CEO, a long-form interview podcast published on YouTube and audio platforms. He runs the show with a team built around constant testing.
+caseStudy: case-studies/steven-bartlett
 advice:
   - text: "The goal is to get it wrong as many times as possible — because that's how you get it right."
     source: https://www.colinandsamir.com/resources/how-diary-of-a-ceo-became-youtubes-1-show
@@ -23,3 +24,10 @@ advice:
     source: https://www.colinandsamir.com/resources/how-diary-of-a-ceo-became-youtubes-1-show
     sourceTitle: "How Diary of a CEO became YouTube's #1 Show (The Colin & Samir Show)"
     date: "Sep 2024 (approx.)"
+videos:
+  - platform: youtube
+    id: hbZbPHjE8NE
+    title: "The Rise of Diary of a CEO"
+    channel: Colin and Samir
+    date: Sep 2025
+    why: "Bartlett explains the testing system, from pre-release viewer panels to rewording the subscribe ask."

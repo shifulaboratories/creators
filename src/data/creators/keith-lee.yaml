@@ -3,6 +3,7 @@ known: Food reviews of small, local restaurants on TikTok
 niche: short-form
 platforms: [tiktok]
 about: A former professional MMA fighter who reviews takeout from local, mostly family-run restaurants, usually filmed in his car and rated out of 10. His reviews often bring a rush of new customers to the places he features.
+caseStudy: case-studies/keith-lee
 advice:
   - text: "I don't shoot content, per se. I go get food, and people enjoy the originality."
     source: https://www.mashed.com/1212938/how-tiktoks-keith-lee-gained-millions-of-followers-reviewing-food-exclusive-interview
@@ -17,3 +18,18 @@ advice:
     source: https://www.entrepreneur.com/leadership/keith-lee-has-17m-tiktok-followers-heres-how-he-got-there/500418
     sourceTitle: "Keith Lee has 17M TikTok followers. Here's how he got there (Entrepreneur)"
     date: "Dec 2025"
+videos:
+  - platform: tiktok
+    id: "7184272821084753195"
+    handle: keith_lee125
+    title: "Frankensons Pizzeria taste test"
+    date: Jan 2023
+    stat: 62M views by Nov 2026
+    why: "The 10 out of 10 that turned a struggling family pizzeria into a three-hour wait."
+  - platform: tiktok
+    id: "7306701439605230878"
+    handle: keith_lee125
+    title: "The Puddery taste test"
+    date: Nov 2023
+    stat: 30.1M views by Nov 2026
+    why: "Rolling Stone reports the shop went from 5 customers the day before to 130 the day after."

@@ -3,6 +3,7 @@ known: Fitness trainer behind the BBG workouts and the Sweat app
 niche: lifestyle
 platforms: [instagram]
 about: Kayla Itsines is an Australian personal trainer who built a large Instagram following around her Bikini Body Guides and co-founded the Sweat fitness app. She sold Sweat in 2021 and bought it back in 2023.
+caseStudy: case-studies/kayla-itsines
 advice:
   - text: "I'm still in my direct messages – there's 16 million people in there, and I'm in there every single day,"
     source: https://www.forbes.com.au/covers/entrepreneurs/im-the-boss-now-kayla-itsines-on-being-back-at-sweats-helm/
@@ -23,3 +24,10 @@ advice:
     source: https://www.forbes.com.au/covers/entrepreneurs/im-the-boss-now-kayla-itsines-on-being-back-at-sweats-helm/
     sourceTitle: "Kayla Itsines on being back at Sweat's helm (Forbes Australia)"
     date: "Feb 2024"
+videos:
+  - platform: youtube
+    id: WHMYtw0xymE
+    title: "Gym or Home! My OG Whiteboard Workout!"
+    channel: Kayla Itsines
+    date: Jan 2022
+    why: "One of the whiteboard workouts from her early Instagram days, brought back on YouTube."

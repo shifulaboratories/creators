@@ -3,6 +3,7 @@ known: Vegan cooking and feel-good videos on TikTok, author and entrepreneur
 niche: lifestyle
 platforms: [tiktok, instagram, youtube]
 about: Tabitha Brown is an actor who became widely known for warm, conversational vegan cooking videos on TikTok. She has since built a range of businesses and product lines that she owns outright.
+caseStudy: case-studies/tabitha-brown
 advice:
   - text: "The only reason that you want to get investors is if you need it."
     source: https://afrotech.com/tabitha-browns-decision-to-bootstrap-her-businesses
@@ -21,3 +22,24 @@ advice:
     source: https://www.fastcompany.com/90873390/tabitha-brown-seen-loved-heard-entertainment-empire-joy
     sourceTitle: "Tabitha Brown's entertainment empire (Fast Company)"
     date: "Apr 2023"
+videos:
+  - platform: tiktok
+    id: "6803143606619229446"
+    handle: iamtabithabrown
+    title: "Quick pasta salad"
+    date: Mar 2020
+    stat: 5.1M views by Nov 2026
+    why: "Posted five days after she joined TikTok. She apologizes for the sound because she's still learning."
+  - platform: tiktok
+    id: "6814921699725905158"
+    handle: iamtabithabrown
+    title: "Carrot bacon"
+    date: Apr 2020
+    stat: 21.8M views by Nov 2026
+    why: "One of her most-watched TikToks, from the month her following passed a million."
+  - platform: youtube
+    id: T87T3PD9KLs
+    title: "A 15 year dream has finally come true!! I'm retiring my husband!!!"
+    channel: Tabitha Brown
+    date: Jun 2021
+    why: "What the audience made possible, in her words. Time linked it in its 2021 profile."
