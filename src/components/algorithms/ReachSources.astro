@@ -1,0 +1,195 @@
+---
+/**
+ * Who sees your post first: each platform's surfaces placed on a track from
+ * "people who follow you" to "people who don't". Tap a platform to see its surfaces
+ * slide into place and read the platform's own words. Data: src/lib/reach-data.ts.
+ */
+import { reach } from '../../lib/reach-data';
+const tag = { platform: 'From the platform', code: 'From the code' };
+---
+
+<div class="sc-widget rs not-content" data-rs data-reach={JSON.stringify(reach)} data-section={reach[0].tint}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Interactive · Who sees you first</div>
+			<h4 class="sc-widget__title">Followers, or strangers?</h4>
+		</div>
+	</div>
+
+	<div class="sc-chip-row" role="group" aria-label="Platform">
+		{reach.map((p, i) => <button type="button" class="sc-chip" data-k={p.key} data-section={p.tint} aria-pressed={i === 0 ? 'true' : 'false'}>{p.name}</button>)}
+	</div>
+
+	<div class="rs-track" aria-hidden="true">
+		<div class="rs-ends"><span>People who follow you</span><span>People who’ve never seen you</span></div>
+		<div class="rs-rail"><span class="rs-mid"></span></div>
+		<div class="rs-pins" data-pins>
+			{[0, 1, 2].map((i) => (
+				<span class="rs-pin" data-pin={i} hidden={!reach[0].surfaces[i]} style={reach[0].surfaces[i] ? `--x:${reach[0].surfaces[i].lean}` : ''}>
+					<b>{reach[0].surfaces[i]?.name}</b>
+				</span>
+			))}
+		</div>
+	</div>
+
+	<div class="rs-proof" aria-live="polite">
+		<ul class="rs-sr" data-list>
+			{reach[0].surfaces.map((s) => <li>{s.name}: {s.lean < 35 ? 'mostly followers' : s.lean > 65 ? 'mostly people who don’t follow you' : 'a mix'}</li>)}
+		</ul>
+		<p data-proof>{reach[0].proof}</p>
+		<p class="rs-cite"><span class={`sc-tag is-${reach[0].src}`} data-tag>{tag[reach[0].src]}</span> <a data-cite href={reach[0].href} target="_blank" rel="noopener">{reach[0].cite}</a></p>
+	</div>
+	<p class="sc-widget__note">Placements are our reading of each platform’s own description, not measured shares. The one exception is X, whose published code split For You candidates about half and half in 2023.</p>
+</div>
+
+<script>
+	type S = { name: string; lean: number };
+	type R = { key: string; name: string; tint: string; surfaces: S[]; proof: string; src: string; cite: string; href: string };
+	const tags: Record<string, string> = { platform: 'From the platform', code: 'From the code' };
+	const word = (l: number) => (l < 35 ? 'mostly followers' : l > 65 ? 'mostly people who don’t follow you' : 'a mix');
+	document.querySelectorAll<HTMLElement>('[data-rs]').forEach((root) => {
+		const data: R[] = JSON.parse(root.dataset.reach!);
+		const show = (key: string) => {
+			const p = data.find((d) => d.key === key)!;
+			root.dataset.section = p.tint;
+			root.querySelectorAll<HTMLButtonElement>('[data-k]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === key)));
+			root.querySelectorAll<HTMLElement>('[data-pin]').forEach((el, i) => {
+				const s = p.surfaces[i];
+				if (!s) {
+					el.hidden = true;
+					return;
+				}
+				el.hidden = false;
+				el.style.setProperty('--x', String(s.lean));
+				el.querySelector('b')!.textContent = s.name;
+			});
+			root.querySelector('[data-list]')!.innerHTML = p.surfaces.map((s) => `<li>${s.name}: ${word(s.lean)}</li>`).join('');
+			root.querySelector('[data-proof]')!.textContent = p.proof;
+			const tag = root.querySelector('[data-tag]')!;
+			tag.className = `sc-tag is-${p.src}`;
+			tag.textContent = tags[p.src];
+			const a = root.querySelector<HTMLAnchorElement>('[data-cite]')!;
+			a.href = p.href;
+			a.textContent = p.cite;
+		};
+		root.querySelectorAll<HTMLButtonElement>('[data-k]').forEach((b) => b.addEventListener('click', () => show(b.dataset.k!)));
+	});
+</script>
+
+<style>
+	.rs-track {
+		margin: 1.4rem 0 0.4rem;
+	}
+	.rs-ends {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		font-size: 0.72rem;
+		color: var(--sc-steel);
+		margin-bottom: 0.5rem;
+	}
+	.rs-ends span:last-child {
+		text-align: right;
+	}
+	.rs-rail {
+		position: relative;
+		height: 10px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--sc-rose), color-mix(in srgb, var(--sc-rose) 30%, var(--sc-cyan)) 50%, var(--sc-cyan));
+		opacity: 0.75;
+	}
+	.rs-mid {
+		position: absolute;
+		left: 50%;
+		top: -4px;
+		bottom: -4px;
+		width: 1px;
+		background: rgb(255 255 255 / 0.4);
+	}
+	.rs-pins {
+		position: relative;
+		height: 7.2rem;
+	}
+	.rs-pin {
+		--x: 50;
+		position: absolute;
+		top: 0;
+		left: clamp(3.2rem, calc(var(--x) * 1%), calc(100% - 3.2rem));
+		transform: translateX(-50%);
+		display: grid;
+		justify-items: center;
+		transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.rs-pin[hidden] {
+		display: none;
+	}
+	.rs-pin::before {
+		content: '';
+		width: 2px;
+		height: 1.1rem;
+		background: var(--accent);
+	}
+	.rs-pin b {
+		font-size: 0.76rem;
+		font-weight: 600;
+		white-space: nowrap;
+		padding: 0.3rem 0.65rem;
+		border-radius: 999px;
+		color: #0a0a0a;
+		background: var(--accent);
+		box-shadow: 0 10px 24px -12px var(--accent);
+	}
+	.rs-pin[data-pin='0'] {
+		z-index: 3;
+	}
+	.rs-pin[data-pin='1'] {
+		z-index: 2;
+		top: 2.3rem;
+	}
+	.rs-pin[data-pin='1']::before {
+		height: 3.4rem;
+		margin-top: -2.3rem;
+	}
+	.rs-pin[data-pin='2'] {
+		top: 4.6rem;
+	}
+	.rs-pin[data-pin='2']::before {
+		height: 5.7rem;
+		margin-top: -4.6rem;
+	}
+	@media (max-width: 30rem) {
+		.rs-pin b {
+			font-size: 0.68rem;
+			padding: 0.25rem 0.5rem;
+		}
+	}
+	.rs-proof {
+		padding: 0.85rem 1rem;
+		border-radius: 14px;
+		background: color-mix(in srgb, var(--accent) 7%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+	}
+	.rs-proof p {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.5;
+		color: var(--sc-platinum);
+	}
+	.rs-proof .rs-cite {
+		margin-top: 0.5rem;
+		font-size: 0.78rem;
+		color: var(--sc-silver);
+	}
+	.rs-sr {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rs-pin {
+			transition: none;
+		}
+	}
+</style>

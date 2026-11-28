@@ -1347,7 +1347,30 @@ export const terms: Term[] = [
 			takeaway: 'Your post has to win at every stage. Early viewer reactions help it move from one to the next.',
 		},
 		related: ['algorithm', 'for-you-page', 'reach', 'unoriginal-content'],
-		guides: ['algorithms/how-recommenders-work', 'algorithms/the-research'],
+		guides: ['algorithms/how-recommenders-work', 'algorithms/taste-map', 'algorithms/the-research'],
+		sources: [S.ytDnn, S.igExplore, S.ttRec],
+	},
+	{
+		slug: 'embedding',
+		term: 'Embedding',
+		aka: ['taste map', 'interest vector', 'two-tower model'],
+		category: 'algorithm',
+		short: 'An embedding is a feed’s map position for a viewer or a post, learned from engagement. The feed shows you posts whose position is close to yours.',
+		body: [
+			'YouTube’s 2016 paper and Meta’s 2023 write-up on Instagram Explore both describe learning a position for every viewer and every item, so that a viewer ends up close to the posts they engage with. Finding candidates is then a nearest-neighbor search: the posts closest to your spot.',
+			'Your position moves as you react. Instagram says it fine-tunes these models every hour; TikTok mixes in different content so a feed doesn’t narrow into a bubble.',
+		],
+		example: {
+			setup: 'What moves a viewer’s spot, in plain terms:',
+			rows: [
+				['Watching to the end, sending', 'Moves you toward that kind of post'],
+				['Swiping past', 'A small nudge away'],
+				['Not interested', 'A bigger push away'],
+			],
+			takeaway: 'A post that makes it obvious who it’s for gets placed near the right viewers faster.',
+		},
+		related: ['recommendation-system', 'algorithm', 'for-you-page'],
+		guides: ['algorithms/taste-map', 'algorithms/how-recommenders-work'],
 		sources: [S.ytDnn, S.igExplore, S.ttRec],
 	},
 	{
