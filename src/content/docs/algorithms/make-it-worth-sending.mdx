@@ -1,0 +1,83 @@
+---
+title: "Make it worth sending"
+description: "Sends and shares carry the most weight for reaching new people. What research on 7,000 articles found makes people share, and how to build a post someone sends to a friend."
+payoff: "Build posts people send to a specific friend, using what research says moves people to share."
+moves:
+  - do: "Before you post, name the person a viewer would send it to, and the words they'd type."
+    why: "Instagram says sends matter most for reaching people who don't follow you."
+    source: "Instagram, 2025"
+  - do: "Aim for a feeling that fires people up: awe, surprise, or righteous anger."
+    why: "High-arousal emotions made articles more likely to be shared; sadness made them less likely."
+    source: "Berger & Milkman, 2012"
+  - do: "Make one post this week that's useful enough to screenshot."
+    why: "Practically useful articles were shared more, regardless of emotion."
+    source: "Berger & Milkman, 2012"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Lesson 4
+sidebar:
+  order: 4
+---
+
+import EmotionMap from '../../../components/algorithms/EmotionMap.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** a send is the strongest thing a viewer can do for you, because it pulls a new person into the app. Instagram says sends are "slightly more important" than watch time and likes for reaching people who don't follow you. In X's published code, copying a post's link is weighted about 28 times a like. And research is clear about what makes people share: content that fires them up, that surprises them, or that's genuinely useful.
+
+## Pass the send test
+
+Every post that gets sent has an answer to "who would I send this to, and what would I say?" Most fit one of four:
+
+- **"This is so you."** It nails a feeling, a habit or a type of person. The viewer sends it to the friend it describes. Relatable comedy and niche-specific humor live here.
+- **"You need this."** It solves a problem someone they know has. Recipes, scripts, settings, money moves.
+- **"You have to see this."** Awe or surprise: a skill, a reveal, a fact that flips what you thought.
+- **"Can you believe this?"** Outrage or worry on someone's behalf: a scam exposed, an unfair rule. Powerful, and risky (see below).
+
+If you can't fill in the friend and the sentence, the post can still do well, but it's relying on the other three steps.
+
+## Pick the feeling on purpose
+
+The best study on this looked at nearly 7,000 New York Times articles and which ones made the most-emailed list. Happy beat sad, but the bigger factor was how *activated* a piece made people feel. Tap a feeling:
+
+<EmotionMap />
+
+## Don't buy shares with anger
+
+Anger travels, but it also earns the actions feeds punish hardest. In X's code a report is weighted −234, against 0.708 for a like, and blocks and mutes are heavily negative too. Instagram's Explore formula subtracts the chance someone taps "see less." Make people angry *for* your audience, never *at* them, and always give them something to do with the feeling.
+
+<QuickCheck
+  title="Send check"
+  id="alg-send"
+  items={[
+    { text: "I can name who they'd send it to", hint: "“My sister who's planning a wedding.” Be that specific." },
+    { text: "I can write the message they'd type", hint: "“lol this is you,” “you need this,” “WAIT watch to the end.”" },
+    { text: "The feeling is activating, not just pleasant", hint: "Awe, surprise, useful, righteous anger. Not just nice." },
+    { text: "It makes the sender look good", hint: "People share what makes them look funny, smart or in the know." },
+    { text: "Nothing in it invites a report or a mute", hint: "Those cost far more than a share earns." },
+  ]}
+  done="Worth sending."
+/>
+
+Next: [Turn a hit into an audience →](/algorithms/turn-a-hit-into-an-audience/)
+
+<DeepDive title="What the research did and didn't find" hint="Read before quoting it">
+
+- **What it measured:** whether each of 6,956 New York Times home page articles (Aug 30 to Nov 30, 2008) made the paper's most-emailed list. Coders and software rated each article's emotion.
+- **What it found:** positive content was more viral than negative, but high-arousal emotions (awe, anger, anxiety) made content more viral whatever their direction, and sadness made it less viral. One standard deviation more anger raised the odds of making the list by 34%, awe by 30%. Practically useful, interesting and surprising articles were also shared more.
+- **Lab follow-ups:** the authors also ran experiments where they changed how activated people felt, and sharing moved with it.
+- **What it can't tell you:** these were news articles shared by email in 2008, not videos on a feed. The direction of the findings has held up widely, but the exact percentages won't carry over to your Reels.
+- **The four send reasons** above are our framework, not the paper's. The "useful," "surprise" and emotion parts are backed by it; "this is so you" is creator-tested.
+
+</DeepDive>
+
+<DeepDive title="Sources" hint="4 sources">
+
+- Jonah Berger, Katherine L. Milkman, [What Makes Online Content Viral?](https://faculty.wharton.upenn.edu/wp-content/uploads/2011/11/Virality.pdf), Journal of Marketing Research 49(2), 2012.
+- Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025 (Mosseri video).
+- X (xAI), [x-algorithm](https://github.com/xai-org/x-algorithm), `home-mixer/params/param.rs`, checked Nov 26, 2026. See [Inside X's open-source algorithm](/algorithms/x-open-source/).
+- Vladislav Vorotilov, Ilnur Shugaepov, [Scaling the Instagram Explore recommendations system](https://engineering.fb.com/2023/08/09/ml-applications/scaling-instagram-explore-recommendations-system/), Engineering at Meta, Aug 9, 2023.
+
+</DeepDive>
