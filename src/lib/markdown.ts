@@ -5,6 +5,7 @@
 import { reachText } from './reach-data';
 import type { CollectionEntry } from 'astro:content';
 import { sets, myths, rows, platforms } from './widget-data';
+import { viralSteps, packagingVariants, emotions } from './viral-data';
 import { protectWidgetMarkdown } from './protect-playbooks';
 import { moneyWidgetText } from './money-markdown';
 import { strategyWidgetText } from './strategy-data';
@@ -55,6 +56,18 @@ export function toMarkdown(e: CollectionEntry<'docs'>): string {
 }
 
 const widgetText: Record<string, string> = {
+	ViralPath:
+		'Where does your post leak? (self-check) Rate your next post on four steps; each step only gets the people the step before kept, so the weakest caps your reach:\n\n' +
+		viralSteps.map((s, i) => `${i + 1}. **${s.name}**: ${s.question} Feeds measure: ${s.measures}. Lesson: ${s.lesson} (${SITE}${s.href})`).join('\n'),
+	PackagingTest:
+		'Guess the winner (made-up video and numbers): three title and thumbnail ideas for a video about 30 days of waking up at 5am.\n\n| Title | Thumbnail | Click-through | Share of watch time |\n| --- | --- | --- | --- |\n' +
+		packagingVariants.map((v) => `| ${v.title} | ${v.thumb} | ${v.ctr}% | ${v.watch}% |`).join('\n') +
+		'\n\nYouTube\'s A/B test picks the winner by watch time, not click-through rate ("we optimize tests for overall watch time over other metrics, like click-through-rate", YouTube Help), so the specific, honest option wins.',
+	EmotionMap:
+		'What makes people share (Berger & Milkman, Journal of Marketing Research, 2012; 6,956 NYT articles, outcome = most-emailed list):\n\n' +
+		emotions.map((e) => `- **${e.label}** (${e.effect === 'up' ? 'shared more' : e.effect === 'down' ? 'shared less' : 'no extra boost'}): ${e.finding} Make it: ${e.make} Watch out: ${e.watch}`).join('\n'),
+	BroadcastChain:
+		'Broadcast vs chain (Goel, Anderson, Hofman, Watts, Management Science, 2016; ~1 billion sharing events on Twitter, 2011-2012): big spreads look like one big broadcast, not long chains of friends sharing. About 1 in 4,000 posts reached even 100 reshares; about 99% of all sharing was the original post or one step from it; even videos and pictures with 10,000+ reposts had median structural virality under 3. Popularity is "largely driven by the size of the largest broadcast."',
 	MoneyLoop:
 		'The business loop behind ad-funded feeds (Meta figures):\n\n1. You post: the feed needs a steady supply of watchable content.\n2. The feed matches it: AI recommendations drove a 24%+ increase in time spent on Instagram since Reels launched (Zuckerberg, Q1 2023 call).\n3. People stay and come back: video time spent on Instagram up more than 30% year over year (Zuckerberg, Q3 2025 call).\n4. More ads get seen: ad impressions up 14%, "driven by engagement and user growth, particularly on video surfaces" (Susan Li, Q3 2025 call).\n5. Money funds better matching: Meta 2024 revenue $164.5B, up 22%; ad impressions up 11% in 2024 (Q4 2024 results).',
 	SnowballFlow:

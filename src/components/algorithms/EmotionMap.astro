@@ -1,0 +1,104 @@
+---
+/**
+ * Emotion map from Berger & Milkman (JMR 2012): what people share is less about
+ * happy vs sad and more about how activated a post makes them feel. Tap a
+ * sticker to read the finding, how to make it, and the catch.
+ */
+import { emotions } from '../../lib/viral-data';
+const first = emotions[0];
+---
+
+<div class="sc-widget em not-content" data-em data-items={JSON.stringify(emotions)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · What makes people share</div>
+			<p class="sc-widget__title">Tap a feeling</p>
+		</div>
+	</div>
+
+	<div class="em-body">
+		<div class="em-map" role="group" aria-label="Feelings placed by how positive and how activating they are">
+			<span class="em-zone" aria-hidden="true">Shared more</span>
+			{emotions.map((e, i) => (
+				<button
+					type="button"
+					class={`em-dot is-${e.effect}`}
+					style={`--x:${e.x}%;--y:${100 - e.y}%`}
+					data-k={e.key}
+					aria-pressed={i === 0 ? 'true' : 'false'}
+				>
+					<span class="em-arrow" aria-hidden="true">{e.effect === 'up' ? '↑' : e.effect === 'down' ? '↓' : '·'}</span>{e.label}
+				</button>
+			))}
+		</div>
+
+		<p class="em-key" aria-hidden="true">Higher = more fired up · Further right = more positive</p>
+		<div class="em-read" aria-live="polite">
+			<p class="em-h" data-h>{first.label}</p>
+			<p class="em-find" data-find>{first.finding}</p>
+			<p class="em-make"><b>Make it:</b> <span data-make>{first.make}</span></p>
+			<p class="em-watch"><b>Watch out:</b> <span data-watch>{first.watch}</span></p>
+		</div>
+	</div>
+
+	<p class="em-src">Research: Jonah Berger and Katherine Milkman, <a href="https://faculty.wharton.upenn.edu/wp-content/uploads/2011/11/Virality.pdf">“What Makes Online Content Viral?”</a>, Journal of Marketing Research, 2012. 6,956 New York Times articles over three months; the outcome was making the most-emailed list. Positions on the map are our sketch. “Make it” and “Watch out” are our advice, not the paper’s.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-em]').forEach((root) => {
+		const items = JSON.parse(root.dataset.items!) as { key: string; label: string; finding: string; make: string; watch: string }[];
+		const h = root.querySelector('[data-h]')!;
+		const find = root.querySelector('[data-find]')!;
+		const make = root.querySelector('[data-make]')!;
+		const watch = root.querySelector('[data-watch]')!;
+		root.querySelectorAll<HTMLButtonElement>('[data-k]').forEach((b) =>
+			b.addEventListener('click', () => {
+				const e = items.find((x) => x.key === b.dataset.k)!;
+				root.querySelectorAll('[data-k]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+				h.textContent = e.label;
+				find.textContent = e.finding;
+				make.textContent = e.make;
+				watch.textContent = e.watch;
+			}),
+		);
+	});
+</script>
+
+<style>
+	.em-body { display: grid; gap: 1rem; }
+	@media (min-width: 46rem) { .em-body { grid-template-columns: 1.1fr 1fr; align-items: start; } }
+	.em-map {
+		position: relative; aspect-ratio: 1 / 0.9; border-radius: 16px; border: 1px solid var(--sc-line);
+		background:
+			linear-gradient(to bottom, color-mix(in srgb, var(--sc-jade) 14%, transparent), transparent 55%),
+			linear-gradient(rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.06)) 50% 0 / 1px 100% no-repeat,
+			linear-gradient(rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.06)) 0 50% / 100% 1px no-repeat,
+			rgb(255 255 255 / 0.015);
+	}
+	.em-zone { position: absolute; top: 0.6rem; left: 50%; transform: translateX(-50%); font-size: 0.7rem; font-weight: 700; color: var(--sc-jade); }
+	.em-key { margin: -0.5rem 0 0; font-size: 0.72rem; color: var(--sc-steel); text-align: center; }
+	@media (min-width: 46rem) { .em-key { grid-column: 1; grid-row: 2; margin: 0; } .em-read { grid-column: 2; grid-row: 1 / span 2; } }
+	.em-dot {
+		position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
+		appearance: none; font: inherit; font-size: 0.8rem; font-weight: 700; white-space: nowrap; cursor: pointer;
+		padding: 0.4rem 0.7rem; min-height: 2.2rem; border-radius: 999px; border: 1px solid var(--c);
+		color: var(--sc-ivory); background: color-mix(in srgb, var(--c) 18%, var(--sc-bg, #0a0a0a));
+		transition: transform 0.2s, background 0.2s;
+	}
+	.em-dot.is-up { --c: var(--sc-jade); }
+	.em-dot.is-down { --c: var(--sc-ember, #d0705f); }
+	.em-dot.is-flat { --c: var(--sc-steel); }
+	.em-dot:hover { transform: translate(-50%, -50%) scale(1.05); }
+	.em-dot[aria-pressed='true'] { background: var(--c); color: #0a0a0a; }
+	.em-dot:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+	.em-arrow { margin-right: 0.25rem; }
+	.em-read { display: grid; gap: 0.5rem; }
+	.em-read p { margin: 0; line-height: 1.5; }
+	.em-h { font-family: var(--sc-font-display); font-weight: 700; font-size: 1.2rem; color: var(--sc-ivory); }
+	.em-find { color: var(--sc-ivory); font-size: 0.95rem; border-left: 2px solid var(--sc-jade); padding-left: 0.7rem; }
+	.em-make, .em-watch { font-size: 0.88rem; color: var(--sc-platinum); }
+	.em-make b { color: var(--sc-jade); }
+	.em-watch b { color: var(--sc-champagne); }
+	.em-src { margin: 1rem 0 0; font-size: 0.72rem; line-height: 1.5; color: var(--sc-steel); }
+	.em-src a { color: var(--sc-silver); }
+</style>

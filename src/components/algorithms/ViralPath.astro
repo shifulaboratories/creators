@@ -1,0 +1,147 @@
+---
+/**
+ * The course spine: Stop, Stay, Send, Come back. Rate your next post at each
+ * step and the funnel narrows to show where it leaks. A self-check, not a
+ * prediction: the step names map to signals platforms publish (see the lessons).
+ */
+import { viralSteps } from '../../lib/viral-data';
+const levels = [
+	{ key: 'weak', label: 'Not really', v: 0.3 },
+	{ key: 'ok', label: 'Kind of', v: 0.6 },
+	{ key: 'strong', label: 'Yes', v: 0.9 },
+];
+---
+
+<div class="sc-widget vp not-content" data-vp data-steps={JSON.stringify(viralSteps.map(({ key, name, href, lesson }) => ({ key, name, href, lesson })))} data-levels={JSON.stringify(levels)}>
+	<div class="sc-widget__head">
+		<div>
+			<div class="sc-widget__kicker">Try it · Where does your post leak?</div>
+			<p class="sc-widget__title">Answer four questions about your next post</p>
+		</div>
+		<span class="sc-tag is-illustrative">Self-check</span>
+	</div>
+
+	<div class="vp-funnel" aria-hidden="true">
+		{viralSteps.map((s, i) => (
+			<div class={`vp-bar is-${s.tint}`} data-bar={i}>
+				<span class="vp-bar__fill"></span>
+				<span class="vp-bar__label">{s.name}</span>
+			</div>
+		))}
+	</div>
+
+	<ol class="vp-steps">
+		{viralSteps.map((s, i) => (
+			<li class={`vp-step is-${s.tint}`} data-step={i}>
+				<div class="vp-step__top">
+					<span class="vp-n">{i + 1}</span>
+					<strong>{s.name}</strong>
+					<span class="vp-measures">Feeds measure: {s.measures}</span>
+				</div>
+				<p class="vp-q">{s.question}</p>
+				<div class="vp-seg" role="radiogroup" aria-label={s.question}>
+					{levels.map((l) => (
+						<button type="button" role="radio" data-level={l.key} aria-checked={l.key === 'ok' ? 'true' : 'false'}>{l.label}</button>
+					))}
+				</div>
+			</li>
+		))}
+	</ol>
+
+	<p class="vp-out" aria-live="polite">
+		<span data-out>Pick an answer for each step.</span>
+		<a data-out-link href={viralSteps[0].href}></a>
+	</p>
+	<p class="sc-widget__note">Each step only gets the people the step before it kept. That's why one weak step caps everything after it. The bar widths are a picture of that idea, not a forecast of your views.</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-vp]').forEach((root) => {
+		const steps = JSON.parse(root.dataset.steps!) as { key: string; name: string; href: string; lesson: string }[];
+		const levels = JSON.parse(root.dataset.levels!) as { key: string; label: string; v: number }[];
+		const state = steps.map(() => 'ok');
+		const fills = [...root.querySelectorAll<HTMLElement>('.vp-bar__fill')];
+		const out = root.querySelector<HTMLElement>('[data-out]')!;
+		const link = root.querySelector<HTMLAnchorElement>('[data-out-link]')!;
+		const render = () => {
+			let w = 1;
+			state.forEach((k, i) => {
+				w *= levels.find((l) => l.key === k)!.v;
+				fills[i].style.width = `${Math.round(34 + 66 * Math.pow(w, 0.6))}%`;
+			});
+			const vals = state.map((k) => levels.find((l) => l.key === k)!.v);
+			const min = Math.min(...vals);
+			root.querySelectorAll('.vp-step').forEach((el, i) => el.classList.toggle('is-leak', vals[i] === min && min < 0.9));
+			if (min >= 0.9) {
+				out.textContent = 'No obvious leak. Post it, then check which step your numbers say was weakest.';
+				link.textContent = 'How a post actually goes viral →';
+				link.href = '/algorithms/how-posts-go-viral/';
+				return;
+			}
+			const i = vals.indexOf(min);
+			if (vals.every((v) => v === min)) {
+				out.textContent = 'All four steps are about even. Start at the top, because every later step only gets the people this one keeps.';
+				link.textContent = `${steps[0].lesson} →`;
+				link.href = steps[0].href;
+				return;
+			}
+			out.textContent = `Your biggest leak is ${steps[i].name}. Fix that first: it limits every step after it.`;
+			link.textContent = `${steps[i].lesson} →`;
+			link.href = steps[i].href;
+		};
+		root.querySelectorAll<HTMLElement>('.vp-step').forEach((el, i) => {
+			el.querySelectorAll<HTMLButtonElement>('[data-level]').forEach((b) =>
+				b.addEventListener('click', () => {
+					state[i] = b.dataset.level!;
+					el.querySelectorAll('[data-level]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+					render();
+				}),
+			);
+		});
+		render();
+	});
+</script>
+
+<style>
+	.vp .is-rose { --c: var(--sc-rose); }
+	.vp .is-champagne { --c: var(--sc-champagne); }
+	.vp .is-jade { --c: var(--sc-jade); }
+	.vp .is-amethyst { --c: var(--sc-amethyst); }
+	.vp-funnel { display: grid; gap: 6px; margin: 0.25rem 0 1.1rem; justify-items: center; }
+	.vp-bar { position: relative; width: 100%; height: 30px; display: flex; justify-content: center; }
+	.vp-bar__fill {
+		height: 100%; width: 60%; border-radius: 999px;
+		background: linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, transparent), var(--c), color-mix(in srgb, var(--c) 55%, transparent));
+		transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.vp-bar__label {
+		position: absolute; inset: 0; display: grid; place-items: center;
+		font-size: 0.78rem; font-weight: 700; color: #0a0a0a; mix-blend-mode: normal;
+		text-shadow: 0 0 6px rgb(255 255 255 / 0.35);
+	}
+	@media (prefers-reduced-motion: reduce) { .vp-bar__fill { transition: none; } }
+	.vp-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+	@media (min-width: 46rem) { .vp-steps { grid-template-columns: 1fr 1fr; } }
+	.vp-step {
+		border: 1px solid var(--sc-line); border-radius: 14px; padding: 0.8rem 0.85rem 0.85rem;
+		background: rgb(255 255 255 / 0.02); transition: border-color 0.25s, box-shadow 0.25s;
+	}
+	.vp-step.is-leak { border-color: color-mix(in srgb, var(--c) 70%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 14%, transparent); }
+	.vp-step__top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; }
+	.vp-step__top strong { color: var(--sc-ivory); font-family: var(--sc-font-display); font-size: 1rem; }
+	.vp-n {
+		width: 1.5rem; height: 1.5rem; border-radius: 50%; display: grid; place-items: center;
+		font-size: 0.75rem; font-weight: 700; color: #0a0a0a; background: var(--c);
+	}
+	.vp-measures { flex-basis: 100%; font-size: 0.74rem; color: var(--sc-steel); }
+	.vp-q { margin: 0.45rem 0 0.6rem; font-size: 0.9rem; line-height: 1.45; color: var(--sc-platinum); }
+	.vp-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 3px; border-radius: 999px; background: rgb(255 255 255 / 0.04); border: 1px solid var(--sc-line); }
+	.vp-seg button {
+		appearance: none; font: inherit; font-size: 0.8rem; font-weight: 600; min-height: 2.2rem;
+		border: 0; border-radius: 999px; background: transparent; color: var(--sc-silver); cursor: pointer;
+	}
+	.vp-seg button[aria-checked='true'] { background: var(--c); color: #0a0a0a; }
+	.vp-seg button:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+	.vp-out { margin: 1rem 0 0; font-size: 0.95rem; line-height: 1.5; color: var(--sc-ivory); }
+	.vp-out a { display: inline-block; margin-left: 0.25rem; font-weight: 600; color: var(--accent); }
+</style>

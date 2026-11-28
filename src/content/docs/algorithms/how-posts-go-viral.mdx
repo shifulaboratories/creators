@@ -1,0 +1,82 @@
+---
+title: "How a post actually goes viral"
+description: "Viral isn't friends telling friends. A feed tests your post on a few people and widens it when they react well. What that means for every post you make."
+payoff: "See how a post really spreads, so you stop chasing luck and start earning the next ring of viewers."
+moves:
+  - do: "Judge each post by how its first viewers reacted, not by your follower count."
+    why: "TikTok says follower count and past hits aren't direct factors in what it recommends."
+    source: "TikTok, 2020"
+  - do: "Make every post work for a stranger who has never seen you."
+    why: "On YouTube, recommendations drive more viewing than subscriptions or search."
+    source: "YouTube, 2021"
+  - do: "Post more shots, not bigger bets."
+    why: "Big spreads are rare: about 1 in 4,000 posts reached even 100 reshares in the largest study of sharing."
+    source: "Goel et al., 2016"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Lesson 1
+sidebar:
+  order: 1
+---
+
+import SnowballFlow from '../../../components/SnowballFlow.astro';
+import BroadcastChain from '../../../components/algorithms/BroadcastChain.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** most people picture going viral as a chain: you post, a friend shares, their friends share, and so on. Research on a billion shares says that almost never happens. Big reach comes from one big broadcast, and today the broadcaster is the feed. It shows your post to a small group, watches what they do, and keeps widening the circle while people react well. Your job is to win each circle.
+
+## Stop picturing a chain
+
+<BroadcastChain />
+
+The study is from Twitter in 2011 and 2012, before recommendation feeds ran everything. Back then the big broadcasters were big accounts. Now a feed can make anyone's post the broadcast, which is why a post from a small account can reach far more people than follow it. It also means the feed, not your friends, decides how far you go.
+
+## Win the first circle
+
+Play with how the first viewers react and watch how far the post travels.
+
+<SnowballFlow />
+
+What the platforms have said publicly lines up with this picture:
+
+- **TikTok:** recommendations are driven by what each viewer does, and follower count and past high-performing videos aren't direct factors.
+- **Instagram:** Trial Reels are shown to people who don't follow you first. You see views, likes, comments and shares about 24 hours later, and Instagram can share it with everyone automatically if it does well in the first 72 hours.
+- **YouTube:** recommendations drive more viewing than subscriptions or search, and they aren't based on your social network.
+
+<BeforeAfter
+  illustration
+  before={{ label: "Thinking like a chain", title: "“My followers will share it”", lines: ["Writes for people who already know you", "Inside jokes, no context", "Blames the algorithm when followers don't share"] }}
+  after={{ label: "Thinking like a broadcast", title: "“A stranger will see this first”", lines: ["First seconds make sense with zero context", "Clear who it's for", "Judges the post by how the first viewers reacted"] }}
+/>
+
+## Take more shots
+
+Even in a huge dataset, big spreads were rare: about 1 in 4,000 posts reached 100 reshares, and the authors put true viral hits closer to one in a million. You can't schedule a hit. You can raise the odds on every post, and take more of them. The creators in our [case studies](/case-studies/) all made a lot of posts before the ones you know.
+
+<QuickCheck
+  title="Before you post"
+  id="alg-viral-1"
+  items={[
+    { text: "A stranger would get it in the first two seconds", hint: "No “as I said yesterday,” no inside jokes." },
+    { text: "It's obvious who it's for", hint: "The feed matches posts to people. Help it." },
+    { text: "I know which of the four steps this post is weakest on", hint: "Stop, Stay, Send or Come back. Check it on [the course page](/algorithms/)." },
+    { text: "I'll judge it by its first viewers, not by followers", hint: "Retention, sends and follows from non-followers tell you if it's winning circles." },
+  ]}
+  done="Ready to post."
+/>
+
+Next: [Get the tap →](/algorithms/get-the-tap/)
+
+<DeepDive title="Sources" hint="5 sources">
+
+- Sharad Goel, Ashton Anderson, Jake Hofman, Duncan J. Watts, [The Structural Virality of Online Diffusion](https://www.5harad.com/papers/twiral.pdf), Management Science 62(1), 2016. About 1 billion diffusion events on Twitter, July 2011 to June 2012.
+- TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
+- Instagram, [Trial reels: try content with non-followers first](https://creators.instagram.com/blog/instagram-trial-reels), Dec 10, 2024.
+- Cristos Goodrow, [On YouTube's recommendation system](https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/), YouTube, Sep 15, 2021.
+- The snowball widget is an illustrative model of this testing pattern, not platform data.
+
+</DeepDive>

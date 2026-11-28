@@ -1,0 +1,95 @@
+---
+title: "Keep them watching"
+description: "Watch time is the top signal on Instagram, TikTok and YouTube. How to structure a post people finish and are glad they watched, and how to read where they leave."
+payoff: "Build posts people finish, and are glad they did, using the one structure that works from 15 seconds to 20 minutes."
+moves:
+  - do: "Cut your next video until every line earns the next one."
+    why: "Watch time is a top ranking signal on Instagram, TikTok and YouTube."
+    source: "Platforms"
+  - do: "Put the first payoff in the first quarter, then open the next question."
+    why: "People who get something early keep watching for more."
+    source: "Creator-tested"
+  - do: "Find where viewers left your last video and rewatch that moment."
+    why: "The drop is the model's training data, and your edit notes."
+    source: "YouTube"
+status: draft
+confidence: verified
+lastReviewed: 2026-11-28
+cover:
+  label: Lesson 3
+sidebar:
+  order: 3
+---
+
+import RetentionCurve from '../../../components/grow/RetentionCurve.astro';
+import QuickCheck from '../../../components/guide/QuickCheck.astro';
+import BeforeAfter from '../../../components/guide/BeforeAfter.astro';
+import DeepDive from '../../../components/guide/DeepDive.astro';
+
+**The short version:** after the tap, the feed's main question is "did they stay?" Instagram names watch time as a top-three signal, TikTok calls finishing a longer video a strong one, and YouTube counts watch time weighted by whether people say they were glad they watched. So the goal isn't a longer post. It's a post where nobody wants to leave, and that leaves people satisfied.
+
+## Know what "watching" means to each feed
+
+<figure class="sc-figure">
+<ul class="sc-bars">
+<li class="sc-bar is-rose" style="--v:90;--i:0"><div class="sc-bar__head">Instagram<b>Watch time is a top-three signal</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-cyan" style="--v:86;--i:1"><div class="sc-bar__head">TikTok<b>Finishing a longer video</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-ion" style="--v:82;--i:2"><div class="sc-bar__head">YouTube<b>Watch time people rate 4 or 5 stars</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+<li class="sc-bar is-jade" style="--v:74;--i:3"><div class="sc-bar__head">LinkedIn<b>Time spent, not scrolled past</b></div><div class="sc-bar__track"><div class="sc-bar__fill"></div></div></li>
+</ul>
+<figcaption>What each platform has said about watching. Bar lengths are decorative, not measured.</figcaption>
+</figure>
+
+YouTube's version matters most for long videos: it surveys viewers, and "only videos that you rate highly with four or five stars are counted as valued watchtime." Padding a video to make it longer adds minutes people don't value.
+
+## Use the five-beat structure
+
+This is how most posts people finish are built, whether they last 15 seconds or 20 minutes. It isn't a platform rule. It's the shape that keeps giving people a reason to stay.
+
+<figure class="sc-figure">
+<ol class="sc-steps">
+<li class="is-active"><strong>Hook</strong><span>Show the most interesting thing, or the question, in the first seconds.</span></li>
+<li><strong>Stakes</strong><span>Why this matters to the viewer. Who it's for, what could go wrong, what they'll get.</span></li>
+<li><strong>Build</strong><span>Every beat raises a new small question before answering the last one. No dead air.</span></li>
+<li><strong>Payoff</strong><span>Deliver what the packaging promised. Clearly, and earlier than feels natural.</span></li>
+<li><strong>Next</strong><span>Point to what's next: part two, the series, the reply you're about to make. This is how people come back.</span></li>
+</ol>
+<figcaption>Our framework, drawn from how the creators in our case studies structure videos. Creator-tested, not a platform rule.</figcaption>
+</figure>
+
+<BeforeAfter
+  illustration
+  before={{ label: "Loses people", title: "Room makeover, 60 seconds", lines: ["“Hey guys, so today...” (5s)", "Tour of the empty room (15s)", "Shopping haul (25s)", "Reveal at second 55"] }}
+  after={{ label: "Keeps them", title: "Same footage, re-cut", lines: ["Flash of the finished room, “$300, one weekend”", "“The hardest part was the wall”", "Three fast steps, each ending on a problem", "Full reveal, then “part two: the closet”"] }}
+/>
+
+## Read where they leave
+
+Your retention graph is the most honest feedback you'll get. Each dip is a moment people decided the next second wasn't worth it. Pick a shape:
+
+<RetentionCurve />
+
+<QuickCheck
+  title="Edit check"
+  id="alg-stay"
+  items={[
+    { text: "The first payoff lands in the first quarter", hint: "Give them something early so they trust the rest." },
+    { text: "There's no stretch where nothing new happens", hint: "If you'd skip it on someone else's video, cut it." },
+    { text: "Every section ends on a small question", hint: "“But that broke the wall.” “Then the brand replied.”" },
+    { text: "It ends when the value ends", hint: "No long outro. Point to the next post and stop." },
+    { text: "Someone would be glad they watched", hint: "That's literally what YouTube asks them in surveys." },
+  ]}
+  done="Ready to post."
+/>
+
+Next: [Make it worth sending →](/algorithms/make-it-worth-sending/)
+
+<DeepDive title="Sources" hint="5 sources">
+
+- Andrew Hutchinson, [Instagram shares algorithm insights for 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-2025/738034/), Social Media Today, Jan 22, 2025 (Mosseri: "The top three signals that matter most for ranking are watch time, likes and sends").
+- TikTok Newsroom, [How TikTok recommends videos #ForYou](https://newsroom.tiktok.com/en-us/how-tiktok-recommends-videos-for-you/), June 18, 2020.
+- Cristos Goodrow, [On YouTube's recommendation system](https://blog.youtube/inside-youtube/on-youtubes-recommendation-system/), YouTube, Sep 15, 2021.
+- Siddharth Dangi et al., [Understanding feed dwell time](https://engineering.linkedin.com/blog/2020/understanding-feed-dwell-time), LinkedIn Engineering, 2020.
+- YouTube Help, [Measure key moments for audience retention](https://support.google.com/youtube/answer/9314415).
+
+</DeepDive>

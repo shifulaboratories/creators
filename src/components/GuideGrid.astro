@@ -9,14 +9,21 @@ interface Props {
 	kicker?: string;
 	/** Card title level. Use 2 when the grid sits right under the page title. */
 	headingLevel?: 2 | 3;
+	/** Only guides whose sidebar order is in [from, to]. Lets one section show two groups. */
+	from?: number;
+	to?: number;
 }
-const { section, kicker, headingLevel = 3 } = Astro.props;
+const { section, kicker, headingLevel = 3, from = -Infinity, to = Infinity } = Astro.props;
 const H = headingLevel === 2 ? 'h2' : 'h3';
 const locale = currentLocale(Astro);
 const L = t(locale).grid;
 // In Spanish or Portuguese, show the translation where there is one, else the English guide.
 const items = withFallback(await getCollection('docs'), locale)
 	.filter(({ base }) => base.startsWith(section + '/') && base !== section + '/index' && base !== section)
+	.filter(({ entry }) => {
+		const o = entry.data.sidebar?.order ?? 99;
+		return o >= from && o <= to;
+	})
 	.sort((a, b) => (a.entry.data.sidebar?.order ?? 99) - (b.entry.data.sidebar?.order ?? 99));
 const entries = items.map((i) => i.entry);
 const baseOf = new Map(items.map((i) => [i.entry, i]));

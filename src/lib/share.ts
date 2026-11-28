@@ -13,7 +13,7 @@ export const SECTION_LABELS: Record<string, string> = {
 	protect: 'Protect',
 	underground: 'Underground',
 	news: 'News',
-	algorithms: 'The algorithm',
+	algorithms: 'Go viral',
 	'case-studies': 'Case studies',
 	platforms: 'Platforms',
 	shortlist: 'The Shortlist',
